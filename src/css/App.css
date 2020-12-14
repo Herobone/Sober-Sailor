@@ -1,0 +1,12 @@
+/*
+This file is used if:
+- there should be extra css needed that is not provided by w3.css
+- current layouts have to be overwritten
+*/
+
+
+/* Only on small screens */
+
+@media only screen and (max-width: 600px) {
+
+}
