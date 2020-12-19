@@ -1,6 +1,7 @@
 import React, {ReactElement} from 'react';
 import '../../css/App.css';
 import {Alert} from '../../helper/AlertTypes';
+import {FormattedMessage} from "react-intl";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -15,7 +16,7 @@ class Home extends React.Component<Props, State> {
     render() {
         return (
             <div>
-                Home
+                <FormattedMessage id="general.placeholder"/>
             </div>
         );
     }
