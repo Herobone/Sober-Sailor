@@ -31,7 +31,7 @@ class LanguageContainer extends React.Component<Props, State> {
         if (!lang || typeof lang === "undefined") {
             lang = navigator.language.split("-")[0];
         }
-        if (!this.hasKey(MESSAGES, lang)) {
+        if (!Util.hasKey(MESSAGES, lang)) {
             lang = "de";
         }
         this.state = {
