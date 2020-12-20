@@ -1,4 +1,4 @@
-import React, { Component, ReactElement } from 'react'
+import React, {Component, ReactElement} from 'react'
 import {
     BrowserRouter as Router,
     Switch,
@@ -12,6 +12,7 @@ import Home from "../Sites/Home";
 import Mixed from "../Sites/Gamemodes/Mixed";
 import TruthOrDare from "../Sites/Gamemodes/TruthOrDare";
 import Saufpoly from "../Sites/Gamemodes/Saufpoly";
+import GameProvider from "./GameProvider";
 
 interface Props {
     changeLanguage: (locale: string) => void;
@@ -37,21 +38,35 @@ export class Routed extends Component<Props, State> {
             <div className="w3-container">
                 <Router>
                     <Switch>
-                        <Route path="/mixed" render={() => <Mixed createAlert={this.props.createAlert} /> } />
-                        <Route path="/mixed/:gameID" render={props => <Mixed createAlert={this.props.createAlert} gameID={props.match.params.gameID} /> } />
+                        <Route path="/mixed/:gameID"
+                               render={props => <GameProvider createAlert={this.props.createAlert}><Mixed
+                                   createAlert={this.props.createAlert}
+                                   gameID={props.match.params.gameID}/></GameProvider>}/>
+                        <Route path="/mixed" render={() => <GameProvider createAlert={this.props.createAlert}><Mixed
+                            createAlert={this.props.createAlert}/></GameProvider>}/>
 
-                        <Route path="/truthordare" render={() => <TruthOrDare createAlert={this.props.createAlert} /> } />
-                        <Route path="/truthordare/:gameID" render={props => <TruthOrDare createAlert={this.props.createAlert} gameID={props.match.params.gameID} /> } />
+                        <Route path="/truthordare/:gameID"
+                               render={props => <GameProvider createAlert={this.props.createAlert}><TruthOrDare
+                                   createAlert={this.props.createAlert}
+                                   gameID={props.match.params.gameID}/></GameProvider>}/>
+                        <Route path="/truthordare"
+                               render={() => <GameProvider createAlert={this.props.createAlert}><TruthOrDare
+                                   createAlert={this.props.createAlert}/></GameProvider>}/>
 
-                        <Route path="/saufpoly" render={() => <Saufpoly createAlert={this.props.createAlert} /> } />
-                        <Route path="/saufpoly/:gameID" render={props => <Saufpoly createAlert={this.props.createAlert} gameID={props.match.params.gameID} /> } />
+                        <Route path="/saufpoly/:gameID"
+                               render={props => <GameProvider createAlert={this.props.createAlert}><Saufpoly
+                                   createAlert={this.props.createAlert}
+                                   gameID={props.match.params.gameID}/></GameProvider>}/>
+                        <Route path="/saufpoly"
+                               render={() => <GameProvider createAlert={this.props.createAlert}><Saufpoly
+                                   createAlert={this.props.createAlert}/></GameProvider>}/>
 
                         <Route path="/login">
-                            <Login createAlert={this.props.createAlert} />
+                            <Login createAlert={this.props.createAlert}/>
                         </Route>
 
                         <Route path="/logout">
-                            <Logout createAlert={this.props.createAlert} />
+                            <Logout createAlert={this.props.createAlert}/>
                         </Route>
 
                         <Route path="/settings">
@@ -66,7 +81,7 @@ export class Routed extends Component<Props, State> {
                             <Home createAlert={this.props.createAlert}/>
                         </Route>
                     </Switch>
-                </Router >
+                </Router>
             </div>
         )
     }

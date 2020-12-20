@@ -20,6 +20,7 @@ import React, {ReactElement} from 'react';
 import '../../../css/App.css';
 import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
+import GameProvider from "../../Functional/GameProvider";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -33,6 +34,7 @@ interface State {
 class TruthOrDare extends React.Component<Props, State> {
 
     render() {
+        console.log(this.props.gameID)
         return (
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.truthordare"/>

@@ -20,6 +20,8 @@ import React, {ReactElement} from 'react';
 import '../../../css/App.css';
 import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
+import GameProvider from "../../Functional/GameProvider";
+import firebase from "firebase";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -33,10 +35,17 @@ interface State {
 class Mixed extends React.Component<Props, State> {
 
     render() {
+        let currentUser = firebase.auth().currentUser;
+        console.log(currentUser);
         return (
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.mixed"/>
+                <br/>
+                Game ID:
                 {this.props.gameID}
+                <br/>
+                User ID:
+                {currentUser?.uid}
             </div>
         );
     }

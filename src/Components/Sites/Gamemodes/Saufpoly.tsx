@@ -20,6 +20,8 @@ import React, {ReactElement} from 'react';
 import '../../../css/App.css';
 import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
+import GameProvider from "../../Functional/GameProvider";
+import firebase from "firebase";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -34,10 +36,15 @@ class Saufpoly extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className="w3-center">
-                <FormattedMessage id="gamemodes.saufpoly"/>
-                {this.props.gameID}
-            </div>
+            <GameProvider createAlert={this.props.createAlert}>
+                <div className="w3-center">
+                    <FormattedMessage id="gamemodes.saufpoly"/>
+                    <br/>
+                    Game ID: {this.props.gameID}
+                    <br/>
+                    User ID: {firebase.auth().currentUser?.uid}
+                </div>
+            </GameProvider>
         );
     }
 
