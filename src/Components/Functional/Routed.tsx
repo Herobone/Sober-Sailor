@@ -9,6 +9,9 @@ import {Alert} from '../../helper/AlertTypes';
 import Login from '../Sites/Login';
 import Logout from './Logout';
 import Home from "../Sites/Home";
+import Mixed from "../Sites/Gamemodes/Mixed";
+import TruthOrDare from "../Sites/Gamemodes/TruthOrDare";
+import Saufpoly from "../Sites/Gamemodes/Saufpoly";
 
 interface Props {
     changeLanguage: (locale: string) => void;
@@ -31,30 +34,40 @@ export class Routed extends Component<Props, State> {
 
     render() {
         return (
-            <Router>
+            <div className="w3-container">
+                <Router>
+                    <Switch>
+                        <Route path="/mixed" render={() => <Mixed createAlert={this.props.createAlert} /> } />
+                        <Route path="/mixed/:gameID" render={props => <Mixed createAlert={this.props.createAlert} gameID={props.match.params.gameID} /> } />
 
-                <Switch>
-                    <Route path="/login">
-                        <Login createAlert={this.props.createAlert} />
-                    </Route>
+                        <Route path="/truthordare" render={() => <TruthOrDare createAlert={this.props.createAlert} /> } />
+                        <Route path="/truthordare/:gameID" render={props => <TruthOrDare createAlert={this.props.createAlert} gameID={props.match.params.gameID} /> } />
 
-                    <Route path="/logout">
-                        <Logout createAlert={this.props.createAlert} />
-                    </Route>
+                        <Route path="/saufpoly" render={() => <Saufpoly createAlert={this.props.createAlert} /> } />
+                        <Route path="/saufpoly/:gameID" render={props => <Saufpoly createAlert={this.props.createAlert} gameID={props.match.params.gameID} /> } />
 
-                    <Route path="/settings">
-                        <Settings
-                            changeLanguage={this.props.changeLanguage}
-                            currentLocale={this.props.currentLocale}
-                            createAlert={this.props.createAlert}
-                        />
-                    </Route>
+                        <Route path="/login">
+                            <Login createAlert={this.props.createAlert} />
+                        </Route>
 
-                    <Route path="/">
-                        <Home createAlert={this.props.createAlert}/>
-                    </Route>
-                </Switch>
-            </Router >
+                        <Route path="/logout">
+                            <Logout createAlert={this.props.createAlert} />
+                        </Route>
+
+                        <Route path="/settings">
+                            <Settings
+                                changeLanguage={this.props.changeLanguage}
+                                currentLocale={this.props.currentLocale}
+                                createAlert={this.props.createAlert}
+                            />
+                        </Route>
+
+                        <Route path="/">
+                            <Home createAlert={this.props.createAlert}/>
+                        </Route>
+                    </Switch>
+                </Router >
+            </div>
         )
     }
 }

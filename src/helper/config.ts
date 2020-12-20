@@ -1,21 +1,11 @@
 const config = {
-    apiKey: "PUT-YOUR-API-KEY-HERE",
-    authDomain: "your-firebase-project-id.firebaseapp.com",
-    databaseURL: "https://your-firebase-project-id.firebaseio.com",
-    projectId: "your-firebase-project-id",
-    storageBucket: "your-firebase-project-id.appspot.com",
-    messagingSenderId: "YOUR-SENDER-ID-HERE",
-    appId: "YOUR-APP-ID-HERE",
-    measurementId: "YOUR-ANALYTICS-ID",
-
-    clientId: "GAPI-CLIENT-ID.apps.googleusercontent.com",
-
-    scopes: [
-        // put all scopes that required by GAPI here
-    ],
-    discoveryDocs: [
-        // put all discovery docs for the APIs here
-    ]
+    apiKey: "AIzaSyDK2kzipgJdsN3PLMGoWIdtvJXj0-jqHu8",
+    authDomain: "sober-sailor.firebaseapp.com",
+    projectId: "sober-sailor",
+    storageBucket: "sober-sailor.appspot.com",
+    messagingSenderId: "922767796924",
+    appId: "1:922767796924:web:c224574e42c431d1bd7eb9",
+    measurementId: "G-1G0EXE06XV"
 };
 
 export default config;

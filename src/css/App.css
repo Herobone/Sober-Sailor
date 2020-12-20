@@ -4,6 +4,15 @@ This file is used if:
 - current layouts have to be overwritten
 */
 
+.sailor-startpage-gameselector {
+    width: 50%;
+    margin-top: 10%;
+    margin-left: 25%;
+}
+
+.sailor-gameselect-button {
+    font-weight: bold;
+}
 
 /* Only on small screens */
 

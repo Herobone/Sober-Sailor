@@ -15,6 +15,9 @@
 	"elements.alerts.success": "Success!",
 	"elements.alerts.warning": "Warning!",
 	"elements.dropdown.select": "Select one",
+	"gamemodes.mixed": "Mixed (All types of tasks)",
+	"gamemodes.saufpoly": "Saufpoly",
+	"gamemodes.truthordare": "Truth or Dare",
 	"general.add": "Add",
 	"general.done": "Done!",
 	"general.placeholder": "Placeholder (EN)",
@@ -22,5 +25,5 @@
 	"general.welcome": "Welcome",
 	"navigation.myprofile": "My Profile",
 	"settings.labels.selectlanguage": "Language",
-	"states.homework.overdue": ""
+	"sobersailor.name": "Sober Sailor - The Online Party Game"
 }
