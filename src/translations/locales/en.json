@@ -1,13 +1,13 @@
 {
 	"account.actions.login": "Log In",
-	"account.actions.logout": "Log Out",
 	"account.actions.login.withGoogle": "Log In with Google",
+	"account.actions.logout": "Log Out",
 	"account.actions.noname": "Please provide a valid name!",
+	"account.descriptions.signout.success": "Logout successful!",
 	"account.descriptors.finishsignup": "Please finish signing up!",
 	"account.descriptors.myaccount": "My Account",
 	"account.descriptors.notsignedin": "To use this feature, you need to be signed in!",
 	"account.descriptors.signinneeded": "To continue you have to sign in!",
-	"account.descriptions.signout.success": "Logout successful!",
 	"account.descriptors.yourname": "Your Name",
 	"account.navigation.settings": "Settings",
 	"elements.alerts.error": "Error",
@@ -15,11 +15,12 @@
 	"elements.alerts.success": "Success!",
 	"elements.alerts.warning": "Warning!",
 	"elements.dropdown.select": "Select one",
-	"general.done": "Done!",
-	"general.shouldnothappen": "Unknown Error! That should not have happened!",
-	"general.placeholder": "Placeholder (EN)",
-	"general.welcome": "Welcome",
 	"general.add": "Add",
+	"general.done": "Done!",
+	"general.placeholder": "Placeholder (EN)",
+	"general.shouldnothappen": "Unknown Error! That should not have happened!",
+	"general.welcome": "Welcome",
 	"navigation.myprofile": "My Profile",
-	"settings.labels.selectlanguage": "Language"
+	"settings.labels.selectlanguage": "Language",
+	"states.homework.overdue": ""
 }
