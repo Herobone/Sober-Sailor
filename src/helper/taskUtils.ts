@@ -18,30 +18,40 @@ import Util from "./Util";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export function storeToLocalFromGit(task: string, lang: string, onFinish: (tasks: string[]) => void) {
+export function storeToLocalFromGit(task: string, lang: string): Promise<string[]> {
     const url = "https://raw.githubusercontent.com/Herobone/Sober-Sailor/main/src/gamemodes/mixed/tasks/" + task + "/" + lang + ".json";
-    fetch(url)
-        .then(response => response.text())
-        .then(json => {
-            localStorage.setItem(task + "_" + lang, json);
-            onFinish(JSON.parse(json));
-        })
-        .catch(error => console.error("Error while downloading JSON from GitHub!", error));
-}
-
-export function getTasks(task: string, lang: string, onFinish: (tasks: string[]) => void) {
-    let stored = localStorage.getItem(task + "_" + lang);
-    if (stored) {
-        onFinish(JSON.parse(stored));
-        console.log("From local");
-    } else {
-        storeToLocalFromGit(task, lang, onFinish);
-        console.log("Form server");
-    }
-}
-
-export function getRandomTask(task: string, lang: string, onFinish: (task: string) => void) {
-    getTasks(task, lang, (tasks) => {
-        onFinish(Util.selectRandom(tasks));
+    return new Promise<string[]>((resolve, reject) => {
+        fetch(url)
+            .then(response => response.text())
+            .then(json => {
+                localStorage.setItem(task + "_" + lang, json);
+                resolve(JSON.parse(json));
+            })
+            .catch(error => {
+                console.error("Error while downloading JSON from GitHub!", error);
+                reject(error);
+            });
     });
+}
+
+export function getTasks(task: string, lang: string): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+        let stored = localStorage.getItem(task + "_" + lang);
+        if (stored) {
+            resolve(JSON.parse(stored));
+            console.log("From local");
+        } else {
+            storeToLocalFromGit(task, lang).then(resolve).catch(reject);
+            console.log("Form server");
+        }
+    })
+}
+
+export function getRandomTask(task: string, lang: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        getTasks(task, lang).then((tasks) => {
+            resolve(Util.selectRandom(tasks));
+        }).catch(reject);
+    })
+
 }

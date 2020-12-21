@@ -38,6 +38,7 @@ export function createGame(): Promise<string> {
             type: null,
             round: 0,
             host: uid,
+            pollState: false,
             created: firebase.firestore.Timestamp.now()
         }).then(() => resolve(gameID));
     });
@@ -146,7 +147,16 @@ export function transferHostShip(gameID: string) {
     });
 }
 
-export function myAnswerIs(gameID: string, answer: string) {
+export function setPollState(gameID: string, state: boolean) {
+    return new Promise((resolve, reject) => {
+        const gameRef = getGameByID(gameID);
+        gameRef.update({
+            pollState: state
+        }).then(resolve).catch(reject);
+    });
+}
+
+export function setAnswer(gameID: string, answer: string | null) {
     const auth = firebase.auth();
     const user = auth.currentUser;
     return new Promise((resolve, reject) => {
@@ -158,6 +168,14 @@ export function myAnswerIs(gameID: string, answer: string) {
         const gameRef = getGameByID(gameID);
         gameRef.collection("players").doc(uid).update({
             answer: answer
-        }).then(resolve);
+        }).then(resolve).catch(reject);
     });
+}
+
+export function myAnswerIs(gameID: string, answer: string) {
+    return setAnswer(gameID, answer);
+}
+
+export function clearMyAnswer(gameID: string) {
+    return setAnswer(gameID, null);
 }
