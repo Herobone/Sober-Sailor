@@ -25,6 +25,7 @@ import firebase from "firebase";
 import {getGameByID, joinGame} from "../../../helper/gameManager";
 import Util from "../../../helper/Util";
 import Leaderboard from "../../Visuals/Leaderboard";
+import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -90,6 +91,7 @@ class Mixed extends React.Component<Props, State> {
                 Next Task:
                 {this.state.nextTask}
                 <br/>
+                <WhoWouldRather />
                 <button onClick={this.randomButtonClick}>Random Button</button>
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef}/>
             </div>

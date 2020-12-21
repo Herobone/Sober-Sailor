@@ -17,8 +17,12 @@
  */
 
 export function storeToLocalFromGit(task: string, lang: string, onFinish: () => void) {
+    const url = "https://raw.githubusercontent.com/Herobone/Sober-Sailor/main/src/gamemodes/mixed/tasks/" + task + "/" + lang + ".json";
     fetch(url)
         .then(response => response.json())
-        .then(json => localStorage.s)
-        .catch(error => callback(error, null))
+        .then(json => {
+            localStorage.setItem(task + "_" + lang, json);
+            onFinish();
+        })
+        .catch(error => console.error("Error while downloading JSON from GitHub!", error))
 }

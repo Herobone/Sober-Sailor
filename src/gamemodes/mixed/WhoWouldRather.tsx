@@ -16,27 +16,56 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {FormattedMessage} from "react-intl";
+import {storeToLocalFromGit} from "../../helper/taskDownloader"
+import Cookies from "universal-cookie";
+import Util from "../../helper/Util";
 
 interface Props {
 
 }
+
 interface State {
+    ready: boolean;
+    question: string | null;
 }
 
 export default class WhoWouldRather extends Component<Props, State> {
     state = {
+        ready: false,
+        question: null
     }
 
     constructor(props: Props) {
         super(props);
     }
 
+    componentDidMount() {
+        const cookies = new Cookies();
+        const loc = cookies.get("locale");
+        storeToLocalFromGit("whowouldrather", loc, () => {
+            const questions = localStorage.getItem("whowouldrather_" + loc);
+            if (questions) {
+                const jQuestions = JSON.parse(questions);
+                this.setState({question: jQuestions[Util.random(0, jQuestions.length)], ready: true});
+            }
+        });
+    }
+
     render() {
         return (
             <div>
-                <h2><FormattedMessage id={"gamemodes.whowouldrather"} /></h2>
+                <h2><FormattedMessage id={"gamemodes.whowouldrather"}/></h2>
+                {!this.state.ready &&
+                <div>
+                    Loading questions...
+                </div>}
+
+                {!this.state.ready &&
+                <div>
+                    {this.state.question}
+                </div>}
             </div>
         )
     }
