@@ -37,13 +37,15 @@ interface Props {
 }
 
 interface State {
-    nextTask: string | null
+    nextTask: string | null;
+    taskType: string | null;
 }
 
 class Mixed extends React.Component<Props, State> {
 
     state = {
-        nextTask: null
+        nextTask: null,
+        taskType: null
     }
 
     leaderboardRef: RefObject<Leaderboard>;
@@ -67,7 +69,8 @@ class Mixed extends React.Component<Props, State> {
         let data = doc.data();
         if (data) {
             this.setState({
-                nextTask: data.currentTask
+                nextTask: data.currentTask,
+                taskType: data.type
             });
         }
 
@@ -79,6 +82,12 @@ class Mixed extends React.Component<Props, State> {
     randomButtonClick() {
         console.log("Random Button activated");
         const taskType = Util.selectRandom(tasks);
+        let lang: string;
+        if (this.lang in taskType.lang) {
+            lang = this.lang
+        } else {
+            lang = taskType.lang[0];
+        }
         const nextTask = getRandomTask(taskType.id, this.lang, task => {
             this.setState({nextTask: task});
             getGameByID(this.props.gameID).update({
