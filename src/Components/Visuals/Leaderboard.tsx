@@ -66,7 +66,7 @@ export default class Leaderboard extends Component<Props, State> {
                 </tr>
             );
             counter++;
-        })
+        });
 
         return vals;
 

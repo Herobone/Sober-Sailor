@@ -30,6 +30,16 @@ class Util {
         return sequ;
     }
 
+    static getRandomKey<T>(collection: Map<T, any>): T {
+        let keys = Array.from(collection.keys());
+        return keys[Math.floor(Math.random() * keys.length)];
+    }
+
+    static getRandomItem<K, V>(set: Map<K, V>) {
+        let items = Array.from(set);
+        return items[Math.floor(Math.random() * items.length)];
+    }
+
     static alphanumeric(text: string) {
         const letters = /^[0-9a-zA-Z]+$/ig;
         return text.match(letters);

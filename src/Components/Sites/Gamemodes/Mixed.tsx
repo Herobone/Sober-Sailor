@@ -22,7 +22,7 @@ import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
 import firebase from "firebase";
 
-import {getGameByID, joinGame} from "../../../helper/gameManager";
+import {getGameByID, joinGame, amIHost, getAllPlayers, transferHostShip} from "../../../helper/gameManager";
 import Util from "../../../helper/Util";
 import Leaderboard from "../../Visuals/Leaderboard";
 import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
@@ -30,6 +30,7 @@ import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
 import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
 import {getRandomTask} from "../../../helper/taskUtils";
 import Cookies from "universal-cookie";
+import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -39,13 +40,15 @@ interface Props {
 interface State {
     nextTask: string | null;
     taskType: string | null;
+    isHost: boolean;
 }
 
 class Mixed extends React.Component<Props, State> {
 
     state = {
         nextTask: null,
-        taskType: null
+        taskType: null,
+        isHost: false
     }
 
     leaderboardRef: RefObject<Leaderboard>;
@@ -63,6 +66,7 @@ class Mixed extends React.Component<Props, State> {
 
     componentDidMount() {
         joinGame(this.props.gameID, this.gameEvent);
+        amIHost(this.props.gameID).then((host) => this.setState({isHost: host}));
     }
 
     gameEvent(doc: firebase.firestore.DocumentSnapshot) {
@@ -80,6 +84,9 @@ class Mixed extends React.Component<Props, State> {
     }
 
     randomButtonClick() {
+        if (!this.state.isHost) {
+            return;
+        }
         console.log("Random Button activated");
         const taskType = Util.selectRandom(tasks);
         let lang: string;
@@ -88,33 +95,60 @@ class Mixed extends React.Component<Props, State> {
         } else {
             lang = taskType.lang[0];
         }
-        const nextTask = getRandomTask(taskType.id, this.lang, task => {
+        const nextTask = getRandomTask(taskType.id, lang, task => {
             this.setState({nextTask: task});
             getGameByID(this.props.gameID).update({
                 currentTask: task,
                 type: taskType.id
-            })
+            }).then(r => console.log("Task updated"))
         });
     }
 
     render() {
         let currentUser = firebase.auth().currentUser;
 
+        let taskComponent: ReactElement = <FormattedMessage id={'elements.tasks.notloaded'}/>
+
+        const task = this.state.nextTask,
+            type = this.state.taskType;
+
+        if (task && type) {
+            switch (type) {
+                case "whowouldrather":
+                    taskComponent = <WhoWouldRather question={task} gameID={this.props.gameID}/>
+                    break;
+                case "truthordare":
+                    taskComponent = <TruthOrDare question={task}/>
+                    break;
+            }
+        }
+
         return (
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.mixed"/>
                 <br/>
-                Game ID:
+                Game ID: {" "}
                 {this.props.gameID}
                 <br/>
-                User ID:
+                User ID: {" "}
                 {currentUser?.uid}
                 <br/>
-                Next Task:
+                Next Task: {" "}
                 {this.state.nextTask}
                 <br/>
-                <WhoWouldRather />
-                <button onClick={this.randomButtonClick}>Random Button</button>
+                Task Type: {" "}
+                {this.state.taskType}
+                <br/>
+
+                {taskComponent}
+
+                {this.state.isHost && <div className={"host-area"}>
+                    <button onClick={this.randomButtonClick}>Random Button</button>
+                    <button onClick={() => {
+                        getAllPlayers(this.props.gameID).then((players) => console.log(players));
+                        transferHostShip(this.props.gameID).then(() => console.log("New player is now host!"));
+                    }}>Transfer Host</button>
+                </div>}
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef}/>
             </div>
         );

@@ -16,24 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {Component, ReactElement} from 'react';
+import React, {Component} from 'react';
 import {FormattedMessage} from "react-intl";
 import {getRandomTask} from "../../helper/taskUtils";
 import Cookies from "universal-cookie";
-import {getAllPlayers, myAnswerIs} from "../../helper/gameManager";
 
 interface Props {
-    question: string;
-    gameID: string;
+    question: string
 }
 
 interface State {
-    players: Map<string, string>;
 }
 
-export default class WhoWouldRather extends Component<Props, State> {
+export default class TruthOrDare extends Component<Props, State> {
     state = {
-        players: new Map<string, string>()
     }
 
 
@@ -42,26 +38,13 @@ export default class WhoWouldRather extends Component<Props, State> {
     }
 
     componentDidMount() {
-        getAllPlayers(this.props.gameID).then((players) => this.setState({players}))
     }
 
     render() {
-        let vals: ReactElement[] = [];
-        let counter = 1;
-        this.state.players.forEach((value: string, key: string) => {
-            vals.push(
-                <button key={key} className={"wwr-player-select"} onClick={() => myAnswerIs(this.props.gameID, key)}>
-                    {value}
-                </button>
-            );
-            counter++;
-        });
-
         return (
             <div>
-                <h2><FormattedMessage id={"gamemodes.whowouldrather"}/>...</h2>
-                ...{this.props.question}
-                {vals}
+                <h2><FormattedMessage id={"gamemodes.truthordare"}/></h2>
+                {this.props.question}
             </div>
         )
     }

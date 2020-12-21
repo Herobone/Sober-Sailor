@@ -49,17 +49,13 @@ export default class App extends Component<Props, State> {
     }
 
     render() {
-        // If the App uses the GAPI load it here with
-        // <GAPIContainer createAlert={this.state.createAlert}>
         return (
             <React.StrictMode>
                 <LanguageContainer ref={this.langRef}>
                     <AlertProvider ref={this.alertRef}>
-
                         <Routed changeLanguage={this.state.changeLanguage}
                                 currentLocale={this.state.currentLocale}
                                 createAlert={this.state.createAlert}/>
-
                     </AlertProvider>
                 </LanguageContainer>
             </React.StrictMode>

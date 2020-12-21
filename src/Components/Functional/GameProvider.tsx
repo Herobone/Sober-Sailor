@@ -20,7 +20,7 @@ import React, {Component, ReactElement} from 'react';
 import firebase from "firebase";
 import Alerts, {Alert} from "../../helper/AlertTypes";
 import {FormattedMessage} from "react-intl";
-import {createGame} from "../../helper/gameManager";
+import {createGame, leaveGame} from "../../helper/gameManager";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -78,7 +78,7 @@ export default class GameProvider extends Component<Props, State> {
             this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
             return;
         }
-        createGame((gameID) => {
+        createGame().then((gameID) => {
             window.location.pathname = "/" + this.props.gameURL + "/" + gameID;
         });
     }
@@ -88,33 +88,37 @@ export default class GameProvider extends Component<Props, State> {
             input = this.nameInputRef.current;
 
         if (!input || !currentUser) {
-            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen"/>);
             return;
         }
 
         if (input.value.length < 3) {
-            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname"/>);
             return;
         }
 
-        currentUser.updateProfile({ displayName: input.value });
+        currentUser.updateProfile({displayName: input.value});
         this.forceUpdate();
     }
 
     render() {
-        if (!this.props.gameID) {
-            return (<div className="w3-center">
-                <p className="sailor-creategame-button">
-                    <button onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
-                        <FormattedMessage id="actions.game.create"/>
-                    </button>
-                </p>
-            </div>);
+        const gameID = this.props.gameID;
+        const user = this.state.user;
+        if (!gameID) {
+            return (
+                <div className="w3-center">
+                    <p className="sailor-creategame-button">
+                        <button onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
+                            <FormattedMessage id="actions.game.create"/>
+                        </button>
+                    </p>
+                </div>
+            );
         }
 
         const currentUser = firebase.auth().currentUser;
 
-        if (!this.state.user) {
+        if (!user) {
             return (
                 <div>
                     Loading...
@@ -122,30 +126,35 @@ export default class GameProvider extends Component<Props, State> {
             );
         }
 
-        if (currentUser && this.state.user) {
+        if (currentUser) {
             if (currentUser.displayName && currentUser.displayName !== "") {
-                return (this.props.children);
+                return (
+                    <div>
+                        {this.props.children}
+                        <button onClick={() => leaveGame(gameID)}><FormattedMessage id={'actions.leave'}/></button>
+                    </div>
+                );
             } else {
                 return (
                     <div>
                         <h1>
-                            <FormattedMessage id="account.descriptors.finishsignup" />
+                            <FormattedMessage id="account.descriptors.finishsignup"/>
                         </h1>
                         <p>
-                            <label><b><FormattedMessage id="account.descriptors.yourname" /></b></label>
-                            <br />
+                            <label><b><FormattedMessage id="account.descriptors.yourname"/></b></label>
+                            <br/>
                             <input
                                 ref={this.nameInputRef}
                                 className="w3-input w3-border w3-round"
                                 name="name"
                                 type="text"
-                                style={{ width: "40%" }}
+                                style={{width: "40%"}}
                                 placeholder="Name"
                             />
                         </p>
-                        <br />
+                        <br/>
                         <button className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
-                            <FormattedMessage id="general.done" />
+                            <FormattedMessage id="general.done"/>
                         </button>
                     </div>
                 );
