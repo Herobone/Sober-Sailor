@@ -2,6 +2,7 @@
 import * as React from 'react';
 import messages_en from './locales/en.json';
 import messages_de from './locales/de.json';
+import messages_de_AT from './locales/de_AT.json'
 import { IntlProvider } from 'react-intl';
 import Cookies from 'universal-cookie';
 import Util from "../helper/Util";
@@ -12,7 +13,8 @@ interface State {
 
 const MESSAGES = {
     'en': messages_en,
-    'de': messages_de
+    'de': messages_de,
+    'de_AT': messages_de_AT
 };
 
 interface Props {

@@ -17,7 +17,8 @@ export class Settings extends Component<Props> {
     render() {
         const options = {
             "de": "Deutsch",
-            "en": "English"
+            "en": "English",
+            "de_AT": "Boarisch"
         };
 
         const currentUser = firebase.auth().currentUser;
