@@ -32,21 +32,21 @@ export function createGame(onFinish: (gameID: string) => void) {
     const randomSuffix = Util.randomCharOrNumberSequence((lenOfUID / 2) - 5);
     const gameID = uid.substr(0, 5) + randomSuffix;
     const gameRef = getGameByID(gameID);
-    const gameConfig = gameRef.doc("config");
-    gameConfig.set({
+    gameRef.set({
+        currentTask: null,
+        round: 0,
         host: uid,
         created: firebase.firestore.Timestamp.now()
     }).then(() => onFinish(gameID));
 }
 
-export function getGameByID(gameID: string): firebase.firestore.CollectionReference {
+export function getGameByID(gameID: string): firebase.firestore.DocumentReference {
     const db = firebase.firestore();
-    return db.collection(gameID);
+    return db.collection("games").doc(gameID);
 }
 
-export function joinGame(gameID: string) {
+export function joinGame(gameID: string, gameEvent: (doc: firebase.firestore.DocumentSnapshot) => void) {
     const auth = firebase.auth();
-    const db = firebase.firestore();
     const user = auth.currentUser;
 
     if (!user) {
@@ -56,8 +56,14 @@ export function joinGame(gameID: string) {
     const uid = user.uid;
 
     const gameRef = getGameByID(gameID);
-    const userRef = gameRef.doc(uid);
-    userRef.set({
-        sips: 0
-    }).then(() => console.log("Success"));
+    const userRef = gameRef.collection("players").doc(uid);
+    userRef.get().then((doc) => {
+        if (!doc.exists) {
+            userRef.set({
+                sips: 0,
+                nickname: user.displayName
+            }).then(() => console.log("Success"));
+        }
+    })
+    gameRef.onSnapshot(gameEvent);
 }

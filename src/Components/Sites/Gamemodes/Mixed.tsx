@@ -16,13 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {ReactElement} from 'react';
+import React, {ReactElement, RefObject} from 'react';
 import '../../../css/App.css';
 import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
 import firebase from "firebase";
 
 import {getGameByID, joinGame} from "../../../helper/gameManager";
+import Util from "../../../helper/Util";
+import Leaderboard from "../../Visuals/Leaderboard";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -30,15 +32,46 @@ interface Props {
 }
 
 interface State {
+    nextTask: string | null
 }
 
 class Mixed extends React.Component<Props, State> {
 
     state = {
+        nextTask: null
+    }
+
+    leaderboardRef: RefObject<Leaderboard>;
+
+    constructor(props: Props) {
+        super(props);
+        this.gameEvent = this.gameEvent.bind(this);
+        this.randomButtonClick = this.randomButtonClick.bind(this);
+        this.leaderboardRef = React.createRef();
     }
 
     componentDidMount() {
-        joinGame(this.props.gameID);
+        joinGame(this.props.gameID, this.gameEvent);
+    }
+
+    gameEvent(doc: firebase.firestore.DocumentSnapshot) {
+        let data = doc.data();
+        if (data) {
+            this.setState({
+                nextTask: data.currentTask
+            });
+        }
+
+        if (this.leaderboardRef.current) {
+            this.leaderboardRef.current.updateLeaderboard();
+        }
+    }
+
+    randomButtonClick() {
+        console.log("Random Button activated");
+        getGameByID(this.props.gameID).update({
+            currentTask: "Hallo du nuuss" + Util.randomCharOrNumberSequence(5)
+        })
     }
 
     render() {
@@ -53,6 +86,12 @@ class Mixed extends React.Component<Props, State> {
                 <br/>
                 User ID:
                 {currentUser?.uid}
+                <br/>
+                Next Task:
+                {this.state.nextTask}
+                <br/>
+                <button onClick={this.randomButtonClick}>Random Button</button>
+                <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef}/>
             </div>
         );
     }

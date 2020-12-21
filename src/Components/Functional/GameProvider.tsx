@@ -33,6 +33,9 @@ interface State {
 }
 
 export default class GameProvider extends Component<Props, State> {
+
+    nameInputRef!: React.RefObject<HTMLInputElement>;
+
     state = {
         user: null
     }
@@ -41,6 +44,9 @@ export default class GameProvider extends Component<Props, State> {
         super(props);
 
         this.createGame = this.createGame.bind(this);
+
+        this.nameInputRef = React.createRef();
+        this.setName = this.setName.bind(this);
     }
 
     componentDidMount() {
@@ -72,9 +78,27 @@ export default class GameProvider extends Component<Props, State> {
             this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
             return;
         }
-        const gameID = createGame((gameID) => {
+        createGame((gameID) => {
             window.location.pathname = "/" + this.props.gameURL + "/" + gameID;
         });
+    }
+
+    setName() {
+        const currentUser = firebase.auth().currentUser,
+            input = this.nameInputRef.current;
+
+        if (!input || !currentUser) {
+            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            return;
+        }
+
+        if (input.value.length < 3) {
+            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+            return;
+        }
+
+        currentUser.updateProfile({ displayName: input.value });
+        this.forceUpdate();
     }
 
     render() {
@@ -88,14 +112,46 @@ export default class GameProvider extends Component<Props, State> {
             </div>);
         }
 
-        return (
-            <div>
-                {this.state.user && this.props.children}
-                {!this.state.user &&
+        const currentUser = firebase.auth().currentUser;
+
+        if (!this.state.user) {
+            return (
                 <div>
                     Loading...
-                </div>}
-            </div>
-        )
+                </div>
+            );
+        }
+
+        if (currentUser && this.state.user) {
+            if (currentUser.displayName && currentUser.displayName !== "") {
+                return (this.props.children);
+            } else {
+                return (
+                    <div>
+                        <h1>
+                            <FormattedMessage id="account.descriptors.finishsignup" />
+                        </h1>
+                        <p>
+                            <label><b><FormattedMessage id="account.descriptors.yourname" /></b></label>
+                            <br />
+                            <input
+                                ref={this.nameInputRef}
+                                className="w3-input w3-border w3-round"
+                                name="name"
+                                type="text"
+                                style={{ width: "40%" }}
+                                placeholder="Name"
+                            />
+                        </p>
+                        <br />
+                        <button className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
+                            <FormattedMessage id="general.done" />
+                        </button>
+                    </div>
+                );
+            }
+        }
+
+
     }
 }
