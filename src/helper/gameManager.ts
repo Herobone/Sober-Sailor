@@ -34,6 +34,7 @@ export function createGame(onFinish: (gameID: string) => void) {
     const gameRef = getGameByID(gameID);
     gameRef.set({
         currentTask: null,
+        type: null,
         round: 0,
         host: uid,
         created: firebase.firestore.Timestamp.now()

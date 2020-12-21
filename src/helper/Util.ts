@@ -38,6 +38,10 @@ class Util {
     static hasKey<O>(obj: O, key: keyof any): key is keyof O {
         return key in obj
     }
+
+    static selectRandom<T>(obj: Array<T>): T {
+        return obj[Util.random(0, obj.length)];
+    }
 }
 
 export default Util

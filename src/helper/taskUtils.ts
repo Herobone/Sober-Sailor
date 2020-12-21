@@ -1,3 +1,5 @@
+import Util from "./Util";
+
 /*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
@@ -16,13 +18,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export function storeToLocalFromGit(task: string, lang: string, onFinish: () => void) {
+export function storeToLocalFromGit(task: string, lang: string, onFinish: (tasks: string[]) => void) {
     const url = "https://raw.githubusercontent.com/Herobone/Sober-Sailor/main/src/gamemodes/mixed/tasks/" + task + "/" + lang + ".json";
     fetch(url)
-        .then(response => response.json())
+        .then(response => response.text())
         .then(json => {
             localStorage.setItem(task + "_" + lang, json);
-            onFinish();
+            onFinish(JSON.parse(json));
         })
-        .catch(error => console.error("Error while downloading JSON from GitHub!", error))
+        .catch(error => console.error("Error while downloading JSON from GitHub!", error));
+}
+
+export function getTasks(task: string, lang: string, onFinish: (tasks: string[]) => void) {
+    let stored = localStorage.getItem(task + "_" + lang);
+    if (stored) {
+        onFinish(JSON.parse(stored));
+        console.log("From local");
+    } else {
+        storeToLocalFromGit(task, lang, onFinish);
+        console.log("Form server");
+    }
+}
+
+export function getRandomTask(task: string, lang: string, onFinish: (task: string) => void) {
+    getTasks(task, lang, (tasks) => {
+        onFinish(Util.selectRandom(tasks));
+    });
 }

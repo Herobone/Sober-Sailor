@@ -27,6 +27,10 @@ import Util from "../../../helper/Util";
 import Leaderboard from "../../Visuals/Leaderboard";
 import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
 
+import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
+import {getRandomTask} from "../../../helper/taskUtils";
+import Cookies from "universal-cookie";
+
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
     gameID: string;
@@ -43,12 +47,16 @@ class Mixed extends React.Component<Props, State> {
     }
 
     leaderboardRef: RefObject<Leaderboard>;
+    lang: string;
 
     constructor(props: Props) {
         super(props);
         this.gameEvent = this.gameEvent.bind(this);
         this.randomButtonClick = this.randomButtonClick.bind(this);
         this.leaderboardRef = React.createRef();
+
+        const cookies = new Cookies();
+        this.lang = cookies.get("locale");
     }
 
     componentDidMount() {
@@ -70,9 +78,14 @@ class Mixed extends React.Component<Props, State> {
 
     randomButtonClick() {
         console.log("Random Button activated");
-        getGameByID(this.props.gameID).update({
-            currentTask: "Hallo du nuuss" + Util.randomCharOrNumberSequence(5)
-        })
+        const taskType = Util.selectRandom(tasks);
+        const nextTask = getRandomTask(taskType.id, this.lang, task => {
+            this.setState({nextTask: task});
+            getGameByID(this.props.gameID).update({
+                currentTask: task,
+                type: taskType.id
+            })
+        });
     }
 
     render() {
