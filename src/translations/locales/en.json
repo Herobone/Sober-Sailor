@@ -11,6 +11,7 @@
 	"account.descriptors.yourname": "Your Name",
 	"account.navigation.settings": "Settings",
 	"actions.game.create": "Create Game",
+	"actions.host.transfer": "Transfer Host",
 	"actions.leave": "Leave Game",
 	"elements.alerts.error": "Error",
 	"elements.alerts.info": "Information:",

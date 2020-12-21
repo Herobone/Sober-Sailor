@@ -59,7 +59,7 @@ export default class WhoWouldRather extends Component<Props, State> {
 
         return (
             <div>
-                <h2><FormattedMessage id={"gamemodes.whowouldrather"}/>...</h2>
+                <h2><FormattedMessage id="gamemodes.whowouldrather"/>...</h2>
                 ...{this.props.question}
                 {vals}
             </div>

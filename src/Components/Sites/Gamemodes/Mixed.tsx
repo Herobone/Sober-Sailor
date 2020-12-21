@@ -147,7 +147,7 @@ class Mixed extends React.Component<Props, State> {
                     <button onClick={() => {
                         getAllPlayers(this.props.gameID).then((players) => console.log(players));
                         transferHostShip(this.props.gameID).then(() => console.log("New player is now host!"));
-                    }}>Transfer Host</button>
+                    }}><FormattedMessage id='actions.host.transfer'/></button>
                 </div>}
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef}/>
             </div>
