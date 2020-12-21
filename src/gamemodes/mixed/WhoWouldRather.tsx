@@ -18,8 +18,6 @@
 
 import React, {Component, ReactElement} from 'react';
 import {FormattedMessage} from "react-intl";
-import {getRandomTask} from "../../helper/taskUtils";
-import Cookies from "universal-cookie";
 import {getAllPlayers, myAnswerIs} from "../../helper/gameManager";
 
 interface Props {
@@ -29,20 +27,29 @@ interface Props {
 
 interface State {
     players: Map<string, string>;
+    inputLocked: boolean;
 }
 
 export default class WhoWouldRather extends Component<Props, State> {
     state = {
-        players: new Map<string, string>()
+        players: new Map<string, string>(),
+        inputLocked: true
     }
 
 
     constructor(props: Props) {
         super(props);
+        this.lockInput = this.lockInput.bind(this);
     }
 
     componentDidMount() {
         getAllPlayers(this.props.gameID).then((players) => this.setState({players}))
+    }
+
+    lockInput(lock: boolean) {
+        this.setState({
+            inputLocked: lock
+        });
     }
 
     render() {
@@ -50,18 +57,24 @@ export default class WhoWouldRather extends Component<Props, State> {
         let counter = 1;
         this.state.players.forEach((value: string, key: string) => {
             vals.push(
-                <button key={key} className={"wwr-player-select"} onClick={() => myAnswerIs(this.props.gameID, key)}>
-                    {value}
-                </button>
+                <div key={key}>
+                    <button className={"wwr-player-select"}
+                            onClick={() => myAnswerIs(this.props.gameID, key)}>
+                        {value}
+                    </button>
+                    <br/>
+                </div>
             );
             counter++;
         });
 
         return (
             <div>
-                <h2><FormattedMessage id="gamemodes.whowouldrather"/>...</h2>
-                ...{this.props.question}
-                {vals}
+                <h2><FormattedMessage id="gamemodes.whowouldrather"/> {this.props.question}</h2>
+                <p>
+                    <FormattedMessage id='gamemodes.whowouldrather.description'/>
+                </p>
+                {!this.state.inputLocked && vals}
             </div>
         )
     }
