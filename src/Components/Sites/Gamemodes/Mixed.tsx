@@ -20,23 +20,30 @@ import React, {ReactElement} from 'react';
 import '../../../css/App.css';
 import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
-import GameProvider from "../../Functional/GameProvider";
 import firebase from "firebase";
+
+import {getGameByID, joinGame} from "../../../helper/gameManager";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-    gameID?: string;
+    gameID: string;
 }
 
 interface State {
-
 }
 
 class Mixed extends React.Component<Props, State> {
 
+    state = {
+    }
+
+    componentDidMount() {
+        joinGame(this.props.gameID);
+    }
+
     render() {
         let currentUser = firebase.auth().currentUser;
-        console.log(currentUser);
+
         return (
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.mixed"/>

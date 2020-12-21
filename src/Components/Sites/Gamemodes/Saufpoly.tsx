@@ -25,7 +25,7 @@ import firebase from "firebase";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-    gameID?: string;
+    gameID: string;
 }
 
 interface State {

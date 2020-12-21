@@ -19,9 +19,13 @@
 import React, {Component, ReactElement} from 'react';
 import firebase from "firebase";
 import Alerts, {Alert} from "../../helper/AlertTypes";
+import {FormattedMessage} from "react-intl";
+import {createGame} from "../../helper/gameManager";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+    gameID?: string;
+    gameURL?: string;
 }
 
 interface State {
@@ -35,6 +39,8 @@ export default class GameProvider extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+
+        this.createGame = this.createGame.bind(this);
     }
 
     componentDidMount() {
@@ -61,7 +67,27 @@ export default class GameProvider extends Component<Props, State> {
         });
     }
 
+    createGame() {
+        if (!this.props.gameURL) {
+            this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
+            return;
+        }
+        const gameID = createGame((gameID) => {
+            window.location.pathname = "/" + this.props.gameURL + "/" + gameID;
+        });
+    }
+
     render() {
+        if (!this.props.gameID) {
+            return (<div className="w3-center">
+                <p className="sailor-creategame-button">
+                    <button onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
+                        <FormattedMessage id="actions.game.create"/>
+                    </button>
+                </p>
+            </div>);
+        }
+
         return (
             <div>
                 {this.state.user && this.props.children}

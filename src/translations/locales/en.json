@@ -10,6 +10,7 @@
 	"account.descriptors.signinneeded": "To continue you have to sign in!",
 	"account.descriptors.yourname": "Your Name",
 	"account.navigation.settings": "Settings",
+	"actions.game.create": "Create Game",
 	"elements.alerts.error": "Error",
 	"elements.alerts.info": "Information:",
 	"elements.alerts.success": "Success!",

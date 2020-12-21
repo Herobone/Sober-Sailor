@@ -39,27 +39,30 @@ export class Routed extends Component<Props, State> {
                 <Router>
                     <Switch>
                         <Route path="/mixed/:gameID"
-                               render={props => <GameProvider createAlert={this.props.createAlert}><Mixed
+                               render={props => <GameProvider createAlert={this.props.createAlert}
+                                                              gameID={props.match.params.gameID}><Mixed
                                    createAlert={this.props.createAlert}
                                    gameID={props.match.params.gameID}/></GameProvider>}/>
-                        <Route path="/mixed" render={() => <GameProvider createAlert={this.props.createAlert}><Mixed
-                            createAlert={this.props.createAlert}/></GameProvider>}/>
+
 
                         <Route path="/truthordare/:gameID"
-                               render={props => <GameProvider createAlert={this.props.createAlert}><TruthOrDare
+                               render={props => <GameProvider createAlert={this.props.createAlert}
+                                                              gameID={props.match.params.gameID}><TruthOrDare
                                    createAlert={this.props.createAlert}
                                    gameID={props.match.params.gameID}/></GameProvider>}/>
-                        <Route path="/truthordare"
-                               render={() => <GameProvider createAlert={this.props.createAlert}><TruthOrDare
-                                   createAlert={this.props.createAlert}/></GameProvider>}/>
 
                         <Route path="/saufpoly/:gameID"
-                               render={props => <GameProvider createAlert={this.props.createAlert}><Saufpoly
+                               render={props => <GameProvider createAlert={this.props.createAlert}
+                                                              gameID={props.match.params.gameID}><Saufpoly
                                    createAlert={this.props.createAlert}
                                    gameID={props.match.params.gameID}/></GameProvider>}/>
+
+                        <Route path="/mixed"
+                               render={() => <GameProvider createAlert={this.props.createAlert} gameURL="mixed"/>}/>
+                        <Route path="/truthordare"
+                               render={() => <GameProvider createAlert={this.props.createAlert} gameURL="truthordare"/>}/>
                         <Route path="/saufpoly"
-                               render={() => <GameProvider createAlert={this.props.createAlert}><Saufpoly
-                                   createAlert={this.props.createAlert}/></GameProvider>}/>
+                               render={() => <GameProvider createAlert={this.props.createAlert} gameURL="saufpoly"/>}/>
 
                         <Route path="/login">
                             <Login createAlert={this.props.createAlert}/>

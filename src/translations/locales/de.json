@@ -10,6 +10,7 @@
 	"account.descriptors.signinneeded": "Um fortzufahren, musst du dich zuerst anmelden!",
 	"account.descriptors.yourname": "Dein Name",
 	"account.navigation.settings": "Einstellungen",
+	"actions.game.create": "Spiel Erstellen",
 	"elements.alerts.error": "Fehler",
 	"elements.alerts.info": "Information:",
 	"elements.alerts.success": "Erfolgreich!",

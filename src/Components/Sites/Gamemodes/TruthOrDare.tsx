@@ -20,11 +20,10 @@ import React, {ReactElement} from 'react';
 import '../../../css/App.css';
 import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
-import GameProvider from "../../Functional/GameProvider";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-    gameID?: string;
+    gameID: string;
 }
 
 interface State {
