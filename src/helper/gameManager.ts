@@ -17,6 +17,7 @@
  */
 import firebase from "firebase";
 import Util from "./Util";
+
 export default class GameManager {
 
     static createGame(): Promise<string> {
@@ -84,11 +85,21 @@ export default class GameManager {
         const uid = user.uid;
 
         const gameRef = GameManager.getGameByID(gameID);
-        gameRef.collection("players").doc(uid).delete().then(() => {
-            console.log("Deleted user from game");
-            auth.signOut();
-            window.location.pathname = "";
-        });
+        GameManager.amIHost(gameID)
+            .then((host) => {
+                if (host) {
+                    GameManager.transferHostShip(gameID)
+                        .then(() => {
+                            gameRef.collection("players").doc(uid).delete()
+                                .then(() => {
+                                    console.log("Deleted user from game");
+                                    auth.signOut();
+                                    window.location.pathname = "";
+                                });
+                        });
+                }
+
+            });
     }
 
     static amIHost(gameID: string): Promise<boolean> {
@@ -137,14 +148,15 @@ export default class GameManager {
             }
 
             const uid = user.uid;
-            GameManager.getAllPlayers(gameID).then((players) => {
-                players.delete(uid);
-                const random = Util.getRandomKey(players);
-                const gameRef = GameManager.getGameByID(gameID);
-                gameRef.update({
-                    host: random
-                }).then(resolve).catch(reject);
-            });
+            GameManager.getAllPlayers(gameID)
+                .then((players) => {
+                    players.delete(uid);
+                    const random = Util.getRandomKey(players);
+                    const gameRef = GameManager.getGameByID(gameID);
+                    gameRef.update({
+                        host: random
+                    }).then(resolve).catch(reject);
+                });
         });
     }
 
