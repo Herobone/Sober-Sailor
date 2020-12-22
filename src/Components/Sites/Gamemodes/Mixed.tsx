@@ -22,14 +22,7 @@ import {Alert} from '../../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
 import firebase from "firebase";
 
-import {
-    getGameByID,
-    joinGame,
-    amIHost,
-    getAllPlayers,
-    transferHostShip,
-    setPollState, clearMyAnswer
-} from "../../../helper/gameManager";
+import GameManager from "../../../helper/gameManager";
 import Util from "../../../helper/Util";
 import Leaderboard from "../../Visuals/Leaderboard";
 import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
@@ -83,8 +76,8 @@ class Mixed extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        joinGame(this.props.gameID, this.gameEvent);
-        amIHost(this.props.gameID).then((host) => this.setState({isHost: host}));
+        GameManager.joinGame(this.props.gameID, this.gameEvent);
+        GameManager.amIHost(this.props.gameID).then((host) => this.setState({isHost: host}));
     }
 
     gameEvent(doc: firebase.firestore.DocumentSnapshot) {
@@ -95,7 +88,7 @@ class Mixed extends React.Component<Props, State> {
                     nextTask: data.currentTask,
                     taskType: data.type
                 });
-                clearMyAnswer(this.props.gameID);
+                GameManager.clearMyAnswer(this.props.gameID);
             }
             if (!this.state.pollState && data.pollState) {
                 this.startTimer(20, this.countdownRef);
@@ -135,7 +128,7 @@ class Mixed extends React.Component<Props, State> {
                     countdownTimeout: null
                 });
                 if (this.state.isHost) {
-                    setPollState(this.props.gameID, false);
+                    GameManager.setPollState(this.props.gameID, false);
                 }
             }
         }, 1000);
@@ -148,7 +141,7 @@ class Mixed extends React.Component<Props, State> {
         if (!this.state.isHost) {
             return;
         }
-        clearMyAnswer(this.props.gameID);
+        GameManager.clearMyAnswer(this.props.gameID);
         console.log("Random Button activated");
         const taskType = Util.selectRandom(tasks);
         let lang: string;
@@ -159,10 +152,10 @@ class Mixed extends React.Component<Props, State> {
         }
         getRandomTask(taskType.id, lang).then((task) => {
             this.setState({nextTask: task});
-            getGameByID(this.props.gameID).update({
+            GameManager.getGameByID(this.props.gameID).update({
                 currentTask: task,
                 type: taskType.id
-            }).then(r => console.log("Task updated"))
+            }).then(() => console.log("Task updated"))
         });
     }
 
@@ -212,11 +205,11 @@ class Mixed extends React.Component<Props, State> {
                 {this.state.isHost && <div className={"host-area"}>
                     <button onClick={this.randomButtonClick}>Random Button</button>
                     <button onClick={() => {
-                        getAllPlayers(this.props.gameID).then((players) => console.log(players));
-                        transferHostShip(this.props.gameID).then(() => console.log("New player is now host!"));
+                        GameManager.getAllPlayers(this.props.gameID).then((players) => console.log(players));
+                        GameManager.transferHostShip(this.props.gameID).then(() => console.log("New player is now host!"));
                     }}><FormattedMessage id='actions.host.transfer'/></button>
                     <button onClick={() => {
-                        setPollState(this.props.gameID, true);
+                        GameManager.setPollState(this.props.gameID, true);
                     }}><FormattedMessage id="actions.host.startpoll"/></button>
                 </div>}
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef}/>

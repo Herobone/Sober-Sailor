@@ -20,7 +20,7 @@ import React, {Component, ReactElement} from 'react';
 import firebase from "firebase";
 import Alerts, {Alert} from "../../helper/AlertTypes";
 import {FormattedMessage} from "react-intl";
-import {createGame, leaveGame} from "../../helper/gameManager";
+import GameManager from "../../helper/gameManager";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -78,7 +78,7 @@ export default class GameProvider extends Component<Props, State> {
             this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
             return;
         }
-        createGame().then((gameID) => {
+        GameManager.createGame().then((gameID) => {
             window.location.pathname = "/" + this.props.gameURL + "/" + gameID;
         });
     }
@@ -131,7 +131,7 @@ export default class GameProvider extends Component<Props, State> {
                 return (
                     <div>
                         {this.props.children}
-                        <button onClick={() => leaveGame(gameID)}><FormattedMessage id={'actions.leave'}/></button>
+                        <button onClick={() => GameManager.leaveGame(gameID)}><FormattedMessage id={'actions.leave'}/></button>
                     </div>
                 );
             } else {

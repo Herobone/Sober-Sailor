@@ -44,10 +44,6 @@ export class Login extends Component<Props, State> {
         }
     };
 
-    constructor(props: Props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(
             (user) => {

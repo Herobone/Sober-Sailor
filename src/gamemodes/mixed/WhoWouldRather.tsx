@@ -18,7 +18,7 @@
 
 import React, {Component, ReactElement} from 'react';
 import {FormattedMessage} from "react-intl";
-import {getAllPlayers, myAnswerIs} from "../../helper/gameManager";
+import GameManager from "../../helper/gameManager";
 
 interface Props {
     question: string;
@@ -43,7 +43,7 @@ export default class WhoWouldRather extends Component<Props, State> {
     }
 
     componentDidMount() {
-        getAllPlayers(this.props.gameID).then((players) => this.setState({players}))
+        GameManager.getAllPlayers(this.props.gameID).then((players) => this.setState({players}))
     }
 
     lockInput(lock: boolean) {
@@ -53,19 +53,17 @@ export default class WhoWouldRather extends Component<Props, State> {
     }
 
     render() {
-        let vals: ReactElement[] = [];
-        let counter = 1;
+        let values: ReactElement[] = [];
         this.state.players.forEach((value: string, key: string) => {
-            vals.push(
+            values.push(
                 <div key={key}>
                     <button className={"wwr-player-select"}
-                            onClick={() => myAnswerIs(this.props.gameID, key)}>
+                            onClick={() => GameManager.myAnswerIs(this.props.gameID, key)}>
                         {value}
                     </button>
                     <br/>
                 </div>
             );
-            counter++;
         });
 
         return (
@@ -74,7 +72,7 @@ export default class WhoWouldRather extends Component<Props, State> {
                 <p>
                     <FormattedMessage id='gamemodes.whowouldrather.description'/>
                 </p>
-                {!this.state.inputLocked && vals}
+                {!this.state.inputLocked && values}
             </div>
         )
     }

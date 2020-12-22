@@ -17,7 +17,7 @@
  */
 
 import React, {Component, ReactElement} from 'react';
-import {getGameByID} from "../../helper/gameManager";
+import GameManager from "../../helper/gameManager";
 import {FormattedMessage} from "react-intl";
 
 interface Props {
@@ -40,7 +40,7 @@ export default class Leaderboard extends Component<Props, State> {
     }
 
     updateLeaderboard() {
-        const lead = getGameByID(this.props.gameID).collection("players").orderBy("sips", "desc");
+        const lead = GameManager.getGameByID(this.props.gameID).collection("players").orderBy("sips", "desc");
         const leaderboard = new Map<string, number>();
         lead.get().then((query) => {
             query.forEach((doc) => {

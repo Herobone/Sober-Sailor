@@ -18,8 +18,6 @@
 
 import React, {Component} from 'react';
 import {FormattedMessage} from "react-intl";
-import {getRandomTask} from "../../helper/taskUtils";
-import Cookies from "universal-cookie";
 
 interface Props {
     question: string
@@ -30,11 +28,6 @@ interface State {
 
 export default class TruthOrDare extends Component<Props, State> {
     state = {
-    }
-
-
-    constructor(props: Props) {
-        super(props);
     }
 
     componentDidMount() {
