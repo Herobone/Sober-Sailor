@@ -23,6 +23,7 @@
 	"elements.leaderboard.nickname": "Player name",
 	"elements.leaderboard.rank": "Rank",
 	"elements.leaderboard.score": "Sips",
+	"elements.result.youranswer": "You answered {answer}!",
 	"elements.tasks.notloaded": "No Task loaded",
 	"gamemodes.mixed": "Mixed (All types of tasks)",
 	"gamemodes.saufpoly": "Saufpoly",

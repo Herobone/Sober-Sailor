@@ -23,6 +23,7 @@
 	"elements.leaderboard.nickname": "Spielername",
 	"elements.leaderboard.rank": "Rang",
 	"elements.leaderboard.score": "Schlucke",
+	"elements.result.youranswer": "Du hast {answer} geantwortet!",
 	"elements.tasks.notloaded": "Keine Aufgabe geladen",
 	"gamemodes.mixed": "Gemischt (Alle Typen von Aufgaben)",
 	"gamemodes.saufpoly": "Saufpoly",
