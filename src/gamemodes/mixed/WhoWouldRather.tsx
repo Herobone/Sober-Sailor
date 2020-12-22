@@ -28,12 +28,14 @@ interface Props {
 interface State {
     players: Map<string, string>;
     inputLocked: boolean;
+    answer: string | null;
 }
 
 export default class WhoWouldRather extends Component<Props, State> {
     state = {
         players: new Map<string, string>(),
-        inputLocked: true
+        inputLocked: true,
+        answer: null
     }
 
 
@@ -58,7 +60,13 @@ export default class WhoWouldRather extends Component<Props, State> {
             values.push(
                 <div key={key}>
                     <button className={"wwr-player-select"}
-                            onClick={() => GameManager.myAnswerIs(this.props.gameID, key)}>
+                            onClick={() => {
+                                GameManager.myAnswerIs(this.props.gameID, key);
+                                this.setState({
+                                    answer: value,
+                                    inputLocked: true
+                                });
+                            }}>
                         {value}
                     </button>
                     <br/>
@@ -72,7 +80,14 @@ export default class WhoWouldRather extends Component<Props, State> {
                 <p>
                     <FormattedMessage id='gamemodes.whowouldrather.description'/>
                 </p>
-                {!this.state.inputLocked && values}
+                {!this.state.inputLocked && !this.state.answer && values}
+                {this.state.answer &&
+                <div>
+                    <FormattedMessage id="elements.result.youranswer" values={{
+                        answer: this.state.answer
+                    }} />
+                </div>
+                }
             </div>
         )
     }

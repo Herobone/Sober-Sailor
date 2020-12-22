@@ -104,6 +104,7 @@ class Mixed extends React.Component<Props, State> {
                     this.taskRef.current.lockInput(true);
                 }
             }
+
         }
 
         if (this.leaderboardRef.current) {
@@ -112,7 +113,7 @@ class Mixed extends React.Component<Props, State> {
     }
 
     startTimer(duration: number, display: RefObject<HTMLSpanElement>) {
-        var timer = duration;
+        let timer = duration;
         const timeout = setInterval(() => {
             if (display.current) {
                 display.current.innerText = timer.toString();
@@ -129,6 +130,7 @@ class Mixed extends React.Component<Props, State> {
                 });
                 if (this.state.isHost) {
                     GameManager.setPollState(this.props.gameID, false);
+                    GameManager.setEvalState(this.props.gameID, true);
                 }
             }
         }, 1000);
