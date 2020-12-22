@@ -17,6 +17,7 @@
  */
 import firebase from "firebase";
 import Util from "./Util";
+import {Player, playerConverter} from "./models/Player";
 
 export default class GameManager {
 
@@ -124,15 +125,14 @@ export default class GameManager {
         });
     }
 
-    static getAllPlayers(gameID: string): Promise<Map<string, string>> {
-        const players = new Map<string, string>();
+    static getAllPlayers(gameID: string): Promise<Player[]> {
+        const players: Player[] = [];
         const gameRef = GameManager.getGameByID(gameID);
         const playerRef = gameRef.collection("players");
         return new Promise((resolve, reject) => {
-            playerRef.get().then((query) => {
+            playerRef.withConverter(playerConverter).get().then((query) => {
                 query.forEach((doc) => {
-                    const data = doc.data()
-                    players.set(doc.id, data.nickname);
+                    players.push(doc.data());
                 });
                 resolve(players);
             }).catch((error) => reject(error));
@@ -150,8 +150,13 @@ export default class GameManager {
             const uid = user.uid;
             GameManager.getAllPlayers(gameID)
                 .then((players) => {
-                    players.delete(uid);
-                    const random = Util.getRandomKey(players);
+                    const ids: string[] = [];
+                    players.forEach((element: Player) => {
+                        if (element.uid !== uid) {
+                            ids.push(element.uid);
+                        }
+                    })
+                    const random = Util.getRandomElement(ids);
                     const gameRef = GameManager.getGameByID(gameID);
                     gameRef.update({
                         host: random
@@ -200,5 +205,11 @@ export default class GameManager {
 
     static clearMyAnswer(gameID: string) {
         return GameManager.setAnswer(gameID, null);
+    }
+
+    static getAllAnswers(gameID: string) {
+        return new Promise((resolve, reject) => {
+
+        });
     }
 }
