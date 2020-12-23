@@ -17,7 +17,7 @@
  */
 import firebase from "firebase";
 import Util from "./Util";
-import {Player, playerConverter} from "./models/Player";
+import { Player, playerConverter } from "./models/Player";
 
 export default class GameManager {
 
@@ -207,9 +207,38 @@ export default class GameManager {
         return GameManager.setAnswer(gameID, null);
     }
 
-    static getAllAnswers(gameID: string) {
-        return new Promise((resolve, reject) => {
+    static evaluateAnswers(gameID: string): Promise<Player[]> {
+        return new Promise<Player[]>((resolve, reject) => {
+            GameManager.getAllPlayers(gameID).then((players: Player[]) => {
+                const answers: string[] = [];
+                const idNameMap: Map<string, string> = new Map<string, string>();
+                players.forEach((player: Player) => {
+                    idNameMap.set(player.uid, player.nickname);
+                    if (player.answer) {
+                        answers.push(player.answer);
+                    } else {
+                        answers.push(player.uid);
+                    }
+                });
+                const occur = Util.countOccurences(answers);
+                const sipsPerPlayer: Player[] = [];
+                occur.forEach((count: number, uid: string) => {
+                    const name = idNameMap.get(uid);
+                    if (!name) {
+                        return reject("Name was not in map. So the answer was not a current player");
+                    }
+                    sipsPerPlayer.push(new Player(uid, name, count, null));
+                });
 
-        });
+                let occuredKeys = Array.from(occur.keys());
+                idNameMap.forEach((name: string, uid: string) => {
+                    if (occuredKeys.indexOf(uid) < 0) {
+                        sipsPerPlayer.push(new Player(uid, name, 0, null));
+                    }
+                });
+
+                resolve(sipsPerPlayer);
+            }).catch(reject);
+        })
     }
 }

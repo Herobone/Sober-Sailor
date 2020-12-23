@@ -31,12 +31,12 @@ class Util {
     }
 
     static getRandomKey<T>(collection: Map<T, any>): T {
-        let keys = Array.from(collection.keys());
+        const keys = Array.from(collection.keys());
         return keys[Math.floor(Math.random() * keys.length)];
     }
 
     static getRandomItem<K, V>(set: Map<K, V>) {
-        let items = Array.from(set);
+        const items = Array.from(set);
         return items[Math.floor(Math.random() * items.length)];
     }
 
@@ -50,11 +50,36 @@ class Util {
     }
 
     static hasKey<O>(obj: O, key: keyof any): key is keyof O {
-        return key in obj
+        return key in obj;
     }
 
     static selectRandom<T>(obj: Array<T>): T {
         return obj[Util.random(0, obj.length)];
+    }
+
+    static countOccurences<T>(array: T[]): Map<T, number> {
+        let content: T[] = [],
+            count: number[] = [],
+            prev;
+
+        const countMap: Map<T, number> = new Map<T, number>();
+
+        array.sort();
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] !== prev) {
+                content.push(array[i]);
+                count.push(1);
+            } else {
+                count[count.length - 1]++;
+            }
+            prev = array[i];
+        }
+
+        for (let i = 0; i < content.length; i++) {
+            countMap.set(content[i], count[i]);
+        }
+        
+        return countMap;
     }
 }
 
