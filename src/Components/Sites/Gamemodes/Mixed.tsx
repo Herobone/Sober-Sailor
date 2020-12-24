@@ -33,6 +33,7 @@ import Cookies from "universal-cookie";
 import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
 import { Player } from '../../../helper/models/Player';
 import ResultPage from '../../Visuals/ResultPage';
+import { Game } from '../../../helper/models/Game';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -103,8 +104,8 @@ class Mixed extends React.Component<Props, State> {
         }
     }
 
-    gameEvent(doc: firebase.firestore.DocumentSnapshot) {
-        let data = doc.data();
+    gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>) {
+        const data = doc.data();
         if (data) {
             if (this.state.nextTask !== data.currentTask || this.state.taskType !== data.type) {
                 this.submitAndReset();
@@ -123,7 +124,7 @@ class Mixed extends React.Component<Props, State> {
                 }
             }
 
-            if (!this.state.evalState && data.evaluationState) {
+            if (!this.state.evalState && data.evalState) {
                 console.log("Eval state changed to true!");
                 this.setState({
                     evalState: true
@@ -139,7 +140,7 @@ class Mixed extends React.Component<Props, State> {
                 }).catch(console.error)
             }
 
-            if (!data.evaluationState) {
+            if (!data.evalState) {
                 this.setState({
                     evalState: false
                 });
@@ -203,7 +204,8 @@ class Mixed extends React.Component<Props, State> {
             GameManager.getGameByID(this.props.gameID).update({
                 currentTask: task,
                 type: taskType.id,
-                evaluationState: false
+                evalState: false,
+                pollState: false
             }).then(() => console.log("Task updated"))
         });
     }
