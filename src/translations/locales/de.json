@@ -19,6 +19,7 @@
 	"elements.alerts.success": "Erfolgreich!",
 	"elements.alerts.warning": "Achtung!",
 	"elements.dropdown.select": "Bitte Auswählen",
+	"elements.results": "Ergebnisse",
 	"elements.leaderboard": "Rangliste",
 	"elements.leaderboard.nickname": "Spielername",
 	"elements.leaderboard.rank": "Rang",
@@ -36,6 +37,10 @@
 	"general.seconds": "Sekunden",
 	"general.shouldnothappen": "Unbekannter Fehler! Ups! Das hätte nicht passieren sollen! ",
 	"general.welcome": "Willkommen",
+	"general.sips": "Schlucke",
+	"general.answer": "Antwort",
+	"general.nickname": "Spielername",
+	"elements.general.rank": "Rang",
 	"navigation.myprofile": "Mein Profil",
 	"settings.labels.selectlanguage": "Sprache (Language)",
 	"sobersailor.name": "Sober Sailor - Das Online Party Spiel"

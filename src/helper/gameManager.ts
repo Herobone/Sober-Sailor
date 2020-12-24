@@ -211,13 +211,16 @@ export default class GameManager {
         return new Promise<Player[]>((resolve, reject) => {
             GameManager.getAllPlayers(gameID).then((players: Player[]) => {
                 const answers: string[] = [];
-                const idNameMap: Map<string, string> = new Map<string, string>();
+                const idNameMap: Map<string, string> = new Map();
+                const playerAnwered: Map<string, string> = new Map();
                 players.forEach((player: Player) => {
                     idNameMap.set(player.uid, player.nickname);
                     if (player.answer) {
                         answers.push(player.answer);
+                        playerAnwered.set(player.uid, player.answer);
                     } else {
                         answers.push(player.uid);
+                        playerAnwered.set(player.uid, player.uid);
                     }
                 });
                 const occur = Util.countOccurences(answers);
@@ -227,13 +230,30 @@ export default class GameManager {
                     if (!name) {
                         return reject("Name was not in map. So the answer was not a current player");
                     }
-                    sipsPerPlayer.push(new Player(uid, name, count, null));
+                    const theirAnswer = playerAnwered.get(uid);
+                    if (!theirAnswer) {
+                        return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                    }
+                    const theirAnswerReadable = idNameMap.get(theirAnswer);
+                    if (!theirAnswerReadable) {
+                        return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                    }
+                    sipsPerPlayer.push(new Player(uid, name, count, theirAnswerReadable));
                 });
 
                 let occuredKeys = Array.from(occur.keys());
                 idNameMap.forEach((name: string, uid: string) => {
                     if (occuredKeys.indexOf(uid) < 0) {
-                        sipsPerPlayer.push(new Player(uid, name, 0, null));
+
+                        const theirAnswer = playerAnwered.get(uid);
+                        if (!theirAnswer) {
+                            return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                        }
+                        const theirAnswerReadable = idNameMap.get(theirAnswer);
+                        if (!theirAnswerReadable) {
+                            return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                        }
+                        sipsPerPlayer.push(new Player(uid, name, 0, theirAnswerReadable));
                     }
                 });
 

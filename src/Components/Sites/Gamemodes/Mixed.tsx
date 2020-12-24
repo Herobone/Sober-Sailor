@@ -32,6 +32,7 @@ import { getRandomTask } from "../../../helper/taskUtils";
 import Cookies from "universal-cookie";
 import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
 import { Player } from '../../../helper/models/Player';
+import ResultPage from '../../Visuals/ResultPage';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -63,6 +64,7 @@ class Mixed extends React.Component<Props, State> {
     leaderboardRef: RefObject<Leaderboard>;
     countdownRef: RefObject<HTMLSpanElement>;
     taskRef: RefObject<WhoWouldRather>;
+    resultRef: RefObject<ResultPage>;
 
     lang: string;
 
@@ -75,6 +77,7 @@ class Mixed extends React.Component<Props, State> {
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
+        this.resultRef = React.createRef();
 
         const cookies = new Cookies();
         this.lang = cookies.get("locale");
@@ -91,8 +94,13 @@ class Mixed extends React.Component<Props, State> {
             if (this.state.nextTask !== data.currentTask || this.state.taskType !== data.type) {
                 this.setState({
                     nextTask: data.currentTask,
-                    taskType: data.type
+                    taskType: data.type,
+                    result: null
                 });
+                const res = this.resultRef.current;
+                if (res) {
+                    res.updateResults([]);
+                }
                 GameManager.clearMyAnswer(this.props.gameID);
             }
             if (!this.state.pollState && data.pollState) {
@@ -113,6 +121,10 @@ class Mixed extends React.Component<Props, State> {
                     this.setState({
                         result
                     });
+                    const res = this.resultRef.current;
+                    if (res) {
+                        res.updateResults(result);
+                    }
                 }).catch(console.error)
             }
 
@@ -227,6 +239,8 @@ class Mixed extends React.Component<Props, State> {
                 </div>
 
                 {taskComponent}
+
+                <ResultPage ref={this.resultRef} />
 
                 {this.state.isHost && <div className={"host-area"}>
                     <button onClick={this.randomButtonClick}>Random Button</button>
