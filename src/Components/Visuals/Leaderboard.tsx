@@ -80,14 +80,14 @@ export default class Leaderboard extends Component<Props, State> {
                     <thead>
                     <tr>
                         <th className={"leaderboard-header-rank"}>
-                            <FormattedMessage id={"elements.leaderboard.rank"}/>
+                            <FormattedMessage id={"elements.general.rank"}/>
                         </th>
                         <th className={"leaderboard-header-nickname"}>
                             <FormattedMessage
-                                id={"elements.leaderboard.nickname"}/>
+                                id={"general.nickname"}/>
                         </th>
                         <th className={"leaderboard-header-score"}>
-                            <FormattedMessage id={"elements.leaderboard.score"}/>
+                            <FormattedMessage id={"general.sips"}/>
                         </th>
                     </tr>
                     </thead>
