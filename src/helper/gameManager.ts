@@ -18,7 +18,7 @@
 import firebase from "firebase";
 import Util from "./Util";
 import { Player, playerConverter } from "./models/Player";
-import { Game, gameConverter, IGame } from "./models/Game";
+import { Game, gameConverter } from "./models/Game";
 
 export default class GameManager {
 
@@ -38,7 +38,7 @@ export default class GameManager {
             const gameRef = GameManager.getGameByID(gameID);
             const now: Date = new Date();
             console.log(now);
-            gameRef.set(new Game(gameID, null, null, 0, uid, false, false, now)).then(() => resolve(gameID));
+            gameRef.set(new Game(gameID, null, null, null, 0, uid, false, false, now)).then(() => resolve(gameID));
         });
     }
 

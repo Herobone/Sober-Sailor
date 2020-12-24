@@ -31,9 +31,10 @@ import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
 import { getRandomTask } from "../../../helper/taskUtils";
 import Cookies from "universal-cookie";
 import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
-import { Player } from '../../../helper/models/Player';
+import { Player, playerConverter } from '../../../helper/models/Player';
 import ResultPage from '../../Visuals/ResultPage';
 import { Game } from '../../../helper/models/Game';
+import { Task } from '../../../helper/models/task';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -43,6 +44,7 @@ interface Props {
 interface State {
     nextTask: string | null;
     taskType: string | null;
+    target: string | null;
     isHost: boolean;
     pollState: boolean;
     evalState: boolean;
@@ -55,6 +57,7 @@ class Mixed extends React.Component<Props, State> {
     state = {
         nextTask: null,
         taskType: null,
+        target: null,
         isHost: false,
         pollState: false,
         evalState: false,
@@ -75,6 +78,8 @@ class Mixed extends React.Component<Props, State> {
         this.randomButtonClick = this.randomButtonClick.bind(this);
         this.startTimer = this.startTimer.bind(this);
         this.submitAndReset = this.submitAndReset.bind(this);
+        this.setTask = this.setTask.bind(this);
+        this.hostPlayerHandel = this.hostPlayerHandel.bind(this)
 
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
@@ -87,7 +92,19 @@ class Mixed extends React.Component<Props, State> {
 
     componentDidMount() {
         GameManager.joinGame(this.props.gameID, this.gameEvent);
-        GameManager.amIHost(this.props.gameID).then((host) => this.setState({ isHost: host }));
+        GameManager.amIHost(this.props.gameID).then((host) => {
+            this.setState({ isHost: host });
+            if (host) {
+                GameManager.getGameByID(this.props.gameID).collection("players").withConverter(playerConverter).onSnapshot(this.hostPlayerHandel)
+            }
+        });
+    }
+
+    hostPlayerHandel(col: firebase.firestore.QuerySnapshot<Player>) {
+        col.forEach((result) => {
+            const data = result.data();
+            console.log("Change on:", data);
+        })
     }
 
     submitAndReset() {
@@ -107,11 +124,14 @@ class Mixed extends React.Component<Props, State> {
     gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>) {
         const data = doc.data();
         if (data) {
-            if (this.state.nextTask !== data.currentTask || this.state.taskType !== data.type) {
+            if (this.state.nextTask !== data.currentTask ||
+                this.state.taskType !== data.type ||
+                this.state.target !== data.taskTarget) {
                 this.submitAndReset();
                 this.setState({
                     nextTask: data.currentTask,
-                    taskType: data.type
+                    taskType: data.type,
+                    target: data.taskTarget
                 });
             }
             if (!this.state.pollState && data.pollState) {
@@ -186,28 +206,42 @@ class Mixed extends React.Component<Props, State> {
         })
     }
 
-    randomButtonClick() {
-        if (!this.state.isHost) {
-            return;
-        }
-        console.log("Random Button activated");
-        this.submitAndReset();
-        const taskType = Util.selectRandom(tasks);
+    setTask(taskType: Task, target: Player | null) {
         let lang: string;
         if (this.lang in taskType.lang) {
             lang = this.lang
         } else {
             lang = taskType.lang[0];
         }
+        let tar = target ? target.uid : null;
         getRandomTask(taskType.id, lang).then((task) => {
             this.setState({ nextTask: task });
             GameManager.getGameByID(this.props.gameID).update({
                 currentTask: task,
                 type: taskType.id,
                 evalState: false,
-                pollState: false
-            }).then(() => console.log("Task updated"))
+                pollState: false,
+                taskTarget: tar
+            }).then(() => console.log("Task updated"));
         });
+    }
+
+    randomButtonClick() {
+        if (!this.state.isHost) {
+            return;
+        }
+        console.log("Random Button activated");
+        this.submitAndReset();
+        const taskType: Task = Util.selectRandom(tasks);
+        let target: Player | null = null;
+        if (taskType.singleTarget) {
+            GameManager.getAllPlayers(this.props.gameID).then((players: Player[]) => {
+                target = Util.selectRandom(players);
+                this.setTask(taskType, target);
+            });
+        } else {
+            this.setTask(taskType, null);
+        }
     }
 
     render() {
@@ -224,7 +258,11 @@ class Mixed extends React.Component<Props, State> {
                     taskComponent = <WhoWouldRather question={task} gameID={this.props.gameID} ref={this.taskRef} />
                     break;
                 case "truthordare":
-                    taskComponent = <TruthOrDare question={task} />
+                    const target = this.state.target;
+                    if (target) {
+
+                        taskComponent = <TruthOrDare question={task} target={target} />
+                    }
                     break;
             }
         }

@@ -22,6 +22,7 @@ export interface IGame {
     gameID: string;
     currentTask: string | null;
     type: string | null;
+    taskTarget: string | null;
     round: number;
     host: string;
     pollState: boolean;
@@ -32,6 +33,7 @@ export interface IGame {
 interface IGameExternal {
     currentTask: string | null;
     type: string | null;
+    taskTarget: string | null;
     round: number;
     host: string;
     pollState: boolean;
@@ -45,6 +47,7 @@ export class Game implements IGame {
         readonly gameID: string,
         readonly currentTask: string | null,
         readonly type: string | null,
+        readonly taskTarget: string | null,
         readonly round: number,
         readonly host: string,
         readonly pollState: boolean,
@@ -59,6 +62,7 @@ export const gameConverter = {
         return {
             currentTask: game.currentTask,
             type: game.type,
+            taskTarget: game.taskTarget,
             round: game.round,
             host: game.host,
             pollState: game.pollState,
@@ -75,6 +79,7 @@ export const gameConverter = {
             snapshot.id,
             data.currentTask,
             data.type,
+            data.taskTarget,
             data.round,
             data.host,
             data.pollState,
