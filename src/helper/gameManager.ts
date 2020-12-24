@@ -203,10 +203,6 @@ export default class GameManager {
         return GameManager.setAnswer(gameID, answer);
     }
 
-    static clearMyAnswer(gameID: string) {
-        return GameManager.setAnswer(gameID, null);
-    }
-
     static evaluateAnswers(gameID: string): Promise<Player[]> {
         return new Promise<Player[]>((resolve, reject) => {
             GameManager.getAllPlayers(gameID).then((players: Player[]) => {
@@ -260,5 +256,53 @@ export default class GameManager {
                 resolve(sipsPerPlayer);
             }).catch(reject);
         })
+    }
+
+    static getMyData(gameID: string): Promise<Player> {
+        const gameRef = GameManager.getGameByID(gameID);
+        const auth = firebase.auth();
+        const user = auth.currentUser;
+        return new Promise((resolve, reject) => {
+            if (!user) {
+                return reject();
+            }
+
+            const uid = user.uid;
+            const playerRef = gameRef.collection("players").doc(uid);
+            playerRef.withConverter(playerConverter).get().then((doc) => {
+                const data = doc.data();
+                if (data) {
+                    resolve(data);
+                } else {
+                    reject("Player not found");
+                }
+            }).catch(reject);
+        })
+    }
+
+    static afterEval(gameID: string, results: Player[]) {
+        let sipsIHaveToTake = 0;
+        const auth = firebase.auth();
+        const user = auth.currentUser;
+        return new Promise((resolve, reject) => {
+            if (!user) {
+                return reject();
+            }
+
+            const uid = user.uid;
+            results.forEach((player: Player) => {
+                if (player.uid === uid) {
+                    sipsIHaveToTake = player.sips;
+                }
+            });
+            GameManager.getMyData(gameID).then((data: Player) => {
+                const gameRef = GameManager.getGameByID(gameID);
+                const sipsToSubmit = data.sips + sipsIHaveToTake;
+                gameRef.collection("players").doc(uid).update({
+                    sips: sipsToSubmit,
+                    answer: null
+                }).then(resolve).catch(reject);
+            });
+        });
     }
 }

@@ -73,6 +73,7 @@ class Mixed extends React.Component<Props, State> {
         this.gameEvent = this.gameEvent.bind(this);
         this.randomButtonClick = this.randomButtonClick.bind(this);
         this.startTimer = this.startTimer.bind(this);
+        this.submitAndReset = this.submitAndReset.bind(this);
 
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
@@ -88,20 +89,29 @@ class Mixed extends React.Component<Props, State> {
         GameManager.amIHost(this.props.gameID).then((host) => this.setState({ isHost: host }));
     }
 
+    submitAndReset() {
+        const resultsWere = this.state.result;
+        if (resultsWere) {
+            GameManager.afterEval(this.props.gameID, resultsWere)
+                .then(() => this.setState({
+                    result: null
+                }));
+        }
+        const res = this.resultRef.current;
+        if (res) {
+            res.updateResults([]);
+        }
+    }
+
     gameEvent(doc: firebase.firestore.DocumentSnapshot) {
         let data = doc.data();
         if (data) {
             if (this.state.nextTask !== data.currentTask || this.state.taskType !== data.type) {
+                this.submitAndReset();
                 this.setState({
                     nextTask: data.currentTask,
-                    taskType: data.type,
-                    result: null
+                    taskType: data.type
                 });
-                const res = this.resultRef.current;
-                if (res) {
-                    res.updateResults([]);
-                }
-                GameManager.clearMyAnswer(this.props.gameID);
             }
             if (!this.state.pollState && data.pollState) {
                 this.startTimer(20, this.countdownRef);
@@ -114,6 +124,7 @@ class Mixed extends React.Component<Props, State> {
             }
 
             if (!this.state.evalState && data.evaluationState) {
+                console.log("Eval state changed to true!");
                 this.setState({
                     evalState: true
                 });
@@ -178,8 +189,8 @@ class Mixed extends React.Component<Props, State> {
         if (!this.state.isHost) {
             return;
         }
-        GameManager.clearMyAnswer(this.props.gameID);
         console.log("Random Button activated");
+        this.submitAndReset();
         const taskType = Util.selectRandom(tasks);
         let lang: string;
         if (this.lang in taskType.lang) {
