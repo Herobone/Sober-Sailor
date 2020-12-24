@@ -19,6 +19,7 @@
 import React, {Component, ReactElement} from 'react';
 import {FormattedMessage} from "react-intl";
 import GameManager from "../../helper/gameManager";
+import {Player} from "../../helper/models/Player";
 
 interface Props {
     question: string;
@@ -26,14 +27,16 @@ interface Props {
 }
 
 interface State {
-    players: Map<string, string>;
+    players: Player[];
     inputLocked: boolean;
+    answer: string | null;
 }
 
 export default class WhoWouldRather extends Component<Props, State> {
     state = {
-        players: new Map<string, string>(),
-        inputLocked: true
+        players: [],
+        inputLocked: true,
+        answer: null
     }
 
 
@@ -54,12 +57,18 @@ export default class WhoWouldRather extends Component<Props, State> {
 
     render() {
         let values: ReactElement[] = [];
-        this.state.players.forEach((value: string, key: string) => {
+        this.state.players.forEach((element: Player) => {
             values.push(
-                <div key={key}>
+                <div key={element.uid}>
                     <button className={"wwr-player-select"}
-                            onClick={() => GameManager.myAnswerIs(this.props.gameID, key)}>
-                        {value}
+                            onClick={() => {
+                                GameManager.myAnswerIs(this.props.gameID, element.uid);
+                                this.setState({
+                                    answer: element.nickname,
+                                    inputLocked: true
+                                });
+                            }}>
+                        {element.nickname}
                     </button>
                     <br/>
                 </div>
@@ -72,7 +81,14 @@ export default class WhoWouldRather extends Component<Props, State> {
                 <p>
                     <FormattedMessage id='gamemodes.whowouldrather.description'/>
                 </p>
-                {!this.state.inputLocked && values}
+                {!this.state.inputLocked && !this.state.answer && values}
+                {this.state.answer &&
+                <div>
+                    <FormattedMessage id="elements.result.youranswer" values={{
+                        answer: this.state.answer
+                    }} />
+                </div>
+                }
             </div>
         )
     }

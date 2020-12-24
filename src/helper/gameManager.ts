@@ -17,6 +17,8 @@
  */
 import firebase from "firebase";
 import Util from "./Util";
+import { Player, playerConverter } from "./models/Player";
+
 export default class GameManager {
 
     static createGame(): Promise<string> {
@@ -84,11 +86,21 @@ export default class GameManager {
         const uid = user.uid;
 
         const gameRef = GameManager.getGameByID(gameID);
-        gameRef.collection("players").doc(uid).delete().then(() => {
-            console.log("Deleted user from game");
-            auth.signOut();
-            window.location.pathname = "";
-        });
+        GameManager.amIHost(gameID)
+            .then((host) => {
+                if (host) {
+                    GameManager.transferHostShip(gameID)
+                        .then(() => {
+                            gameRef.collection("players").doc(uid).delete()
+                                .then(() => {
+                                    console.log("Deleted user from game");
+                                    auth.signOut();
+                                    window.location.pathname = "";
+                                });
+                        });
+                }
+
+            });
     }
 
     static amIHost(gameID: string): Promise<boolean> {
@@ -113,15 +125,14 @@ export default class GameManager {
         });
     }
 
-    static getAllPlayers(gameID: string): Promise<Map<string, string>> {
-        const players = new Map<string, string>();
+    static getAllPlayers(gameID: string): Promise<Player[]> {
+        const players: Player[] = [];
         const gameRef = GameManager.getGameByID(gameID);
         const playerRef = gameRef.collection("players");
         return new Promise((resolve, reject) => {
-            playerRef.get().then((query) => {
+            playerRef.withConverter(playerConverter).get().then((query) => {
                 query.forEach((doc) => {
-                    const data = doc.data()
-                    players.set(doc.id, data.nickname);
+                    players.push(doc.data());
                 });
                 resolve(players);
             }).catch((error) => reject(error));
@@ -137,14 +148,20 @@ export default class GameManager {
             }
 
             const uid = user.uid;
-            GameManager.getAllPlayers(gameID).then((players) => {
-                players.delete(uid);
-                const random = Util.getRandomKey(players);
-                const gameRef = GameManager.getGameByID(gameID);
-                gameRef.update({
-                    host: random
-                }).then(resolve).catch(reject);
-            });
+            GameManager.getAllPlayers(gameID)
+                .then((players) => {
+                    const ids: string[] = [];
+                    players.forEach((element: Player) => {
+                        if (element.uid !== uid) {
+                            ids.push(element.uid);
+                        }
+                    })
+                    const random = Util.getRandomElement(ids);
+                    const gameRef = GameManager.getGameByID(gameID);
+                    gameRef.update({
+                        host: random
+                    }).then(resolve).catch(reject);
+                });
         });
     }
 
@@ -186,7 +203,106 @@ export default class GameManager {
         return GameManager.setAnswer(gameID, answer);
     }
 
-    static clearMyAnswer(gameID: string) {
-        return GameManager.setAnswer(gameID, null);
+    static evaluateAnswers(gameID: string): Promise<Player[]> {
+        return new Promise<Player[]>((resolve, reject) => {
+            GameManager.getAllPlayers(gameID).then((players: Player[]) => {
+                const answers: string[] = [];
+                const idNameMap: Map<string, string> = new Map();
+                const playerAnwered: Map<string, string> = new Map();
+                players.forEach((player: Player) => {
+                    idNameMap.set(player.uid, player.nickname);
+                    if (player.answer) {
+                        answers.push(player.answer);
+                        playerAnwered.set(player.uid, player.answer);
+                    } else {
+                        answers.push(player.uid);
+                        playerAnwered.set(player.uid, player.uid);
+                    }
+                });
+                const occur = Util.countOccurences(answers);
+                const sipsPerPlayer: Player[] = [];
+                occur.forEach((count: number, uid: string) => {
+                    const name = idNameMap.get(uid);
+                    if (!name) {
+                        return reject("Name was not in map. So the answer was not a current player");
+                    }
+                    const theirAnswer = playerAnwered.get(uid);
+                    if (!theirAnswer) {
+                        return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                    }
+                    const theirAnswerReadable = idNameMap.get(theirAnswer);
+                    if (!theirAnswerReadable) {
+                        return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                    }
+                    sipsPerPlayer.push(new Player(uid, name, count, theirAnswerReadable));
+                });
+
+                let occuredKeys = Array.from(occur.keys());
+                idNameMap.forEach((name: string, uid: string) => {
+                    if (occuredKeys.indexOf(uid) < 0) {
+
+                        const theirAnswer = playerAnwered.get(uid);
+                        if (!theirAnswer) {
+                            return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                        }
+                        const theirAnswerReadable = idNameMap.get(theirAnswer);
+                        if (!theirAnswerReadable) {
+                            return reject("Well, fuck. That is an error that should not happen. Memory leak?")
+                        }
+                        sipsPerPlayer.push(new Player(uid, name, 0, theirAnswerReadable));
+                    }
+                });
+
+                resolve(sipsPerPlayer);
+            }).catch(reject);
+        })
+    }
+
+    static getMyData(gameID: string): Promise<Player> {
+        const gameRef = GameManager.getGameByID(gameID);
+        const auth = firebase.auth();
+        const user = auth.currentUser;
+        return new Promise((resolve, reject) => {
+            if (!user) {
+                return reject();
+            }
+
+            const uid = user.uid;
+            const playerRef = gameRef.collection("players").doc(uid);
+            playerRef.withConverter(playerConverter).get().then((doc) => {
+                const data = doc.data();
+                if (data) {
+                    resolve(data);
+                } else {
+                    reject("Player not found");
+                }
+            }).catch(reject);
+        })
+    }
+
+    static afterEval(gameID: string, results: Player[]) {
+        let sipsIHaveToTake = 0;
+        const auth = firebase.auth();
+        const user = auth.currentUser;
+        return new Promise((resolve, reject) => {
+            if (!user) {
+                return reject();
+            }
+
+            const uid = user.uid;
+            results.forEach((player: Player) => {
+                if (player.uid === uid) {
+                    sipsIHaveToTake = player.sips;
+                }
+            });
+            GameManager.getMyData(gameID).then((data: Player) => {
+                const gameRef = GameManager.getGameByID(gameID);
+                const sipsToSubmit = data.sips + sipsIHaveToTake;
+                gameRef.collection("players").doc(uid).update({
+                    sips: sipsToSubmit,
+                    answer: null
+                }).then(resolve).catch(reject);
+            });
+        });
     }
 }

@@ -59,7 +59,7 @@ export default class Leaderboard extends Component<Props, State> {
         let counter = 1;
         this.state.leaderboard.forEach((value: number, key: string) => {
             vals.push(
-                <tr key={counter}>
+                <tr key={"leaderboard" + counter}>
                     <td className={"leaderboard-place"}>{counter}</td>
                     <td className={"leaderboard-nickname"}>{key}</td>
                     <td className={"leaderboard-score"}>{value}</td>
