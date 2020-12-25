@@ -102,6 +102,9 @@ export default class GameManager {
                     window.location.pathname = "";
                 });
         }
+
+        localStorage.removeItem("playerLookupTable");
+
         GameManager.amIHost(gameID)
             .then((host) => {
                 if (host) {
@@ -145,7 +148,10 @@ export default class GameManager {
         return new Promise((resolve, reject) => {
             playerRef.withConverter(playerConverter).get().then((query) => {
                 query.forEach((doc) => {
-                    players.push(doc.data());
+                    const data = doc.data();
+                    if (data && doc.id !== "register") {
+                        players.push(data);
+                    }
                 });
                 resolve(players);
             }).catch((error) => reject(error));

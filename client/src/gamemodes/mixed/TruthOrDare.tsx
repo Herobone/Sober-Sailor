@@ -18,7 +18,6 @@
 
 import React, { Component } from 'react';
 import { FormattedMessage } from "react-intl";
-import Cookies from 'universal-cookie';
 import { Register } from "../../helper/models/Register";
 
 interface Props {
@@ -37,9 +36,14 @@ export default class TruthOrDare extends Component<Props, State> {
     }
 
     render() {
-        const cookie = new Cookies();
-        const register = Register.deserialize(cookie.get("playerLookupTable"));
-        const targetName = register.playerUidMap.get(this.props.target);
+        const pltRaw = localStorage.getItem("playerLookupTable");
+        
+        let targetName :string = "Error";
+        if (pltRaw) {
+            const register = Register.parse(pltRaw);
+            const tar = register.playerUidMap.get(this.props.target);
+            targetName = tar ? tar : "Error";
+        }
         return (
             <div>
                 <h2>{targetName}:</h2>

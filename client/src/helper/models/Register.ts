@@ -37,8 +37,16 @@ export class Register implements IRegister {
         return Util.strMapToObj(this.playerUidMap);
     }
 
+    stringify() {
+        return JSON.stringify(this.serialize());
+    }
+
     static deserialize(toDeserialize: { [key: string]: string }): Register {
         return new Register(Util.objToStrMap(toDeserialize));
+    }
+
+    static parse(toParse: string) {
+        return Register.deserialize(JSON.parse(toParse));
     }
 
 }

@@ -18,7 +18,7 @@
 
 import React, { ReactElement, RefObject } from 'react';
 import '../../../css/App.css';
-import { Alert } from '../../../helper/AlertTypes';
+import Alerts, { Alert } from '../../../helper/AlertTypes';
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 
@@ -103,10 +103,7 @@ class Mixed extends React.Component<Props, State> {
         const data = doc.data();
         if (data) {
             console.log(data.playerUidMap);
-            const cookies = new Cookies();
-            cookies.set("playerLookupTable", data.serialize(), {
-                sameSite: 'strict',
-            });
+            localStorage.setItem("playerLookupTable", data.stringify());
         }
         this.updateLeaderboard();
     }
@@ -240,11 +237,15 @@ class Mixed extends React.Component<Props, State> {
         const taskType: Task = Util.selectRandom(tasks);
         let target: string | null = null;
         if (taskType.singleTarget) {
-            const cookie = new Cookies();
-            const register = Register.deserialize(cookie.get("playerLookupTable"));
+            const pltRaw = localStorage.getItem("playerLookupTable");
+            if (pltRaw) {
+                const register = Register.parse(pltRaw);
 
                 target = Util.getRandomKey(register.playerUidMap);
                 this.setTask(taskType, target);
+            } else {
+                this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+            }
         } else {
             this.setTask(taskType, null);
         }
@@ -266,7 +267,6 @@ class Mixed extends React.Component<Props, State> {
                 case "truthordare":
                     const target = this.state.target;
                     if (target) {
-
                         taskComponent = <TruthOrDare question={task} target={target} />
                     }
                     break;
@@ -300,14 +300,18 @@ class Mixed extends React.Component<Props, State> {
                 <ResultPage ref={this.resultRef} />
 
                 {this.state.isHost && <div className={"host-area"}>
-                    <button onClick={this.randomButtonClick}>Random Button</button>
+                    {!this.state.pollState &&
+                        <button onClick={this.randomButtonClick}>Random Button</button>
+                    }
                     <button onClick={() => {
                         GameManager.getAllPlayers(this.props.gameID).then((players) => console.log(players));
                         GameManager.transferHostShip(this.props.gameID).then(() => console.log("New player is now host!"));
                     }}><FormattedMessage id='actions.host.transfer' /></button>
-                    <button onClick={() => {
-                        GameManager.setPollState(this.props.gameID, true);
-                    }}><FormattedMessage id="actions.host.startpoll" /></button>
+                    {!this.state.pollState &&
+                        <button onClick={() => {
+                            GameManager.setPollState(this.props.gameID, true);
+                        }}><FormattedMessage id="actions.host.startpoll" /></button>
+                    }
                 </div>}
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef} />
             </div>
