@@ -7,7 +7,6 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
-    "sourceRoot": "src",
     "rootDir": "src"
   },
   "compileOnSave": true,
@@ -15,9 +14,12 @@
     "./src"
   ],
   "exclude": [
-    "../node_modules/",
-    "lib",
-    "../src",
-    "node_modules"
+    "node_modules",
+    "./node_modules",
+    "../src-nonono",
+    "../node_modules",
+    "../node_modules/@types/",
+    "../public",
+    "./lib"
   ]
 }
