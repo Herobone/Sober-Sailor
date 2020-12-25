@@ -60,4 +60,5 @@ export const onPlayerJoin = functions.firestore.document("/games/{gameID}/player
         players: players,
         playerUidMap: strMapToObj(playerUid)
     });
+    return null;
 })
