@@ -3,12 +3,14 @@
     "id": "whowouldrather",
     "lang": [
       "de"
-    ]
+    ],
+    "singleTarget": false
   },
   {
     "id": "truthordare",
     "lang": [
       "de"
-    ]
+    ],
+    "singleTarget": true
   }
 ]

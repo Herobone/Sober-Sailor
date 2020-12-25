@@ -20,7 +20,8 @@ import React, {Component} from 'react';
 import {FormattedMessage} from "react-intl";
 
 interface Props {
-    question: string
+    question: string;
+    target: string;
 }
 
 interface State {
@@ -36,6 +37,7 @@ export default class TruthOrDare extends Component<Props, State> {
     render() {
         return (
             <div>
+                <h2>{this.props.target}:</h2>
                 <h2><FormattedMessage id={"gamemodes.truthordare"}/></h2>
                 {this.props.question}
             </div>

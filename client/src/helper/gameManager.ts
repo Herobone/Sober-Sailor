@@ -18,6 +18,7 @@
 import firebase from "firebase";
 import Util from "./Util";
 import { Player, playerConverter } from "./models/Player";
+import { Game, gameConverter } from "./models/Game";
 
 export default class GameManager {
 
@@ -35,44 +36,46 @@ export default class GameManager {
             const randomSuffix = Util.randomCharOrNumberSequence((lenOfUID / 2) - 5);
             const gameID = uid.substr(0, 5) + randomSuffix;
             const gameRef = GameManager.getGameByID(gameID);
-            gameRef.set({
-                currentTask: null,
-                type: null,
-                round: 0,
-                host: uid,
-                pollState: false,
-                evaluationState: false,
-                created: firebase.firestore.Timestamp.now()
-            }).then(() => resolve(gameID));
+            const now: Date = new Date();
+            console.log(now);
+            gameRef.set(new Game(gameID, null, null, null, 0, uid, false, false, now)).then(() => resolve(gameID));
         });
     }
 
-    static getGameByID(gameID: string): firebase.firestore.DocumentReference {
+    static getGameByID(gameID: string): firebase.firestore.DocumentReference<Game> {
+        return GameManager.getRawGameByID(gameID).withConverter(gameConverter);
+    }
+
+    static getRawGameByID(gameID: string): firebase.firestore.DocumentReference {
         const db = firebase.firestore();
         return db.collection("games").doc(gameID);
     }
 
-    static joinGame(gameID: string, gameEvent: (doc: firebase.firestore.DocumentSnapshot) => void) {
+    static joinGame(gameID: string, gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void) {
         const auth = firebase.auth();
         const user = auth.currentUser;
 
-        if (!user) {
-            return;
-        }
-
-        const uid = user.uid;
-
-        const gameRef = GameManager.getGameByID(gameID);
-        const userRef = gameRef.collection("players").doc(uid);
-        userRef.get().then((doc) => {
-            if (!doc.exists) {
-                userRef.set({
-                    sips: 0,
-                    nickname: user.displayName
-                }).then(() => console.log("Success"));
+        return new Promise((resolve, reject) => {
+            if (!user) {
+                return reject();
             }
-        })
-        gameRef.onSnapshot(gameEvent);
+
+            const uid = user.uid,
+                nickname = user.displayName;
+
+            if (!nickname) {
+                return reject("User tried to join without name!");
+            }
+
+            const gameRef = GameManager.getGameByID(gameID);
+            const userRef = gameRef.collection("players").doc(uid).withConverter(playerConverter);
+            userRef.get().then((doc) => {
+                if (!doc.exists) {
+                    userRef.set(new Player(uid, nickname, 0, null)).then(resolve).catch(reject);
+                }
+            }).catch(reject);
+            gameRef.onSnapshot(gameEvent);
+        });
     }
 
     static leaveGame(gameID: string) {
@@ -86,18 +89,24 @@ export default class GameManager {
         const uid = user.uid;
 
         const gameRef = GameManager.getGameByID(gameID);
+
+        const deletePlayer = () => {
+            gameRef.collection("players").doc(uid).delete()
+                .then(() => {
+                    console.log("Deleted user from game");
+                    auth.signOut();
+                    window.location.pathname = "";
+                });
+        }
         GameManager.amIHost(gameID)
             .then((host) => {
                 if (host) {
                     GameManager.transferHostShip(gameID)
                         .then(() => {
-                            gameRef.collection("players").doc(uid).delete()
-                                .then(() => {
-                                    console.log("Deleted user from game");
-                                    auth.signOut();
-                                    window.location.pathname = "";
-                                });
+                            deletePlayer();
                         });
+                } else {
+                    deletePlayer();
                 }
 
             });
@@ -178,7 +187,7 @@ export default class GameManager {
         return new Promise((resolve, reject) => {
             const gameRef = GameManager.getGameByID(gameID);
             gameRef.update({
-                evaluationState: state
+                evalState: state
             }).then(resolve).catch(reject);
         });
     }
