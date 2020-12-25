@@ -3,13 +3,21 @@
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "outDir": "lib",
+    "outDir": "./lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "sourceRoot": "src",
+    "rootDir": "src"
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "./src"
+  ],
+  "exclude": [
+    "../node_modules/",
+    "lib",
+    "../src",
+    "node_modules"
   ]
 }
