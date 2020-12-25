@@ -6,8 +6,12 @@ name: Node.js CI
 on:
   push:
     branches: [ main ]
+    paths:
+      - client
   pull_request:
     branches: [ main ]
+    paths:
+      - client
 
 jobs:
   build:
@@ -17,6 +21,11 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: client
 
     steps:
     - uses: actions/checkout@v2
