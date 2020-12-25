@@ -31,10 +31,11 @@ import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
 import { getRandomTask } from "../../../helper/taskUtils";
 import Cookies from "universal-cookie";
 import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
-import { Player, playerConverter } from '../../../helper/models/Player';
+import { Player } from '../../../helper/models/Player';
 import ResultPage from '../../Visuals/ResultPage';
 import { Game } from '../../../helper/models/Game';
 import { Task } from '../../../helper/models/task';
+import { Register } from '../../../helper/models/Register';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -79,7 +80,8 @@ class Mixed extends React.Component<Props, State> {
         this.startTimer = this.startTimer.bind(this);
         this.submitAndReset = this.submitAndReset.bind(this);
         this.setTask = this.setTask.bind(this);
-        this.hostPlayerHandel = this.hostPlayerHandel.bind(this)
+        this.playerEvent = this.playerEvent.bind(this)
+        this.updateLeaderboard = this.updateLeaderboard.bind(this);
 
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
@@ -91,20 +93,22 @@ class Mixed extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        GameManager.joinGame(this.props.gameID, this.gameEvent);
+        GameManager.joinGame(this.props.gameID, this.gameEvent, this.playerEvent);
         GameManager.amIHost(this.props.gameID).then((host) => {
             this.setState({ isHost: host });
-            if (host) {
-                GameManager.getGameByID(this.props.gameID).collection("players").withConverter(playerConverter).onSnapshot(this.hostPlayerHandel)
-            }
         });
     }
 
-    hostPlayerHandel(col: firebase.firestore.QuerySnapshot<Player>) {
-        col.forEach((result) => {
-            const data = result.data();
-            console.log("Change on:", data);
-        })
+    playerEvent(doc: firebase.firestore.DocumentSnapshot<Register>) {
+        const data = doc.data();
+        if (data) {
+            console.log(data.playerUidMap);
+            const cookies = new Cookies();
+            cookies.set("playerLookupTable", data.serialize(), {
+                sameSite: 'strict',
+            });
+        }
+        this.updateLeaderboard();
     }
 
     submitAndReset() {
@@ -173,7 +177,9 @@ class Mixed extends React.Component<Props, State> {
             }
 
         }
+    }
 
+    updateLeaderboard() {
         if (this.leaderboardRef.current) {
             this.leaderboardRef.current.updateLeaderboard();
         }
@@ -206,14 +212,13 @@ class Mixed extends React.Component<Props, State> {
         })
     }
 
-    setTask(taskType: Task, target: Player | null) {
+    setTask(taskType: Task, target: string | null) {
         let lang: string;
         if (this.lang in taskType.lang) {
             lang = this.lang
         } else {
             lang = taskType.lang[0];
         }
-        let tar = target ? target.uid : null;
         getRandomTask(taskType.id, lang).then((task) => {
             this.setState({ nextTask: task });
             GameManager.getGameByID(this.props.gameID).update({
@@ -221,7 +226,7 @@ class Mixed extends React.Component<Props, State> {
                 type: taskType.id,
                 evalState: false,
                 pollState: false,
-                taskTarget: tar
+                taskTarget: target
             }).then(() => console.log("Task updated"));
         });
     }
@@ -233,12 +238,13 @@ class Mixed extends React.Component<Props, State> {
         console.log("Random Button activated");
         this.submitAndReset();
         const taskType: Task = Util.selectRandom(tasks);
-        let target: Player | null = null;
+        let target: string | null = null;
         if (taskType.singleTarget) {
-            GameManager.getAllPlayers(this.props.gameID).then((players: Player[]) => {
-                target = Util.selectRandom(players);
+            const cookie = new Cookies();
+            const register = Register.deserialize(cookie.get("playerLookupTable"));
+
+                target = Util.getRandomKey(register.playerUidMap);
                 this.setTask(taskType, target);
-            });
         } else {
             this.setTask(taskType, null);
         }

@@ -19,6 +19,7 @@ import firebase from "firebase";
 import Util from "./Util";
 import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
+import { Register, registerConverter } from "./models/Register";
 
 export default class GameManager {
 
@@ -51,7 +52,9 @@ export default class GameManager {
         return db.collection("games").doc(gameID);
     }
 
-    static joinGame(gameID: string, gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void) {
+    static joinGame(gameID: string,
+        gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
+        playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void) {
         const auth = firebase.auth();
         const user = auth.currentUser;
 
@@ -75,6 +78,7 @@ export default class GameManager {
                 }
             }).catch(reject);
             gameRef.onSnapshot(gameEvent);
+            gameRef.collection("players").doc("register").withConverter(registerConverter).onSnapshot(playerEvent);
         });
     }
 

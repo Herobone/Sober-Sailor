@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {Component} from 'react';
-import {FormattedMessage} from "react-intl";
+import React, { Component } from 'react';
+import { FormattedMessage } from "react-intl";
+import Cookies from 'universal-cookie';
+import { Register } from "../../helper/models/Register";
 
 interface Props {
     question: string;
@@ -35,10 +37,13 @@ export default class TruthOrDare extends Component<Props, State> {
     }
 
     render() {
+        const cookie = new Cookies();
+        const register = Register.deserialize(cookie.get("playerLookupTable"));
+        const targetName = register.playerUidMap.get(this.props.target);
         return (
             <div>
-                <h2>{this.props.target}:</h2>
-                <h2><FormattedMessage id={"gamemodes.truthordare"}/></h2>
+                <h2>{targetName}:</h2>
+                <h2><FormattedMessage id={"gamemodes.truthordare"} /></h2>
                 {this.props.question}
             </div>
         )
