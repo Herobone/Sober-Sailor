@@ -1,5 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from "firebase-admin";
+import { SingleTargetRequest, SingleTargetResult } from './models/SingleTarget';
+import { gameConverter } from './models/Game';
+import { Player, playerConverter } from './models/Player';
 
 admin.initializeApp();
 
@@ -30,6 +33,42 @@ function objToStrMap(obj: { [key: string]: string }): Map<string, string> {
     }
     return strMap;
 }
+
+export const singleTarget = functions.region("europe-west1").https.onCall(async (data: SingleTargetRequest, context): Promise<SingleTargetResult> => {
+    const auth = context.auth;
+    console.log(data);
+    if (auth) {
+        const requestUID = auth.uid;
+        const gameDocRef = admin.firestore().collection("games").doc(data.gameID);
+        const gameRef = await gameDocRef.withConverter(gameConverter).get();
+        const gameData = gameRef.data();
+        if (!gameData) {
+            return { status: "Data missing", responseOK: false };
+        }
+        if (requestUID !== gameData.taskTarget) {
+            return { status: "Not called by target of task", responseOK: false };
+        }
+        const playerRef = gameDocRef.collection("players").doc(requestUID).withConverter(playerConverter);
+        const playerData = (await playerRef.get()).data();
+
+        if (!playerData) {
+            return { status: "Data missing", responseOK: false };
+        }
+
+        await gameDocRef.update({
+            evalState: true,
+        });
+
+        await playerRef.set(new Player(playerData.uid,
+            playerData.nickname,
+            data.answer ? playerData.sips : playerData.sips + gameData.penalty,
+            null));
+
+        return { status: "All okay", responseOK: true }
+    } else {
+        return { status: "Not authenticated", responseOK: false };
+    }
+});
 
 export const onPlayerJoin = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onCreate(async (snapshot, context) => {
 

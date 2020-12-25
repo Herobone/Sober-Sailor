@@ -51,6 +51,7 @@ interface State {
     evalState: boolean;
     result: Player[] | null;
     countdownTimeout: NodeJS.Timeout | null;
+    penalty: number;
 }
 
 class Mixed extends React.Component<Props, State> {
@@ -64,6 +65,7 @@ class Mixed extends React.Component<Props, State> {
         evalState: false,
         countdownTimeout: null,
         result: null,
+        penalty: 0,
     }
 
     leaderboardRef: RefObject<Leaderboard>;
@@ -132,7 +134,8 @@ class Mixed extends React.Component<Props, State> {
                 this.setState({
                     nextTask: data.currentTask,
                     taskType: data.type,
-                    target: data.taskTarget
+                    target: data.taskTarget,
+                    penalty: data.penalty,
                 });
             }
             if (!this.state.pollState && data.pollState) {
@@ -150,15 +153,19 @@ class Mixed extends React.Component<Props, State> {
                 this.setState({
                     evalState: true
                 });
-                GameManager.evaluateAnswers(this.props.gameID).then((result) => {
-                    this.setState({
-                        result
-                    });
-                    const res = this.resultRef.current;
-                    if (res) {
-                        res.updateResults(result);
-                    }
-                }).catch(console.error)
+                if (this.state.taskType === "truthordare") {
+                    this.updateLeaderboard();
+                } else {
+                    GameManager.evaluateAnswers(this.props.gameID).then((result) => {
+                        this.setState({
+                            result
+                        });
+                        const res = this.resultRef.current;
+                        if (res) {
+                            res.updateResults(result);
+                        }
+                    }).catch(console.error);
+                }
             }
 
             if (!data.evalState) {
@@ -209,7 +216,7 @@ class Mixed extends React.Component<Props, State> {
         })
     }
 
-    setTask(taskType: Task, target: string | null) {
+    setTask(taskType: Task, target: string | null, penalty: number = 0) {
         let lang: string;
         if (this.lang in taskType.lang) {
             lang = this.lang
@@ -223,7 +230,8 @@ class Mixed extends React.Component<Props, State> {
                 type: taskType.id,
                 evalState: false,
                 pollState: false,
-                taskTarget: target
+                taskTarget: target,
+                penalty: penalty,
             }).then(() => console.log("Task updated"));
         });
     }
@@ -242,7 +250,7 @@ class Mixed extends React.Component<Props, State> {
                 const register = Register.parse(pltRaw);
 
                 target = Util.getRandomKey(register.playerUidMap);
-                this.setTask(taskType, target);
+                this.setTask(taskType, target, Util.random(3, 6));
             } else {
                 this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
             }
@@ -267,7 +275,7 @@ class Mixed extends React.Component<Props, State> {
                 case "truthordare":
                     const target = this.state.target;
                     if (target) {
-                        taskComponent = <TruthOrDare question={task} target={target} />
+                        taskComponent = <TruthOrDare question={task} target={target} gameID={this.props.gameID} penalty={this.state.penalty} />
                     }
                     break;
             }

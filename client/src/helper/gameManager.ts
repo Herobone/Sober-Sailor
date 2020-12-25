@@ -39,7 +39,7 @@ export default class GameManager {
             const gameRef = GameManager.getGameByID(gameID);
             const now: Date = new Date();
             console.log(now);
-            gameRef.set(new Game(gameID, null, null, null, 0, uid, false, false, now)).then(() => resolve(gameID));
+            gameRef.set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now)).then(() => resolve(gameID));
         });
     }
 
@@ -98,7 +98,6 @@ export default class GameManager {
             gameRef.collection("players").doc(uid).delete()
                 .then(() => {
                     console.log("Deleted user from game");
-                    auth.signOut();
                     window.location.pathname = "";
                 });
         }
@@ -202,7 +201,7 @@ export default class GameManager {
         });
     }
 
-    static setAnswer(gameID: string, answer: string | null) {
+    static setAnswer(gameID: string, answer: string) {
         const auth = firebase.auth();
         const user = auth.currentUser;
         return new Promise((resolve, reject) => {
@@ -216,10 +215,6 @@ export default class GameManager {
                 answer: answer
             }).then(resolve).catch(reject);
         });
-    }
-
-    static myAnswerIs(gameID: string, answer: string) {
-        return GameManager.setAnswer(gameID, answer);
     }
 
     static evaluateAnswers(gameID: string): Promise<Player[]> {
