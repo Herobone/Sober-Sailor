@@ -72,6 +72,7 @@ class Mixed extends React.Component<Props, State> {
     countdownRef: RefObject<HTMLSpanElement>;
     taskRef: RefObject<WhoWouldRather>;
     resultRef: RefObject<ResultPage>;
+    truthOrDareRef: RefObject<TruthOrDare>;
 
     lang: string;
 
@@ -89,6 +90,7 @@ class Mixed extends React.Component<Props, State> {
         this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
         this.resultRef = React.createRef();
+        this.truthOrDareRef = React.createRef();
 
         const cookies = new Cookies();
         this.lang = cookies.get("locale");
@@ -122,6 +124,11 @@ class Mixed extends React.Component<Props, State> {
         if (res) {
             res.updateResults([]);
         }
+        const tud = this.truthOrDareRef.current;
+        if (tud) {
+            tud.reset();
+        }
+        this.updateLeaderboard();
     }
 
     gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>) {
@@ -184,8 +191,9 @@ class Mixed extends React.Component<Props, State> {
     }
 
     updateLeaderboard() {
-        if (this.leaderboardRef.current) {
-            this.leaderboardRef.current.updateLeaderboard();
+        const lb = this.leaderboardRef.current;
+        if (lb) {
+            lb.updateLeaderboard();
         }
     }
 
@@ -275,7 +283,7 @@ class Mixed extends React.Component<Props, State> {
                 case "truthordare":
                     const target = this.state.target;
                     if (target) {
-                        taskComponent = <TruthOrDare question={task} target={target} gameID={this.props.gameID} penalty={this.state.penalty} />
+                        taskComponent = <TruthOrDare ref={this.truthOrDareRef} question={task} target={target} gameID={this.props.gameID} penalty={this.state.penalty} />
                     }
                     break;
             }

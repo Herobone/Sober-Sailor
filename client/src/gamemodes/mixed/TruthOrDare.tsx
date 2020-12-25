@@ -42,6 +42,7 @@ export default class TruthOrDare extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.setAnswer = this.setAnswer.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
     setAnswer(answer: boolean) {
@@ -54,6 +55,12 @@ export default class TruthOrDare extends Component<Props, State> {
         singleTarget(callData).then((d) => {
             const data: SingleTargetResult = d.data;
             console.log(data);
+        })
+    }
+
+    reset() {
+        this.setState({
+            answer: null
         })
     }
 
