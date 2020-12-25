@@ -16,10 +16,6 @@
   "exclude": [
     "node_modules",
     "./node_modules",
-    "../src-nonono",
-    "../node_modules",
-    "../node_modules/@types/",
-    "../public",
     "./lib"
   ]
 }
