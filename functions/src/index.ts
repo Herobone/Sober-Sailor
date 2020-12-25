@@ -23,15 +23,15 @@ function strMapToObj(strMap: Map<string, string>): { [key: string]: string } {
     return obj;
 }
 
-function objToStrMap(obj : { [key: string]: string }): Map<string,string> {
-    const strMap: Map<string,string> = new Map();
+function objToStrMap(obj: { [key: string]: string }): Map<string, string> {
+    const strMap: Map<string, string> = new Map();
     for (const k of Object.keys(obj)) {
         strMap.set(k, obj[k]);
     }
     return strMap;
 }
 
-export const onPlayerJoin = functions.firestore.document("/games/{gameID}/players/{playerID}").onCreate(async (snapshot, context) => {
+export const onPlayerJoin = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onCreate(async (snapshot, context) => {
 
     if (context.params.playerID === "register") {
         return null;
@@ -52,13 +52,29 @@ export const onPlayerJoin = functions.firestore.document("/games/{gameID}/player
             });
         }
     }
-    const players: string[] = [];
-    playerUid.forEach((value: string) => {
-        players.push(value);
-    })
     await playerColRef.doc("register").set({
-        players: players,
-        playerUidMap: strMapToObj(playerUid)
+        playerUidMap: strMapToObj(playerUid),
     });
     return null;
-})
+});
+
+export const onPlayerLeave = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onDelete(async (snapshot, context) => {
+
+    const playerColRef = db.collection("games").doc(context.params.gameID).collection("players");
+    const registerRef = await playerColRef.doc("register").get();
+
+    const playerUid: Map<string, string> = new Map();
+
+    const data = registerRef.data();
+    if (data) {
+        objToStrMap(data.playerUidMap).forEach((value: string, key: string) => {
+            playerUid.set(key, value);
+        });
+    }
+
+    playerUid.delete(context.params.playerID);
+    await playerColRef.doc("register").set({
+        playerUidMap: strMapToObj(playerUid),
+    });
+    return null;
+});
