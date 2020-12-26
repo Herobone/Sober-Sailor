@@ -4,9 +4,10 @@ import { SingleTargetRequest, SingleTargetResult } from './models/SingleTarget';
 import { gameConverter } from './models/Game';
 import { Player } from './models/Player';
 import { KickPlayer } from './models/HostEvents';
-import FirestoreUtil from './helper/FirestoreUtil';
 
 admin.initializeApp();
+
+import FirestoreUtil from './helper/FirestoreUtil';
 
 const db = admin.firestore();
 
