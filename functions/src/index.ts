@@ -137,39 +137,6 @@ export const garbageCollection = functions.region("europe-west1").pubsub.schedul
     });
 });
 
-/* async function deleteCollection(collection: admin.firestore.CollectionReference) {
-
-    return new Promise((resolve, reject) => {
-        deleteQueryBatch(collection, resolve).catch(reject);
-    });
-}
-
-async function deleteQueryBatch(query: admin.firestore.CollectionReference, resolve: (value?: unknown) => any) {
-    const snapshot = await query.get();
-
-    const batchSize = snapshot.size;
-    if (batchSize === 0) {
-        // When there are no documents left, we are done
-        resolve();
-        return;
-    }
-
-    // Delete documents in a batch
-    const batch = db.batch();
-    snapshot.docs.forEach((doc) => {
-        batch.delete(doc.ref);
-    });
-    await batch.commit();
-
-    // Recurse on the next process tick, to avoid
-    // exploding the stack.
-    process.nextTick(() => {
-        deleteQueryBatch(query, resolve);
-    });
-} */
-
-
-
 export const garbageCollectionHTTPS = functions.region("europe-west1").https.onRequest(async (req, resp) => {
     const maxAge = Date.now() - (12 * 60 * 60 * 1000);
     const gamesRef = await db.collection("games").where("created", "<", new Date(maxAge)).withConverter(gameConverter).get();
