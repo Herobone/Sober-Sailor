@@ -2,188 +2,144 @@ import * as functions from 'firebase-functions';
 import * as admin from "firebase-admin";
 import { SingleTargetRequest, SingleTargetResult } from './models/SingleTarget';
 import { gameConverter } from './models/Game';
-import { Player, playerConverter } from './models/Player';
+import { Player } from './models/Player';
+import { KickPlayer } from './models/HostEvents';
 
 admin.initializeApp();
 
+import FirestoreUtil from './helper/FirestoreUtil';
+
 const db = admin.firestore();
-
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//    functions.logger.info("Hello logs!", { structuredData: true });
-//    response.send("Hello from Firebase!");
-//});
-
-function strMapToObj(strMap: Map<string, string>): { [key: string]: string } {
-    const obj = Object.create(null);
-    for (const [k, v] of strMap) {
-        // We don’t escape the key '__proto__'
-        // which can cause problems on older engines
-        obj[k] = v;
-    }
-    return obj;
-}
-
-function objToStrMap(obj: { [key: string]: string }): Map<string, string> {
-    const strMap: Map<string, string> = new Map();
-    for (const k of Object.keys(obj)) {
-        strMap.set(k, obj[k]);
-    }
-    return strMap;
-}
 
 export const singleTarget = functions.region("europe-west1").https.onCall(async (data: SingleTargetRequest, context): Promise<SingleTargetResult> => {
     const auth = context.auth;
-    console.log(data);
     if (auth) {
         const requestUID = auth.uid;
-        const gameDocRef = admin.firestore().collection("games").doc(data.gameID);
-        const gameRef = await gameDocRef.withConverter(gameConverter).get();
-        const gameData = gameRef.data();
+
+        const gameData = await FirestoreUtil.getGameData(data.gameID);
         if (!gameData) {
-            return { status: "Data missing", responseOK: false };
+            throw new functions.https.HttpsError("not-found", "Game data was missing!");
         }
         if (requestUID !== gameData.taskTarget) {
-            return { status: "Not called by target of task", responseOK: false };
+            throw new functions.https.HttpsError("permission-denied", "Function must be called by target of the question!");
         }
-        const playerRef = gameDocRef.collection("players").doc(requestUID).withConverter(playerConverter);
-        const playerData = (await playerRef.get()).data();
 
+        const playerData = await FirestoreUtil.getPlayerData(data.gameID, requestUID);
         if (!playerData) {
-            return { status: "Data missing", responseOK: false };
+            throw new functions.https.HttpsError("not-found", "Player data was missing!");
         }
 
-        await gameDocRef.update({
+        await FirestoreUtil.getGame(data.gameID).update({
             evalState: true,
         });
 
-        await playerRef.set(new Player(playerData.uid,
-            playerData.nickname,
-            data.answer ? playerData.sips : playerData.sips + gameData.penalty,
-            null));
+        await FirestoreUtil.getPlayer(data.gameID, requestUID).set(
+            new Player(playerData.uid,
+                playerData.nickname,
+                data.answer ? playerData.sips : playerData.sips + gameData.penalty,
+                null)
+        );
 
         return { status: "All okay", responseOK: true }
     } else {
-        return { status: "Not authenticated", responseOK: false };
+        throw new functions.https.HttpsError("unauthenticated", "User was not authenticated with firebase while calling this function!");
     }
 });
 
 export const onPlayerJoin = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onCreate(async (snapshot, context) => {
 
     if (context.params.playerID === "register") {
-        return null;
+        // If the created document was a register don't proceed!
+        throw new functions.https.HttpsError("ok", "Function triggered on register create");
     }
 
-    const playerColRef = db.collection("games").doc(context.params.gameID).collection("players");
-    const registerRef = await playerColRef.doc("register").get();
+    const registerRef = await FirestoreUtil.getRegisterRef(context.params.gameID);
     const playerData = snapshot.data();
 
-    const playerUid: Map<string, string> = new Map();
+    let playerUid: Map<string, string> = new Map();
+
+    if (registerRef.exists) {
+        playerUid = FirestoreUtil.createMap(registerRef);
+    }
 
     playerUid.set(context.params.playerID, playerData.nickname);
-    if (registerRef.exists) {
-        const data = registerRef.data();
-        if (data) {
-            objToStrMap(data.playerUidMap).forEach((value: string, key: string) => {
-                playerUid.set(key, value);
-            });
-        }
-    }
-    await playerColRef.doc("register").set({
-        playerUidMap: strMapToObj(playerUid),
-    });
+
+    await FirestoreUtil.updateRegister(context.params.gameID, playerUid);
+
     return null;
 });
 
 export const onPlayerLeave = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onDelete(async (snapshot, context) => {
-
-    const playerColRef = db.collection("games").doc(context.params.gameID).collection("players");
-    const registerRef = await playerColRef.doc("register").get();
-
-    const playerUid: Map<string, string> = new Map();
-
-    const data = registerRef.data();
-    if (data) {
-        objToStrMap(data.playerUidMap).forEach((value: string, key: string) => {
-            playerUid.set(key, value);
-        });
+    if (context.authType === "ADMIN") {
+        // If the delete was performed by an ADMIN (console or firebase) ignore it
+        throw new functions.https.HttpsError("ok", "Delete by admin is ignored!");
     }
 
-    playerUid.delete(context.params.playerID);
-    if (playerUid.size > 0) {
-        await playerColRef.doc("register").set({
-            playerUidMap: strMapToObj(playerUid),
-        });
-    }
+    const registerRef = await FirestoreUtil.getRegisterRef(context.params.gameID);
+
+    const map = FirestoreUtil.createMap(registerRef);
+    map.delete(context.params.playerID);
+
+    await FirestoreUtil.updateRegister(context.params.gameID, map);
+
     return null;
 });
 
 export const garbageCollection = functions.region("europe-west1").pubsub.schedule("every 12 hours").onRun(async (contest) => {
     const maxAge = Date.now() - (12 * 60 * 60 * 1000);
     const gamesRef = await db.collection("games").where("created", "<", new Date(maxAge)).withConverter(gameConverter).get();
-    const results: string[] = [];
-    await gamesRef.forEach(async (res) => {
-        results.push(res.id);
+    await gamesRef.forEach(async (gameToDelete) => {
 
-        const players = await db.collection("games").doc(res.id).collection("players").get();
-        await players.forEach(async (result) => {
-            console.log("Player, ", result.id);
-            await result.ref.delete();
+        const players = await FirestoreUtil.getPlayers(gameToDelete.id).get();
+        await players.forEach(async (playerToDelete) => {
+            console.log("Player, ", playerToDelete.id);
+            await playerToDelete.ref.delete();
         });
 
-        await res.ref.delete();
+        await gameToDelete.ref.delete();
     });
 });
-
-/* async function deleteCollection(collection: admin.firestore.CollectionReference) {
-
-    return new Promise((resolve, reject) => {
-        deleteQueryBatch(collection, resolve).catch(reject);
-    });
-}
-
-async function deleteQueryBatch(query: admin.firestore.CollectionReference, resolve: (value?: unknown) => any) {
-    const snapshot = await query.get();
-
-    const batchSize = snapshot.size;
-    if (batchSize === 0) {
-        // When there are no documents left, we are done
-        resolve();
-        return;
-    }
-
-    // Delete documents in a batch
-    const batch = db.batch();
-    snapshot.docs.forEach((doc) => {
-        batch.delete(doc.ref);
-    });
-    await batch.commit();
-
-    // Recurse on the next process tick, to avoid
-    // exploding the stack.
-    process.nextTick(() => {
-        deleteQueryBatch(query, resolve);
-    });
-} */
-
-
 
 export const garbageCollectionHTTPS = functions.region("europe-west1").https.onRequest(async (req, resp) => {
     const maxAge = Date.now() - (12 * 60 * 60 * 1000);
     const gamesRef = await db.collection("games").where("created", "<", new Date(maxAge)).withConverter(gameConverter).get();
     const results: string[] = [];
-    await gamesRef.forEach(async (res) => {
-        results.push(res.id);
+    await gamesRef.forEach(async (gameToDelete) => {
+        results.push(gameToDelete.id);
 
-        const players = await db.collection("games").doc(res.id).collection("players").get();
-        await players.forEach(async (result) => {
-            console.log("Player, ", result.id);
-            await result.ref.delete();
+        const players = await FirestoreUtil.getPlayers(gameToDelete.id).get();
+        await players.forEach(async (playerToDelete) => {
+            console.log("Player, ", playerToDelete.id);
+            await playerToDelete.ref.delete();
         });
 
-        await res.ref.delete();
+        await gameToDelete.ref.delete();
     });
     resp.json(results);
-})
+});
+
+export const kickPlayer = functions.region("europe-west1").https.onCall(async (data: KickPlayer, context) => {
+    const auth = context.auth;
+    if (auth) {
+        const requestUID = auth.uid;
+        const gameData = await FirestoreUtil.getGameData(data.gameID);
+
+        if (!gameData) {
+            throw new functions.https.HttpsError("not-found", "Game data was missing!");
+        }
+        if (requestUID !== gameData.host) {
+            throw new functions.https.HttpsError("permission-denied", "Function must be called by host of game!");
+        }
+
+        await FirestoreUtil.getPlayer(data.gameID, data.playerID).delete();
+
+        const registerRef = await FirestoreUtil.getRegisterRef(data.gameID);
+        const map = FirestoreUtil.createMap(registerRef);
+
+        map.delete(data.playerID);
+
+        await FirestoreUtil.updateRegister(data.gameID, map);
+    } else {
+        throw new functions.https.HttpsError("unauthenticated", "User was not authenticated with firebase while calling this function!");
+    }
+});
