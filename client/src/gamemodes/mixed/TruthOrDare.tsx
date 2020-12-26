@@ -19,7 +19,6 @@
 import firebase from 'firebase';
 import React, { Component } from 'react';
 import { FormattedMessage } from "react-intl";
-import GameManager from '../../helper/gameManager';
 import { Register } from "../../helper/models/Register";
 import { SingleTargetRequest, SingleTargetResult } from '../../helper/models/SingleTarget';
 
