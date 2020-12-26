@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import React, { Component, ReactElement } from 'react'
+import { Component, ReactElement } from 'react'
 import Alerts, { Alert } from '../../helper/AlertTypes';
 import { Register } from '../../helper/models/Register';
 

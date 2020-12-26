@@ -17,7 +17,7 @@
  */
 
 import firebase from 'firebase';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { FormattedMessage } from "react-intl";
 import { Register } from "../../helper/models/Register";
 import { SingleTargetRequest, SingleTargetResult } from '../../helper/models/SingleTarget';

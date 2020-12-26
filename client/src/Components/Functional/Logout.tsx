@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import React, {Component, ReactElement} from 'react';
+import {Component, ReactElement} from 'react';
 import {Redirect} from 'react-router';
 import Alerts, {Alert} from '../../helper/AlertTypes';
 import {FormattedMessage} from 'react-intl';

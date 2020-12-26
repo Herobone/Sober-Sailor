@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import {ReactElement, Component} from 'react';
 import '../../css/App.css';
 import {Alert} from '../../helper/AlertTypes';
 import {FormattedMessage} from "react-intl";
@@ -12,7 +12,7 @@ interface State {
 
 }
 
-class Home extends React.Component<Props, State> {
+class Home extends Component<Props, State> {
 
     render() {
         return (
