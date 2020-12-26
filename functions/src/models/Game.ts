@@ -54,7 +54,7 @@ export class Game implements IGame {
         readonly host: string,
         readonly pollState: boolean,
         readonly evalState: boolean,
-        readonly created: Date
+        readonly created: Date,
     ) { }
 
 }
@@ -70,7 +70,7 @@ export const gameConverter = {
             host: game.host,
             pollState: game.pollState,
             evalState: game.evalState,
-            created: admin.firestore.Timestamp.fromDate(game.created)
+            created: admin.firestore.Timestamp.fromDate(game.created),
         }
     },
     fromFirestore(
@@ -89,5 +89,5 @@ export const gameConverter = {
             data.evalState,
             data.created.toDate()
         );
-    }
+    },
 }

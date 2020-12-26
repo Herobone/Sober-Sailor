@@ -47,7 +47,7 @@ export const playerConverter = {
         return {
             nickname: player.nickname,
             sips: player.sips,
-            answer: player.answer
+            answer: player.answer,
         }
     },
     fromFirestore(
@@ -55,5 +55,5 @@ export const playerConverter = {
     ): Player {
         const data = snapshot.data();
         return new Player(snapshot.id, data.nickname, data.sips, data.answer);
-    }
+    },
 }
