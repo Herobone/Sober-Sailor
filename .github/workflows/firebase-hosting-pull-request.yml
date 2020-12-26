@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor!= 'depbot' &&
       github.actor != 'dependabot[bot]'
+    defaults:
+      run:
+        shell: bash
+        working-directory: client
     steps:
       - uses: actions/checkout@v2
       - run: npm ci && npm run build
