@@ -161,6 +161,8 @@ export default class GameProvider extends Component<Props, State> {
             }
         }
 
+        return (<div>Eror</div>);
+
 
     }
 }
