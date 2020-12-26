@@ -36,6 +36,7 @@ import ResultPage from '../../Visuals/ResultPage';
 import { Game } from '../../../helper/models/Game';
 import { Task } from '../../../helper/models/task';
 import { Register } from '../../../helper/models/Register';
+import KickList from '../../Visuals/KickList';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -73,6 +74,7 @@ class Mixed extends React.Component<Props, State> {
     taskRef: RefObject<WhoWouldRather>;
     resultRef: RefObject<ResultPage>;
     truthOrDareRef: RefObject<TruthOrDare>;
+    kickListRef: RefObject<KickList>;
 
     lang: string;
 
@@ -91,6 +93,7 @@ class Mixed extends React.Component<Props, State> {
         this.taskRef = React.createRef();
         this.resultRef = React.createRef();
         this.truthOrDareRef = React.createRef();
+        this.kickListRef = React.createRef();
 
         const cookies = new Cookies();
         this.lang = cookies.get("locale");
@@ -328,6 +331,16 @@ class Mixed extends React.Component<Props, State> {
                             GameManager.setPollState(this.props.gameID, true);
                         }}><FormattedMessage id="actions.host.startpoll" /></button>
                     }
+                    <br />
+                    <button onClick={() => {
+                        const klRef = this.kickListRef.current;
+                        if (klRef) {
+                            klRef.show();
+                        }
+                    }}>
+                        <FormattedMessage id="actions.host.kick" />
+                    </button>
+                    <KickList createAlert={this.props.createAlert} gameID={this.props.gameID} ref={this.kickListRef}/>
                 </div>}
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef} />
             </div>

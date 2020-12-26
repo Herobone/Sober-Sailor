@@ -13,6 +13,7 @@
 	"actions.game.create": "Spiel Erstellen",
 	"actions.host.startpoll": "Umfrage starten",
 	"actions.host.transfer": "Host übertragen",
+	"actions.host.kick": "Spieler kicken",
 	"actions.leave": "Spiel verlassen",
 	"elements.alerts.error": "Fehler",
 	"elements.alerts.info": "Information:",

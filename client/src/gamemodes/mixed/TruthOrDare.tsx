@@ -48,7 +48,6 @@ export default class TruthOrDare extends Component<Props, State> {
         this.setState({
             answer
         });
-        //GameManager.setAnswer(this.props.gameID, answer ? "dare" : "drink");
         const callData: SingleTargetRequest = { answer: answer, gameID: this.props.gameID};
         const singleTarget = firebase.functions().httpsCallable("singleTarget")
         singleTarget(callData).then((d) => {
