@@ -1,9 +1,12 @@
-// import * as functions from 'firebase-functions';
-// import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions';
+import * as admin from "firebase-admin";
+import { SingleTargetRequest, SingleTargetResult } from './models/SingleTarget';
+import { gameConverter } from './models/Game';
+import { Player, playerConverter } from './models/Player';
 
-// admin.initializeApp();
+admin.initializeApp();
 
-// const db = admin.firestore();
+const db = admin.firestore();
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -13,52 +16,174 @@
 //    response.send("Hello from Firebase!");
 //});
 
-// function strMapToObj(strMap: Map<string, string>): { [key: string]: string } {
-//     let obj = Object.create(null);
-//     for (let [k, v] of strMap) {
-//         // We don’t escape the key '__proto__'
-//         // which can cause problems on older engines
-//         obj[k] = v;
-//     }
-//     return obj;
-// }
+function strMapToObj(strMap: Map<string, string>): { [key: string]: string } {
+    const obj = Object.create(null);
+    for (const [k, v] of strMap) {
+        // We don’t escape the key '__proto__'
+        // which can cause problems on older engines
+        obj[k] = v;
+    }
+    return obj;
+}
 
-// function objToStrMap(obj : { [key: string]: string }): Map<string,string> {
-//     let strMap: Map<string,string> = new Map();
-//     for (let k of Object.keys(obj)) {
-//         strMap.set(k, obj[k]);
-//     }
-//     return strMap;
-// }
+function objToStrMap(obj: { [key: string]: string }): Map<string, string> {
+    const strMap: Map<string, string> = new Map();
+    for (const k of Object.keys(obj)) {
+        strMap.set(k, obj[k]);
+    }
+    return strMap;
+}
 
-// export const onPlayerJoin = functions.firestore.document("/games/{gameID}/players/{playerID}").onCreate(async (snapshot, context) => {
+export const singleTarget = functions.region("europe-west1").https.onCall(async (data: SingleTargetRequest, context): Promise<SingleTargetResult> => {
+    const auth = context.auth;
+    console.log(data);
+    if (auth) {
+        const requestUID = auth.uid;
+        const gameDocRef = admin.firestore().collection("games").doc(data.gameID);
+        const gameRef = await gameDocRef.withConverter(gameConverter).get();
+        const gameData = gameRef.data();
+        if (!gameData) {
+            return { status: "Data missing", responseOK: false };
+        }
+        if (requestUID !== gameData.taskTarget) {
+            return { status: "Not called by target of task", responseOK: false };
+        }
+        const playerRef = gameDocRef.collection("players").doc(requestUID).withConverter(playerConverter);
+        const playerData = (await playerRef.get()).data();
 
-//     if (context.params.playerID === "register") {
-//         return null;
-//     }
+        if (!playerData) {
+            return { status: "Data missing", responseOK: false };
+        }
 
-//     const playerColRef = db.collection("games").doc(context.params.gameID).collection("players");
-//     const registerRef = await playerColRef.doc("register").get();
-//     const playerData = snapshot.data();
+        await gameDocRef.update({
+            evalState: true,
+        });
 
-//     const playerUid: Map<string, string> = new Map();
+        await playerRef.set(new Player(playerData.uid,
+            playerData.nickname,
+            data.answer ? playerData.sips : playerData.sips + gameData.penalty,
+            null));
 
-//     playerUid.set(context.params.playerID, playerData.nickname);
-//     if (registerRef.exists) {
-//         const data = registerRef.data();
-//         if (data) {
-//             objToStrMap(data.playerUidMap).forEach((value: string, key: string) => {
-//                 playerUid.set(key, value);
-//             });
-//         }
-//     }
-//     const players: string[] = [];
-//     playerUid.forEach((value: string) => {
-//         players.push(value);
-//     })
-//     playerColRef.doc("register").set({
-//         players: players,
-//         playerUidMap: strMapToObj(playerUid)
-//     });
-//     return null;
-// })
+        return { status: "All okay", responseOK: true }
+    } else {
+        return { status: "Not authenticated", responseOK: false };
+    }
+});
+
+export const onPlayerJoin = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onCreate(async (snapshot, context) => {
+
+    if (context.params.playerID === "register") {
+        return null;
+    }
+
+    const playerColRef = db.collection("games").doc(context.params.gameID).collection("players");
+    const registerRef = await playerColRef.doc("register").get();
+    const playerData = snapshot.data();
+
+    const playerUid: Map<string, string> = new Map();
+
+    playerUid.set(context.params.playerID, playerData.nickname);
+    if (registerRef.exists) {
+        const data = registerRef.data();
+        if (data) {
+            objToStrMap(data.playerUidMap).forEach((value: string, key: string) => {
+                playerUid.set(key, value);
+            });
+        }
+    }
+    await playerColRef.doc("register").set({
+        playerUidMap: strMapToObj(playerUid),
+    });
+    return null;
+});
+
+export const onPlayerLeave = functions.region("europe-west1").firestore.document("/games/{gameID}/players/{playerID}").onDelete(async (snapshot, context) => {
+
+    const playerColRef = db.collection("games").doc(context.params.gameID).collection("players");
+    const registerRef = await playerColRef.doc("register").get();
+
+    const playerUid: Map<string, string> = new Map();
+
+    const data = registerRef.data();
+    if (data) {
+        objToStrMap(data.playerUidMap).forEach((value: string, key: string) => {
+            playerUid.set(key, value);
+        });
+    }
+
+    playerUid.delete(context.params.playerID);
+    if (playerUid.size > 0) {
+        await playerColRef.doc("register").set({
+            playerUidMap: strMapToObj(playerUid),
+        });
+    }
+    return null;
+});
+
+export const garbageCollection = functions.region("europe-west1").pubsub.schedule("every 12 hours").onRun(async (contest) => {
+    const maxAge = Date.now() - (12 * 60 * 60 * 1000);
+    const gamesRef = await db.collection("games").where("created", "<", new Date(maxAge)).withConverter(gameConverter).get();
+    const results: string[] = [];
+    await gamesRef.forEach(async (res) => {
+        results.push(res.id);
+
+        const players = await db.collection("games").doc(res.id).collection("players").get();
+        await players.forEach(async (result) => {
+            console.log("Player, ", result.id);
+            await result.ref.delete();
+        });
+
+        await res.ref.delete();
+    });
+});
+
+/* async function deleteCollection(collection: admin.firestore.CollectionReference) {
+
+    return new Promise((resolve, reject) => {
+        deleteQueryBatch(collection, resolve).catch(reject);
+    });
+}
+
+async function deleteQueryBatch(query: admin.firestore.CollectionReference, resolve: (value?: unknown) => any) {
+    const snapshot = await query.get();
+
+    const batchSize = snapshot.size;
+    if (batchSize === 0) {
+        // When there are no documents left, we are done
+        resolve();
+        return;
+    }
+
+    // Delete documents in a batch
+    const batch = db.batch();
+    snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+    });
+    await batch.commit();
+
+    // Recurse on the next process tick, to avoid
+    // exploding the stack.
+    process.nextTick(() => {
+        deleteQueryBatch(query, resolve);
+    });
+} */
+
+
+
+export const garbageCollectionHTTPS = functions.region("europe-west1").https.onRequest(async (req, resp) => {
+    const maxAge = Date.now() - (12 * 60 * 60 * 1000);
+    const gamesRef = await db.collection("games").where("created", "<", new Date(maxAge)).withConverter(gameConverter).get();
+    const results: string[] = [];
+    await gamesRef.forEach(async (res) => {
+        results.push(res.id);
+
+        const players = await db.collection("games").doc(res.id).collection("players").get();
+        await players.forEach(async (result) => {
+            console.log("Player, ", result.id);
+            await result.ref.delete();
+        });
+
+        await res.ref.delete();
+    });
+    resp.json(results);
+})

@@ -15,8 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import firebase from "firebase";
+import * as admin from "firebase-admin";
 
 export interface IGame {
     gameID: string;
@@ -40,7 +39,7 @@ interface IGameExternal {
     host: string;
     pollState: boolean;
     evalState: boolean;
-    created: firebase.firestore.Timestamp;
+    created: admin.firestore.Timestamp;
 }
 
 export class Game implements IGame {
@@ -55,13 +54,13 @@ export class Game implements IGame {
         readonly host: string,
         readonly pollState: boolean,
         readonly evalState: boolean,
-        readonly created: Date
+        readonly created: Date,
     ) { }
 
 }
 
 export const gameConverter = {
-    toFirestore(game: Game): firebase.firestore.DocumentData {
+    toFirestore(game: Game): admin.firestore.DocumentData {
         return {
             currentTask: game.currentTask,
             type: game.type,
@@ -71,14 +70,13 @@ export const gameConverter = {
             host: game.host,
             pollState: game.pollState,
             evalState: game.evalState,
-            created: firebase.firestore.Timestamp.fromDate(game.created)
+            created: admin.firestore.Timestamp.fromDate(game.created),
         }
     },
     fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IGameExternal>,
-        options: firebase.firestore.SnapshotOptions
+        snapshot: admin.firestore.QueryDocumentSnapshot<IGameExternal>
     ): Game {
-        const data = snapshot.data(options);
+        const data = snapshot.data();
         return new Game(
             snapshot.id,
             data.currentTask,
@@ -91,5 +89,5 @@ export const gameConverter = {
             data.evalState,
             data.created.toDate()
         );
-    }
+    },
 }

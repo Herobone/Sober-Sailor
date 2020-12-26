@@ -19,6 +19,7 @@ import firebase from "firebase";
 import Util from "./Util";
 import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
+import { Register, registerConverter } from "./models/Register";
 
 export default class GameManager {
 
@@ -38,7 +39,7 @@ export default class GameManager {
             const gameRef = GameManager.getGameByID(gameID);
             const now: Date = new Date();
             console.log(now);
-            gameRef.set(new Game(gameID, null, null, null, 0, uid, false, false, now)).then(() => resolve(gameID));
+            gameRef.set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now)).then(() => resolve(gameID));
         });
     }
 
@@ -51,7 +52,9 @@ export default class GameManager {
         return db.collection("games").doc(gameID);
     }
 
-    static joinGame(gameID: string, gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void) {
+    static joinGame(gameID: string,
+        gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
+        playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void) {
         const auth = firebase.auth();
         const user = auth.currentUser;
 
@@ -75,6 +78,7 @@ export default class GameManager {
                 }
             }).catch(reject);
             gameRef.onSnapshot(gameEvent);
+            gameRef.collection("players").doc("register").withConverter(registerConverter).onSnapshot(playerEvent);
         });
     }
 
@@ -94,10 +98,12 @@ export default class GameManager {
             gameRef.collection("players").doc(uid).delete()
                 .then(() => {
                     console.log("Deleted user from game");
-                    auth.signOut();
                     window.location.pathname = "";
                 });
         }
+
+        localStorage.removeItem("playerLookupTable");
+
         GameManager.amIHost(gameID)
             .then((host) => {
                 if (host) {
@@ -141,7 +147,10 @@ export default class GameManager {
         return new Promise((resolve, reject) => {
             playerRef.withConverter(playerConverter).get().then((query) => {
                 query.forEach((doc) => {
-                    players.push(doc.data());
+                    const data = doc.data();
+                    if (data && doc.id !== "register") {
+                        players.push(data);
+                    }
                 });
                 resolve(players);
             }).catch((error) => reject(error));
@@ -192,7 +201,7 @@ export default class GameManager {
         });
     }
 
-    static setAnswer(gameID: string, answer: string | null) {
+    static setAnswer(gameID: string, answer: string) {
         const auth = firebase.auth();
         const user = auth.currentUser;
         return new Promise((resolve, reject) => {
@@ -206,10 +215,6 @@ export default class GameManager {
                 answer: answer
             }).then(resolve).catch(reject);
         });
-    }
-
-    static myAnswerIs(gameID: string, answer: string) {
-        return GameManager.setAnswer(gameID, answer);
     }
 
     static evaluateAnswers(gameID: string): Promise<Player[]> {

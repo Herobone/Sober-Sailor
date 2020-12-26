@@ -62,7 +62,7 @@ export default class WhoWouldRather extends Component<Props, State> {
                 <div key={element.uid}>
                     <button className={"wwr-player-select"}
                             onClick={() => {
-                                GameManager.myAnswerIs(this.props.gameID, element.uid);
+                                GameManager.setAnswer(this.props.gameID, element.uid);
                                 this.setState({
                                     answer: element.nickname,
                                     inputLocked: true

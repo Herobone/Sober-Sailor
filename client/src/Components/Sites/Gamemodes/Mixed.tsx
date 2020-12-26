@@ -18,7 +18,7 @@
 
 import React, { ReactElement, RefObject } from 'react';
 import '../../../css/App.css';
-import { Alert } from '../../../helper/AlertTypes';
+import Alerts, { Alert } from '../../../helper/AlertTypes';
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 
@@ -31,10 +31,11 @@ import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
 import { getRandomTask } from "../../../helper/taskUtils";
 import Cookies from "universal-cookie";
 import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
-import { Player, playerConverter } from '../../../helper/models/Player';
+import { Player } from '../../../helper/models/Player';
 import ResultPage from '../../Visuals/ResultPage';
 import { Game } from '../../../helper/models/Game';
 import { Task } from '../../../helper/models/task';
+import { Register } from '../../../helper/models/Register';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -50,6 +51,7 @@ interface State {
     evalState: boolean;
     result: Player[] | null;
     countdownTimeout: NodeJS.Timeout | null;
+    penalty: number;
 }
 
 class Mixed extends React.Component<Props, State> {
@@ -63,12 +65,14 @@ class Mixed extends React.Component<Props, State> {
         evalState: false,
         countdownTimeout: null,
         result: null,
+        penalty: 0,
     }
 
     leaderboardRef: RefObject<Leaderboard>;
     countdownRef: RefObject<HTMLSpanElement>;
     taskRef: RefObject<WhoWouldRather>;
     resultRef: RefObject<ResultPage>;
+    truthOrDareRef: RefObject<TruthOrDare>;
 
     lang: string;
 
@@ -79,32 +83,33 @@ class Mixed extends React.Component<Props, State> {
         this.startTimer = this.startTimer.bind(this);
         this.submitAndReset = this.submitAndReset.bind(this);
         this.setTask = this.setTask.bind(this);
-        this.hostPlayerHandel = this.hostPlayerHandel.bind(this)
+        this.playerEvent = this.playerEvent.bind(this)
+        this.updateLeaderboard = this.updateLeaderboard.bind(this);
 
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
         this.resultRef = React.createRef();
+        this.truthOrDareRef = React.createRef();
 
         const cookies = new Cookies();
         this.lang = cookies.get("locale");
     }
 
     componentDidMount() {
-        GameManager.joinGame(this.props.gameID, this.gameEvent);
+        GameManager.joinGame(this.props.gameID, this.gameEvent, this.playerEvent);
         GameManager.amIHost(this.props.gameID).then((host) => {
             this.setState({ isHost: host });
-            if (host) {
-                GameManager.getGameByID(this.props.gameID).collection("players").withConverter(playerConverter).onSnapshot(this.hostPlayerHandel)
-            }
         });
     }
 
-    hostPlayerHandel(col: firebase.firestore.QuerySnapshot<Player>) {
-        col.forEach((result) => {
-            const data = result.data();
-            console.log("Change on:", data);
-        })
+    playerEvent(doc: firebase.firestore.DocumentSnapshot<Register>) {
+        const data = doc.data();
+        if (data) {
+            console.log(data.playerUidMap);
+            localStorage.setItem("playerLookupTable", data.stringify());
+        }
+        this.updateLeaderboard();
     }
 
     submitAndReset() {
@@ -119,6 +124,11 @@ class Mixed extends React.Component<Props, State> {
         if (res) {
             res.updateResults([]);
         }
+        const tud = this.truthOrDareRef.current;
+        if (tud) {
+            tud.reset();
+        }
+        this.updateLeaderboard();
     }
 
     gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>) {
@@ -131,7 +141,8 @@ class Mixed extends React.Component<Props, State> {
                 this.setState({
                     nextTask: data.currentTask,
                     taskType: data.type,
-                    target: data.taskTarget
+                    target: data.taskTarget,
+                    penalty: data.penalty,
                 });
             }
             if (!this.state.pollState && data.pollState) {
@@ -149,15 +160,19 @@ class Mixed extends React.Component<Props, State> {
                 this.setState({
                     evalState: true
                 });
-                GameManager.evaluateAnswers(this.props.gameID).then((result) => {
-                    this.setState({
-                        result
-                    });
-                    const res = this.resultRef.current;
-                    if (res) {
-                        res.updateResults(result);
-                    }
-                }).catch(console.error)
+                if (this.state.taskType === "truthordare") {
+                    this.updateLeaderboard();
+                } else {
+                    GameManager.evaluateAnswers(this.props.gameID).then((result) => {
+                        this.setState({
+                            result
+                        });
+                        const res = this.resultRef.current;
+                        if (res) {
+                            res.updateResults(result);
+                        }
+                    }).catch(console.error);
+                }
             }
 
             if (!data.evalState) {
@@ -173,9 +188,12 @@ class Mixed extends React.Component<Props, State> {
             }
 
         }
+    }
 
-        if (this.leaderboardRef.current) {
-            this.leaderboardRef.current.updateLeaderboard();
+    updateLeaderboard() {
+        const lb = this.leaderboardRef.current;
+        if (lb) {
+            lb.updateLeaderboard();
         }
     }
 
@@ -206,14 +224,13 @@ class Mixed extends React.Component<Props, State> {
         })
     }
 
-    setTask(taskType: Task, target: Player | null) {
+    setTask(taskType: Task, target: string | null, penalty: number = 0) {
         let lang: string;
         if (this.lang in taskType.lang) {
             lang = this.lang
         } else {
             lang = taskType.lang[0];
         }
-        let tar = target ? target.uid : null;
         getRandomTask(taskType.id, lang).then((task) => {
             this.setState({ nextTask: task });
             GameManager.getGameByID(this.props.gameID).update({
@@ -221,7 +238,8 @@ class Mixed extends React.Component<Props, State> {
                 type: taskType.id,
                 evalState: false,
                 pollState: false,
-                taskTarget: tar
+                taskTarget: target,
+                penalty: penalty,
             }).then(() => console.log("Task updated"));
         });
     }
@@ -233,12 +251,17 @@ class Mixed extends React.Component<Props, State> {
         console.log("Random Button activated");
         this.submitAndReset();
         const taskType: Task = Util.selectRandom(tasks);
-        let target: Player | null = null;
+        let target: string | null = null;
         if (taskType.singleTarget) {
-            GameManager.getAllPlayers(this.props.gameID).then((players: Player[]) => {
-                target = Util.selectRandom(players);
-                this.setTask(taskType, target);
-            });
+            const pltRaw = localStorage.getItem("playerLookupTable");
+            if (pltRaw) {
+                const register = Register.parse(pltRaw);
+
+                target = Util.getRandomKey(register.playerUidMap);
+                this.setTask(taskType, target, Util.random(3, 6));
+            } else {
+                this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+            }
         } else {
             this.setTask(taskType, null);
         }
@@ -260,8 +283,7 @@ class Mixed extends React.Component<Props, State> {
                 case "truthordare":
                     const target = this.state.target;
                     if (target) {
-
-                        taskComponent = <TruthOrDare question={task} target={target} />
+                        taskComponent = <TruthOrDare ref={this.truthOrDareRef} question={task} target={target} gameID={this.props.gameID} penalty={this.state.penalty} />
                     }
                     break;
             }
@@ -294,14 +316,18 @@ class Mixed extends React.Component<Props, State> {
                 <ResultPage ref={this.resultRef} />
 
                 {this.state.isHost && <div className={"host-area"}>
-                    <button onClick={this.randomButtonClick}>Random Button</button>
+                    {!this.state.pollState &&
+                        <button onClick={this.randomButtonClick}>Random Button</button>
+                    }
                     <button onClick={() => {
                         GameManager.getAllPlayers(this.props.gameID).then((players) => console.log(players));
                         GameManager.transferHostShip(this.props.gameID).then(() => console.log("New player is now host!"));
                     }}><FormattedMessage id='actions.host.transfer' /></button>
-                    <button onClick={() => {
-                        GameManager.setPollState(this.props.gameID, true);
-                    }}><FormattedMessage id="actions.host.startpoll" /></button>
+                    {!this.state.pollState &&
+                        <button onClick={() => {
+                            GameManager.setPollState(this.props.gameID, true);
+                        }}><FormattedMessage id="actions.host.startpoll" /></button>
+                    }
                 </div>}
                 <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef} />
             </div>

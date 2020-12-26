@@ -16,9 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {Component, ReactElement} from 'react';
+import React, { Component, ReactElement } from 'react';
 import GameManager from "../../helper/gameManager";
-import {FormattedMessage} from "react-intl";
+import { FormattedMessage } from "react-intl";
+import { playerConverter } from '../../helper/models/Player';
 
 interface Props {
     gameID: string;
@@ -40,12 +41,14 @@ export default class Leaderboard extends Component<Props, State> {
     }
 
     updateLeaderboard() {
-        const lead = GameManager.getGameByID(this.props.gameID).collection("players").orderBy("sips", "desc");
+        const lead = GameManager.getGameByID(this.props.gameID).collection("players").withConverter(playerConverter).orderBy("sips", "desc");
         const leaderboard = new Map<string, number>();
         lead.get().then((query) => {
             query.forEach((doc) => {
-                const data = doc.data()
-                leaderboard.set(data.nickname, data.sips);
+                const data = doc.data();
+                if (data && doc.id !== "register") {
+                    leaderboard.set(data.nickname, data.sips);
+                }
             });
             this.setState({
                 leaderboard
@@ -75,24 +78,24 @@ export default class Leaderboard extends Component<Props, State> {
     render() {
         return (
             <div>
-                <h1 className={"leaderboard-header"}><FormattedMessage id={"elements.leaderboard"}/></h1>
+                <h1 className={"leaderboard-header"}><FormattedMessage id={"elements.leaderboard"} /></h1>
                 <table className={"leaderboard"}>
                     <thead>
-                    <tr>
-                        <th className={"leaderboard-header-rank"}>
-                            <FormattedMessage id={"elements.general.rank"}/>
-                        </th>
-                        <th className={"leaderboard-header-nickname"}>
-                            <FormattedMessage
-                                id={"general.nickname"}/>
-                        </th>
-                        <th className={"leaderboard-header-score"}>
-                            <FormattedMessage id={"general.sips"}/>
-                        </th>
-                    </tr>
+                        <tr>
+                            <th className={"leaderboard-header-rank"}>
+                                <FormattedMessage id={"elements.general.rank"} />
+                            </th>
+                            <th className={"leaderboard-header-nickname"}>
+                                <FormattedMessage
+                                    id={"general.nickname"} />
+                            </th>
+                            <th className={"leaderboard-header-score"}>
+                                <FormattedMessage id={"general.sips"} />
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {this.prepareLeaderboard()}
+                        {this.prepareLeaderboard()}
                     </tbody>
                 </table>
             </div>
