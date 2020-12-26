@@ -4,8 +4,10 @@
 name: Deploy to Firebase Hosting on PR
 on:
   pull_request:
+    branches:
+      - main
     paths:
-      - client
+      - client/**
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
