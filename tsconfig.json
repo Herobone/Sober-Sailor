@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "strict": true,
+        "target": "es2017",
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true
+    },
+    "compileOnSave": true
+}

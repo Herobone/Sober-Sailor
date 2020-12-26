@@ -1,6 +1,6 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
     "types": [
       "jest"
     ],
@@ -10,19 +10,10 @@
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "rootDir": "./src",
-    "noFallthroughCasesInSwitch": true
+    "rootDir": "./src"
   },
   "include": [
     "./src"
