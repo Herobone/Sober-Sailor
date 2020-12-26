@@ -1,4 +1,4 @@
-import {Component, ReactElement} from 'react'
+import React, {Component, ReactElement} from 'react'
 import Column from '../Visuals/Column';
 import Dropdown from '../Visuals/Dropdown';
 import firebase from 'firebase';

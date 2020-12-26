@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 
 interface ColumnProps {
     additionalClasses?: string

@@ -1,4 +1,4 @@
-import {Component, ReactElement} from 'react'
+import React, {Component, ReactElement} from 'react'
 import firebase from 'firebase';
 import {StyledFirebaseAuth} from 'react-firebaseui';
 import {Redirect} from 'react-router';

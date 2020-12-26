@@ -1,5 +1,4 @@
-import React from 'react';
-import { Component, RefObject } from 'react'
+import React, { Component, RefObject } from 'react'
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

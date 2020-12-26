@@ -16,12 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Component, ReactElement } from 'react';
+import React, {Component, ReactElement} from 'react';
 import firebase from "firebase";
-import Alerts, { Alert } from "../../helper/AlertTypes";
-import { FormattedMessage } from "react-intl";
+import Alerts, {Alert} from "../../helper/AlertTypes";
+import {FormattedMessage} from "react-intl";
 import GameManager from "../../helper/gameManager";
-import React from 'react';
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -89,16 +88,16 @@ export default class GameProvider extends Component<Props, State> {
             input = this.nameInputRef.current;
 
         if (!input || !currentUser) {
-            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen"/>);
             return;
         }
 
         if (input.value.length < 3) {
-            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname"/>);
             return;
         }
 
-        currentUser.updateProfile({ displayName: input.value });
+        currentUser.updateProfile({displayName: input.value});
         this.forceUpdate();
     }
 
@@ -110,7 +109,7 @@ export default class GameProvider extends Component<Props, State> {
                 <div className="w3-center">
                     <p className="sailor-creategame-button">
                         <button onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
-                            <FormattedMessage id="actions.game.create" />
+                            <FormattedMessage id="actions.game.create"/>
                         </button>
                     </p>
                 </div>
@@ -126,45 +125,42 @@ export default class GameProvider extends Component<Props, State> {
                 </div>
             );
         }
+
         if (currentUser) {
             if (currentUser.displayName && currentUser.displayName !== "") {
                 return (
                     <div>
                         {this.props.children}
-                        <button onClick={() => GameManager.leaveGame(gameID)}><FormattedMessage id={'actions.leave'} /></button>
+                        <button onClick={() => GameManager.leaveGame(gameID)}><FormattedMessage id={'actions.leave'}/></button>
                     </div>
                 );
             } else {
                 return (
                     <div>
                         <h1>
-                            <FormattedMessage id="account.descriptors.finishsignup" />
+                            <FormattedMessage id="account.descriptors.finishsignup"/>
                         </h1>
                         <p>
-                            <label><b><FormattedMessage id="account.descriptors.yourname" /></b></label>
-                            <br />
+                            <label><b><FormattedMessage id="account.descriptors.yourname"/></b></label>
+                            <br/>
                             <input
                                 ref={this.nameInputRef}
                                 className="w3-input w3-border w3-round"
                                 name="name"
                                 type="text"
-                                style={{ width: "40%" }}
+                                style={{width: "40%"}}
                                 placeholder="Name"
                             />
                         </p>
-                        <br />
+                        <br/>
                         <button className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
-                            <FormattedMessage id="general.done" />
+                            <FormattedMessage id="general.done"/>
                         </button>
                     </div>
                 );
             }
         }
 
-        return (
-            <div>
-                Error
-            </div>
-        );
+
     }
 }

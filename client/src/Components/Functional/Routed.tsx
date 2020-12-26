@@ -1,4 +1,4 @@
-import {Component, ReactElement} from 'react'
+import React, {Component, ReactElement} from 'react'
 import {
     BrowserRouter as Router,
     Switch,

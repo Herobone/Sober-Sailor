@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Component, ReactElement } from 'react';
+import React, { Component, ReactElement } from 'react';
 import GameManager from "../../helper/gameManager";
 import { FormattedMessage } from "react-intl";
 import { playerConverter } from '../../helper/models/Player';
