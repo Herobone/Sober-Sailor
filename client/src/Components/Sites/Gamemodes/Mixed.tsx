@@ -26,11 +26,11 @@ import { Alert, Alerts } from "../../../helper/AlertTypes";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
-import { WhoWouldRather } from "../../../gamemodes/mixed/WhoWouldRather";
+import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
 
-import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
+import tasks from "../../../gamemodes/tasks.json";
 import { getRandomTask } from "../../../helper/TaskUtils";
-import { TruthOrDare } from "../../../gamemodes/mixed/TruthOrDare";
+import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
 import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";

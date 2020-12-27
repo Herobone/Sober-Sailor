@@ -19,9 +19,9 @@
 import firebase from "firebase";
 import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
-import { GameManager } from "../../helper/gameManager";
-import { Register } from "../../helper/models/Register";
-import { SingleTargetRequest } from "../../helper/models/SingleTarget";
+import { GameManager } from "../helper/gameManager";
+import { Register } from "../helper/models/Register";
+import { SingleTargetRequest } from "../helper/models/SingleTarget";
 
 interface Props {
   question: string;
