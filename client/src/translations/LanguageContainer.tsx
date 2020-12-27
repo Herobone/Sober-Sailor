@@ -4,7 +4,7 @@ import Cookies from "universal-cookie";
 import messages_en from "./locales/en.json";
 import messages_de from "./locales/de.json";
 import messages_de_AT from "./locales/de_AT.json";
-import Util from "../helper/Util";
+import { Util } from "../helper/Util";
 
 interface State {
   locale: string;
@@ -18,7 +18,7 @@ const MESSAGES = {
 
 interface Props {}
 
-class LanguageContainer extends React.Component<Props, State> {
+export class LanguageContainer extends React.Component<Props, State> {
   cookies: Cookies;
 
   constructor(props: Props) {
@@ -26,9 +26,9 @@ class LanguageContainer extends React.Component<Props, State> {
 
     this.cookies = new Cookies();
 
-    let lang = this.cookies.get("locale");
-    if (!lang || typeof lang === "undefined") {
-      lang = navigator.language.split("-")[0];
+    let lang: string | undefined = this.cookies.get("locale");
+    if (!lang || lang === undefined) {
+      [lang] = navigator.language.split("-");
     }
     if (!Util.hasKey(MESSAGES, lang)) {
       lang = "de";
@@ -40,18 +40,18 @@ class LanguageContainer extends React.Component<Props, State> {
     this.getCurrentLocale = this.getCurrentLocale.bind(this);
   }
 
-  public changeLanguage(locale: string) {
+  public getCurrentLocale(): string {
+    return this.state.locale;
+  }
+
+  public changeLanguage(locale: string): void {
     this.cookies.set("locale", locale, { expires: new Date(9999, 12) });
     this.setState({
       locale,
     });
   }
 
-  public getCurrentLocale(): string {
-    return this.state.locale;
-  }
-
-  public render() {
+  public render(): JSX.Element {
     const { locale } = this.state;
     let msg = {};
     if (Util.hasKey(MESSAGES, locale)) {
@@ -65,5 +65,3 @@ class LanguageContainer extends React.Component<Props, State> {
     );
   }
 }
-
-export default LanguageContainer;

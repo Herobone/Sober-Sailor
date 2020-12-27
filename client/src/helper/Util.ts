@@ -1,5 +1,5 @@
 // This class contains static Methods that might come useful for like anything
-class Util {
+export class Util {
   static random(from: number, to: number): number {
     return Math.floor(Math.random() * to + from);
   }
@@ -24,12 +24,12 @@ class Util {
     return sequ;
   }
 
-  static getRandomKey<T>(collection: Map<T, any>): T {
+  static getRandomKey<T>(collection: Map<T, unknown>): T {
     const keys = [...collection.keys()];
     return keys[Math.floor(Math.random() * keys.length)];
   }
 
-  static getRandomItem<K, V>(set: Map<K, V>) {
+  static getRandomItem<K, V>(set: Map<K, V>): [K, V] {
     const items = [...set];
     return items[Math.floor(Math.random() * items.length)];
   }
@@ -38,11 +38,12 @@ class Util {
     return array[Math.floor(Math.random() * array.length)];
   }
 
-  static alphanumeric(text: string) {
+  static alphanumeric(text: string): RegExpMatchArray | null {
     const letters = /^[\da-z]+$/gi;
     return text.match(letters);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static hasKey<O>(obj: O, key: keyof any): key is keyof O {
     return key in obj;
   }
@@ -54,12 +55,12 @@ class Util {
   static countOccurences<T>(array: T[]): Map<T, number> {
     const content: T[] = [];
     const count: number[] = [];
-    let prev;
+    let prev: T;
 
     const countMap: Map<T, number> = new Map<T, number>();
 
     array.sort();
-    for (const element of array) {
+    array.forEach((element) => {
       if (element !== prev) {
         content.push(element);
         count.push(1);
@@ -67,32 +68,30 @@ class Util {
         count[count.length - 1]++;
       }
       prev = element;
-    }
+    });
 
-    for (const [i, element] of content.entries()) {
+    content.forEach((element, i) => {
       countMap.set(element, count[i]);
-    }
+    });
 
     return countMap;
   }
 
   static strMapToObj(strMap: Map<string, string>): { [key: string]: string } {
     const obj = Object.create(null);
-    for (const [k, v] of strMap) {
+    strMap.forEach((v: string, k: string) => {
       // We don’t escape the key '__proto__'
       // which can cause problems on older engines
       obj[k] = v;
-    }
+    });
     return obj;
   }
 
   static objToStrMap(obj: { [key: string]: string }): Map<string, string> {
     const strMap: Map<string, string> = new Map();
-    for (const k of Object.keys(obj)) {
-      strMap.set(k, obj[k]);
-    }
+    Object.keys(obj).forEach((key: string) => {
+      strMap.set(key, obj[key]);
+    });
     return strMap;
   }
 }
-
-export default Util;

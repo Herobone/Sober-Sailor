@@ -1,6 +1,6 @@
 import React, { Component, ReactElement, RefObject } from "react";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
-import LanguageContainer from "./translations/LanguageContainer";
+import { LanguageContainer } from "./translations/LanguageContainer";
 import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
 import { Alert } from "./helper/AlertTypes";

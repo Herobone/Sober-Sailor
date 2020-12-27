@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 
 interface ColumnProps {
   additionalClasses?: string;
 }
 
-export class Column extends Component<ColumnProps> {
-  render() {
+export class Column extends PureComponent<ColumnProps> {
+  render(): JSX.Element {
     const topLevelClass = `w3-col ${this.props.additionalClasses}`;
     return (
       <div className={topLevelClass}>
@@ -14,5 +14,3 @@ export class Column extends Component<ColumnProps> {
     );
   }
 }
-
-export default Column;

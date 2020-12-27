@@ -23,8 +23,8 @@ import firebase from "firebase";
 import Cookies from "universal-cookie";
 
 import Alerts, { Alert } from "../../../helper/AlertTypes";
-import GameManager from "../../../helper/gameManager";
-import Util from "../../../helper/Util";
+import { GameManager } from "../../../helper/gameManager";
+import { Util } from "../../../helper/Util";
 import Leaderboard from "../../Visuals/Leaderboard";
 import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
 

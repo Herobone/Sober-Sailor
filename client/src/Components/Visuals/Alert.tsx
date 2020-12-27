@@ -12,27 +12,31 @@ interface State {
   shown: boolean;
 }
 
-class Alert extends Component<Props, State> {
-  state = {
-    shown: true,
-  };
+export class Alert extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      shown: true,
+    };
+  }
 
-  render() {
+  render():JSX.Element {
     return (
       <span>
         {this.state.shown && (
           <div className={`w3-panel ${this.props.type.color} w3-display-container`}>
-            <span
+            <button
               onClick={() => {
                 this.setState({ shown: false });
                 if (this.props.clear) {
                   this.props.clear();
                 }
               }}
+              type="button"
               className="w3-button w3-large w3-display-topright"
             >
               &times;
-            </span>
+            </button>
             <h3>
               {this.props.header && this.props.header}
               {!this.props.header && <FormattedMessage id={this.props.type.defaultHeader} />}
@@ -44,5 +48,3 @@ class Alert extends Component<Props, State> {
     );
   }
 }
-
-export default Alert;

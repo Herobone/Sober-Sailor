@@ -16,19 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import firebase from "firebase";
-import Util from "./Util";
+import { Util } from "./Util";
 import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
 import { Register, registerConverter } from "./models/Register";
 
-export default class GameManager {
+export class GameManager {
   static createGame(): Promise<string> {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve, reject): void => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
@@ -37,8 +38,10 @@ export default class GameManager {
       const gameID = uid.slice(0, 5) + randomSuffix;
       const gameRef = GameManager.getGameByID(gameID);
       const now: Date = new Date();
-      console.log(now);
-      gameRef.set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now)).then(() => resolve(gameID));
+      gameRef
+        .set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now))
+        .then(() => resolve(gameID))
+        .catch(reject);
     });
   }
 
@@ -55,20 +58,22 @@ export default class GameManager {
     gameID: string,
     gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
     playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void,
-  ) {
+  ): Promise<unknown> {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
     return new Promise((resolve, reject) => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
       const nickname = user.displayName;
 
       if (!nickname) {
-        return reject("User tried to join without name!");
+        reject(new Error("User tried to join without name!"));
+        return;
       }
 
       const gameRef = GameManager.getGameByID(gameID);
@@ -77,16 +82,18 @@ export default class GameManager {
         .get()
         .then((doc) => {
           if (!doc.exists) {
-            userRef.set(new Player(uid, nickname, 0, null)).then(resolve).catch(reject);
+            return userRef.set(new Player(uid, nickname, 0, null));
           }
+          return Promise.resolve();
         })
+        .then(resolve)
         .catch(reject);
       gameRef.onSnapshot(gameEvent);
       gameRef.collection("players").doc("register").withConverter(registerConverter).onSnapshot(playerEvent);
     });
   }
 
-  static leaveGame(gameID: string) {
+  static leaveGame(gameID: string): void {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
@@ -98,49 +105,55 @@ export default class GameManager {
 
     const gameRef = GameManager.getGameByID(gameID);
 
-    const deletePlayer = () => {
+    const deletePlayer = (): void => {
       gameRef
         .collection("players")
         .doc(uid)
         .delete()
         .then(() => {
-          console.log("Deleted user from game");
           window.location.pathname = "";
-        });
+          return Promise.resolve();
+        })
+        .catch(console.error);
     };
 
     localStorage.removeItem("playerLookupTable");
 
-    GameManager.amIHost(gameID).then((host) => {
-      if (host) {
-        GameManager.transferHostShip(gameID).then(() => {
-          deletePlayer();
-        });
-      } else {
-        deletePlayer();
-      }
-    });
+    GameManager.amIHost(gameID)
+      .then((host) => {
+        if (host) {
+          return GameManager.transferHostShip(gameID);
+        }
+        return Promise.resolve();
+      })
+      .then(() => deletePlayer())
+      .catch(console.error);
   }
 
   static amIHost(gameID: string): Promise<boolean> {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject): void => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
       const gameRef = GameManager.getGameByID(gameID);
-      gameRef.get().then((doc) => {
-        const data = doc.data();
-        if (data) {
-          resolve(data.host === uid);
-        } else {
-          reject();
-        }
-      });
+      gameRef
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          if (data) {
+            resolve(data.host === uid);
+          } else {
+            reject();
+          }
+          return Promise.resolve();
+        })
+        .catch(console.error);
     });
   }
 
@@ -160,40 +173,42 @@ export default class GameManager {
             }
           });
           resolve(players);
+          return Promise.resolve();
         })
         .catch((error) => reject(error));
     });
   }
 
-  static transferHostShip(gameID: string) {
+  static transferHostShip(gameID: string): Promise<unknown> {
     const auth = firebase.auth();
     const user = auth.currentUser;
     return new Promise((resolve, reject) => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
-      GameManager.getAllPlayers(gameID).then((players) => {
-        const ids: string[] = [];
-        players.forEach((element: Player) => {
-          if (element.uid !== uid) {
-            ids.push(element.uid);
-          }
-        });
-        const random = Util.getRandomElement(ids);
-        const gameRef = GameManager.getGameByID(gameID);
-        gameRef
-          .update({
+      GameManager.getAllPlayers(gameID)
+        .then((players) => {
+          const ids: string[] = [];
+          players.forEach((element: Player) => {
+            if (element.uid !== uid) {
+              ids.push(element.uid);
+            }
+          });
+          const random = Util.getRandomElement(ids);
+          const gameRef = GameManager.getGameByID(gameID);
+          return gameRef.update({
             host: random,
-          })
-          .then(resolve)
-          .catch(reject);
-      });
+          });
+        })
+        .then(resolve)
+        .catch(reject);
     });
   }
 
-  static setPollState(gameID: string, state: boolean) {
+  static setPollState(gameID: string, state: boolean): Promise<unknown> {
     return new Promise((resolve, reject) => {
       const gameRef = GameManager.getGameByID(gameID);
       gameRef
@@ -205,7 +220,7 @@ export default class GameManager {
     });
   }
 
-  static setEvalState(gameID: string, state: boolean) {
+  static setEvalState(gameID: string, state: boolean): Promise<unknown> {
     return new Promise((resolve, reject) => {
       const gameRef = GameManager.getGameByID(gameID);
       gameRef
@@ -217,12 +232,13 @@ export default class GameManager {
     });
   }
 
-  static setAnswer(gameID: string, answer: string) {
+  static setAnswer(gameID: string, answer: string): Promise<unknown> {
     const auth = firebase.auth();
     const user = auth.currentUser;
     return new Promise((resolve, reject) => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
@@ -260,15 +276,18 @@ export default class GameManager {
           occur.forEach((count: number, uid: string) => {
             const name = idNameMap.get(uid);
             if (!name) {
-              return reject("Name was not in map. So the answer was not a current player");
+              reject(new Error("Name was not in map. So the answer was not a current player"));
+              return;
             }
             const theirAnswer = playerAnwered.get(uid);
             if (!theirAnswer) {
-              return reject("Well, fuck. That is an error that should not happen. Memory leak?");
+              reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
+              return;
             }
             const theirAnswerReadable = idNameMap.get(theirAnswer);
             if (!theirAnswerReadable) {
-              return reject("Well, fuck. That is an error that should not happen. Memory leak?");
+              reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
+              return;
             }
             sipsPerPlayer.push(new Player(uid, name, count, theirAnswerReadable));
           });
@@ -278,17 +297,20 @@ export default class GameManager {
             if (!occuredKeys.has(uid)) {
               const theirAnswer = playerAnwered.get(uid);
               if (!theirAnswer) {
-                return reject("Well, fuck. That is an error that should not happen. Memory leak?");
+                reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
+                return;
               }
               const theirAnswerReadable = idNameMap.get(theirAnswer);
               if (!theirAnswerReadable) {
-                return reject("Well, fuck. That is an error that should not happen. Memory leak?");
+                reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
+                return;
               }
               sipsPerPlayer.push(new Player(uid, name, 0, theirAnswerReadable));
             }
           });
 
           resolve(sipsPerPlayer);
+          return Promise.resolve();
         })
         .catch(reject);
     });
@@ -300,7 +322,8 @@ export default class GameManager {
     const user = auth.currentUser;
     return new Promise((resolve, reject) => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
@@ -313,20 +336,22 @@ export default class GameManager {
           if (data) {
             resolve(data);
           } else {
-            reject("Player not found");
+            reject(new Error("Player not found"));
           }
+          return Promise.resolve();
         })
         .catch(reject);
     });
   }
 
-  static afterEval(gameID: string, results: Player[]) {
+  static afterEval(gameID: string, results: Player[]): Promise<unknown> {
     let sipsIHaveToTake = 0;
     const auth = firebase.auth();
     const user = auth.currentUser;
     return new Promise((resolve, reject) => {
       if (!user) {
-        return reject();
+        reject();
+        return;
       }
 
       const { uid } = user;
@@ -335,19 +360,17 @@ export default class GameManager {
           sipsIHaveToTake = player.sips;
         }
       });
-      GameManager.getMyData(gameID).then((data: Player) => {
-        const gameRef = GameManager.getGameByID(gameID);
-        const sipsToSubmit = data.sips + sipsIHaveToTake;
-        gameRef
-          .collection("players")
-          .doc(uid)
-          .update({
+      GameManager.getMyData(gameID)
+        .then((data: Player) => {
+          const gameRef = GameManager.getGameByID(gameID);
+          const sipsToSubmit = data.sips + sipsIHaveToTake;
+          return gameRef.collection("players").doc(uid).update({
             sips: sipsToSubmit,
             answer: null,
-          })
-          .then(resolve)
-          .catch(reject);
-      });
+          });
+        })
+        .then(resolve)
+        .catch(reject);
     });
   }
 }

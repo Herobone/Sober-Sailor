@@ -56,7 +56,10 @@ module.exports = {
     "unicorn/filename-case": [
       "warn",
       {
-        "case": "pascalCase"
+        "cases": {
+          "pascalCase": true,
+          "camelCase": true
+        }
       }
     ],
     "@typescript-eslint/no-empty-interface": "off",
