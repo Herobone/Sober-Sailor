@@ -18,7 +18,7 @@
 
 import React, { Component, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
-import GameManager from "../../helper/gameManager";
+import { GameManager } from "../../helper/gameManager";
 import { playerConverter } from "../../helper/models/Player";
 
 interface Props {
@@ -29,37 +29,40 @@ interface State {
   leaderboard: Map<string, number>;
 }
 
-export default class Leaderboard extends Component<Props, State> {
-  state = {
-    leaderboard: new Map<string, number>(),
-  };
-
+export class Leaderboard extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      leaderboard: new Map<string, number>(),
+    };
     this.updateLeaderboard = this.updateLeaderboard.bind(this);
     this.prepareLeaderboard = this.prepareLeaderboard.bind(this);
   }
 
-  updateLeaderboard() {
+  updateLeaderboard(): void {
     const lead = GameManager.getGameByID(this.props.gameID)
       .collection("players")
       .withConverter(playerConverter)
       .orderBy("sips", "desc");
     const leaderboard = new Map<string, number>();
-    lead.get().then((query) => {
-      query.forEach((doc) => {
-        const data = doc.data();
-        if (data && doc.id !== "register") {
-          leaderboard.set(data.nickname, data.sips);
-        }
-      });
-      this.setState({
-        leaderboard,
-      });
-    });
+    lead
+      .get()
+      .then((query) => {
+        query.forEach((doc) => {
+          const data = doc.data();
+          if (data && doc.id !== "register") {
+            leaderboard.set(data.nickname, data.sips);
+          }
+        });
+        this.setState({
+          leaderboard,
+        });
+        return Promise.resolve();
+      })
+      .catch(console.error);
   }
 
-  prepareLeaderboard() {
+  prepareLeaderboard(): ReactElement[] {
     const vals: ReactElement[] = [];
     let counter = 1;
     this.state.leaderboard.forEach((value: number, key: string) => {
@@ -76,7 +79,7 @@ export default class Leaderboard extends Component<Props, State> {
     return vals;
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div>
         <h1 className="leaderboard-header">

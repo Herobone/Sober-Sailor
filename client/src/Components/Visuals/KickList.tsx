@@ -1,6 +1,6 @@
 import firebase from "firebase";
 import React, { Component, ReactElement } from "react";
-import Alerts, { Alert } from "../../helper/AlertTypes";
+import { Alerts, Alert } from "../../helper/AlertTypes";
 import { Register } from "../../helper/models/Register";
 
 interface Props {
@@ -16,25 +16,26 @@ interface KickPlayer {
   playerID: string;
 }
 
-export default class KickList extends Component<Props, State> {
-  state = {
-    shown: false,
-  };
-
+export class KickList extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      shown: false,
+    };
     this.show = this.show.bind(this);
   }
 
-  show(shown?: boolean) {
+  show(shown?: boolean): void {
     if (shown === undefined) {
-      this.setState({ shown: !this.state.shown });
+      this.setState((prev) => {
+        return { shown: !prev.shown };
+      });
     } else {
       this.setState({ shown });
     }
   }
 
-  render() {
+  render(): JSX.Element | null {
     if (this.state.shown) {
       const pltRaw = localStorage.getItem("playerLookupTable");
       const vals: ReactElement[] = [];
@@ -44,22 +45,25 @@ export default class KickList extends Component<Props, State> {
         register.playerUidMap.forEach((username: string, uid: string) => {
           vals.push(
             <li
+              // eslint-disable-next-line react/no-array-index-key
               key={`kick${uid}`}
-              onClick={() => {
-                const callData: KickPlayer = {
-                  gameID: this.props.gameID,
-                  playerID: uid,
-                };
-                const kickPlayer = firebase.functions().httpsCallable("kickPlayer");
-                kickPlayer(callData)
-                  .then(() => {
-                    this.setState({ shown: false });
-                  })
-                  .catch(console.warn);
-              }}
               className="w3-bar-item w3-button"
             >
-              {username}
+              <button
+                type="submit"
+                onClick={() => {
+                  const callData: KickPlayer = {
+                    gameID: this.props.gameID,
+                    playerID: uid,
+                  };
+                  const kickPlayer = firebase.functions().httpsCallable("kickPlayer");
+                  kickPlayer(callData)
+                    .then(() => this.setState({ shown: false }))
+                    .catch(console.warn);
+                }}
+              >
+                {username}
+              </button>
             </li>,
           );
         });

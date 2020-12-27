@@ -6,41 +6,43 @@ interface Props {
   callback: (value: number) => void;
 }
 
-class ContextMenu extends Component<Props> {
-  state = {
-    xPos: "0px",
-    yPos: "0px:",
-    showMenu: false,
-  };
+interface State {
+  xPos: string;
+  yPos: string;
+  showMenu: boolean;
+}
 
+export class ContextMenu extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      xPos: "0px",
+      yPos: "0px:",
+      showMenu: false,
+    };
     this.handleClick = this.handleClick.bind(this);
     this.handleContextMenu = this.handleContextMenu.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     document.addEventListener("click", this.handleClick);
     document.addEventListener("contextmenu", this.handleContextMenu);
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     document.removeEventListener("click", this.handleClick);
     document.removeEventListener("contextmenu", this.handleContextMenu);
   }
 
-  handleClick() {
+  handleClick(): void {
     if (this.state.showMenu) this.setState({ showMenu: false });
   }
 
-  handleContextMenuClick(e: number, element: string) {
+  handleContextMenuClick(e: number): void {
     this.props.callback(e);
-    this.setState({
-      selected: element,
-    });
   }
 
-  handleContextMenu(e: MouseEvent) {
+  handleContextMenu(e: MouseEvent): void {
     e.preventDefault();
 
     this.setState({
@@ -50,14 +52,16 @@ class ContextMenu extends Component<Props> {
     });
   }
 
-  render() {
+  render(): JSX.Element | null {
     const { showMenu, yPos, xPos } = this.state;
     if (showMenu) {
       const vals: ReactElement[] = [];
       this.props.content.forEach((element: string, key: number) => {
         vals.push(
-          <li key={key} onClick={() => this.handleContextMenuClick(key, element)} className="w3-bar-item w3-button">
-            <FormattedMessage id={element} />
+          <li key={`contextmenu${element}`} className="w3-bar-item w3-button">
+            <button onClick={() => this.handleContextMenuClick(key)} type="submit">
+              <FormattedMessage id={element} />
+            </button>
           </li>,
         );
       });
@@ -76,5 +80,3 @@ class ContextMenu extends Component<Props> {
     return null;
   }
 }
-
-export default ContextMenu;

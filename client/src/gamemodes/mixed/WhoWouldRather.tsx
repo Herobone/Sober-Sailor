@@ -18,7 +18,7 @@
 
 import React, { Component, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
-import GameManager from "../../helper/gameManager";
+import { GameManager } from "../../helper/gameManager";
 import { Player } from "../../helper/models/Player";
 
 interface Props {
@@ -32,35 +32,37 @@ interface State {
   answer: string | null;
 }
 
-export default class WhoWouldRather extends Component<Props, State> {
-  state = {
-    players: [],
-    inputLocked: true,
-    answer: null,
-  };
-
+export class WhoWouldRather extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      players: [],
+      inputLocked: true,
+      answer: null,
+    };
     this.lockInput = this.lockInput.bind(this);
   }
 
-  componentDidMount() {
-    GameManager.getAllPlayers(this.props.gameID).then((players) => this.setState({ players }));
+  componentDidMount(): void {
+    GameManager.getAllPlayers(this.props.gameID)
+      .then((players) => this.setState({ players }))
+      .catch(console.error);
   }
 
-  lockInput(lock: boolean) {
+  lockInput(lock: boolean): void {
     this.setState({
       inputLocked: lock,
     });
   }
 
-  render() {
-    let values: ReactElement[] = [];
+  render(): JSX.Element {
+    const values: ReactElement[] = [];
     this.state.players.forEach((element: Player) => {
       values.push(
         <div key={element.uid}>
           <button
             className="wwr-player-select"
+            type="submit"
             onClick={() => {
               GameManager.setAnswer(this.props.gameID, element.uid);
               this.setState({

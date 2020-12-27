@@ -22,21 +22,21 @@ import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 import Cookies from "universal-cookie";
 
-import Alerts, { Alert } from "../../../helper/AlertTypes";
+import { Alert, Alerts } from "../../../helper/AlertTypes";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
-import Leaderboard from "../../Visuals/Leaderboard";
-import WhoWouldRather from "../../../gamemodes/mixed/WhoWouldRather";
+import { Leaderboard } from "../../Visuals/Leaderboard";
+import { WhoWouldRather } from "../../../gamemodes/mixed/WhoWouldRather";
 
 import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
 import { getRandomTask } from "../../../helper/TaskUtils";
-import TruthOrDare from "../../../gamemodes/mixed/TruthOrDare";
+import { TruthOrDare } from "../../../gamemodes/mixed/TruthOrDare";
 import { Player } from "../../../helper/models/Player";
-import ResultPage from "../../Visuals/ResultPage";
+import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";
 import { Task } from "../../../helper/models/task";
 import { Register } from "../../../helper/models/Register";
-import KickList from "../../Visuals/KickList";
+import { KickList } from "../../Visuals/KickList";
 
 interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;

@@ -1,4 +1,4 @@
-import Util from "./Util";
+import { Util } from "./Util";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -26,6 +26,7 @@ export function storeToLocalFromGit(task: string, lang: string): Promise<string[
       .then((json) => {
         localStorage.setItem(`${task}_${lang}`, json);
         resolve(JSON.parse(json));
+        return Promise.resolve();
       })
       .catch((error) => {
         console.error("Error while downloading JSON from GitHub!", error);
@@ -39,10 +40,8 @@ export function getTasks(task: string, lang: string): Promise<string[]> {
     const stored = localStorage.getItem(`${task}_${lang}`);
     if (stored) {
       resolve(JSON.parse(stored));
-      console.log("From local");
     } else {
       storeToLocalFromGit(task, lang).then(resolve).catch(reject);
-      console.log("Form server");
     }
   });
 }
@@ -51,7 +50,7 @@ export function getRandomTask(task: string, lang: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     getTasks(task, lang)
       .then((tasks) => {
-        resolve(Util.selectRandom(tasks));
+        return resolve(Util.selectRandom(tasks));
       })
       .catch(reject);
   });

@@ -20,7 +20,7 @@ import firebase from "firebase";
 import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { Register } from "../../helper/models/Register";
-import { SingleTargetRequest, SingleTargetResult } from "../../helper/models/SingleTarget";
+import { SingleTargetRequest } from "../../helper/models/SingleTarget";
 
 interface Props {
   question: string;
@@ -33,36 +33,33 @@ interface State {
   answer: boolean | null;
 }
 
-export default class TruthOrDare extends Component<Props, State> {
-  state = {
-    answer: null,
-  };
-
+export class TruthOrDare extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      answer: null,
+    };
+
     this.setAnswer = this.setAnswer.bind(this);
     this.reset = this.reset.bind(this);
   }
 
-  setAnswer(answer: boolean) {
+  setAnswer(answer: boolean): void {
     this.setState({
       answer,
     });
     const callData: SingleTargetRequest = { answer, gameID: this.props.gameID };
     const singleTarget = firebase.functions().httpsCallable("singleTarget");
-    singleTarget(callData).then((d) => {
-      const { data } = d;
-      console.log(data);
-    });
+    singleTarget(callData).catch(console.error);
   }
 
-  reset() {
+  reset(): void {
     this.setState({
       answer: null,
     });
   }
 
-  render() {
+  render(): JSX.Element {
     const pltRaw = localStorage.getItem("playerLookupTable");
 
     let targetName = "Error";
@@ -74,7 +71,7 @@ export default class TruthOrDare extends Component<Props, State> {
 
     const user = firebase.auth().currentUser;
     if (!user) {
-      return <div className={"error"}>Error user not logged in! This area should be restricted!</div>;
+      return <div className="error">Error user not logged in! This area should be restricted!</div>;
     }
     return (
       <div>
@@ -92,12 +89,12 @@ export default class TruthOrDare extends Component<Props, State> {
         />
         <br />
         {this.props.target === user.uid && this.state.answer === null && (
-          <div className={"target-area"}>
-            <button onClick={() => this.setAnswer(true)}>
-              <FormattedMessage id={"elements.truthordare.dare"} />
+          <div className="target-area">
+            <button type="submit" onClick={() => this.setAnswer(true)}>
+              <FormattedMessage id="elements.truthordare.dare" />
             </button>
-            <button onClick={() => this.setAnswer(false)}>
-              <FormattedMessage id={"elements.truthordare.drink"} />
+            <button type="submit" onClick={() => this.setAnswer(false)}>
+              <FormattedMessage id="elements.truthordare.drink" />
             </button>
           </div>
         )}

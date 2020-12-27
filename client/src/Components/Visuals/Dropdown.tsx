@@ -1,14 +1,14 @@
-import React, { Component, RefObject } from "react";
+import React, { Component, ReactElement, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 
 interface Props {
-  content: { [key: string]: string };
+  content: Map<string, string>;
   callback: (value: string) => void;
   selected?: string;
 }
 
 interface State {
-  selected: string | null;
+  selected: string | undefined;
 }
 
 export class Dropdown extends Component<Props, State> {
@@ -21,17 +21,17 @@ export class Dropdown extends Component<Props, State> {
     this.closeDropdown = this.closeDropdown.bind(this);
 
     this.state = {
-      selected: this.props.selected ? this.props.content[this.props.selected] : null,
+      selected: this.props.selected ? this.props.content.get(this.props.selected) : undefined,
     };
   }
 
-  toggleDropdown() {
+  toggleDropdown(): void {
     if (this.ref === null) {
       return;
     }
     if (this.ref.current !== null) {
       const cur = this.ref.current;
-      if (cur.className.indexOf("w3-show") === -1) {
+      if (cur.className.includes("w3-show")) {
         cur.className += " w3-show";
       } else {
         cur.className = cur.className.replace(" w3-show", "");
@@ -39,7 +39,7 @@ export class Dropdown extends Component<Props, State> {
     }
   }
 
-  handleDropdownClick(e: string, element: string) {
+  handleDropdownClick(e: string, element: string): void {
     this.props.callback(e);
     this.closeDropdown();
     this.setState({
@@ -47,7 +47,7 @@ export class Dropdown extends Component<Props, State> {
     });
   }
 
-  closeDropdown() {
+  closeDropdown(): void {
     if (this.ref === null) {
       return;
     }
@@ -57,21 +57,24 @@ export class Dropdown extends Component<Props, State> {
     }
   }
 
-  render() {
-    const vals = [];
-    for (const key in this.props.content) {
-      if (this.props.content.hasOwnProperty(key)) {
-        const element = this.props.content[key];
-        vals.push(
-          <div key={key} onClick={() => this.handleDropdownClick(key, element)} className="w3-bar-item w3-button">
-            {element}
-          </div>,
-        );
-      }
-    }
+  render(): JSX.Element {
+    const vals: ReactElement[] = [];
+    this.props.content.forEach((element: string, key: string) => {
+      vals.push(
+        <button
+          // eslint-disable-next-line react/no-array-index-key
+          key={`dropdown${key}`}
+          type="submit"
+          onClick={() => this.handleDropdownClick(key, element)}
+          className="w3-bar-item w3-button"
+        >
+          {element}
+        </button>,
+      );
+    });
     return (
       <div className="w3-block w3-black">
-        <button onClick={this.toggleDropdown} className="w3-button w3-black">
+        <button onClick={this.toggleDropdown} className="w3-button w3-black" type="button">
           {this.state.selected !== null && this.state.selected}
           {this.state.selected === null && <FormattedMessage id="elements.dropdown.select" />}{" "}
           <i className="fa fa-chevron-circle-down" aria-hidden="true" />
@@ -83,5 +86,3 @@ export class Dropdown extends Component<Props, State> {
     );
   }
 }
-
-export default Dropdown;

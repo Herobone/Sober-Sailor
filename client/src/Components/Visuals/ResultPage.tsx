@@ -7,24 +7,24 @@ interface State {
   result: Player[];
 }
 
-export default class ResultPage extends Component<Props, State> {
-  state = {
-    result: [],
-  };
-
+export class ResultPage extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      result: [],
+    };
+
     this.updateResults = this.updateResults.bind(this);
     this.prepareResults = this.prepareResults.bind(this);
   }
 
-  public updateResults(results: Player[]) {
+  public updateResults(results: Player[]): void {
     this.setState({
       result: results,
     });
   }
 
-  prepareResults() {
+  prepareResults(): ReactElement[] {
     const vals: ReactElement[] = [];
     let counter = 1;
     this.state.result.forEach((entry: Player) => {
@@ -42,7 +42,7 @@ export default class ResultPage extends Component<Props, State> {
     return vals;
   }
 
-  render() {
+  render(): JSX.Element {
     if (this.state.result.length <= 0) {
       return <div />;
     }

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 export interface Alert {
   defaultHeader: string;
   color: string;
@@ -27,12 +28,15 @@ export class Error implements Alert {
   color = "w3-red";
 }
 
-export default class Alerts {
+export class Alerts {
   static WARNING: Warning = new Warning();
 
+  // This overwrites the standard Error class. Use only in this file!
+  // eslint-disable-next-line unicorn/error-message
   static ERROR: Error = new Error();
 
   static INFO: Info = new Info();
 
   static SUCCESS: Success = new Success();
 }
+/* eslint-enable max-classes-per-file */
