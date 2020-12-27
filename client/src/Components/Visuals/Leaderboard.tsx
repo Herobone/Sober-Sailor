@@ -1,4 +1,4 @@
-/*****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
  *
@@ -16,90 +16,89 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from 'react';
-import GameManager from "../../helper/gameManager";
+import React, { Component, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
-import { playerConverter } from '../../helper/models/Player';
+import GameManager from "../../helper/gameManager";
+import { playerConverter } from "../../helper/models/Player";
 
 interface Props {
-    gameID: string;
+  gameID: string;
 }
 
 interface State {
-    leaderboard: Map<string, number>;
+  leaderboard: Map<string, number>;
 }
 
 export default class Leaderboard extends Component<Props, State> {
-    state = {
-        leaderboard: new Map<string, number>()
-    }
+  state = {
+    leaderboard: new Map<string, number>(),
+  };
 
-    constructor(props: Props) {
-        super(props);
-        this.updateLeaderboard = this.updateLeaderboard.bind(this);
-        this.prepareLeaderboard = this.prepareLeaderboard.bind(this);
-    }
+  constructor(props: Props) {
+    super(props);
+    this.updateLeaderboard = this.updateLeaderboard.bind(this);
+    this.prepareLeaderboard = this.prepareLeaderboard.bind(this);
+  }
 
-    updateLeaderboard() {
-        const lead = GameManager.getGameByID(this.props.gameID).collection("players").withConverter(playerConverter).orderBy("sips", "desc");
-        const leaderboard = new Map<string, number>();
-        lead.get().then((query) => {
-            query.forEach((doc) => {
-                const data = doc.data();
-                if (data && doc.id !== "register") {
-                    leaderboard.set(data.nickname, data.sips);
-                }
-            });
-            this.setState({
-                leaderboard
-            });
-        });
-    }
+  updateLeaderboard() {
+    const lead = GameManager.getGameByID(this.props.gameID)
+      .collection("players")
+      .withConverter(playerConverter)
+      .orderBy("sips", "desc");
+    const leaderboard = new Map<string, number>();
+    lead.get().then((query) => {
+      query.forEach((doc) => {
+        const data = doc.data();
+        if (data && doc.id !== "register") {
+          leaderboard.set(data.nickname, data.sips);
+        }
+      });
+      this.setState({
+        leaderboard,
+      });
+    });
+  }
 
-    prepareLeaderboard() {
+  prepareLeaderboard() {
+    const vals: ReactElement[] = [];
+    let counter = 1;
+    this.state.leaderboard.forEach((value: number, key: string) => {
+      vals.push(
+        <tr key={`leaderboard${counter}`}>
+          <td className="leaderboard-place">{counter}</td>
+          <td className="leaderboard-nickname">{key}</td>
+          <td className="leaderboard-score">{value}</td>
+        </tr>,
+      );
+      counter++;
+    });
 
-        let vals: ReactElement[] = [];
-        let counter = 1;
-        this.state.leaderboard.forEach((value: number, key: string) => {
-            vals.push(
-                <tr key={"leaderboard" + counter}>
-                    <td className={"leaderboard-place"}>{counter}</td>
-                    <td className={"leaderboard-nickname"}>{key}</td>
-                    <td className={"leaderboard-score"}>{value}</td>
-                </tr>
-            );
-            counter++;
-        });
+    return vals;
+  }
 
-        return vals;
-
-    }
-
-    render() {
-        return (
-            <div>
-                <h1 className={"leaderboard-header"}><FormattedMessage id={"elements.leaderboard"} /></h1>
-                <table className={"leaderboard"}>
-                    <thead>
-                        <tr>
-                            <th className={"leaderboard-header-rank"}>
-                                <FormattedMessage id={"elements.general.rank"} />
-                            </th>
-                            <th className={"leaderboard-header-nickname"}>
-                                <FormattedMessage
-                                    id={"general.nickname"} />
-                            </th>
-                            <th className={"leaderboard-header-score"}>
-                                <FormattedMessage id={"general.sips"} />
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.prepareLeaderboard()}
-                    </tbody>
-                </table>
-            </div>
-
-        )
-    }
+  render() {
+    return (
+      <div>
+        <h1 className="leaderboard-header">
+          <FormattedMessage id="elements.leaderboard" />
+        </h1>
+        <table className="leaderboard">
+          <thead>
+            <tr>
+              <th className="leaderboard-header-rank">
+                <FormattedMessage id="elements.general.rank" />
+              </th>
+              <th className="leaderboard-header-nickname">
+                <FormattedMessage id="general.nickname" />
+              </th>
+              <th className="leaderboard-header-score">
+                <FormattedMessage id="general.sips" />
+              </th>
+            </tr>
+          </thead>
+          <tbody>{this.prepareLeaderboard()}</tbody>
+        </table>
+      </div>
+    );
+  }
 }

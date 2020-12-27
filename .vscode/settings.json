@@ -13,5 +13,11 @@
         "**/*.code-search": true,
         "client/build": true,
         "functions/lib": true
-    }
+    },
+    "eslint.workingDirectories": [
+        {
+            "mode": "auto"
+        }
+    ],
+    "editor.formatOnSave": true
 }

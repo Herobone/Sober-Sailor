@@ -1,4 +1,4 @@
-/*****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
  *
@@ -16,32 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {ReactElement} from 'react';
-import '../../../css/App.css';
-import {Alert} from '../../../helper/AlertTypes';
-import {FormattedMessage} from "react-intl";
+import React, { ReactElement } from "react";
+import "../../../css/App.css";
+import { FormattedMessage } from "react-intl";
+import { Alert } from "../../../helper/AlertTypes";
 
 interface Props {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-    gameID: string;
+  createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+  gameID: string;
 }
 
-interface State {
-
-}
+interface State {}
 
 class TruthOrDare extends React.Component<Props, State> {
-
-    render() {
-        console.log(this.props.gameID)
-        return (
-            <div className="w3-center">
-                <FormattedMessage id="gamemodes.truthordare"/>
-                {this.props.gameID}
-            </div>
-        );
-    }
-
+  render() {
+    console.log(this.props.gameID);
+    return (
+      <div className="w3-center">
+        <FormattedMessage id="gamemodes.truthordare" />
+        {this.props.gameID}
+      </div>
+    );
+  }
 }
 
 export default TruthOrDare;

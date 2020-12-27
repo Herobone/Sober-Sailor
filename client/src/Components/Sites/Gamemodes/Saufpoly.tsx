@@ -1,4 +1,4 @@
-/*****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
  *
@@ -16,38 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {ReactElement} from 'react';
-import '../../../css/App.css';
-import {Alert} from '../../../helper/AlertTypes';
-import {FormattedMessage} from "react-intl";
-import GameProvider from "../../Functional/GameProvider";
+import React, { ReactElement } from "react";
+import "../../../css/App.css";
+import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
+import { Alert } from "../../../helper/AlertTypes";
+import GameProvider from "../../Functional/GameProvider";
 
 interface Props {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-    gameID: string;
+  createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+  gameID: string;
 }
 
-interface State {
-
-}
+interface State {}
 
 class Saufpoly extends React.Component<Props, State> {
-
-    render() {
-        return (
-            <GameProvider createAlert={this.props.createAlert}>
-                <div className="w3-center">
-                    <FormattedMessage id="gamemodes.saufpoly"/>
-                    <br/>
-                    Game ID: {this.props.gameID}
-                    <br/>
-                    User ID: {firebase.auth().currentUser?.uid}
-                </div>
-            </GameProvider>
-        );
-    }
-
+  render() {
+    return (
+      <GameProvider createAlert={this.props.createAlert}>
+        <div className="w3-center">
+          <FormattedMessage id="gamemodes.saufpoly" />
+          <br />
+          Game ID: {this.props.gameID}
+          <br />
+          User ID: {firebase.auth().currentUser?.uid}
+        </div>
+      </GameProvider>
+    );
+  }
 }
 
 export default Saufpoly;
