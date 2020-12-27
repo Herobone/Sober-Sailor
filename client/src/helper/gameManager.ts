@@ -22,6 +22,14 @@ import { Game, gameConverter } from "./models/Game";
 import { Register, registerConverter } from "./models/Register";
 
 export class GameManager {
+  static getGameID(): string {
+    const gameID = localStorage.getItem("gameID");
+    if (!gameID) {
+      throw new Error("Game ID not set");
+    }
+    return gameID;
+  }
+
   static createGame(): Promise<string> {
     const auth = firebase.auth();
     const user = auth.currentUser;
@@ -45,16 +53,31 @@ export class GameManager {
     });
   }
 
-  static getGameByID(gameID: string): firebase.firestore.DocumentReference<Game> {
+  static getGame(): firebase.firestore.DocumentReference<Game> {
+    return GameManager.getGameByID(GameManager.getGameID());
+  }
+
+  private static getGameByID(gameID: string): firebase.firestore.DocumentReference<Game> {
     return GameManager.getRawGameByID(gameID).withConverter(gameConverter);
   }
 
-  static getRawGameByID(gameID: string): firebase.firestore.DocumentReference {
+  static getRawGame(): firebase.firestore.DocumentReference {
+    return GameManager.getRawGameByID(GameManager.getGameID());
+  }
+
+  private static getRawGameByID(gameID: string): firebase.firestore.DocumentReference {
     const db = firebase.firestore();
     return db.collection("games").doc(gameID);
   }
 
   static joinGame(
+    gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
+    playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void,
+  ): Promise<unknown> {
+    return GameManager.joinGameP(GameManager.getGameID(), gameEvent, playerEvent);
+  }
+
+  private static joinGameP(
     gameID: string,
     gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
     playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void,
@@ -93,7 +116,11 @@ export class GameManager {
     });
   }
 
-  static leaveGame(gameID: string): void {
+  static leaveGame(): void {
+    return GameManager.leaveGameP(GameManager.getGameID());
+  }
+
+  private static leaveGameP(gameID: string): void {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
@@ -118,6 +145,7 @@ export class GameManager {
     };
 
     localStorage.removeItem("playerLookupTable");
+    localStorage.removeItem("gameID");
 
     GameManager.amIHost(gameID)
       .then((host) => {
@@ -130,7 +158,11 @@ export class GameManager {
       .catch(console.error);
   }
 
-  static amIHost(gameID: string): Promise<boolean> {
+  static amIHost(): Promise<boolean> {
+    return GameManager.amIHostP(GameManager.getGameID());
+  }
+
+  private static amIHostP(gameID: string): Promise<boolean> {
     const auth = firebase.auth();
     const user = auth.currentUser;
 
@@ -157,7 +189,11 @@ export class GameManager {
     });
   }
 
-  static getAllPlayers(gameID: string): Promise<Player[]> {
+  static getAllPlayers(): Promise<Player[]> {
+    return GameManager.getAllPlayersP(GameManager.getGameID());
+  }
+
+  private static getAllPlayersP(gameID: string): Promise<Player[]> {
     const players: Player[] = [];
     const gameRef = GameManager.getGameByID(gameID);
     const playerRef = gameRef.collection("players");
@@ -179,7 +215,11 @@ export class GameManager {
     });
   }
 
-  static transferHostShip(gameID: string): Promise<unknown> {
+  static transferHostShip(): Promise<unknown> {
+    return GameManager.transferHostShipP(GameManager.getGameID());
+  }
+
+  private static transferHostShipP(gameID: string): Promise<unknown> {
     const auth = firebase.auth();
     const user = auth.currentUser;
     return new Promise((resolve, reject) => {
