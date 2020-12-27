@@ -75,6 +75,7 @@ module.exports = {
         }
       }],
     "no-plusplus": "off",
+    "unicorn/no-null": "off",
 
   },
 }
