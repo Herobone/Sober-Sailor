@@ -8,20 +8,20 @@ interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 
-export default class Logout extends Component<Props> {
-  componentDidMount() {
+export class Logout extends Component<Props> {
+  componentDidMount(): void {
     firebase
       .auth()
       .signOut()
       .then(() => {
-        this.props.createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
+        return this.props.createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
       })
       .catch(() => {
         this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
       });
   }
 
-  render() {
+  render(): JSX.Element {
     return <Redirect to="/login" />;
   }
 }

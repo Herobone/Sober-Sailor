@@ -1,9 +1,9 @@
-import React, { Component, ReactElement } from "react";
+import React, { PureComponent, ReactElement } from "react";
 import firebase from "firebase";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import Dropdown from "../Visuals/Dropdown";
-import Column from "../Visuals/Column";
+import { Dropdown } from "../Visuals/Dropdown";
+import { Column } from "../Visuals/Column";
 import { Alert } from "../../helper/AlertTypes";
 
 interface Props {
@@ -12,8 +12,8 @@ interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 
-export class Settings extends Component<Props> {
-  render() {
+export class Settings extends PureComponent<Props> {
+  render(): JSX.Element {
     const options = {
       de: "Deutsch",
       en: "English",
@@ -47,5 +47,3 @@ export class Settings extends Component<Props> {
     );
   }
 }
-
-export default Settings;

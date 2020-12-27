@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-use-before-define
 import React, { PureComponent, ReactElement } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Settings from "../Sites/Settings";
+import { Settings } from "../Sites/Settings";
 import { Alert } from "../../helper/AlertTypes";
-import Login from "../Sites/Login";
-import Logout from "./Logout";
-import Home from "../Sites/Home";
-import Mixed from "../Sites/Gamemodes/Mixed";
-import TruthOrDare from "../Sites/Gamemodes/TruthOrDare";
-import Saufpoly from "../Sites/Gamemodes/Saufpoly";
-import GameProvider from "./GameProvider";
+import { Login } from "../Sites/Login";
+import { Logout } from "./Logout";
+import {Home} from "../Sites/Home";
+import {Mixed} from "../Sites/Gamemodes/Mixed";
+import {TruthOrDare} from "../Sites/Gamemodes/TruthOrDare";
+import {Saufpoly} from "../Sites/Gamemodes/Saufpoly";
+import { GameProvider } from "./GameProvider";
 
 interface Props {
   changeLanguage: (locale: string) => void;
@@ -18,8 +18,7 @@ interface Props {
 }
 
 export class Routed extends PureComponent<Props> {
-
-  render():JSX.Element {
+  render(): JSX.Element {
     return (
       <div className="w3-container">
         <Router>

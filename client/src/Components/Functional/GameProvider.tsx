@@ -29,15 +29,11 @@ interface Props {
 }
 
 interface State {
-  user: firebase.User | null;
+  user?: firebase.User;
 }
 
-export default class GameProvider extends Component<Props, State> {
+export class GameProvider extends Component<Props, State> {
   nameInputRef!: React.RefObject<HTMLInputElement>;
-
-  state = {
-    user: null,
-  };
 
   constructor(props: Props) {
     super(props);
@@ -48,7 +44,7 @@ export default class GameProvider extends Component<Props, State> {
     this.setName = this.setName.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     const { currentUser } = firebase.auth();
     if (!currentUser) {
       firebase
@@ -69,22 +65,12 @@ export default class GameProvider extends Component<Props, State> {
           user,
         });
       } else {
-        console.log("Logging out");
+        console.info("Logging out");
       }
     });
   }
 
-  createGame() {
-    if (!this.props.gameURL) {
-      this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
-      return;
-    }
-    GameManager.createGame().then((gameID) => {
-      window.location.pathname = `/${this.props.gameURL}/${gameID}`;
-    });
-  }
-
-  setName() {
+  setName(): void {
     const { currentUser } = firebase.auth();
     const input = this.nameInputRef.current;
 
@@ -102,14 +88,27 @@ export default class GameProvider extends Component<Props, State> {
     this.forceUpdate();
   }
 
-  render() {
+  createGame(): void {
+    if (!this.props.gameURL) {
+      this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
+      return;
+    }
+    GameManager.createGame()
+      .then((gameID) => {
+        window.location.pathname = `/${this.props.gameURL}/${gameID}`;
+        return Promise.resolve();
+      })
+      .catch(console.error);
+  }
+
+  render(): JSX.Element {
     const { gameID } = this.props;
     const { user } = this.state;
     if (!gameID) {
       return (
         <div className="w3-center">
           <p className="sailor-creategame-button">
-            <button onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
+            <button type="button" onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
               <FormattedMessage id="actions.game.create" />
             </button>
           </p>
@@ -128,7 +127,7 @@ export default class GameProvider extends Component<Props, State> {
         return (
           <div>
             {this.props.children}
-            <button onClick={() => GameManager.leaveGame(gameID)}>
+            <button type="button" onClick={() => GameManager.leaveGame(gameID)}>
               <FormattedMessage id="actions.leave" />
             </button>
           </div>
@@ -140,7 +139,7 @@ export default class GameProvider extends Component<Props, State> {
             <FormattedMessage id="account.descriptors.finishsignup" />
           </h1>
           <p>
-            <label>
+            <label htmlFor="name-input">
               <b>
                 <FormattedMessage id="account.descriptors.yourname" />
               </b>
@@ -148,6 +147,7 @@ export default class GameProvider extends Component<Props, State> {
             <br />
             <input
               ref={this.nameInputRef}
+              id="name-imput"
               className="w3-input w3-border w3-round"
               name="name"
               type="text"
@@ -156,7 +156,7 @@ export default class GameProvider extends Component<Props, State> {
             />
           </p>
           <br />
-          <button className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
+          <button type="button" className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
             <FormattedMessage id="general.done" />
           </button>
         </div>

@@ -14,12 +14,6 @@ interface State {
 }
 
 export class Login extends Component<Props, State> {
-  unregisterAuthObserver!: firebase.Unsubscribe;
-
-  state = {
-    isSignedIn: false,
-  };
-
   // Configure FirebaseUI.
   uiConfig = {
     // Popup signin flow rather than redirect flow.
@@ -28,10 +22,10 @@ export class Login extends Component<Props, State> {
     signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
     callbacks: {
       // Avoid redirects after sign-in.
-      signInSuccessWithAuthResult: () => {
+      signInSuccessWithAuthResult: (): boolean => {
         return false;
       },
-      signInFailure: (error: firebaseui.auth.AuthUIError) => {
+      signInFailure: (error: firebaseui.auth.AuthUIError): Promise<void> => {
         this.props.createAlert(Alerts.ERROR, error.message);
         console.warn(error.message);
         return new Promise<void>((resolve) => {
@@ -41,45 +35,33 @@ export class Login extends Component<Props, State> {
     },
   };
 
-  componentDidMount() {
-    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
-      this.setState({ isSignedIn: !!user });
-    });
+  componentDidMount(): void {
     const { currentUser } = firebase.auth();
-    if (currentUser) {
-      if (currentUser.isAnonymous) {
-        firebase
-          .auth()
-          .signOut()
-          .then(() => this.forceUpdate());
-        console.log("Logged out of anonymous");
-      }
+    if (currentUser && currentUser.isAnonymous) {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => this.forceUpdate())
+        .catch(console.error);
+      console.info("Logged out of anonymous");
     }
   }
 
-  // Make sure we un-register Firebase observers when the component unmounts.
-  componentWillUnmount() {
-    this.unregisterAuthObserver();
-  }
-
-  render() {
+  render(): JSX.Element {
     const { currentUser } = firebase.auth();
     return (
       <div className="login-page">
-        {
-          //! currentUser &&
-          <div>
-            <h1 className="w3-center">
-              <FormattedMessage id="general.welcome" />
-              !
-              <br />
-            </h1>
-            <h3 className="w3-center">
-              <FormattedMessage id="account.descriptors.signinneeded" />
-            </h3>
-            <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()} />
-          </div>
-        }
+        <div>
+          <h1 className="w3-center">
+            <FormattedMessage id="general.welcome" />
+            !
+            <br />
+          </h1>
+          <h3 className="w3-center">
+            <FormattedMessage id="account.descriptors.signinneeded" />
+          </h3>
+          <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()} />
+        </div>
         {currentUser && (
           <div>
             {!currentUser.isAnonymous && <Redirect to="/" />}
@@ -90,5 +72,3 @@ export class Login extends Component<Props, State> {
     );
   }
 }
-
-export default Login;

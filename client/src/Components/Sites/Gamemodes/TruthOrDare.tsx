@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { ReactElement } from "react";
+import React, { PureComponent, ReactElement } from "react";
 import "../../../css/App.css";
 import { FormattedMessage } from "react-intl";
 import { Alert } from "../../../helper/AlertTypes";
@@ -26,11 +26,8 @@ interface Props {
   gameID: string;
 }
 
-interface State {}
-
-class TruthOrDare extends React.Component<Props, State> {
-  render() {
-    console.log(this.props.gameID);
+export class TruthOrDare extends PureComponent<Props> {
+  render(): JSX.Element {
     return (
       <div className="w3-center">
         <FormattedMessage id="gamemodes.truthordare" />
@@ -39,5 +36,3 @@ class TruthOrDare extends React.Component<Props, State> {
     );
   }
 }
-
-export default TruthOrDare;

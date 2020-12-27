@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { PureComponent, ReactElement } from "react";
 import "../../css/App.css";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
@@ -10,8 +10,8 @@ interface Props {
 
 interface State {}
 
-class Home extends React.Component<Props, State> {
-  render() {
+export class Home extends PureComponent<Props, State> {
+  render(): JSX.Element {
     return (
       <div className="w3-center">
         <div className="w3-card-4 sailor-startpage-gameselector">
@@ -43,5 +43,3 @@ class Home extends React.Component<Props, State> {
     );
   }
 }
-
-export default Home;

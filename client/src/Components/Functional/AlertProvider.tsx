@@ -9,8 +9,7 @@ interface State {
 
 interface Props {}
 
-export class AlertProvider extends Component<{}, State> {
-
+export class AlertProvider extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -25,15 +24,16 @@ export class AlertProvider extends Component<{}, State> {
     const alertIndex = lastIndex + 1;
     const al = (
       <Alert
-        key={`alert${  alertIndex}`}
+        key={`alert${alertIndex}`}
         type={type}
         header={header}
         clear={() => {
-          const { errorToDisplay } = this.state;
+          // eslint-disable-next-line react/no-access-state-in-setstate
+          const errorToDisplayClear = this.state.errorToDisplay;
 
-          errorToDisplay.delete(alertIndex);
+          errorToDisplayClear.delete(alertIndex);
           this.setState({
-            errorToDisplay,
+            errorToDisplay: errorToDisplayClear,
           });
         }}
       >
@@ -49,14 +49,13 @@ export class AlertProvider extends Component<{}, State> {
 
   prepareAlerts(): ReactElement[] {
     const vals: ReactElement[] = [];
-    const fn = (val: ReactElement) => {
+    this.state.errorToDisplay.forEach((val: ReactElement): void => {
       vals.push(val);
-    };
-    this.state.errorToDisplay.forEach(fn);
+    });
     return vals;
   }
 
-  render() {
+  render():JSX.Element {
     return (
       <div>
         <div className="w3-container w3-content">

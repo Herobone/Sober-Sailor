@@ -23,9 +23,9 @@ import { act as domAct } from "react-dom/test-utils";
 import { unmountComponentAtNode } from "react-dom";
 import LanguageContainer from "../translations/LanguageContainer";
 import config from "../helper/config";
-import AlertProvider from "../Components/Functional/AlertProvider";
+import { AlertProvider } from "../Components/Functional/AlertProvider";
 import { Alert, Error, Warning } from "../helper/AlertTypes";
-import Routed from "../Components/Functional/Routed";
+import { Routed } from "../Components/Functional/Routed";
 
 firebase.initializeApp(config);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);

@@ -59,5 +59,22 @@ module.exports = {
         "case": "pascalCase"
       }
     ],
+    "@typescript-eslint/no-empty-interface": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "promise/no-return-wrap": "off",
+    "no-console": [
+      "warn",
+      { "allow": ["info", "warn", "error"] }
+    ],
+    "jsx-a11y/label-has-associated-control": [
+      "warn",
+      {
+        "required": {
+          "some": ["nesting", "id"]
+        }
+      }],
+    "no-plusplus": "off",
+
   },
 }
