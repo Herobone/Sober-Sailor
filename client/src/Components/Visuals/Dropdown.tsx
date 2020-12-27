@@ -26,12 +26,9 @@ export class Dropdown extends Component<Props, State> {
   }
 
   toggleDropdown(): void {
-    if (this.ref === null) {
-      return;
-    }
-    if (this.ref.current !== null) {
+    if (this.ref.current) {
       const cur = this.ref.current;
-      if (cur.className.includes("w3-show")) {
+      if (!cur.className.includes("w3-show")) {
         cur.className += " w3-show";
       } else {
         cur.className = cur.className.replace(" w3-show", "");
@@ -48,10 +45,7 @@ export class Dropdown extends Component<Props, State> {
   }
 
   closeDropdown(): void {
-    if (this.ref === null) {
-      return;
-    }
-    if (this.ref.current !== null) {
+    if (this.ref.current) {
       const cur = this.ref.current;
       cur.className = cur.className.replace(" w3-show", "");
     }
@@ -75,8 +69,8 @@ export class Dropdown extends Component<Props, State> {
     return (
       <div className="w3-block w3-black">
         <button onClick={this.toggleDropdown} className="w3-button w3-black" type="button">
-          {this.state.selected !== null && this.state.selected}
-          {this.state.selected === null && <FormattedMessage id="elements.dropdown.select" />}{" "}
+          {this.state.selected && this.state.selected}
+          {!this.state.selected && <FormattedMessage id="elements.dropdown.select" />}{" "}
           <i className="fa fa-chevron-circle-down" aria-hidden="true" />
         </button>
         <div id="language-dropdown" ref={this.ref} className="w3-dropdown-content w3-bar-block w3-border">
