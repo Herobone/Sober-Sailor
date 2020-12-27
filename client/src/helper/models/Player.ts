@@ -1,4 +1,4 @@
-/*****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
  *
@@ -19,42 +19,35 @@
 import firebase from "firebase";
 
 export interface IPlayer {
-    uid: string;
-    nickname: string;
-    sips: number;
-    answer: string | null;
+  uid: string;
+  nickname: string;
+  sips: number;
+  answer: string | null;
 }
 
 interface IPlayerExternal {
-    nickname: string;
-    sips: number;
-    answer: string | null;
+  nickname: string;
+  sips: number;
+  answer: string | null;
 }
 
 export class Player implements IPlayer {
-
-    constructor(
-        readonly uid: string,
-        readonly nickname: string,
-        readonly sips: number,
-        readonly answer: string | null
-    ) { }
-
+  constructor(readonly uid: string, readonly nickname: string, readonly sips: number, readonly answer: string | null) {}
 }
 
 export const playerConverter = {
-    toFirestore(player: Player): firebase.firestore.DocumentData {
-        return {
-            nickname: player.nickname,
-            sips: player.sips,
-            answer: player.answer
-        }
-    },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IPlayerExternal>,
-        options: firebase.firestore.SnapshotOptions
-    ): Player {
-        const data = snapshot.data(options);
-        return new Player(snapshot.id, data.nickname, data.sips, data.answer);
-    }
-}
+  toFirestore(player: Player): firebase.firestore.DocumentData {
+    return {
+      nickname: player.nickname,
+      sips: player.sips,
+      answer: player.answer,
+    };
+  },
+  fromFirestore(
+    snapshot: firebase.firestore.QueryDocumentSnapshot<IPlayerExternal>,
+    options: firebase.firestore.SnapshotOptions,
+  ): Player {
+    const data = snapshot.data(options);
+    return new Player(snapshot.id, data.nickname, data.sips, data.answer);
+  },
+};

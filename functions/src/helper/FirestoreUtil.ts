@@ -8,7 +8,7 @@ export default class FirestoreUtil {
 
     static async getPlayerData(gameID: string, playerID: string) {
         const playerDocRef = FirestoreUtil.getPlayer(gameID, playerID);
-        const playerRef = await playerDocRef.withConverter(playerConverter).get();
+        const playerRef = await playerDocRef.get();
         return playerRef.data();
     }
 
@@ -57,6 +57,6 @@ export default class FirestoreUtil {
     }
 
     static getPlayer(gameID: string, playerID: string) {
-        return FirestoreUtil.getPlayers(gameID).doc(playerID);
+        return FirestoreUtil.getPlayers(gameID).doc(playerID).withConverter(playerConverter);
     }
 }

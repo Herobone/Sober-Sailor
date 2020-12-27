@@ -1,5 +1,5 @@
 export interface Task {
-    id: string;
-    lang: string[];
-    singleTarget: boolean;
+  id: string;
+  lang: string[];
+  singleTarget: boolean;
 }

@@ -1,27 +1,24 @@
-import React, { Component } from 'react';
-import firebase from 'firebase';
-import { Redirect } from 'react-router';
+import React, { PureComponent } from "react";
+import firebase from "firebase";
+import { Redirect } from "react-router";
 
 interface Props {
-    className?: string
+  className?: string;
 }
 
-export default class OnlyAuthed extends Component<Props> {
-    render() {
-        const currentUser = firebase.auth().currentUser;
+export class OnlyAuthed extends PureComponent<Props> {
+  render(): JSX.Element {
+    const { currentUser } = firebase.auth();
 
-        return (
-            <div>
-                {currentUser &&
-                    <div className="only-authed">
-                        <div className={this.props.className}>
-                            {this.props.children}
-                        </div>
-                    </div>
-                }
-                {!currentUser &&
-                <Redirect to="/login" />}
-            </div>
-        )
-    }
+    return (
+      <div>
+        {currentUser && (
+          <div className="only-authed">
+            <div className={this.props.className}>{this.props.children}</div>
+          </div>
+        )}
+        {!currentUser && <Redirect to="/login" />}
+      </div>
+    );
+  }
 }

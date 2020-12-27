@@ -1,53 +1,50 @@
-import React, {Component, ReactElement} from 'react'
-import {Alert as IAlert} from '../../helper/AlertTypes'
-import {FormattedMessage} from 'react-intl'
+import React, { Component, ReactElement } from "react";
+import { FormattedMessage } from "react-intl";
+import { Alert as IAlert } from "../../helper/AlertTypes";
 
 interface Props {
-    header?: ReactElement;
-    type: IAlert;
-    clear?: () => void;
+  header?: ReactElement;
+  type: IAlert;
+  clear?: () => void;
 }
 
 interface State {
-    shown: boolean
+  shown: boolean;
 }
 
-class Alert extends Component<Props, State> {
-    state = {
-        shown: true
-    }
+export class Alert extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      shown: true,
+    };
+  }
 
-    render() {
-        return (
-            <span>
-                {
-                    this.state.shown &&
-                    <div className={`w3-panel ${this.props.type.color} w3-display-container`}>
-                        <span onClick={() => {
-                            this.setState({shown: false});
-                            if (this.props.clear) {
-                                this.props.clear();
-                            }
-                        }}
-                              className="w3-button w3-large w3-display-topright">&times;</span>
-                        <h3>
-                            {
-                                this.props.header &&
-                                this.props.header
-                            }
-                            {
-                                !this.props.header &&
-                                <FormattedMessage id={this.props.type.defaultHeader}/>
-                            }
-                        </h3>
-                        <p>
-                            {this.props.children}
-                        </p>
-                    </div>
+  render():JSX.Element {
+    return (
+      <span>
+        {this.state.shown && (
+          <div className={`w3-panel ${this.props.type.color} w3-display-container`}>
+            <button
+              onClick={() => {
+                this.setState({ shown: false });
+                if (this.props.clear) {
+                  this.props.clear();
                 }
-            </span>
-        )
-    }
+              }}
+              type="button"
+              className="w3-button w3-large w3-display-topright"
+            >
+              &times;
+            </button>
+            <h3>
+              {this.props.header && this.props.header}
+              {!this.props.header && <FormattedMessage id={this.props.type.defaultHeader} />}
+            </h3>
+            <p>{this.props.children}</p>
+          </div>
+        )}
+      </span>
+    );
+  }
 }
-
-export default Alert

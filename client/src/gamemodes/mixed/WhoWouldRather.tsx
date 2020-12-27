@@ -1,4 +1,4 @@
-/*****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
  *
@@ -16,80 +16,88 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, {Component, ReactElement} from 'react';
-import {FormattedMessage} from "react-intl";
-import GameManager from "../../helper/gameManager";
-import {Player} from "../../helper/models/Player";
+import React, { Component, ReactElement } from "react";
+import { FormattedMessage } from "react-intl";
+import { GameManager } from "../../helper/gameManager";
+import { Player } from "../../helper/models/Player";
 
 interface Props {
-    question: string;
-    gameID: string;
+  question: string;
+  gameID: string;
 }
 
 interface State {
-    players: Player[];
-    inputLocked: boolean;
-    answer: string | null;
+  players: Player[];
+  inputLocked: boolean;
+  answer: string | null;
 }
 
-export default class WhoWouldRather extends Component<Props, State> {
-    state = {
-        players: [],
-        inputLocked: true,
-        answer: null
-    }
+export class WhoWouldRather extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      players: [],
+      inputLocked: true,
+      answer: null,
+    };
+    this.lockInput = this.lockInput.bind(this);
+  }
 
+  componentDidMount(): void {
+    GameManager.getAllPlayers(this.props.gameID)
+      .then((players) => this.setState({ players }))
+      .catch(console.error);
+  }
 
-    constructor(props: Props) {
-        super(props);
-        this.lockInput = this.lockInput.bind(this);
-    }
+  lockInput(lock: boolean): void {
+    this.setState({
+      inputLocked: lock,
+    });
+  }
 
-    componentDidMount() {
-        GameManager.getAllPlayers(this.props.gameID).then((players) => this.setState({players}))
-    }
+  render(): JSX.Element {
+    const values: ReactElement[] = [];
+    this.state.players.forEach((element: Player) => {
+      values.push(
+        <div key={element.uid}>
+          <button
+            className="wwr-player-select"
+            type="submit"
+            onClick={() => {
+              GameManager.setAnswer(this.props.gameID, element.uid);
+              this.setState({
+                answer: element.nickname,
+                inputLocked: true,
+              });
+            }}
+          >
+            {element.nickname}
+          </button>
+          <br />
+        </div>,
+      );
+    });
 
-    lockInput(lock: boolean) {
-        this.setState({
-            inputLocked: lock
-        });
-    }
-
-    render() {
-        let values: ReactElement[] = [];
-        this.state.players.forEach((element: Player) => {
-            values.push(
-                <div key={element.uid}>
-                    <button className={"wwr-player-select"}
-                            onClick={() => {
-                                GameManager.setAnswer(this.props.gameID, element.uid);
-                                this.setState({
-                                    answer: element.nickname,
-                                    inputLocked: true
-                                });
-                            }}>
-                        {element.nickname}
-                    </button>
-                    <br/>
-                </div>
-            );
-        });
-
-        return (
-            <div>
-                <h2><FormattedMessage id="gamemodes.whowouldrather"/> {this.props.question}</h2>
-                <p>
-                    <FormattedMessage id='gamemodes.whowouldrather.description'/>
-                </p>
-                {!this.state.inputLocked && !this.state.answer && values}
-                {this.state.answer &&
-                <div>
-                    <FormattedMessage id="elements.result.youranswer" values={{
-                        answer: this.state.answer
-                    }} />
-                </div>
-                }
-            </div>
-        )
-    }
+    return (
+      <div>
+        <h2>
+          <FormattedMessage id="gamemodes.whowouldrather" /> {this.props.question}
+        </h2>
+        <p>
+          <FormattedMessage id="gamemodes.whowouldrather.description" />
+        </p>
+        {!this.state.inputLocked && !this.state.answer && values}
+        {this.state.answer && (
+          <div>
+            <FormattedMessage
+              id="elements.result.youranswer"
+              values={{
+                answer: this.state.answer,
+              }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
 }
