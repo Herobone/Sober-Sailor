@@ -2,8 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
 import * as serviceWorker from "./serviceWorker";
-import config from "./helper/config";
-import App from "./App";
+import { config } from "./helper/config";
+import { App } from "./App";
 
 // Initialize Firebase with the config
 // Configure in helper/config.ts

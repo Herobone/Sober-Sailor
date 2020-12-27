@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Dropdown } from "../Visuals/Dropdown";
 import { Column } from "../Visuals/Column";
 import { Alert } from "../../helper/AlertTypes";
+import { Util } from "../../helper/Util";
 
 interface Props {
   changeLanguage: (locale: string) => void;
@@ -36,7 +37,7 @@ export class Settings extends PureComponent<Props> {
         <h5>
           <FormattedMessage id="settings.labels.selectlanguage" />
         </h5>
-        <Dropdown callback={this.props.changeLanguage} content={options} selected={this.props.currentLocale} />
+        <Dropdown callback={this.props.changeLanguage} content={Util.objToStrMap(options)} selected={this.props.currentLocale} />
         <hr />
         <br />
         <Link to="/logout" className="w3-bar-item w3-button w3-red">

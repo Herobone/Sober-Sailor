@@ -3,7 +3,7 @@ import firebase from "firebase";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
-import Alerts, { Alert } from "../../helper/AlertTypes";
+import { Alerts, Alert } from "../../helper/AlertTypes";
 
 interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;

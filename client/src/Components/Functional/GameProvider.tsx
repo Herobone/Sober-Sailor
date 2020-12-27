@@ -19,8 +19,8 @@
 import React, { Component, ReactElement } from "react";
 import firebase from "firebase";
 import { FormattedMessage } from "react-intl";
-import Alerts, { Alert } from "../../helper/AlertTypes";
-import GameManager from "../../helper/gameManager";
+import { Alerts, Alert } from "../../helper/AlertTypes";
+import { GameManager } from "../../helper/gameManager";
 
 interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -29,7 +29,7 @@ interface Props {
 }
 
 interface State {
-  user?: firebase.User;
+  user: firebase.User | null;
 }
 
 export class GameProvider extends Component<Props, State> {
@@ -37,6 +37,10 @@ export class GameProvider extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
+    this.state = {
+      user: null
+    }
 
     this.createGame = this.createGame.bind(this);
 

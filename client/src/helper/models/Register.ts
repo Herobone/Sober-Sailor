@@ -17,7 +17,7 @@
  */
 
 import firebase from "firebase";
-import Util from "../Util";
+import { Util } from "../Util";
 
 export interface IRegister {
   playerUidMap: Map<string, string>;

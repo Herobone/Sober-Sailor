@@ -1,6 +1,6 @@
 import React, { Component, ReactElement } from "react";
 import { Alert as IAlert } from "../../helper/AlertTypes";
-import Alert from "../Visuals/Alert";
+import { Alert } from "../Visuals/Alert";
 
 interface State {
   errorToDisplay: Map<number, ReactElement>;
@@ -55,7 +55,7 @@ export class AlertProvider extends Component<Props, State> {
     return vals;
   }
 
-  render():JSX.Element {
+  render(): JSX.Element {
     return (
       <div>
         <div className="w3-container w3-content">
