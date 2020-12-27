@@ -40,7 +40,6 @@ import { KickList } from "../../Visuals/KickList";
 
 interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-  gameID: string;
 }
 
 interface State {
@@ -104,8 +103,8 @@ export class Mixed extends React.Component<Props, State> {
   }
 
   componentDidMount(): void {
-    GameManager.joinGame(this.props.gameID, this.gameEvent, this.playerEvent);
-    GameManager.amIHost(this.props.gameID)
+    GameManager.joinGame(this.gameEvent, this.playerEvent);
+    GameManager.amIHost()
       .then((host): void => {
         return this.setState({ isHost: host });
       })
@@ -118,7 +117,7 @@ export class Mixed extends React.Component<Props, State> {
       .then(
         (task): Promise<void> => {
           this.setState({ nextTask: task });
-          return GameManager.getGameByID(this.props.gameID).update({
+          return GameManager.getGame().update({
             currentTask: task,
             type: taskType.id,
             evalState: false,
@@ -149,8 +148,8 @@ export class Mixed extends React.Component<Props, State> {
           countdownTimeout: undefined,
         });
         if (this.state.isHost) {
-          GameManager.setPollState(this.props.gameID, false);
-          GameManager.setEvalState(this.props.gameID, true);
+          GameManager.setPollState(false);
+          GameManager.setEvalState(true);
         }
       }
     }, 1000);
@@ -199,7 +198,7 @@ export class Mixed extends React.Component<Props, State> {
         if (this.state.taskType === "truthordare") {
           this.updateLeaderboard();
         } else {
-          GameManager.evaluateAnswers(this.props.gameID)
+          GameManager.evaluateAnswers()
             .then((result) => {
               this.setState({
                 result,
@@ -229,7 +228,7 @@ export class Mixed extends React.Component<Props, State> {
   submitAndReset(): void {
     const resultsWere = this.state.result;
     if (resultsWere) {
-      GameManager.afterEval(this.props.gameID, resultsWere)
+      GameManager.afterEval(resultsWere)
         .then(() =>
           this.setState({
             result: undefined,
@@ -289,20 +288,14 @@ export class Mixed extends React.Component<Props, State> {
     if (task && type) {
       switch (type) {
         case "whowouldrather": {
-          taskComponent = <WhoWouldRather question={task} gameID={this.props.gameID} ref={this.taskRef} />;
+          taskComponent = <WhoWouldRather question={task} ref={this.taskRef} />;
           break;
         }
         case "truthordare": {
           const { target } = this.state;
           if (target !== null) {
             taskComponent = (
-              <TruthOrDare
-                ref={this.truthOrDareRef}
-                question={task}
-                target={target}
-                gameID={this.props.gameID}
-                penalty={this.state.penalty}
-              />
+              <TruthOrDare ref={this.truthOrDareRef} question={task} target={target} penalty={this.state.penalty} />
             );
           }
           break;
@@ -317,7 +310,7 @@ export class Mixed extends React.Component<Props, State> {
       <div className="w3-center">
         <FormattedMessage id="gamemodes.mixed" />
         <br />
-        Game ID: {this.props.gameID}
+        Game ID: {GameManager.getGameID()}
         <br />
         User ID: {currentUser?.uid}
         <br />
@@ -343,7 +336,7 @@ export class Mixed extends React.Component<Props, State> {
             <button
               type="button"
               onClick={() => {
-                GameManager.transferHostShip(this.props.gameID);
+                GameManager.transferHostShip();
               }}
             >
               <FormattedMessage id="actions.host.transfer" />
@@ -352,7 +345,7 @@ export class Mixed extends React.Component<Props, State> {
               <button
                 type="button"
                 onClick={() => {
-                  GameManager.setPollState(this.props.gameID, true);
+                  GameManager.setPollState(true);
                 }}
               >
                 <FormattedMessage id="actions.host.startpoll" />
@@ -370,10 +363,10 @@ export class Mixed extends React.Component<Props, State> {
             >
               <FormattedMessage id="actions.host.kick" />
             </button>
-            <KickList createAlert={this.props.createAlert} gameID={this.props.gameID} ref={this.kickListRef} />
+            <KickList createAlert={this.props.createAlert} ref={this.kickListRef} />
           </div>
         )}
-        <Leaderboard gameID={this.props.gameID} ref={this.leaderboardRef} />
+        <Leaderboard ref={this.leaderboardRef} />
       </div>
     );
   }

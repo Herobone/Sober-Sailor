@@ -137,7 +137,7 @@ export class GameProvider extends Component<Props, State> {
         return (
           <div>
             {this.props.children}
-            <button type="button" onClick={() => GameManager.leaveGame(gameID)}>
+            <button type="button" onClick={() => GameManager.leaveGame()}>
               <FormattedMessage id="actions.leave" />
             </button>
           </div>

@@ -23,7 +23,6 @@ import { Player } from "../../helper/models/Player";
 
 interface Props {
   question: string;
-  gameID: string;
 }
 
 interface State {
@@ -44,7 +43,7 @@ export class WhoWouldRather extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    GameManager.getAllPlayers(this.props.gameID)
+    GameManager.getAllPlayers()
       .then((players) => this.setState({ players }))
       .catch(console.error);
   }
@@ -64,7 +63,7 @@ export class WhoWouldRather extends Component<Props, State> {
             className="wwr-player-select"
             type="submit"
             onClick={() => {
-              GameManager.setAnswer(this.props.gameID, element.uid);
+              GameManager.setAnswer(element.uid);
               this.setState({
                 answer: element.nickname,
                 inputLocked: true,

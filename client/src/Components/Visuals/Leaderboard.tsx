@@ -21,9 +21,7 @@ import { FormattedMessage } from "react-intl";
 import { GameManager } from "../../helper/gameManager";
 import { playerConverter } from "../../helper/models/Player";
 
-interface Props {
-  gameID: string;
-}
+interface Props {}
 
 interface State {
   leaderboard: Map<string, number>;
@@ -40,10 +38,7 @@ export class Leaderboard extends Component<Props, State> {
   }
 
   updateLeaderboard(): void {
-    const lead = GameManager.getGameByID(this.props.gameID)
-      .collection("players")
-      .withConverter(playerConverter)
-      .orderBy("sips", "desc");
+    const lead = GameManager.getGame().collection("players").withConverter(playerConverter).orderBy("sips", "desc");
     const leaderboard = new Map<string, number>();
     lead
       .get()
