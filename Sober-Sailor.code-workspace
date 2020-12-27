@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "./functions"
+		},
+		{
+			"path": "./client"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/bower_components": true,
+			"**/*.code-search": true
+		},
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/bower_components": true,
+			"**/*.code-search": true,
+			"**/build/**": true,
+			"**/lib/**": true
+		},
+		"eslint.workingDirectories": [
+			{
+				"mode": "auto"
+			}
+		],
+		"editor.formatOnSave": true
+	}
+}
