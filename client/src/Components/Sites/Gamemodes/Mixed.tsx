@@ -35,7 +35,7 @@ import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";
 import { Task } from "../../../helper/models/task";
-import { Register } from "../../../helper/models/Register";
+import { Register, registerConverter } from "../../../helper/models/Register";
 import { KickList } from "../../Visuals/KickList";
 
 interface Props {
@@ -270,7 +270,15 @@ export class Mixed extends React.Component<Props, State> {
         target = Util.getRandomKey(register.playerUidMap);
         this.setTask(taskType, target, Util.random(3, 6));
       } else {
-        this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+        this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored! Try again!");
+        const gameRef = GameManager.getGame();
+        gameRef
+          .collection("players")
+          .doc("register")
+          .withConverter(registerConverter)
+          .get()
+          .then(this.playerEvent)
+          .catch(console.error);
       }
     } else {
       this.setTask(taskType, null);
