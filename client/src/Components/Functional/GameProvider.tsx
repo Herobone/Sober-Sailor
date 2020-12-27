@@ -39,13 +39,19 @@ export class GameProvider extends Component<Props, State> {
     super(props);
 
     this.state = {
-      user: null
-    }
+      user: null,
+    };
 
     this.createGame = this.createGame.bind(this);
 
     this.nameInputRef = React.createRef();
     this.setName = this.setName.bind(this);
+
+    if (this.props.gameID) {
+      localStorage.setItem("gameID", this.props.gameID);
+    } else {
+      localStorage.removeItem("gameID");
+    }
   }
 
   componentDidMount(): void {
