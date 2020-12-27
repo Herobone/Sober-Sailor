@@ -10,6 +10,7 @@ import { Mixed } from "../Sites/Gamemodes/Mixed";
 import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
 import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
+import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
 
 interface Props {
   changeLanguage: (locale: string) => void;
@@ -57,6 +58,11 @@ export class Routed extends PureComponent<Props> {
               path="/saufpoly"
               render={() => <GameProvider createAlert={this.props.createAlert} gameURL="saufpoly" />}
             />
+
+            <Route path="/ttt">
+              <TicTacToe />
+            </Route>
+
             <Route path="/login">
               <Login createAlert={this.props.createAlert} />
             </Route>

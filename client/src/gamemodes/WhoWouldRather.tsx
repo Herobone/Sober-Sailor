@@ -18,8 +18,8 @@
 
 import React, { Component, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
-import { GameManager } from "../../helper/gameManager";
-import { Player } from "../../helper/models/Player";
+import { GameManager } from "../helper/gameManager";
+import { Player } from "../helper/models/Player";
 
 interface Props {
   question: string;

@@ -26,16 +26,16 @@ import { Alert, Alerts } from "../../../helper/AlertTypes";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
-import { WhoWouldRather } from "../../../gamemodes/mixed/WhoWouldRather";
+import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
 
-import tasks from "../../../gamemodes/mixed/tasks/tasks.json";
+import tasks from "../../../gamemodes/tasks.json";
 import { getRandomTask } from "../../../helper/TaskUtils";
-import { TruthOrDare } from "../../../gamemodes/mixed/TruthOrDare";
+import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
 import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";
 import { Task } from "../../../helper/models/task";
-import { Register } from "../../../helper/models/Register";
+import { Register, registerConverter } from "../../../helper/models/Register";
 import { KickList } from "../../Visuals/KickList";
 
 interface Props {
@@ -270,7 +270,15 @@ export class Mixed extends React.Component<Props, State> {
         target = Util.getRandomKey(register.playerUidMap);
         this.setTask(taskType, target, Util.random(3, 6));
       } else {
-        this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+        this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored! Try again!");
+        const gameRef = GameManager.getGame();
+        gameRef
+          .collection("players")
+          .doc("register")
+          .withConverter(registerConverter)
+          .get()
+          .then(this.playerEvent)
+          .catch(console.error);
       }
     } else {
       this.setTask(taskType, null);
