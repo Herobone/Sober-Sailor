@@ -1,11 +1,11 @@
 import firebase from "firebase";
 import React, { Component, ReactElement } from "react";
 import { Alerts, Alert } from "../../helper/AlertTypes";
+import { GameManager } from "../../helper/gameManager";
 import { Register } from "../../helper/models/Register";
 
 interface Props {
   createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-  gameID: string;
 }
 interface State {
   shown: boolean;
@@ -53,7 +53,7 @@ export class KickList extends Component<Props, State> {
                 type="submit"
                 onClick={() => {
                   const callData: KickPlayer = {
-                    gameID: this.props.gameID,
+                    gameID: GameManager.getGameID(),
                     playerID: uid,
                   };
                   const kickPlayer = firebase.functions().httpsCallable("kickPlayer");

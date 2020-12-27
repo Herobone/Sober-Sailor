@@ -5,10 +5,10 @@ import { Settings } from "../Sites/Settings";
 import { Alert } from "../../helper/AlertTypes";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
-import {Home} from "../Sites/Home";
-import {Mixed} from "../Sites/Gamemodes/Mixed";
-import {TruthOrDare} from "../Sites/Gamemodes/TruthOrDare";
-import {Saufpoly} from "../Sites/Gamemodes/Saufpoly";
+import { Home } from "../Sites/Home";
+import { Mixed } from "../Sites/Gamemodes/Mixed";
+import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
+import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
 
 interface Props {
@@ -27,7 +27,7 @@ export class Routed extends PureComponent<Props> {
               path="/mixed/:gameID"
               render={(props) => (
                 <GameProvider createAlert={this.props.createAlert} gameID={props.match.params.gameID}>
-                  <Mixed createAlert={this.props.createAlert} gameID={props.match.params.gameID} />
+                  <Mixed createAlert={this.props.createAlert} />
                 </GameProvider>
               )}
             />
