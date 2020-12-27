@@ -19,13 +19,13 @@
 import firebase from "firebase";
 import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
+import { GameManager } from "../../helper/gameManager";
 import { Register } from "../../helper/models/Register";
 import { SingleTargetRequest } from "../../helper/models/SingleTarget";
 
 interface Props {
   question: string;
   target: string;
-  gameID: string;
   penalty: number;
 }
 
@@ -48,7 +48,7 @@ export class TruthOrDare extends Component<Props, State> {
     this.setState({
       answer,
     });
-    const callData: SingleTargetRequest = { answer, gameID: this.props.gameID };
+    const callData: SingleTargetRequest = { answer, gameID: GameManager.getGameID() };
     const singleTarget = firebase.functions().httpsCallable("singleTarget");
     singleTarget(callData).catch(console.error);
   }

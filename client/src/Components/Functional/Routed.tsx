@@ -28,7 +28,7 @@ export class Routed extends PureComponent<Props> {
               path="/mixed/:gameID"
               render={(props) => (
                 <GameProvider createAlert={this.props.createAlert} gameID={props.match.params.gameID}>
-                  <Mixed createAlert={this.props.createAlert} gameID={props.match.params.gameID} />
+                  <Mixed createAlert={this.props.createAlert} />
                 </GameProvider>
               )}
             />

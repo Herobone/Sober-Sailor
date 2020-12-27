@@ -39,13 +39,19 @@ export class GameProvider extends Component<Props, State> {
     super(props);
 
     this.state = {
-      user: null
-    }
+      user: null,
+    };
 
     this.createGame = this.createGame.bind(this);
 
     this.nameInputRef = React.createRef();
     this.setName = this.setName.bind(this);
+
+    if (this.props.gameID) {
+      localStorage.setItem("gameID", this.props.gameID);
+    } else {
+      localStorage.removeItem("gameID");
+    }
   }
 
   componentDidMount(): void {
@@ -131,7 +137,7 @@ export class GameProvider extends Component<Props, State> {
         return (
           <div>
             {this.props.children}
-            <button type="button" onClick={() => GameManager.leaveGame(gameID)}>
+            <button type="button" onClick={() => GameManager.leaveGame()}>
               <FormattedMessage id="actions.leave" />
             </button>
           </div>
