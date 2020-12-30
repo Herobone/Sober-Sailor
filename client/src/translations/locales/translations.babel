@@ -269,6 +269,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>actions.host.kick</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>actions.host.startpoll</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -437,6 +458,48 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>elements.general.penalty</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>elements.general.rank</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>elements.leaderboard</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -542,7 +605,70 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>elements.results</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>elements.tasks.notloaded</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>elements.truthordare.dare</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>elements.truthordare.drink</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -689,6 +815,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>general.answer</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>general.done</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -705,6 +852,27 @@
                     </translation>
                     <translation>
                         <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>general.nickname</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
                         <approved>false</approved>
                     </translation>
                 </translations>
@@ -768,6 +936,27 @@
                     </translation>
                     <translation>
                         <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>general.sips</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
                         <approved>false</approved>
                     </translation>
                 </translations>
