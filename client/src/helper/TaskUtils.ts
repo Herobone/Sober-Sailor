@@ -1,5 +1,3 @@
-import { Util } from "./Util";
-
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
@@ -17,6 +15,7 @@ import { Util } from "./Util";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { Util } from "./Util";
 
 export function storeToLocalFromGit(task: string, lang: string): Promise<string[]> {
   const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/main/tasks/${task}/${lang}.json`;

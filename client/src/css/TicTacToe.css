@@ -1,47 +1,65 @@
+/*****************************
+ * Sober Sailor - The online Party Game
+ * Copyright (c) 2020.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 .board-row:after {
-    clear: both;
-    content: "";
-    display: table;
+  clear: both;
+  content: "";
+  display: table;
 }
 
 .status {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .square {
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
-    font-size: 6vw;
-    font-weight: bold;
-    line-height: 8vw;
-    height: 8vw;
-    margin-right: -1px;
-    margin-top: -1px;
-    padding: 0;
-    text-align: center;
-    width: 8vw;
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 6vw;
+  font-weight: bold;
+  line-height: 8vw;
+  height: 8vw;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 8vw;
 }
 
 .square:focus {
-    outline: none;
-    background-color: #f0f000;
+  outline: none;
+  background-color: #f0f000;
 }
 
 .square:hover {
-    outline: none;
-    background-color: #ffff00;
+  outline: none;
+  background-color: #ffff00;
 }
 
 .kbd-navigation .square:focus {
-    background: #ddd;
+  background: #ddd;
 }
 
 .game {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .game-info {
-    margin-left: 20px;
+  margin-left: 20px;
 }
