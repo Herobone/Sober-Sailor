@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import firebase from "firebase";
-import { Player } from "../../helper/models/Player";
 import { GameManager } from "../../helper/gameManager";
 import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 
-export type TicOptions = "X" | "O" | undefined;
+export type TicOptions = "X" | "O" | null;
 
 export class TicUtils {
     static calculateWinner(squares: TicOptions[]): TicOptions {
@@ -34,7 +33,7 @@ export class TicUtils {
             [0, 4, 8],
             [2, 4, 6],
         ];
-        let winner: TicOptions;
+        let winner: TicOptions = null;
         lines.forEach((line: number[]) => {
             const [a, b, c] = line;
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -44,7 +43,7 @@ export class TicUtils {
         return winner;
     }
 
-    static registerTicTacToe(opponents: Player[]): Promise<unknown> {
+    static registerTicTacToe(opponents: string[]): Promise<unknown> {
         const gameID = GameManager.getGameID();
         return new Promise<unknown>((resolve, reject) => {
             if (opponents.length !== 2) {
@@ -52,7 +51,7 @@ export class TicUtils {
             }
             const tttRef = firebase.firestore().collection(gameID).doc("tictactoe").withConverter(ticTacToeConverter);
             tttRef
-                .set(new TicTacToe(new Array(9), 0, true, opponents[0].uid, opponents[1].uid))
+                .set(new TicTacToe(new Array(9), 0, true, opponents[0], opponents[1]))
                 .then(resolve)
                 .catch(reject);
         });

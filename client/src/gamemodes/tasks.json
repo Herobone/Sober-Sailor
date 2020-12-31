@@ -16,8 +16,7 @@
   {
     "id": "tictactoe",
     "lang": [
-      "en",
-      "de"
+      "*"
     ],
     "singleTarget": true
   }

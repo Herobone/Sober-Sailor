@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 // This class contains static Methods that might come useful for like anything
 export class Util {
     static random(from: number, to: number): number {
