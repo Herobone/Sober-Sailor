@@ -188,13 +188,12 @@ export class GameManager {
                 .delete()
                 .then(() => {
                     window.location.pathname = "";
+                    localStorage.removeItem("playerLookupTable");
+                    localStorage.removeItem("gameID");
                     return Promise.resolve();
                 })
                 .catch(console.error);
         };
-
-        localStorage.removeItem("playerLookupTable");
-        localStorage.removeItem("gameID");
 
         GameManager.amIHost()
             .then((host) => {
@@ -279,19 +278,29 @@ export class GameManager {
 
             const { uid } = user;
             GameManager.getAllPlayers()
-                .then((players) => {
-                    const ids: string[] = [];
-                    players.forEach((element: Player) => {
-                        if (element.uid !== uid) {
-                            ids.push(element.uid);
+                .then(
+                    (players): Promise<void | firebase.functions.HttpsCallableResult> => {
+                        const ids: string[] = [];
+                        players.forEach((element: Player) => {
+                            if (element.uid !== uid) {
+                                ids.push(element.uid);
+                            }
+                        });
+
+                        const gameRef = GameManager.getGameByID(gameID);
+                        if (ids.length > 0) {
+                            console.log("Some players left! Transferring!");
+                            const random = Util.getRandomElement(ids);
+                            return gameRef.update({
+                                host: random,
+                            });
                         }
-                    });
-                    const random = Util.getRandomElement(ids);
-                    const gameRef = GameManager.getGameByID(gameID);
-                    return gameRef.update({
-                        host: random,
-                    });
-                })
+
+                        console.log("No players left! Closing!");
+                        const closeGame = firebase.functions().httpsCallable("closeGame");
+                        return closeGame({ gameID: GameManager.getGameID() });
+                    },
+                )
                 .then(resolve)
                 .catch(reject);
         });

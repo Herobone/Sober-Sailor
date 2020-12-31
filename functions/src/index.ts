@@ -119,7 +119,7 @@ export const onPlayerLeave = functions
 export const garbageCollection = functions
   .region("europe-west1")
   .pubsub.schedule("every 12 hours")
-  .onRun(async (contest) => {
+  .onRun(async () => {
     const maxAge = Date.now() - 12 * 60 * 60 * 1000;
     const gamesRef = await db
       .collection("games")
@@ -159,6 +159,43 @@ export const garbageCollectionHTTPS = functions
       await gameToDelete.ref.delete();
     });
     resp.json(results);
+  });
+
+export const closeGame = functions
+  .region("europe-west1")
+  .https.onCall(async (data: { gameID: string }, context) => {
+    const auth = context.auth;
+    if (auth) {
+      const requestUID = auth.uid;
+      const gameData = await FirestoreUtil.getGameData(data.gameID);
+
+      if (!gameData) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "Game data was missing!"
+        );
+      }
+      if (requestUID !== gameData.host) {
+        throw new functions.https.HttpsError(
+          "permission-denied",
+          "Function must be called by host of game!"
+        );
+      }
+      const gameRef = FirestoreUtil.getGame(data.gameID);
+
+      const players = await FirestoreUtil.getPlayers(data.gameID).get();
+      await players.forEach(async (playerToDelete) => {
+        console.log("Player, ", playerToDelete.id);
+        await playerToDelete.ref.delete();
+      });
+
+      await gameRef.delete();
+    } else {
+      throw new functions.https.HttpsError(
+        "unauthenticated",
+        "User was not authenticated with firebase while calling this function!"
+      );
+    }
   });
 
 export const kickPlayer = functions
