@@ -119,6 +119,7 @@ export class TicUtils {
                     return tttRef.update({
                         squares: field,
                         isXNext: !value.isXNext,
+                        stepNumber: value.stepNumber + 1,
                     });
                 })
                 .then(() => resolve())
