@@ -24,6 +24,7 @@ import "../../css/TicTacToe.css";
 import { TicOptions, TicUtils } from "./TicUtils";
 import { TicTacToe as TicTacToeData, ticTacToeConverter } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
+import { Player } from "../../helper/models/Player";
 
 interface Props {}
 interface State {
@@ -32,6 +33,7 @@ interface State {
     isXNext: boolean;
     spectator: boolean;
     player: TicOptions;
+    winner: TicOptions;
 }
 
 export class TicTacToe extends Component<Props, State> {
@@ -45,6 +47,7 @@ export class TicTacToe extends Component<Props, State> {
             isXNext: true,
             spectator: true,
             player: null,
+            winner: null,
         };
 
         this.updateData = this.updateData.bind(this);
@@ -104,13 +107,19 @@ export class TicTacToe extends Component<Props, State> {
         } else {
             console.warn("No user provided!");
         }
+
+        const winner = TicUtils.calculateWinner(data.squares);
         this.setState({
             squares: data.squares,
             stepNumber: data.stepNumber,
             isXNext: data.isXNext,
             player,
             spectator,
+            winner,
         });
+        if (winner && !spectator && user && winner !== player) {
+            GameManager.afterEval([new Player(user.uid, "", data.stepNumber, null)]);
+        }
         // console.log(
         //     `Step Number: ${data.stepNumber} | Is X next: ${data.isXNext} | Player: ${player} | Spectator: ${spectator}`,
         // );
@@ -123,9 +132,10 @@ export class TicTacToe extends Component<Props, State> {
 
     render(): JSX.Element {
         const { squares } = this.state;
-        const winner = TicUtils.calculateWinner(squares);
 
-        const status = winner ? `Winner: ${winner}` : `Next player: ${this.state.isXNext ? "X" : "O"}`;
+        const status = this.state.winner
+            ? `Winner: ${this.state.winner}`
+            : `Next player: ${this.state.isXNext ? "X" : "O"}`;
 
         return (
             <div className="game">
