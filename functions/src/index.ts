@@ -191,6 +191,7 @@ export const closeGame = functions
       });
 
       await gameRef.delete();
+      await db.collection("tictactoe").doc(data.gameID).delete();
     } else {
       throw new functions.https.HttpsError(
         "unauthenticated",
