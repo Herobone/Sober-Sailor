@@ -64,8 +64,7 @@ export class TicUtils {
     }
 
     static numpadToSquare(numpad: number): number {
-        const reversed = numpad;
-        switch (reversed) {
+        switch (numpad) {
             case 2:
                 return 7;
             case 5:
