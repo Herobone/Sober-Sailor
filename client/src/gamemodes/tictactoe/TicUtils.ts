@@ -15,28 +15,71 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import firebase from "firebase";
+import { Player } from "../../helper/models/Player";
+import { GameManager } from "../../helper/gameManager";
+import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 
 export type TicOptions = "X" | "O" | undefined;
 
 export class TicUtils {
-  static calculateWinner(squares: TicOptions[]): TicOptions {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    let winner: TicOptions;
-    lines.forEach((line: number[]) => {
-      const [a, b, c] = line;
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        winner = squares[a];
-      }
-    });
-    return winner;
-  }
+    static calculateWinner(squares: TicOptions[]): TicOptions {
+        const lines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        let winner: TicOptions;
+        lines.forEach((line: number[]) => {
+            const [a, b, c] = line;
+            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                winner = squares[a];
+            }
+        });
+        return winner;
+    }
+
+    static registerTicTacToe(opponents: Player[]): Promise<unknown> {
+        const gameID = GameManager.getGameID();
+        return new Promise<unknown>((resolve, reject) => {
+            if (opponents.length !== 2) {
+                throw new RangeError("More or less than two players specified!");
+            }
+            const tttRef = firebase.firestore().collection(gameID).doc("tictactoe").withConverter(ticTacToeConverter);
+            tttRef
+                .set(new TicTacToe(new Array(9), 0, true, opponents[0].uid, opponents[1].uid))
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
+    static makeDraw(fieldID: number, player: "X" | "O"): Promise<unknown> {
+        const gameID = GameManager.getGameID();
+        return new Promise<unknown>((resolve, reject) => {
+            const tttRef = firebase.firestore().collection(gameID).doc("tictactoe").withConverter(ticTacToeConverter);
+            tttRef
+                .get({ source: "cache" })
+                .then((data) => {
+                    const ttt = data.data();
+                    if (!ttt) {
+                        throw new Error("Data from Game was empty");
+                    }
+                    return ttt.squares;
+                })
+                .then((value) => {
+                    const field = value;
+                    field[fieldID] = player;
+                    return tttRef.update({
+                        squares: field,
+                    });
+                })
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 }
