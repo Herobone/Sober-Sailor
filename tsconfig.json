@@ -2,7 +2,7 @@
     "compilerOptions": {
         "noImplicitReturns": true,
         "strict": true,
-        "target": "es2017",
+        "target": "es2020",
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
