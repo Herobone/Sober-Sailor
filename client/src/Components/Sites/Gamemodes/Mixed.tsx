@@ -115,7 +115,7 @@ export class Mixed extends React.Component<Props, State> {
     }
 
     setTask(taskType: Task, target: PlayerList, penalty = 0): void {
-        console.log(target);
+        // console.log(target);
         if (taskType.id === "tictactoe") {
             GameManager.getGame()
                 .update({
@@ -129,7 +129,7 @@ export class Mixed extends React.Component<Props, State> {
                 .catch(console.error);
             if (target && target.length === 2) {
                 TicUtils.registerTicTacToe(target)
-                    .then(() => console.log("Success!"))
+                    // .then(() => console.log("Success!"))
                     .catch(console.error);
             }
         } else {
@@ -327,7 +327,7 @@ export class Mixed extends React.Component<Props, State> {
                     break;
                 }
                 case "tictactoe": {
-                    console.log("TicTacToe");
+                    // console.log("TicTacToe");
                     taskComponent = <TicTacToe />;
                     break;
                 }

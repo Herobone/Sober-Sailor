@@ -54,10 +54,10 @@ export class GameManager {
             throw new Error(`Trying to get ${n} players while PLT only has ${reg.size} entries`);
         }
         const players: string[] = new Array(n);
-        console.log(`Array length ${players.length} with n=${n}`);
+        // console.log(`Array length ${players.length} with n=${n}`);
         for (let i = 0; i < n; i++) {
             const choose = Util.getRandomKey(reg);
-            console.log(`Current iteration: ${i} has chosen ${choose}`);
+            // console.log(`Current iteration: ${i} has chosen ${choose}`);
             players[i] = choose;
             reg.delete(choose);
         }
@@ -289,14 +289,14 @@ export class GameManager {
 
                         const gameRef = GameManager.getGameByID(gameID);
                         if (ids.length > 0) {
-                            console.log("Some players left! Transferring!");
+                            // console.log("Some players left! Transferring!");
                             const random = Util.getRandomElement(ids);
                             return gameRef.update({
                                 host: random,
                             });
                         }
 
-                        console.log("No players left! Closing!");
+                        // console.log("No players left! Closing!");
                         const closeGame = firebase.functions().httpsCallable("closeGame");
                         return closeGame({ gameID: GameManager.getGameID() });
                     },

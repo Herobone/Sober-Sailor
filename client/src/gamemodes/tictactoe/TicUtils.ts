@@ -49,7 +49,7 @@ export class TicUtils {
             if (opponents.length !== 2) {
                 throw new RangeError("More or less than two players specified!");
             }
-            console.log(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
+            // console.log(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
             const tttRef = firebase.firestore().collection("tictactoe").doc(gameID).withConverter(ticTacToeConverter);
 
             tttRef
@@ -103,7 +103,7 @@ export class TicUtils {
                 })
                 .then((value) => {
                     if (!TicUtils.drawAllowed(value.isXNext, player)) {
-                        console.log("Draw not allowed!");
+                        // console.log("Draw not allowed!");
                         resolve();
                         return null;
                     }
