@@ -134,6 +134,7 @@ export const garbageCollection = functions
       });
 
       await gameToDelete.ref.delete();
+      await db.collection("tictactoe").doc(gameToDelete.id).delete();
     });
   });
 
