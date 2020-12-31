@@ -39,6 +39,7 @@ import { Register } from "../../../helper/models/Register";
 import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
+import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -127,7 +128,9 @@ export class Mixed extends React.Component<Props, State> {
                 })
                 .catch(console.error);
             if (target && target.length === 2) {
-                TicUtils.registerTicTacToe(target).catch(console.error);
+                TicUtils.registerTicTacToe(target)
+                    .then(() => console.log("Success!"))
+                    .catch(console.error);
             }
         } else {
             const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
@@ -199,7 +202,7 @@ export class Mixed extends React.Component<Props, State> {
             ) {
                 this.submitAndReset();
                 this.setState({
-                    nextTask: data.currentTask,
+                    nextTask: data.currentTask ? data.currentTask : data.type,
                     taskType: data.type,
                     target: data.taskTarget,
                     penalty: data.penalty,
@@ -324,6 +327,8 @@ export class Mixed extends React.Component<Props, State> {
                     break;
                 }
                 case "tictactoe": {
+                    console.log("TicTacToe");
+                    taskComponent = <TicTacToe />;
                     break;
                 }
                 default: {

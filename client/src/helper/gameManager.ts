@@ -54,9 +54,11 @@ export class GameManager {
             throw new Error(`Trying to get ${n} players while PLT only has ${reg.size} entries`);
         }
         const players: string[] = new Array(n);
+        console.log(`Array length ${players.length} with n=${n}`);
         for (let i = 0; i < n; i++) {
             const choose = Util.getRandomKey(reg);
-            players.push(choose);
+            console.log(`Current iteration: ${i} has chosen ${choose}`);
+            players[i] = choose;
             reg.delete(choose);
         }
         return players;

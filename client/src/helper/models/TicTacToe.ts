@@ -44,7 +44,7 @@ export const ticTacToeConverter = {
             stepNumber: game.stepNumber,
             isXNext: game.isXNext,
             playerX: game.playerX,
-            playerY: game.playerO,
+            playerO: game.playerO,
         };
     },
     fromFirestore(

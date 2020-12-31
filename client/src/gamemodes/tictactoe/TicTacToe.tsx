@@ -17,6 +17,7 @@
  */
 
 import firebase from "firebase";
+import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
 import { Board } from "./Board";
 import "../../css/TicTacToe.css";
@@ -24,14 +25,13 @@ import { TicOptions, TicUtils } from "./TicUtils";
 import { TicTacToe as TicTacToeData, ticTacToeConverter } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
 
-interface Props {
-    spectator: boolean;
-    player: TicOptions;
-}
+interface Props {}
 interface State {
     squares: TicOptions[];
     stepNumber: number;
     isXNext: boolean;
+    spectator: boolean;
+    player: TicOptions;
 }
 
 export class TicTacToe extends Component<Props, State> {
@@ -43,23 +43,32 @@ export class TicTacToe extends Component<Props, State> {
             squares: new Array(9),
             stepNumber: 0,
             isXNext: true,
+            spectator: true,
+            player: null,
         };
 
         this.updateData = this.updateData.bind(this);
         this.updateFromDoc = this.updateFromDoc.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.keyEvent = this.keyEvent.bind(this);
 
         const gameID = GameManager.getGameID();
-        const tttRef = firebase.firestore().collection(gameID).doc("tictactoe").withConverter(ticTacToeConverter);
+        const tttRef = firebase.firestore().collection("tictactoe").doc(gameID).withConverter(ticTacToeConverter);
         this.unsubscribe = tttRef.onSnapshot(this.updateFromDoc);
+    }
+
+    componentDidMount(): void {
+        document.addEventListener("keydown", this.keyEvent, false);
     }
 
     componentWillUnmount(): void {
         this.unsubscribe();
+        document.removeEventListener("keydown", this.keyEvent, false);
     }
 
     handleClick(i: number): void {
-        if (this.props.spectator || !this.props.player) {
-            throw new Error("Trying to make a draw as spectator");
+        if (this.state.spectator || !this.state.player) {
+            return;
         }
 
         const { squares } = this.state;
@@ -67,7 +76,7 @@ export class TicTacToe extends Component<Props, State> {
             return;
         }
 
-        TicUtils.makeDraw(i, this.props.player).catch(console.error);
+        TicUtils.makeDraw(i, this.state.player).catch(console.error);
     }
 
     private updateFromDoc(doc: firebase.firestore.DocumentSnapshot<TicTacToeData>): void {
@@ -79,11 +88,37 @@ export class TicTacToe extends Component<Props, State> {
     }
 
     updateData(data: TicTacToeData): void {
+        const user = firebase.auth().currentUser;
+        let player: TicOptions = null;
+        let spectator = true;
+        if (user) {
+            // console.log(`Player X: ${data.playerX} === ${user.uid} => ${user.uid === data.playerX}`);
+            // console.log(`Player O: ${data.playerO} === ${user.uid} => ${user.uid === data.playerO}`);
+            if (user.uid === data.playerX) {
+                player = "X";
+                spectator = false;
+            } else if (user.uid === data.playerO) {
+                player = "O";
+                spectator = false;
+            }
+        } else {
+            console.warn("No user provided!");
+        }
         this.setState({
             squares: data.squares,
             stepNumber: data.stepNumber,
             isXNext: data.isXNext,
+            player,
+            spectator,
         });
+        // console.log(
+        //     `Step Number: ${data.stepNumber} | Is X next: ${data.isXNext} | Player: ${player} | Spectator: ${spectator}`,
+        // );
+    }
+
+    keyEvent(event: KeyboardEvent): void {
+        const num = Number.parseInt(event.key, 10);
+        if (num < 10 && num > 0) this.handleClick(TicUtils.numpadToSquare(num));
     }
 
     render(): JSX.Element {
@@ -93,15 +128,24 @@ export class TicTacToe extends Component<Props, State> {
         const status = winner ? `Winner: ${winner}` : `Next player: ${this.state.isXNext ? "X" : "O"}`;
 
         return (
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-            <div
-                className="game"
-                onKeyPressCapture={(event) => {
-                    const num = Number.parseInt(event.key, 10);
-                    if (num < 10 && num > 0) this.handleClick(num - 1);
-                }}
-                role="application"
-            >
+            <div className="game">
+                {this.state.spectator && (
+                    <div className="spectator-area">
+                        <h2>
+                            <FormattedMessage id="elements.general.youare" />{" "}
+                            <FormattedMessage id="elements.tictactoe.spectator" />
+                        </h2>
+                        <br />
+                    </div>
+                )}
+                {!this.state.spectator && (
+                    <div className="player-area">
+                        <h2>
+                            <FormattedMessage id="elements.general.youare" /> {this.state.player}
+                        </h2>
+                        <br />
+                    </div>
+                )}
                 <div className="game-board">
                     <Board squares={squares} onClick={(i: number) => this.handleClick(i)} />
                 </div>

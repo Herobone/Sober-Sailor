@@ -84,7 +84,7 @@ export class Routed extends PureComponent<Props> {
                         />
 
                         <Route path="/ttt">
-                            <TicTacToe spectator={false} player="X" />
+                            <TicTacToe />
                         </Route>
 
                         <Route path="/login">
