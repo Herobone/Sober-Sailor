@@ -22,7 +22,7 @@ import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 import Cookies from "universal-cookie";
 
-import { Alert, Alerts } from "../../../helper/AlertTypes";
+import { Alert } from "../../../helper/AlertTypes";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -35,347 +35,370 @@ import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";
 import { Task } from "../../../helper/models/task";
-import { Register, registerConverter } from "../../../helper/models/Register";
+import { Register } from "../../../helper/models/Register";
 import { KickList } from "../../Visuals/KickList";
+import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
+import { PlayerList } from "../../../helper/models/CustomTypes";
+import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 
 interface Props {
-  createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 
 interface State {
-  nextTask: string | null;
-  taskType: string | null;
-  target: string | null;
-  isHost: boolean;
-  pollState: boolean;
-  evalState: boolean;
-  result: Player[] | undefined;
-  countdownTimeout: NodeJS.Timeout | undefined;
-  penalty: number;
+    nextTask: string | null;
+    taskType: string | null;
+    target: string | null;
+    isHost: boolean;
+    pollState: boolean;
+    evalState: boolean;
+    result: Player[] | undefined;
+    countdownTimeout: NodeJS.Timeout | undefined;
+    penalty: number;
 }
 
 export class Mixed extends React.Component<Props, State> {
-  leaderboardRef: RefObject<Leaderboard>;
+    leaderboardRef: RefObject<Leaderboard>;
 
-  countdownRef: RefObject<HTMLSpanElement>;
+    countdownRef: RefObject<HTMLSpanElement>;
 
-  taskRef: RefObject<WhoWouldRather>;
+    taskRef: RefObject<WhoWouldRather>;
 
-  resultRef: RefObject<ResultPage>;
+    resultRef: RefObject<ResultPage>;
 
-  truthOrDareRef: RefObject<TruthOrDare>;
+    truthOrDareRef: RefObject<TruthOrDare>;
 
-  kickListRef: RefObject<KickList>;
+    kickListRef: RefObject<KickList>;
 
-  lang: string;
+    lang: string;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      nextTask: null,
-      taskType: null,
-      target: null,
-      isHost: false,
-      pollState: false,
-      evalState: false,
-      countdownTimeout: undefined,
-      result: undefined,
-      penalty: 0,
-    };
-
-    this.gameEvent = this.gameEvent.bind(this);
-    this.randomButtonClick = this.randomButtonClick.bind(this);
-    this.startTimer = this.startTimer.bind(this);
-    this.submitAndReset = this.submitAndReset.bind(this);
-    this.setTask = this.setTask.bind(this);
-    this.playerEvent = this.playerEvent.bind(this);
-    this.updateLeaderboard = this.updateLeaderboard.bind(this);
-
-    this.leaderboardRef = React.createRef();
-    this.countdownRef = React.createRef();
-    this.taskRef = React.createRef();
-    this.resultRef = React.createRef();
-    this.truthOrDareRef = React.createRef();
-    this.kickListRef = React.createRef();
-
-    const cookies = new Cookies();
-    this.lang = cookies.get("locale");
-  }
-
-  componentDidMount(): void {
-    GameManager.joinGame(this.gameEvent, this.playerEvent);
-    GameManager.amIHost()
-      .then((host): void => {
-        return this.setState({ isHost: host });
-      })
-      .catch(console.error);
-  }
-
-  setTask(taskType: Task, target: string | null, penalty = 0): void {
-    const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
-    getRandomTask(taskType.id, lang)
-      .then(
-        (task): Promise<void> => {
-          this.setState({ nextTask: task });
-          return GameManager.getGame().update({
-            currentTask: task,
-            type: taskType.id,
-            evalState: false,
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            nextTask: null,
+            taskType: null,
+            target: null,
+            isHost: false,
             pollState: false,
-            taskTarget: target,
-            penalty,
-          });
-        },
-      )
-      .catch(console.error);
-  }
+            evalState: false,
+            countdownTimeout: undefined,
+            result: undefined,
+            penalty: 0,
+        };
 
-  startTimer(duration: number, display: RefObject<HTMLSpanElement>): void {
-    let timer = duration;
-    const timeout = setInterval(() => {
-      const cur = display.current;
-      if (cur) {
-        cur.textContent = timer.toString();
-      }
+        this.gameEvent = this.gameEvent.bind(this);
+        this.randomButtonClick = this.randomButtonClick.bind(this);
+        this.startTimer = this.startTimer.bind(this);
+        this.submitAndReset = this.submitAndReset.bind(this);
+        this.setTask = this.setTask.bind(this);
+        this.playerEvent = this.playerEvent.bind(this);
+        this.updateLeaderboard = this.updateLeaderboard.bind(this);
 
-      if (--timer < 0) {
-        const tout = this.state.countdownTimeout;
-        if (tout) {
-          clearTimeout(tout);
-        }
-        this.setState({
-          pollState: false,
-          countdownTimeout: undefined,
-        });
-        if (this.state.isHost) {
-          GameManager.setPollState(false);
-          GameManager.setEvalState(true);
-        }
-      }
-    }, 1000);
-    this.setState({
-      countdownTimeout: timeout,
-    });
-  }
+        this.leaderboardRef = React.createRef();
+        this.countdownRef = React.createRef();
+        this.taskRef = React.createRef();
+        this.resultRef = React.createRef();
+        this.truthOrDareRef = React.createRef();
+        this.kickListRef = React.createRef();
 
-  updateLeaderboard(): void {
-    const lb = this.leaderboardRef.current;
-    if (lb) {
-      lb.updateLeaderboard();
+        const cookies = new Cookies();
+        this.lang = cookies.get("locale");
     }
-  }
 
-  gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>): void {
-    const data = doc.data();
-    if (data) {
-      if (
-        this.state.nextTask !== data.currentTask ||
-        this.state.taskType !== data.type ||
-        this.state.target !== data.taskTarget
-      ) {
-        this.submitAndReset();
-        this.setState({
-          nextTask: data.currentTask,
-          taskType: data.type,
-          target: data.taskTarget,
-          penalty: data.penalty,
-        });
-      }
-      if (!this.state.pollState && data.pollState) {
-        this.startTimer(20, this.countdownRef);
-        this.setState({
-          pollState: true,
-        });
-        if (this.taskRef.current) {
-          this.taskRef.current.lockInput(false);
-        }
-      }
-
-      if (!this.state.evalState && data.evalState) {
-        this.setState({
-          evalState: true,
-        });
-        if (this.state.taskType === "truthordare") {
-          this.updateLeaderboard();
-        } else {
-          GameManager.evaluateAnswers()
-            .then((result) => {
-              this.setState({
-                result,
-              });
-              const res = this.resultRef.current;
-              if (res) {
-                res.updateResults(result);
-              }
-              return Promise.resolve();
+    componentDidMount(): void {
+        GameManager.joinGame(this.gameEvent, this.playerEvent);
+        GameManager.amIHost()
+            .then((host): void => {
+                return this.setState({ isHost: host });
             })
             .catch(console.error);
+    }
+
+    setTask(taskType: Task, target: PlayerList, penalty = 0): void {
+        // console.log(target);
+        if (taskType.id === "tictactoe") {
+            GameManager.getGame()
+                .update({
+                    currentTask: null,
+                    type: taskType.id,
+                    evalState: false,
+                    pollState: false,
+                    taskTarget: null,
+                    penalty,
+                })
+                .catch(console.error);
+            if (target && target.length === 2) {
+                TicUtils.registerTicTacToe(target)
+                    // .then(() => console.log("Success!"))
+                    .catch(console.error);
+            }
+        } else {
+            const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
+            const localTarget = target ? target[0] : null;
+
+            this.setState({
+                target: localTarget,
+            });
+            getRandomTask(taskType.id, lang)
+                .then(
+                    (task): Promise<void> => {
+                        this.setState({ nextTask: task });
+                        return GameManager.getGame().update({
+                            currentTask: task,
+                            type: taskType.id,
+                            evalState: false,
+                            pollState: false,
+                            taskTarget: localTarget,
+                            penalty,
+                        });
+                    },
+                )
+                .catch(console.error);
         }
-      }
-
-      if (!data.evalState) {
-        this.setState({
-          evalState: false,
-        });
-      }
-
-      if (!data.pollState && this.taskRef.current) {
-        this.taskRef.current.lockInput(true);
-      }
-    }
-  }
-
-  submitAndReset(): void {
-    const resultsWere = this.state.result;
-    if (resultsWere) {
-      GameManager.afterEval(resultsWere)
-        .then(() =>
-          this.setState({
-            result: undefined,
-          }),
-        )
-        .catch(console.error);
-    }
-    const res = this.resultRef.current;
-    if (res) {
-      res.updateResults([]);
-    }
-    const tud = this.truthOrDareRef.current;
-    if (tud) {
-      tud.reset();
-    }
-    this.updateLeaderboard();
-  }
-
-  playerEvent(doc: firebase.firestore.DocumentSnapshot<Register>): void {
-    const data = doc.data();
-    if (data) {
-      localStorage.setItem("playerLookupTable", data.stringify());
-    }
-    this.updateLeaderboard();
-  }
-
-  randomButtonClick(): void {
-    if (!this.state.isHost) {
-      return;
-    }
-    this.submitAndReset();
-    const taskType: Task = Util.selectRandom(tasks);
-    let target: string | undefined;
-    if (taskType.singleTarget) {
-      const pltRaw = localStorage.getItem("playerLookupTable");
-      if (pltRaw) {
-        const register = Register.parse(pltRaw);
-
-        target = Util.getRandomKey(register.playerUidMap);
-        this.setTask(taskType, target, Util.random(3, 6));
-      } else {
-        this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored! Try again!");
-        const gameRef = GameManager.getGame();
-        gameRef
-          .collection("players")
-          .doc("register")
-          .withConverter(registerConverter)
-          .get()
-          .then(this.playerEvent)
-          .catch(console.error);
-      }
-    } else {
-      this.setTask(taskType, null);
-    }
-  }
-
-  render(): JSX.Element {
-    const { currentUser } = firebase.auth();
-
-    let taskComponent: ReactElement = <FormattedMessage id="elements.tasks.notloaded" />;
-
-    const task = this.state.nextTask;
-    const type = this.state.taskType;
-
-    if (task && type) {
-      switch (type) {
-        case "whowouldrather": {
-          taskComponent = <WhoWouldRather question={task} ref={this.taskRef} />;
-          break;
-        }
-        case "truthordare": {
-          const { target } = this.state;
-          if (target !== null) {
-            taskComponent = (
-              <TruthOrDare ref={this.truthOrDareRef} question={task} target={target} penalty={this.state.penalty} />
-            );
-          }
-          break;
-        }
-        default: {
-          console.error("Unexpected task type!");
-        }
-      }
     }
 
-    return (
-      <div className="w3-center">
-        <FormattedMessage id="gamemodes.mixed" />
-        <br />
-        Game ID: {GameManager.getGameID()}
-        <br />
-        User ID: {currentUser?.uid}
-        <br />
-        Next Task: {this.state.nextTask}
-        <br />
-        Task Type: {this.state.taskType}
-        <br />
-        <div>
-          <span className="countdown-inner" ref={this.countdownRef}>
-            20
-          </span>{" "}
-          <FormattedMessage id="general.seconds" />
-        </div>
-        {taskComponent}
-        <ResultPage ref={this.resultRef} />
-        {this.state.isHost && (
-          <div className="host-area">
-            {!this.state.pollState && (
-              <button type="button" onClick={this.randomButtonClick}>
-                Random Button
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                GameManager.transferHostShip();
-              }}
-            >
-              <FormattedMessage id="actions.host.transfer" />
-            </button>
-            {!this.state.pollState && (
-              <button
-                type="button"
-                onClick={() => {
-                  GameManager.setPollState(true);
-                }}
-              >
-                <FormattedMessage id="actions.host.startpoll" />
-              </button>
-            )}
-            <br />
-            <button
-              type="button"
-              onClick={() => {
-                const klRef = this.kickListRef.current;
-                if (klRef) {
-                  klRef.show();
+    startTimer(duration: number, display: RefObject<HTMLSpanElement>): void {
+        let timer = duration;
+        const timeout = setInterval(() => {
+            const cur = display.current;
+            if (cur) {
+                cur.textContent = timer.toString();
+            }
+
+            if (--timer < 0) {
+                const tout = this.state.countdownTimeout;
+                if (tout) {
+                    clearTimeout(tout);
                 }
-              }}
-            >
-              <FormattedMessage id="actions.host.kick" />
-            </button>
-            <KickList createAlert={this.props.createAlert} ref={this.kickListRef} />
-          </div>
-        )}
-        <Leaderboard ref={this.leaderboardRef} />
-      </div>
-    );
-  }
+                this.setState({
+                    pollState: false,
+                    countdownTimeout: undefined,
+                });
+                if (this.state.isHost) {
+                    GameManager.setPollState(false);
+                    GameManager.setEvalState(true);
+                }
+            }
+        }, 1000);
+        this.setState({
+            countdownTimeout: timeout,
+        });
+    }
+
+    updateLeaderboard(): void {
+        const lb = this.leaderboardRef.current;
+        if (lb) {
+            lb.updateLeaderboard();
+        }
+    }
+
+    gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>): void {
+        const data = doc.data();
+        if (data) {
+            if (
+                this.state.nextTask !== data.currentTask ||
+                this.state.taskType !== data.type ||
+                this.state.target !== data.taskTarget
+            ) {
+                this.submitAndReset();
+                this.setState({
+                    nextTask: data.currentTask ? data.currentTask : data.type,
+                    taskType: data.type,
+                    target: data.taskTarget,
+                    penalty: data.penalty,
+                });
+            }
+            if (!this.state.pollState && data.pollState) {
+                this.startTimer(20, this.countdownRef);
+                this.setState({
+                    pollState: true,
+                });
+                if (this.taskRef.current) {
+                    this.taskRef.current.lockInput(false);
+                }
+            }
+
+            if (!this.state.evalState && data.evalState) {
+                this.setState({
+                    evalState: true,
+                });
+                if (this.state.taskType === "truthordare") {
+                    this.updateLeaderboard();
+                } else {
+                    GameManager.evaluateAnswers()
+                        .then((result) => {
+                            this.setState({
+                                result,
+                            });
+                            const res = this.resultRef.current;
+                            if (res) {
+                                res.updateResults(result);
+                            }
+                            return Promise.resolve();
+                        })
+                        .catch(console.error);
+                }
+            }
+
+            if (!data.evalState) {
+                this.setState({
+                    evalState: false,
+                });
+            }
+
+            if (!data.pollState && this.taskRef.current) {
+                this.taskRef.current.lockInput(true);
+            }
+        }
+    }
+
+    submitAndReset(): void {
+        const resultsWere = this.state.result;
+        if (resultsWere) {
+            GameManager.afterEval(resultsWere)
+                .then(() =>
+                    this.setState({
+                        result: undefined,
+                    }),
+                )
+                .catch(console.error);
+        }
+        const res = this.resultRef.current;
+        if (res) {
+            res.updateResults([]);
+        }
+        const tud = this.truthOrDareRef.current;
+        if (tud) {
+            tud.reset();
+        }
+        this.updateLeaderboard();
+    }
+
+    playerEvent(doc: firebase.firestore.DocumentSnapshot<Register>): void {
+        GameManager.updatePlayerLookupTable(doc);
+        this.updateLeaderboard();
+    }
+
+    randomButtonClick(): void {
+        if (!this.state.isHost) {
+            throw new Error("Trying to execute a host method as non Host");
+        }
+        this.submitAndReset();
+        const taskType: Task = Util.selectRandom(tasks);
+
+        if (taskType.singleTarget) {
+            let targetCount = 1;
+            if (taskType.id === "tictactoe") {
+                targetCount = 2;
+            }
+            const target = GameManager.getRandomPlayer(targetCount);
+            this.setTask(taskType, target, Util.random(3, 7));
+        } else {
+            this.setTask(taskType, null);
+        }
+    }
+
+    render(): JSX.Element {
+        const { currentUser } = firebase.auth();
+
+        let taskComponent: ReactElement = <FormattedMessage id="elements.tasks.notloaded" />;
+
+        const task = this.state.nextTask;
+        const type = this.state.taskType;
+
+        if (task && type) {
+            switch (type) {
+                case "whowouldrather": {
+                    taskComponent = <WhoWouldRather question={task} ref={this.taskRef} />;
+                    break;
+                }
+                case "truthordare": {
+                    const { target } = this.state;
+                    if (target !== null) {
+                        taskComponent = (
+                            <TruthOrDare
+                                ref={this.truthOrDareRef}
+                                question={task}
+                                target={target}
+                                penalty={this.state.penalty}
+                            />
+                        );
+                    }
+                    break;
+                }
+                case "tictactoe": {
+                    // console.log("TicTacToe");
+                    taskComponent = <TicTacToe />;
+                    break;
+                }
+                default: {
+                    console.error("Unexpected task type!");
+                }
+            }
+        }
+
+        return (
+            <div className="w3-center">
+                <FormattedMessage id="gamemodes.mixed" />
+                <br />
+                Game ID: {GameManager.getGameID()}
+                <br />
+                User ID: {currentUser?.uid}
+                <br />
+                Next Task: {this.state.nextTask}
+                <br />
+                Task Type: {this.state.taskType}
+                <br />
+                <div>
+                    <span className="countdown-inner" ref={this.countdownRef}>
+                        20
+                    </span>{" "}
+                    <FormattedMessage id="general.seconds" />
+                </div>
+                {taskComponent}
+                <ResultPage ref={this.resultRef} />
+                {this.state.isHost && (
+                    <div className="host-area">
+                        {!this.state.pollState && (
+                            <button type="button" onClick={this.randomButtonClick}>
+                                Random Button
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                GameManager.transferHostShip();
+                            }}
+                        >
+                            <FormattedMessage id="actions.host.transfer" />
+                        </button>
+                        {!this.state.pollState && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    GameManager.setPollState(true);
+                                }}
+                            >
+                                <FormattedMessage id="actions.host.startpoll" />
+                            </button>
+                        )}
+                        <br />
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const klRef = this.kickListRef.current;
+                                if (klRef) {
+                                    klRef.show();
+                                }
+                            }}
+                        >
+                            <FormattedMessage id="actions.host.kick" />
+                        </button>
+                        <KickList createAlert={this.props.createAlert} ref={this.kickListRef} />
+                    </div>
+                )}
+                <Leaderboard ref={this.leaderboardRef} />
+            </div>
+        );
+    }
 }

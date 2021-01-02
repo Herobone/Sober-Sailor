@@ -1,12 +1,23 @@
 [
   {
     "id": "whowouldrather",
-    "lang": ["de"],
+    "lang": [
+      "de"
+    ],
     "singleTarget": false
   },
   {
     "id": "truthordare",
-    "lang": ["de"],
+    "lang": [
+      "de"
+    ],
+    "singleTarget": true
+  },
+  {
+    "id": "tictactoe",
+    "lang": [
+      "*"
+    ],
     "singleTarget": true
   }
 ]

@@ -16,66 +16,154 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import firebase from "firebase";
+import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
 import { Board } from "./Board";
 import "../../css/TicTacToe.css";
 import { TicOptions, TicUtils } from "./TicUtils";
+import { TicTacToe as TicTacToeData, ticTacToeConverter } from "../../helper/models/TicTacToe";
+import { GameManager } from "../../helper/gameManager";
+import { Player } from "../../helper/models/Player";
 
 interface Props {}
 interface State {
-  squares: TicOptions[];
-  stepNumber: number;
-  xIsNext: boolean;
+    squares: TicOptions[];
+    stepNumber: number;
+    isXNext: boolean;
+    spectator: boolean;
+    player: TicOptions;
+    winner: TicOptions;
 }
 
 export class TicTacToe extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      squares: new Array(9),
-      stepNumber: 0,
-      xIsNext: true,
-    };
-  }
+    unsubscribe: () => void;
 
-  handleClick(i: number): void {
-    const { squares } = this.state;
-    if (TicUtils.calculateWinner(squares) || squares[i]) {
-      return;
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            squares: new Array(9),
+            stepNumber: 0,
+            isXNext: true,
+            spectator: true,
+            player: null,
+            winner: null,
+        };
+
+        this.updateData = this.updateData.bind(this);
+        this.updateFromDoc = this.updateFromDoc.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.keyEvent = this.keyEvent.bind(this);
+
+        const gameID = GameManager.getGameID();
+        const tttRef = firebase.firestore().collection("tictactoe").doc(gameID).withConverter(ticTacToeConverter);
+        this.unsubscribe = tttRef.onSnapshot(this.updateFromDoc);
     }
-    squares[i] = this.state.xIsNext ? "X" : "O";
-    this.setState((prev) => {
-      return {
-        squares,
-        stepNumber: prev.stepNumber + 1,
-        xIsNext: !prev.xIsNext,
-      };
-    });
-  }
 
-  render(): JSX.Element {
-    const { squares } = this.state;
-    const winner = TicUtils.calculateWinner(squares);
+    componentDidMount(): void {
+        document.addEventListener("keydown", this.keyEvent, false);
+    }
 
-    const status = winner ? `Winner: ${winner}` : `Next player: ${this.state.xIsNext ? "X" : "O"}`;
+    componentWillUnmount(): void {
+        this.unsubscribe();
+        document.removeEventListener("keydown", this.keyEvent, false);
+    }
 
-    return (
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-      <div
-        className="game"
-        onKeyPressCapture={(event) => {
-          const num = Number.parseInt(event.key, 10);
-          if (num < 10 && num > 0) this.handleClick(num - 1);
-        }}
-        role="application"
-      >
-        <div className="game-board">
-          <Board squares={squares} onClick={(i: number) => this.handleClick(i)} />
-        </div>
-        <div className="game-info">
-          <div>{status}</div>
-        </div>
-      </div>
-    );
-  }
+    handleClick(i: number): void {
+        if (this.state.spectator || !this.state.player) {
+            return;
+        }
+
+        const { squares } = this.state;
+        if (TicUtils.calculateWinner(squares) || squares[i]) {
+            return;
+        }
+
+        TicUtils.makeDraw(i, this.state.player).catch(console.error);
+    }
+
+    private updateFromDoc(doc: firebase.firestore.DocumentSnapshot<TicTacToeData>): void {
+        const data = doc.data();
+        if (!data) {
+            throw new Error("No data in Document Snapshot!");
+        }
+        this.updateData(data);
+    }
+
+    updateData(data: TicTacToeData): void {
+        const user = firebase.auth().currentUser;
+        let player: TicOptions = null;
+        let spectator = true;
+        if (user) {
+            // console.log(`Player X: ${data.playerX} === ${user.uid} => ${user.uid === data.playerX}`);
+            // console.log(`Player O: ${data.playerO} === ${user.uid} => ${user.uid === data.playerO}`);
+            if (user.uid === data.playerX) {
+                player = "X";
+                spectator = false;
+            } else if (user.uid === data.playerO) {
+                player = "O";
+                spectator = false;
+            }
+        } else {
+            console.warn("No user provided!");
+        }
+
+        const winner = TicUtils.calculateWinner(data.squares);
+        this.setState({
+            squares: data.squares,
+            stepNumber: data.stepNumber,
+            isXNext: data.isXNext,
+            player,
+            spectator,
+            winner,
+        });
+        if (winner && !spectator && user && winner !== player) {
+            GameManager.afterEval([new Player(user.uid, "", data.stepNumber, null)]);
+        }
+        // console.log(
+        //     `Step Number: ${data.stepNumber} | Is X next: ${data.isXNext} | Player: ${player} | Spectator: ${spectator}`,
+        // );
+    }
+
+    keyEvent(event: KeyboardEvent): void {
+        const num = Number.parseInt(event.key, 10);
+        if (num < 10 && num > 0) this.handleClick(TicUtils.numpadToSquare(num));
+    }
+
+    render(): JSX.Element {
+        const { squares } = this.state;
+
+        const status = this.state.winner
+            ? `Winner: ${this.state.winner}`
+            : `Next player: ${this.state.isXNext ? "X" : "O"}`;
+
+        return (
+            <div className="game">
+                {this.state.spectator && (
+                    <div className="spectator-area">
+                        <h2>
+                            <FormattedMessage id="elements.general.youare" />{" "}
+                            <FormattedMessage id="elements.tictactoe.spectator" />
+                        </h2>
+                        <br />
+                    </div>
+                )}
+                {!this.state.spectator && (
+                    <div className="player-area">
+                        <h2>
+                            <FormattedMessage id="elements.general.youare" /> {this.state.player}
+                        </h2>
+                        <br />
+                    </div>
+                )}
+                <div className="game-board">
+                    <Board squares={squares} onClick={(i: number) => this.handleClick(i)} />
+                </div>
+                <div className="game-info">
+                    <div>{status}</div>
+                    <div>Step: {this.state.stepNumber}</div>
+                </div>
+            </div>
+        );
+    }
 }
