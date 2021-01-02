@@ -19,5 +19,13 @@
       "*"
     ],
     "singleTarget": true
+  },
+  {
+    "id": "describe_in_one_word",
+    "lang": [
+      "de",
+      "en"
+    ],
+    "singleTarget": true
   }
 ]

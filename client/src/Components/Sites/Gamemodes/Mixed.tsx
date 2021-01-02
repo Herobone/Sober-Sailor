@@ -39,6 +39,7 @@ import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
+import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -105,7 +106,7 @@ export class Mixed extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
-        GameManager.joinGame(this.gameEvent, this.playerEvent);
+        GameManager.joinGame(this.gameEvent, this.playerEvent).catch(console.error);
         GameManager.amIHost()
             .then((host): void => {
                 return this.setState({ isHost: host });
@@ -114,7 +115,7 @@ export class Mixed extends React.Component<Props, State> {
     }
 
     setTask(taskType: Task, target: PlayerList, penalty = 0): void {
-        // console.log(target);
+        console.log(target);
         if (taskType.id === "tictactoe") {
             GameManager.getGame()
                 .update({
@@ -127,9 +128,7 @@ export class Mixed extends React.Component<Props, State> {
                 })
                 .catch(console.error);
             if (target && target.length === 2) {
-                TicUtils.registerTicTacToe(target)
-                    // .then(() => console.log("Success!"))
-                    .catch(console.error);
+                TicUtils.registerTicTacToe(target).catch(console.error);
             }
         } else {
             const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
@@ -174,8 +173,8 @@ export class Mixed extends React.Component<Props, State> {
                     countdownTimeout: undefined,
                 });
                 if (this.state.isHost) {
-                    GameManager.setPollState(false);
-                    GameManager.setEvalState(true);
+                    GameManager.setPollState(false).catch(console.error);
+                    GameManager.setEvalState(true).catch(console.error);
                 }
             }
         }, 1000);
@@ -283,7 +282,7 @@ export class Mixed extends React.Component<Props, State> {
             throw new Error("Trying to execute a host method as non Host");
         }
         this.submitAndReset();
-        const taskType: Task = Util.selectRandom(tasks);
+        const taskType: Task = process.env.NODE_ENV === "development" ? tasks[3] : Util.selectRandom(tasks);
 
         if (taskType.singleTarget) {
             let targetCount = 1;
@@ -326,8 +325,15 @@ export class Mixed extends React.Component<Props, State> {
                     break;
                 }
                 case "tictactoe": {
-                    // console.log("TicTacToe");
+                    console.log("TicTacToe");
                     taskComponent = <TicTacToe />;
+                    break;
+                }
+                case "describe_in_one_word": {
+                    const { target } = this.state;
+                    if (target !== null) {
+                        taskComponent = <DescribeInOneWord target={target} />;
+                    }
                     break;
                 }
                 default: {
@@ -366,7 +372,7 @@ export class Mixed extends React.Component<Props, State> {
                         <button
                             type="button"
                             onClick={() => {
-                                GameManager.transferHostShip();
+                                GameManager.transferHostShip().catch(console.error);
                             }}
                         >
                             <FormattedMessage id="actions.host.transfer" />
@@ -375,7 +381,7 @@ export class Mixed extends React.Component<Props, State> {
                             <button
                                 type="button"
                                 onClick={() => {
-                                    GameManager.setPollState(true);
+                                    GameManager.setPollState(true).catch(console.error);
                                 }}
                             >
                                 <FormattedMessage id="actions.host.startpoll" />
