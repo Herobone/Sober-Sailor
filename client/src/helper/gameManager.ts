@@ -311,6 +311,7 @@ export class GameManager {
     }
 
     private static setPollStateP(gameID: string, state: boolean): Promise<unknown> {
+        console.log("Changing State to", state);
         return new Promise((resolve, reject) => {
             const gameRef = GameManager.getGameByID(gameID);
             gameRef
