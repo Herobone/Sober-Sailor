@@ -17,22 +17,21 @@
  */
 
 import React, { PureComponent, ReactElement } from "react";
-import "../../../css/App.css";
 import { FormattedMessage } from "react-intl";
 import { Alert } from "../../../helper/AlertTypes";
 
 interface Props {
-  createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-  gameID: string;
+    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+    gameID: string;
 }
 
 export class TruthOrDare extends PureComponent<Props> {
-  render(): JSX.Element {
-    return (
-      <div className="w3-center">
-        <FormattedMessage id="gamemodes.truthordare" />
-        {this.props.gameID}
-      </div>
-    );
-  }
+    render(): JSX.Element {
+        return (
+            <div className="w3-center">
+                <FormattedMessage id="gamemodes.truthordare" />
+                {this.props.gameID}
+            </div>
+        );
+    }
 }

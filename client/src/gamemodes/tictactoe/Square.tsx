@@ -18,18 +18,19 @@
 
 import React, { PureComponent } from "react";
 import { TicOptions } from "./TicUtils";
+import style from "../../css/TicTacToe.module.scss";
 
 interface Props {
-  value: TicOptions;
-  onClick: () => void;
+    value: TicOptions;
+    onClick: () => void;
 }
 
 export class Square extends PureComponent<Props> {
-  render(): JSX.Element {
-    return (
-      <button className="square" onClick={this.props.onClick} type="button">
-        {this.props.value}
-      </button>
-    );
-  }
+    render(): JSX.Element {
+        return (
+            <button className={style.square} onClick={this.props.onClick} type="button">
+                {this.props.value}
+            </button>
+        );
+    }
 }

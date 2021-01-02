@@ -20,7 +20,7 @@ import firebase from "firebase";
 import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
 import { Board } from "./Board";
-import "../../css/TicTacToe.css";
+import style from "../../css/TicTacToe.module.scss";
 import { TicOptions, TicUtils } from "./TicUtils";
 import { TicTacToe as TicTacToeData, ticTacToeConverter } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
@@ -138,7 +138,7 @@ export class TicTacToe extends Component<Props, State> {
             : `Next player: ${this.state.isXNext ? "X" : "O"}`;
 
         return (
-            <div className="game">
+            <div className={style.game}>
                 {this.state.spectator && (
                     <div className="spectator-area">
                         <h2>
@@ -156,10 +156,10 @@ export class TicTacToe extends Component<Props, State> {
                         <br />
                     </div>
                 )}
-                <div className="game-board">
+                <div className={style.boardRow}>
                     <Board squares={squares} onClick={(i: number) => this.handleClick(i)} />
                 </div>
-                <div className="game-info">
+                <div className={style.gameInfo}>
                     <div>{status}</div>
                     <div>Step: {this.state.stepNumber}</div>
                 </div>

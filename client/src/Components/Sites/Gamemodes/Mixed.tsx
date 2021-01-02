@@ -17,7 +17,6 @@
  */
 
 import React, { ReactElement, RefObject } from "react";
-import "../../../css/App.css";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 import Cookies from "universal-cookie";

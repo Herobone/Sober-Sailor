@@ -17,9 +17,9 @@
  */
 
 import React, { PureComponent, ReactElement } from "react";
-import "../../css/App.css";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
+import App from "../../css/App.module.scss";
 import { Alert } from "../../helper/AlertTypes";
 
 interface Props {
@@ -32,7 +32,7 @@ export class Home extends PureComponent<Props, State> {
     render(): JSX.Element {
         return (
             <div className="w3-center">
-                <div className="w3-card-4 sailor-startpage-gameselector">
+                <div className={App.sailorStartpageGameselector}>
                     <header className="w3-container w3-yellow">
                         <h1>
                             <FormattedMessage id="sobersailor.name" />
@@ -40,17 +40,17 @@ export class Home extends PureComponent<Props, State> {
                     </header>
 
                     <div className="w3-container">
-                        <p className="sailor-gameselect-button">
+                        <p className={App.sailorGameselectButton}>
                             <Link to="mixed" className="w3-btn w3-round w3-orange w3-xlarge">
                                 <FormattedMessage id="gamemodes.mixed" />
                             </Link>
                         </p>
-                        <p className="sailor-gameselect-button">
+                        <p className={App.sailorGameselectButton}>
                             <Link to="/truthordare" className="w3-btn w3-round w3-orange w3-xlarge">
                                 <FormattedMessage id="gamemodes.truthordare" />
                             </Link>
                         </p>
-                        <p className="sailor-gameselect-button">
+                        <p className={App.sailorGameselectButton}>
                             <Link to="/saufpoly" className="w3-btn w3-round w3-orange w3-xlarge">
                                 <FormattedMessage id="gamemodes.saufpoly" />
                             </Link>
