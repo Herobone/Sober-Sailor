@@ -38,10 +38,9 @@
     "universal-cookie": "^4.0.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "lint": "eslint '*/**/*.{js,ts,tsx}'",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write \"{,!(node_modules)/**/}*.js\""
@@ -74,6 +73,11 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-unicorn": "^24.0.0",
-    "react-intl-translations-manager": "^5.0.3"
+    "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "postcss-safe-parser": "^5.0.2",
+    "react-app-rewired": "^2.1.8",
+    "react-intl-translations-manager": "^5.0.3",
+    "terser-webpack-plugin": "^4.2.3",
+    "webpack": "^4.44.2"
   }
 }

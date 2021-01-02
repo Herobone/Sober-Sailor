@@ -57,7 +57,7 @@ module.exports = {
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
         "promise/no-return-wrap": "off",
-        "no-console": ["warn", { allow: ["info", "warn", "error"] }],
+        "no-console": "off",
         "jsx-a11y/label-has-associated-control": [
             "warn",
             {
