@@ -16,18 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, RefObject } from "react";
+import React, { Component, ReactElement, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 import DIOWStyle from "../css/App.module.scss";
+import { Alert, Alerts } from "../helper/AlertTypes";
 
 interface Props {
     target: string;
+    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
-interface State {}
+interface State {
+    answer?: string;
+}
 
 export class DescribeInOneWord extends Component<Props, State> {
     wordInputRef: RefObject<HTMLInputElement>;
+
+    maxLength = 20;
 
     constructor(props: Props) {
         super(props);
@@ -37,6 +43,24 @@ export class DescribeInOneWord extends Component<Props, State> {
     }
 
     setWord = (): void => {
+        const refCurrent = this.wordInputRef.current;
+        if (!refCurrent) {
+            return;
+        }
+        const { value } = refCurrent;
+        if (!value || value.length < 0) {
+            console.log("Word not valid!");
+            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="elements.diow.word.short" />);
+            return;
+        }
+        if (value.length > this.maxLength) {
+            console.log("Word not valid!");
+            this.props.createAlert(
+                Alerts.WARNING,
+                <FormattedMessage id="elements.diow.word.long" values={{ len: this.maxLength }} />,
+            );
+            return;
+        }
         console.log("Setting Word");
     };
 
@@ -61,7 +85,7 @@ export class DescribeInOneWord extends Component<Props, State> {
                             <br />
                             <input
                                 ref={this.wordInputRef}
-                                id="word-imput"
+                                id="word-input"
                                 className={DIOWStyle.wordInput}
                                 name="name"
                                 type="text"
