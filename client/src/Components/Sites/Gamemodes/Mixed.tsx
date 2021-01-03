@@ -330,7 +330,7 @@ export class Mixed extends React.Component<Props, State> {
                 case "describe_in_one_word": {
                     const { target } = this.state;
                     if (target !== null) {
-                        taskComponent = <DescribeInOneWord target={target} />;
+                        taskComponent = <DescribeInOneWord target={target} createAlert={this.props.createAlert} />;
                     }
                     break;
                 }
