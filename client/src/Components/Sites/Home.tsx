@@ -20,7 +20,8 @@ import React, { PureComponent, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import App from "../../css/App.module.scss";
-import { Alert } from "../../helper/AlertTypes";
+import { Alert, Alerts } from "../../helper/AlertTypes";
+import { Util } from "../../helper/Util";
 
 interface Props {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -56,6 +57,15 @@ export class Home extends PureComponent<Props, State> {
                             </Link>
                         </p>
                     </div>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            this.props.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
+                        }}
+                    >
+                        Test Alert
+                    </button>
                 </div>
             </div>
         );
