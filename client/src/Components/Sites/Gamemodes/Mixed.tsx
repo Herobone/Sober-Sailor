@@ -297,8 +297,6 @@ export class Mixed extends React.Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const { currentUser } = firebase.auth();
-
         let taskComponent: ReactElement = <FormattedMessage id="elements.tasks.notloaded" />;
 
         const task = this.state.nextTask;
@@ -345,15 +343,6 @@ export class Mixed extends React.Component<Props, State> {
         return (
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.mixed" />
-                <br />
-                Game ID: {GameManager.getGameID()}
-                <br />
-                User ID: {currentUser?.uid}
-                <br />
-                Next Task: {this.state.nextTask}
-                <br />
-                Task Type: {this.state.taskType}
-                <br />
                 <div>
                     <span className="countdown-inner" ref={this.countdownRef}>
                         20
