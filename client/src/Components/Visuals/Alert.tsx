@@ -66,7 +66,7 @@ export class Alert extends Component<Props, State> {
         return (
             <Collapse in={this.state.shown} timeout={500}>
                 <div className={`w3-panel ${this.props.type.color} w3-display-container`}>
-                    <button onClick={() => {}} type="button" className="w3-button w3-large w3-display-topright">
+                    <button onClick={this.close} type="button" className="w3-button w3-large w3-display-topright">
                         &times;
                     </button>
                     <h3>
