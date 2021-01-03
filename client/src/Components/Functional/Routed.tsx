@@ -19,6 +19,7 @@
 // eslint-disable-next-line no-use-before-define
 import React, { PureComponent, ReactElement } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Modal } from "@material-ui/core";
 import { Settings } from "../Sites/Settings";
 import { Alert } from "../../helper/AlertTypes";
 import { Login } from "../Sites/Login";
@@ -29,18 +30,61 @@ import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
 import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
 import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
+import style from "../../css/App.module.scss";
 
 interface Props {
     changeLanguage: (locale: string) => void;
     currentLocale: string;
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
+interface State {
+    settingsShown: boolean;
+}
 
-export class Routed extends PureComponent<Props> {
+export class Routed extends PureComponent<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            settingsShown: false,
+        };
+    }
+
     render(): JSX.Element {
+        const customStyles = {
+            content: {
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+            },
+        };
         return (
             <div className="w3-container">
                 <Router>
+                    <Modal open={this.state.settingsShown} onClose={() => this.setState({ settingsShown: false })}>
+                        <div className={style.settingPanel}>
+                            <Settings
+                                changeLanguage={this.props.changeLanguage}
+                                currentLocale={this.props.currentLocale}
+                                createAlert={this.props.createAlert}
+                            />
+                        </div>
+                    </Modal>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            this.setState((prev) => {
+                                return {
+                                    settingsShown: !prev.settingsShown,
+                                };
+                            })
+                        }
+                    >
+                        Settings
+                    </button>
                     <Switch>
                         <Route
                             path="/mixed/:gameID"
