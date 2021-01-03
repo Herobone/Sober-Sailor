@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
+import React, { Component, ReactElement, RefObject } from "react";
 import { Alert as IAlert } from "../../helper/AlertTypes";
 import { Alert } from "../Visuals/Alert";
 
@@ -30,9 +30,7 @@ interface Props {}
 export class AlertProvider extends Component<Props, State> {
     maxAlerts = 5;
 
-    alertLifetime = 5000;
-
-    clearAlerts: Map<number, NodeJS.Timeout> = new Map();
+    clearAlerts: Map<number, RefObject<Alert>> = new Map();
 
     constructor(props: Props) {
         super(props);
@@ -40,10 +38,6 @@ export class AlertProvider extends Component<Props, State> {
             errorToDisplay: new Map<number, ReactElement>(),
             lastIndex: 0,
         };
-    }
-
-    componentWillUnmount(): void {
-        this.clearAlerts.forEach((timeout) => clearTimeout(timeout));
     }
 
     prepareAlerts = (): ReactElement[] => {
@@ -69,18 +63,28 @@ export class AlertProvider extends Component<Props, State> {
     createAlert = (type: IAlert, message: string | ReactElement, header?: ReactElement): void => {
         const { errorToDisplay, lastIndex } = this.state;
         const alertIndex = lastIndex + 1;
+        const ref: RefObject<Alert> = React.createRef();
         const al = (
-            <Alert key={`alert${alertIndex}`} type={type} header={header} clear={() => this.clearAlert(alertIndex)}>
+            <Alert
+                key={`alert${alertIndex}`}
+                type={type}
+                header={header}
+                ref={ref}
+                clear={() => this.clearAlert(alertIndex)}
+            >
                 {message}
             </Alert>
         );
         if (errorToDisplay.size + 1 > this.maxAlerts) {
-            errorToDisplay.delete(lastIndex - (this.maxAlerts - 1));
+            const alertRef = this.clearAlerts.get(lastIndex - (this.maxAlerts - 1));
+            if (alertRef) {
+                const cur = alertRef.current;
+                if (cur) {
+                    cur.close();
+                }
+            }
         }
-        this.clearAlerts.set(
-            alertIndex,
-            setTimeout(() => this.clearAlert(alertIndex), this.alertLifetime),
-        );
+        this.clearAlerts.set(alertIndex, ref);
         errorToDisplay.set(alertIndex, al);
         this.setState({
             errorToDisplay,

@@ -18,51 +18,64 @@
 
 import React, { Component, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
+import { Collapse } from "@material-ui/core";
 import { Alert as IAlert } from "../../helper/AlertTypes";
 
 interface Props {
-  header?: ReactElement;
-  type: IAlert;
-  clear?: () => void;
+    header?: ReactElement;
+    type: IAlert;
+    clear: () => void;
 }
 
 interface State {
-  shown: boolean;
+    shown: boolean;
 }
 
 export class Alert extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      shown: true,
-    };
-  }
+    timeout?: NodeJS.Timeout;
 
-  render(): JSX.Element {
-    return (
-      <span>
-        {this.state.shown && (
-          <div className={`w3-panel ${this.props.type.color} w3-display-container`}>
-            <button
-              onClick={() => {
-                this.setState({ shown: false });
-                if (this.props.clear) {
-                  this.props.clear();
-                }
-              }}
-              type="button"
-              className="w3-button w3-large w3-display-topright"
-            >
-              &times;
-            </button>
-            <h3>
-              {this.props.header && this.props.header}
-              {!this.props.header && <FormattedMessage id={this.props.type.defaultHeader} />}
-            </h3>
-            <p>{this.props.children}</p>
-          </div>
-        )}
-      </span>
-    );
-  }
+    selfDestroy?: NodeJS.Timeout;
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            shown: false,
+        };
+    }
+
+    componentDidMount(): void {
+        this.selfDestroy = setTimeout(this.close, 10000);
+        this.setState({ shown: true });
+    }
+
+    componentWillUnmount(): void {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+        }
+        if (this.selfDestroy) {
+            clearTimeout(this.selfDestroy);
+        }
+    }
+
+    close = (): void => {
+        this.setState({ shown: false });
+        this.timeout = setTimeout(() => this.props.clear(), 550);
+    };
+
+    render(): JSX.Element {
+        return (
+            <Collapse in={this.state.shown} timeout={500}>
+                <div className={`w3-panel ${this.props.type.color} w3-display-container`}>
+                    <button onClick={() => {}} type="button" className="w3-button w3-large w3-display-topright">
+                        &times;
+                    </button>
+                    <h3>
+                        {this.props.header && this.props.header}
+                        {!this.props.header && <FormattedMessage id={this.props.type.defaultHeader} />}
+                    </h3>
+                    <p>{this.props.children}</p>
+                </div>
+            </Collapse>
+        );
+    }
 }
