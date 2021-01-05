@@ -19,7 +19,8 @@
 // eslint-disable-next-line no-use-before-define
 import React, { PureComponent, ReactElement } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Modal } from "@material-ui/core";
+import { Fab, Modal } from "@material-ui/core";
+import { SettingsRounded } from "@material-ui/icons";
 import { Settings } from "../Sites/Settings";
 import { Alert } from "../../helper/AlertTypes";
 import { Login } from "../Sites/Login";
@@ -50,16 +51,6 @@ export class Routed extends PureComponent<Props, State> {
     }
 
     render(): JSX.Element {
-        const customStyles = {
-            content: {
-                top: "50%",
-                left: "50%",
-                right: "auto",
-                bottom: "auto",
-                marginRight: "-50%",
-                transform: "translate(-50%, -50%)",
-            },
-        };
         return (
             <div className="w3-container">
                 <Router>
@@ -73,8 +64,7 @@ export class Routed extends PureComponent<Props, State> {
                         </div>
                     </Modal>
 
-                    <button
-                        type="button"
+                    <Fab
                         onClick={() =>
                             this.setState((prev) => {
                                 return {
@@ -82,9 +72,14 @@ export class Routed extends PureComponent<Props, State> {
                                 };
                             })
                         }
+                        style={{
+                            position: "fixed",
+                            bottom: "3%",
+                            right: "3%",
+                        }}
                     >
-                        Settings
-                    </button>
+                        <SettingsRounded />
+                    </Fab>
                     <Switch>
                         <Route
                             path="/mixed/:gameID"
