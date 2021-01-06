@@ -19,55 +19,70 @@
 import React, { PureComponent, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import App from "../../css/App.module.scss";
+import { WithStyles, withStyles } from "@material-ui/styles";
+import { Button } from "@material-ui/core";
 import { AlertCreator, Alerts } from "../../helper/AlertTypes";
 import { Util } from "../../helper/Util";
+import { DefaultStyle } from "../../css/Style";
 
-interface Props {
+interface Props extends WithStyles<typeof DefaultStyle> {
     createAlert: AlertCreator;
 }
 
 interface State {}
 
-export class Home extends PureComponent<Props, State> {
+class HomeClass extends PureComponent<Props, State> {
     render(): JSX.Element {
+        const { classes } = this.props;
         return (
-            <>
-                <div className={App.sailorStartpageGameselector}>
-                    <header className="w3-container w3-yellow">
-                        <h1>
-                            <FormattedMessage id="sobersailor.name" />
-                        </h1>
-                    </header>
+            <div className={classes.startPage}>
+                <h1>
+                    <FormattedMessage id="sobersailor.name" />
+                </h1>
 
-                    <div className="w3-container">
-                        <p className={App.sailorGameselectButton}>
-                            <Link to="mixed" className="w3-btn w3-round w3-orange w3-xlarge">
-                                <FormattedMessage id="gamemodes.mixed" />
-                            </Link>
-                        </p>
-                        <p className={App.sailorGameselectButton}>
-                            <Link to="/truthordare" className="w3-btn w3-round w3-orange w3-xlarge">
-                                <FormattedMessage id="gamemodes.truthordare" />
-                            </Link>
-                        </p>
-                        <p className={App.sailorGameselectButton}>
-                            <Link to="/saufpoly" className="w3-btn w3-round w3-orange w3-xlarge">
-                                <FormattedMessage id="gamemodes.saufpoly" />
-                            </Link>
-                        </p>
-                    </div>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to="/mixed"
+                    className={classes.gameSelectButton}
+                >
+                    <FormattedMessage id="gamemodes.mixed" />
+                </Button>
+                <br />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to="/truthordare"
+                    className={classes.gameSelectButton}
+                >
+                    <FormattedMessage id="gamemodes.truthordare" />
+                </Button>
+                <br />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to="/saufpoly"
+                    className={classes.gameSelectButton}
+                >
+                    <FormattedMessage id="gamemodes.saufpoly" />
+                </Button>
 
-                    <button
-                        type="button"
-                        onClick={() => {
-                            this.props.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
-                        }}
-                    >
-                        Test Alert
-                    </button>
-                </div>
-            </>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.margin}
+                    onClick={() => {
+                        this.props.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
+                    }}
+                >
+                    Test Alert
+                </Button>
+            </div>
         );
     }
 }
+
+export const Home = withStyles(DefaultStyle)(HomeClass);

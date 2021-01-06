@@ -20,7 +20,8 @@ import React, { Component, ReactElement } from "react";
 import firebase from "firebase";
 import { FormattedMessage } from "react-intl";
 import { WithStyles, withStyles } from "@material-ui/styles";
-import { Button, TextField } from "@material-ui/core";
+import { Button, Fab, TextField } from "@material-ui/core";
+import { ExitToAppRounded } from "@material-ui/icons";
 import { Alerts, Alert } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { DefaultStyle } from "../../css/Style";
@@ -125,6 +126,7 @@ class GameProviderClass extends Component<Props, State> {
     render(): JSX.Element {
         const { gameID } = this.props;
         const { user } = this.state;
+        const { classes } = this.props;
         if (!gameID) {
             return (
                 <Button variant="contained" color="primary" onClick={this.createGame}>
@@ -144,9 +146,15 @@ class GameProviderClass extends Component<Props, State> {
                 return (
                     <>
                         {this.props.children}
-                        <Button variant="contained" color="primary" onClick={() => GameManager.leaveGame()}>
+                        <Fab
+                            variant="extended"
+                            color="primary"
+                            onClick={() => GameManager.leaveGame()}
+                            className={classes.leaveGameFab}
+                        >
+                            <ExitToAppRounded />
                             <FormattedMessage id="actions.leave" />
-                        </Button>
+                        </Fab>
                     </>
                 );
             }
