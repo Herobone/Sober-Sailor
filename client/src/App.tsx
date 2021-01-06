@@ -17,11 +17,13 @@
  */
 
 import React, { Component, ReactElement, RefObject } from "react";
+import { MuiThemeProvider } from "@material-ui/core";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 import { LanguageContainer } from "./translations/LanguageContainer";
 import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
 import { Alert } from "./helper/AlertTypes";
+import { Theme } from "./css/Theme";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}
@@ -69,15 +71,17 @@ export class App extends Component<Props, State> {
     render(): JSX.Element {
         return (
             <React.StrictMode>
-                <LanguageContainer ref={this.langRef}>
-                    <AlertProvider ref={this.alertRef}>
-                        <Routed
-                            changeLanguage={this.state.changeLanguage}
-                            currentLocale={this.state.currentLocale}
-                            createAlert={this.state.createAlert}
-                        />
-                    </AlertProvider>
-                </LanguageContainer>
+                <MuiThemeProvider theme={Theme}>
+                    <LanguageContainer ref={this.langRef}>
+                        <AlertProvider ref={this.alertRef}>
+                            <Routed
+                                changeLanguage={this.state.changeLanguage}
+                                currentLocale={this.state.currentLocale}
+                                createAlert={this.state.createAlert}
+                            />
+                        </AlertProvider>
+                    </LanguageContainer>
+                </MuiThemeProvider>
             </React.StrictMode>
         );
     }
