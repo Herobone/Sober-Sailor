@@ -17,44 +17,48 @@
  */
 
 /* eslint-disable max-classes-per-file */
+import { ReactElement } from "react";
+
 export interface Alert {
-  defaultHeader: string;
-  color: string;
+    defaultHeader: string;
+    color: string;
 }
 
 export class Warning implements Alert {
-  defaultHeader = "elements.alerts.warning";
+    defaultHeader = "elements.alerts.warning";
 
-  color = "w3-yellow";
+    color = "w3-yellow";
 }
 
 export class Success implements Alert {
-  defaultHeader = "elements.alerts.success";
+    defaultHeader = "elements.alerts.success";
 
-  color = "w3-green";
+    color = "w3-green";
 }
 
 export class Info implements Alert {
-  defaultHeader = "elements.alerts.info";
+    defaultHeader = "elements.alerts.info";
 
-  color = "w3-blue";
+    color = "w3-blue";
 }
 
 export class Error implements Alert {
-  defaultHeader = "elements.alerts.error";
+    defaultHeader = "elements.alerts.error";
 
-  color = "w3-red";
+    color = "w3-red";
 }
 
+export type AlertCreator = (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+
 export class Alerts {
-  static WARNING: Warning = new Warning();
+    static WARNING: Warning = new Warning();
 
-  // This overwrites the standard Error class. Use only in this file!
-  // eslint-disable-next-line unicorn/error-message
-  static ERROR: Error = new Error();
+    // This overwrites the standard Error class. Use only in this file!
+    // eslint-disable-next-line unicorn/error-message
+    static ERROR: Error = new Error();
 
-  static INFO: Info = new Info();
+    static INFO: Info = new Info();
 
-  static SUCCESS: Success = new Success();
+    static SUCCESS: Success = new Success();
 }
 /* eslint-enable max-classes-per-file */

@@ -19,8 +19,9 @@
 // eslint-disable-next-line no-use-before-define
 import React, { PureComponent, ReactElement } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Fab, Modal } from "@material-ui/core";
+import { Fab, Fade, Modal } from "@material-ui/core";
 import { SettingsRounded } from "@material-ui/icons";
+import { WithStyles, withStyles } from "@material-ui/styles";
 import { Settings } from "../Sites/Settings";
 import { Alert } from "../../helper/AlertTypes";
 import { Login } from "../Sites/Login";
@@ -31,9 +32,9 @@ import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
 import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
 import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
-import style from "../../css/App.module.scss";
+import { DefaultStyle } from "../../css/Style";
 
-interface Props {
+interface Props extends WithStyles<typeof DefaultStyle> {
     changeLanguage: (locale: string) => void;
     currentLocale: string;
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
@@ -42,7 +43,7 @@ interface State {
     settingsShown: boolean;
 }
 
-export class Routed extends PureComponent<Props, State> {
+class RoutedClass extends PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -51,17 +52,27 @@ export class Routed extends PureComponent<Props, State> {
     }
 
     render(): JSX.Element {
+        const { classes } = this.props;
         return (
-            <div className="w3-container">
+            <div className={classes.root}>
                 <Router>
-                    <Modal open={this.state.settingsShown} onClose={() => this.setState({ settingsShown: false })}>
-                        <div className={style.settingPanel}>
-                            <Settings
-                                changeLanguage={this.props.changeLanguage}
-                                currentLocale={this.props.currentLocale}
-                                createAlert={this.props.createAlert}
-                            />
-                        </div>
+                    <Modal
+                        open={this.state.settingsShown}
+                        onClose={() => this.setState({ settingsShown: false })}
+                        closeAfterTransition
+                        BackdropProps={{
+                            timeout: 500,
+                        }}
+                    >
+                        <Fade in={this.state.settingsShown}>
+                            <div className={classes.settingsModal}>
+                                <Settings
+                                    changeLanguage={this.props.changeLanguage}
+                                    currentLocale={this.props.currentLocale}
+                                    createAlert={this.props.createAlert}
+                                />
+                            </div>
+                        </Fade>
                     </Modal>
 
                     <Fab
@@ -72,11 +83,8 @@ export class Routed extends PureComponent<Props, State> {
                                 };
                             })
                         }
-                        style={{
-                            position: "fixed",
-                            bottom: "3%",
-                            right: "3%",
-                        }}
+                        className={classes.settingsButton}
+                        color="primary"
                     >
                         <SettingsRounded />
                     </Fab>
@@ -151,3 +159,5 @@ export class Routed extends PureComponent<Props, State> {
         );
     }
 }
+
+export const Routed = withStyles(DefaultStyle)(RoutedClass);

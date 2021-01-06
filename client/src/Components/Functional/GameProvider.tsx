@@ -19,10 +19,13 @@
 import React, { Component, ReactElement } from "react";
 import firebase from "firebase";
 import { FormattedMessage } from "react-intl";
+import { WithStyles, withStyles } from "@material-ui/styles";
+import { Button, TextField } from "@material-ui/core";
 import { Alerts, Alert } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
+import { DefaultStyle } from "../../css/Style";
 
-interface Props {
+interface Props extends WithStyles<typeof DefaultStyle> {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
     gameID?: string;
     gameURL?: string;
@@ -30,9 +33,10 @@ interface Props {
 
 interface State {
     user: firebase.User | null;
+    name: string;
 }
 
-export class GameProvider extends Component<Props, State> {
+class GameProviderClass extends Component<Props, State> {
     nameInputRef!: React.RefObject<HTMLInputElement>;
 
     constructor(props: Props) {
@@ -40,6 +44,7 @@ export class GameProvider extends Component<Props, State> {
 
         this.state = {
             user: null,
+            name: "",
         };
 
         this.createGame = this.createGame.bind(this);
@@ -80,21 +85,27 @@ export class GameProvider extends Component<Props, State> {
         });
     }
 
+    onNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        this.setState({
+            name: event.target.value,
+        });
+    };
+
     setName(): void {
         const { currentUser } = firebase.auth();
-        const input = this.nameInputRef.current;
+        const { name } = this.state;
 
-        if (!input || !currentUser) {
+        if (!currentUser) {
             this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             return;
         }
 
-        if (input.value.length < 3) {
+        if (name.length < 2) {
             this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
             return;
         }
 
-        currentUser.updateProfile({ displayName: input.value });
+        currentUser.updateProfile({ displayName: name }).catch(console.error);
         this.forceUpdate();
     }
 
@@ -116,13 +127,9 @@ export class GameProvider extends Component<Props, State> {
         const { user } = this.state;
         if (!gameID) {
             return (
-                <div className="w3-center">
-                    <p className="sailor-creategame-button">
-                        <button type="button" onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
-                            <FormattedMessage id="actions.game.create" />
-                        </button>
-                    </p>
-                </div>
+                <Button variant="contained" color="primary" onClick={this.createGame}>
+                    <FormattedMessage id="actions.game.create" />
+                </Button>
             );
         }
 
@@ -135,34 +142,28 @@ export class GameProvider extends Component<Props, State> {
         if (currentUser) {
             if (currentUser.displayName && currentUser.displayName !== "") {
                 return (
-                    <div>
+                    <>
                         {this.props.children}
-                        <button type="button" onClick={() => GameManager.leaveGame()}>
+                        <Button variant="contained" color="primary" onClick={() => GameManager.leaveGame()}>
                             <FormattedMessage id="actions.leave" />
-                        </button>
-                    </div>
+                        </Button>
+                    </>
                 );
             }
             return (
-                <div>
+                <>
                     <h1>
                         <FormattedMessage id="account.descriptors.finishsignup" />
                     </h1>
                     <p>
-                        <label htmlFor="name-input">
-                            <b>
-                                <FormattedMessage id="account.descriptors.yourname" />
-                            </b>
-                        </label>
-                        <br />
-                        <input
+                        <TextField
                             ref={this.nameInputRef}
-                            id="name-imput"
-                            className="w3-input w3-border w3-round"
-                            name="name"
-                            type="text"
+                            required
+                            label="Name"
+                            variant="outlined"
+                            color="primary"
                             style={{ width: "40%" }}
-                            placeholder="Name"
+                            onChange={this.onNameChange}
                             onKeyPress={(event) => {
                                 if (event.key === "Enter" || event.key === "Accept") {
                                     this.setName();
@@ -171,13 +172,15 @@ export class GameProvider extends Component<Props, State> {
                         />
                     </p>
                     <br />
-                    <button type="button" className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
+                    <Button variant="contained" color="primary" onClick={this.setName}>
                         <FormattedMessage id="general.done" />
-                    </button>
-                </div>
+                    </Button>
+                </>
             );
         }
 
         return <div>Error</div>;
     }
 }
+
+export const GameProvider = withStyles(DefaultStyle)(GameProviderClass);

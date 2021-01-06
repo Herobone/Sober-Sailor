@@ -20,11 +20,11 @@ import React, { PureComponent, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import App from "../../css/App.module.scss";
-import { Alert, Alerts } from "../../helper/AlertTypes";
+import { AlertCreator, Alerts } from "../../helper/AlertTypes";
 import { Util } from "../../helper/Util";
 
 interface Props {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+    createAlert: AlertCreator;
 }
 
 interface State {}
@@ -32,7 +32,7 @@ interface State {}
 export class Home extends PureComponent<Props, State> {
     render(): JSX.Element {
         return (
-            <div className="w3-center">
+            <>
                 <div className={App.sailorStartpageGameselector}>
                     <header className="w3-container w3-yellow">
                         <h1>
@@ -67,7 +67,7 @@ export class Home extends PureComponent<Props, State> {
                         Test Alert
                     </button>
                 </div>
-            </div>
+            </>
         );
     }
 }

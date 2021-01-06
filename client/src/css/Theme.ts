@@ -17,14 +17,18 @@
  */
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 
-export const Theme = createMuiTheme({
+export const StandardTheme = createMuiTheme({
     palette: {
+        background: {
+            default: "#8a989f",
+        },
         primary: {
-            main: "#6c757d",
+            main: "#ffaa00",
         },
         secondary: {
-            main: "#ffaa00",
+            main: "#6c757d",
+            light: "#8a989f",
         },
     },
 });
-export const responsiveTheme = responsiveFontSizes(Theme);
+export const responsiveTheme = responsiveFontSizes(StandardTheme);

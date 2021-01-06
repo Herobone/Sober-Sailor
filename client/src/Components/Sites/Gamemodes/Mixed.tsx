@@ -21,6 +21,8 @@ import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 import Cookies from "universal-cookie";
 
+import { Button } from "@material-ui/core";
+import { WithStyles, withStyles } from "@material-ui/styles";
 import { Alert } from "../../../helper/AlertTypes";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
@@ -40,8 +42,9 @@ import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
+import { DefaultStyle } from "../../../css/Style";
 
-interface Props {
+interface Props extends WithStyles<typeof DefaultStyle> {
     createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 
@@ -57,7 +60,7 @@ interface State {
     penalty: number;
 }
 
-export class Mixed extends React.Component<Props, State> {
+class MixedClass extends React.Component<Props, State> {
     leaderboardRef: RefObject<Leaderboard>;
 
     countdownRef: RefObject<HTMLSpanElement>;
@@ -86,14 +89,6 @@ export class Mixed extends React.Component<Props, State> {
             penalty: 0,
         };
 
-        this.gameEvent = this.gameEvent.bind(this);
-        this.randomButtonClick = this.randomButtonClick.bind(this);
-        this.startTimer = this.startTimer.bind(this);
-        this.submitAndReset = this.submitAndReset.bind(this);
-        this.setTask = this.setTask.bind(this);
-        this.playerEvent = this.playerEvent.bind(this);
-        this.updateLeaderboard = this.updateLeaderboard.bind(this);
-
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
@@ -114,7 +109,7 @@ export class Mixed extends React.Component<Props, State> {
             .catch(console.error);
     }
 
-    setTask(taskType: Task, target: PlayerList, penalty = 0): void {
+    setTask = (taskType: Task, target: PlayerList, penalty = 0): void => {
         console.log(target);
         if (taskType.id === "tictactoe") {
             GameManager.getGame()
@@ -153,9 +148,9 @@ export class Mixed extends React.Component<Props, State> {
                 )
                 .catch(console.error);
         }
-    }
+    };
 
-    startTimer(duration: number, display: RefObject<HTMLSpanElement>): void {
+    startTimer = (duration: number, display: RefObject<HTMLSpanElement>): void => {
         let timer = duration;
         const timeout = setInterval(() => {
             const cur = display.current;
@@ -181,16 +176,16 @@ export class Mixed extends React.Component<Props, State> {
         this.setState({
             countdownTimeout: timeout,
         });
-    }
+    };
 
-    updateLeaderboard(): void {
+    updateLeaderboard = (): void => {
         const lb = this.leaderboardRef.current;
         if (lb) {
             lb.updateLeaderboard();
         }
-    }
+    };
 
-    gameEvent(doc: firebase.firestore.DocumentSnapshot<Game>): void {
+    gameEvent = (doc: firebase.firestore.DocumentSnapshot<Game>): void => {
         const data = doc.data();
         if (data) {
             if (
@@ -248,9 +243,9 @@ export class Mixed extends React.Component<Props, State> {
                 this.taskRef.current.lockInput(true);
             }
         }
-    }
+    };
 
-    submitAndReset(): void {
+    submitAndReset = (): void => {
         const resultsWere = this.state.result;
         if (resultsWere) {
             GameManager.afterEval(resultsWere)
@@ -270,14 +265,14 @@ export class Mixed extends React.Component<Props, State> {
             tud.reset();
         }
         this.updateLeaderboard();
-    }
+    };
 
-    playerEvent(doc: firebase.firestore.DocumentSnapshot<Register>): void {
+    playerEvent = (doc: firebase.firestore.DocumentSnapshot<Register>): void => {
         GameManager.updatePlayerLookupTable(doc);
         this.updateLeaderboard();
-    }
+    };
 
-    randomButtonClick(): void {
+    randomButtonClick = (): void => {
         if (!this.state.isHost) {
             throw new Error("Trying to execute a host method as non Host");
         }
@@ -294,13 +289,15 @@ export class Mixed extends React.Component<Props, State> {
         } else {
             this.setTask(taskType, null);
         }
-    }
+    };
 
     render(): JSX.Element {
         let taskComponent: ReactElement = <FormattedMessage id="elements.tasks.notloaded" />;
 
         const task = this.state.nextTask;
         const type = this.state.taskType;
+
+        const { classes } = this.props;
 
         if (task && type) {
             switch (type) {
@@ -354,31 +351,42 @@ export class Mixed extends React.Component<Props, State> {
                 {this.state.isHost && (
                     <div className="host-area">
                         {!this.state.pollState && (
-                            <button type="button" onClick={this.randomButtonClick}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={this.randomButtonClick}
+                                className={classes.margin}
+                            >
                                 Random Button
-                            </button>
+                            </Button>
                         )}
-                        <button
-                            type="button"
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.margin}
                             onClick={() => {
                                 GameManager.transferHostShip().catch(console.error);
                             }}
                         >
                             <FormattedMessage id="actions.host.transfer" />
-                        </button>
+                        </Button>
                         {!this.state.pollState && (
-                            <button
-                                type="button"
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className={classes.margin}
                                 onClick={() => {
                                     GameManager.setPollState(true).catch(console.error);
                                 }}
                             >
                                 <FormattedMessage id="actions.host.startpoll" />
-                            </button>
+                            </Button>
                         )}
                         <br />
-                        <button
-                            type="button"
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.margin}
                             onClick={() => {
                                 const klRef = this.kickListRef.current;
                                 if (klRef) {
@@ -387,7 +395,7 @@ export class Mixed extends React.Component<Props, State> {
                             }}
                         >
                             <FormattedMessage id="actions.host.kick" />
-                        </button>
+                        </Button>
                         <KickList createAlert={this.props.createAlert} ref={this.kickListRef} />
                     </div>
                 )}
@@ -396,3 +404,5 @@ export class Mixed extends React.Component<Props, State> {
         );
     }
 }
+
+export const Mixed = withStyles(DefaultStyle)(MixedClass);
