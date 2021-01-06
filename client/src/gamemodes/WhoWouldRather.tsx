@@ -22,81 +22,81 @@ import { GameManager } from "../helper/gameManager";
 import { Player } from "../helper/models/Player";
 
 interface Props {
-  question: string;
+    question: string;
 }
 
 interface State {
-  players: Player[];
-  inputLocked: boolean;
-  answer: string | null;
+    players: Player[];
+    inputLocked: boolean;
+    answer: string | null;
 }
 
 export class WhoWouldRather extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      players: [],
-      inputLocked: true,
-      answer: null,
-    };
-    this.lockInput = this.lockInput.bind(this);
-  }
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            players: [],
+            inputLocked: true,
+            answer: null,
+        };
+        this.lockInput = this.lockInput.bind(this);
+    }
 
-  componentDidMount(): void {
-    GameManager.getAllPlayers()
-      .then((players) => this.setState({ players }))
-      .catch(console.error);
-  }
+    componentDidMount(): void {
+        GameManager.getAllPlayers()
+            .then((players) => this.setState({ players }))
+            .catch(console.error);
+    }
 
-  lockInput(lock: boolean): void {
-    this.setState({
-      inputLocked: lock,
-    });
-  }
+    lockInput(lock: boolean): void {
+        this.setState({
+            inputLocked: lock,
+        });
+    }
 
-  render(): JSX.Element {
-    const values: ReactElement[] = [];
-    this.state.players.forEach((element: Player) => {
-      values.push(
-        <div key={element.uid}>
-          <button
-            className="wwr-player-select"
-            type="submit"
-            onClick={() => {
-              GameManager.setAnswer(element.uid);
-              this.setState({
-                answer: element.nickname,
-                inputLocked: true,
-              });
-            }}
-          >
-            {element.nickname}
-          </button>
-          <br />
-        </div>,
-      );
-    });
+    render(): JSX.Element {
+        const values: ReactElement[] = [];
+        this.state.players.forEach((element: Player) => {
+            values.push(
+                <div key={element.uid}>
+                    <button
+                        className="wwr-player-select"
+                        type="submit"
+                        onClick={() => {
+                            GameManager.setAnswer(element.uid).catch(console.error);
+                            this.setState({
+                                answer: element.nickname,
+                                inputLocked: true,
+                            });
+                        }}
+                    >
+                        {element.nickname}
+                    </button>
+                    <br />
+                </div>,
+            );
+        });
 
-    return (
-      <div>
-        <h2>
-          <FormattedMessage id="gamemodes.whowouldrather" /> {this.props.question}
-        </h2>
-        <p>
-          <FormattedMessage id="gamemodes.whowouldrather.description" />
-        </p>
-        {!this.state.inputLocked && !this.state.answer && values}
-        {this.state.answer && (
-          <div>
-            <FormattedMessage
-              id="elements.result.youranswer"
-              values={{
-                answer: this.state.answer,
-              }}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
+        return (
+            <div>
+                <h2>
+                    <FormattedMessage id="gamemodes.whowouldrather" /> {this.props.question}
+                </h2>
+                <p>
+                    <FormattedMessage id="gamemodes.whowouldrather.description" />
+                </p>
+                {!this.state.inputLocked && !this.state.answer && values}
+                {this.state.answer && (
+                    <div>
+                        <FormattedMessage
+                            id="elements.result.youranswer"
+                            values={{
+                                answer: this.state.answer,
+                            }}
+                        />
+                    </div>
+                )}
+            </div>
+        );
+    }
 }

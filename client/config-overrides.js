@@ -88,6 +88,7 @@ module.exports = {
                 },
             }),
         ];
+        config.optimization.moduleIds = "hashed";
         return config;
     },
 };

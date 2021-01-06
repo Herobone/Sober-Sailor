@@ -437,6 +437,48 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>elements.diow.word.long</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>elements.diow.word.short</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>elements.dropdown.select</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -711,6 +753,27 @@
             </concept_node>
             <concept_node>
                 <name>elements.truthordare.drink</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>de-AT</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>de-DE</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>gamemodes.describeinoneword</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>

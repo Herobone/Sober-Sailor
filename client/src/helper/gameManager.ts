@@ -289,14 +289,14 @@ export class GameManager {
 
                         const gameRef = GameManager.getGameByID(gameID);
                         if (ids.length > 0) {
-                            // console.log("Some players left! Transferring!");
+                            console.log("Some players left! Transferring!");
                             const random = Util.getRandomElement(ids);
                             return gameRef.update({
                                 host: random,
                             });
                         }
 
-                        // console.log("No players left! Closing!");
+                        console.log("No players left! Closing!");
                         const closeGame = firebase.functions().httpsCallable("closeGame");
                         return closeGame({ gameID: GameManager.getGameID() });
                     },

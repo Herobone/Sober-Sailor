@@ -69,5 +69,7 @@ module.exports = {
         "no-plusplus": "off",
         "unicorn/no-null": "off",
         "import/no-cycle": "off",
+        "import/no-default-export": "warn",
+        "import/order": "warn",
     },
 };
