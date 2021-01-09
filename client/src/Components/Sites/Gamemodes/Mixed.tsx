@@ -23,7 +23,6 @@ import Cookies from "universal-cookie";
 
 import { Button } from "@material-ui/core";
 import { WithStyles, withStyles } from "@material-ui/styles";
-import { Alert } from "../../../helper/AlertTypes";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -43,10 +42,9 @@ import { PlayerList } from "../../../helper/models/CustomTypes";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 import { DefaultStyle } from "../../../css/Style";
+import { AlertContext } from "../../Functional/AlertProvider";
 
-interface Props extends WithStyles<typeof DefaultStyle> {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-}
+interface Props extends WithStyles<typeof DefaultStyle> {}
 
 interface State {
     nextTask: string | null;
@@ -61,6 +59,10 @@ interface State {
 }
 
 class MixedClass extends React.Component<Props, State> {
+    static contextType = AlertContext;
+
+    context!: React.ContextType<typeof AlertContext>;
+
     leaderboardRef: RefObject<Leaderboard>;
 
     countdownRef: RefObject<HTMLSpanElement>;
@@ -327,7 +329,7 @@ class MixedClass extends React.Component<Props, State> {
                 case "describe_in_one_word": {
                     const { target } = this.state;
                     if (target !== null) {
-                        taskComponent = <DescribeInOneWord target={target} createAlert={this.props.createAlert} />;
+                        taskComponent = <DescribeInOneWord target={target} />;
                     }
                     break;
                 }
@@ -396,7 +398,7 @@ class MixedClass extends React.Component<Props, State> {
                         >
                             <FormattedMessage id="actions.host.kick" />
                         </Button>
-                        <KickList createAlert={this.props.createAlert} ref={this.kickListRef} />
+                        <KickList ref={this.kickListRef} />
                     </div>
                 )}
                 <Leaderboard ref={this.leaderboardRef} />
@@ -406,3 +408,4 @@ class MixedClass extends React.Component<Props, State> {
 }
 
 export const Mixed = withStyles(DefaultStyle)(MixedClass);
+Mixed.displayName = "MixedGamemodeWithStyle";

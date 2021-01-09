@@ -17,13 +17,12 @@
  */
 
 // eslint-disable-next-line no-use-before-define
-import React, { PureComponent, ReactElement } from "react";
+import React, { PureComponent } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Fab, Fade, Modal } from "@material-ui/core";
 import { SettingsRounded } from "@material-ui/icons";
 import { WithStyles, withStyles } from "@material-ui/styles";
 import { Settings } from "../Sites/Settings";
-import { Alert } from "../../helper/AlertTypes";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
@@ -33,17 +32,21 @@ import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
 import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
 import { DefaultStyle } from "../../css/Style";
+import { AlertContext } from "./AlertProvider";
 
 interface Props extends WithStyles<typeof DefaultStyle> {
     changeLanguage: (locale: string) => void;
     currentLocale: string;
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 interface State {
     settingsShown: boolean;
 }
 
 class RoutedClass extends PureComponent<Props, State> {
+    static contextType = AlertContext;
+
+    context!: React.ContextType<typeof AlertContext>;
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -69,7 +72,6 @@ class RoutedClass extends PureComponent<Props, State> {
                                 <Settings
                                     changeLanguage={this.props.changeLanguage}
                                     currentLocale={this.props.currentLocale}
-                                    createAlert={this.props.createAlert}
                                 />
                             </div>
                         </Fade>
@@ -92,17 +94,17 @@ class RoutedClass extends PureComponent<Props, State> {
                         <Route
                             path="/mixed/:gameID"
                             render={(props) => (
-                                <GameProvider createAlert={this.props.createAlert} gameID={props.match.params.gameID}>
-                                    <Mixed createAlert={this.props.createAlert} />
+                                <GameProvider gameID={props.match.params.gameID}>
+                                    <Mixed />
                                 </GameProvider>
                             )}
                         />
                         <Route
                             path="/truthordare/:gameID"
                             render={(props) => (
-                                <GameProvider createAlert={this.props.createAlert} gameID={props.match.params.gameID}>
+                                <GameProvider gameID={props.match.params.gameID}>
                                     <TruthOrDare
-                                        createAlert={this.props.createAlert}
+                                        createAlert={this.context.createAlert}
                                         gameID={props.match.params.gameID}
                                     />
                                 </GameProvider>
@@ -112,46 +114,39 @@ class RoutedClass extends PureComponent<Props, State> {
                         <Route
                             path="/saufpoly/:gameID"
                             render={(props) => (
-                                <GameProvider createAlert={this.props.createAlert} gameID={props.match.params.gameID}>
-                                    <Saufpoly createAlert={this.props.createAlert} gameID={props.match.params.gameID} />
+                                <GameProvider gameID={props.match.params.gameID}>
+                                    <Saufpoly
+                                        createAlert={this.context.createAlert}
+                                        gameID={props.match.params.gameID}
+                                    />
                                 </GameProvider>
                             )}
                         />
-                        <Route
-                            path="/mixed"
-                            render={() => <GameProvider createAlert={this.props.createAlert} gameURL="mixed" />}
-                        />
-                        <Route
-                            path="/truthordare"
-                            render={() => <GameProvider createAlert={this.props.createAlert} gameURL="truthordare" />}
-                        />
-                        <Route
-                            path="/saufpoly"
-                            render={() => <GameProvider createAlert={this.props.createAlert} gameURL="saufpoly" />}
-                        />
+                        <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
+                        <Route path="/truthordare" render={() => <GameProvider gameURL="truthordare" />} />
+                        <Route path="/saufpoly" render={() => <GameProvider gameURL="saufpoly" />} />
 
                         <Route path="/ttt">
                             <TicTacToe />
                         </Route>
 
                         <Route path="/login">
-                            <Login createAlert={this.props.createAlert} />
+                            <Login />
                         </Route>
 
                         <Route path="/logout">
-                            <Logout createAlert={this.props.createAlert} />
+                            <Logout />
                         </Route>
 
                         <Route path="/settings">
                             <Settings
                                 changeLanguage={this.props.changeLanguage}
                                 currentLocale={this.props.currentLocale}
-                                createAlert={this.props.createAlert}
                             />
                         </Route>
 
                         <Route path="/">
-                            <Home createAlert={this.props.createAlert} />
+                            <Home />
                         </Route>
                     </Switch>
                 </Router>

@@ -71,5 +71,6 @@ module.exports = {
         "import/no-cycle": "off",
         "import/no-default-export": "warn",
         "import/order": "warn",
+        "react/static-property-placement": "off",
     },
 };

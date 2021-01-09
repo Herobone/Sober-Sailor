@@ -21,16 +21,20 @@ import { FormattedMessage } from "react-intl";
 import firebase from "firebase";
 import DIOWStyle from "../css/App.module.scss";
 import { Alert, Alerts } from "../helper/AlertTypes";
+import { AlertContext } from "../Components/Functional/AlertProvider";
 
 interface Props {
     target: string;
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 interface State {
     answer?: string;
 }
 
 export class DescribeInOneWord extends Component<Props, State> {
+    static contextType = AlertContext;
+
+    context!: React.ContextType<typeof AlertContext>;
+
     wordInputRef: RefObject<HTMLInputElement>;
 
     maxLength = 20;
@@ -50,12 +54,12 @@ export class DescribeInOneWord extends Component<Props, State> {
         const { value } = refCurrent;
         if (!value || value.length < 0) {
             console.log("Word not valid!");
-            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="elements.diow.word.short" />);
+            this.context.createAlert(Alerts.WARNING, <FormattedMessage id="elements.diow.word.short" />);
             return;
         }
         if (value.length > this.maxLength) {
             console.log("Word not valid!");
-            this.props.createAlert(
+            this.context.createAlert(
                 Alerts.WARNING,
                 <FormattedMessage id="elements.diow.word.long" values={{ len: this.maxLength }} />,
             );

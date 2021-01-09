@@ -16,22 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent, ReactElement } from "react";
+import React, { PureComponent } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import { WithStyles, withStyles } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
-import { AlertCreator, Alerts } from "../../helper/AlertTypes";
+import { Alerts } from "../../helper/AlertTypes";
 import { Util } from "../../helper/Util";
 import { DefaultStyle } from "../../css/Style";
+import { AlertContext } from "../Functional/AlertProvider";
 
-interface Props extends WithStyles<typeof DefaultStyle> {
-    createAlert: AlertCreator;
-}
+interface Props extends WithStyles<typeof DefaultStyle> {}
 
 interface State {}
 
 class HomeClass extends PureComponent<Props, State> {
+    static contextType = AlertContext;
+
+    context!: React.ContextType<typeof AlertContext>;
+
     render(): JSX.Element {
         const { classes } = this.props;
         return (
@@ -75,7 +78,7 @@ class HomeClass extends PureComponent<Props, State> {
                     color="primary"
                     className={classes.margin}
                     onClick={() => {
-                        this.props.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
+                        this.context.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
                     }}
                 >
                     Test Alert

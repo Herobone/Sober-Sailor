@@ -30,7 +30,7 @@ interface Props {
 export class Saufpoly extends PureComponent<Props> {
     render(): JSX.Element {
         return (
-            <GameProvider createAlert={this.props.createAlert}>
+            <GameProvider>
                 <div className="w3-center">
                     <FormattedMessage id="gamemodes.saufpoly" />
                     <br />

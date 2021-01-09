@@ -23,6 +23,7 @@
     "eslint": "^7.16.0",
     "firebase": "^8.1.1",
     "firebase-tools": "^9.1.0",
+    "firebaseui": "^4.7.1",
     "globalize": "^1.6.0",
     "jquery": "^3.5.1",
     "md5": "^2.2.1",

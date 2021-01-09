@@ -50,6 +50,10 @@ export class Error implements Alert {
 
 export type AlertCreator = (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 
+export type AlertContextType = {
+    createAlert: AlertCreator;
+};
+
 export class Alerts {
     static WARNING: Warning = new Warning();
 

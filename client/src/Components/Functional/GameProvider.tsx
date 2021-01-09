@@ -16,18 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
-import firebase from "firebase";
+import React, { Component } from "react";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { FormattedMessage } from "react-intl";
 import { WithStyles, withStyles } from "@material-ui/styles";
 import { Button, Fab, TextField } from "@material-ui/core";
 import { ExitToAppRounded } from "@material-ui/icons";
-import { Alerts, Alert } from "../../helper/AlertTypes";
+import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { DefaultStyle } from "../../css/Style";
+import { AlertContext } from "./AlertProvider";
 
 interface Props extends WithStyles<typeof DefaultStyle> {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
     gameID?: string;
     gameURL?: string;
 }
@@ -38,7 +39,11 @@ interface State {
 }
 
 class GameProviderClass extends Component<Props, State> {
+    static contextType = AlertContext;
+
     nameInputRef!: React.RefObject<HTMLInputElement>;
+
+    context!: React.ContextType<typeof AlertContext>;
 
     constructor(props: Props) {
         super(props);
@@ -67,7 +72,7 @@ class GameProviderClass extends Component<Props, State> {
                 .auth()
                 .signInAnonymously()
                 .catch((error) => {
-                    this.props.createAlert(Alerts.ERROR, error.message);
+                    this.context.createAlert(Alerts.ERROR, error.message);
                     console.error(error.message);
                 });
         } else {
@@ -97,12 +102,12 @@ class GameProviderClass extends Component<Props, State> {
         const { name } = this.state;
 
         if (!currentUser) {
-            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             return;
         }
 
         if (name.length < 2) {
-            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+            this.context.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
             return;
         }
 
@@ -112,7 +117,7 @@ class GameProviderClass extends Component<Props, State> {
 
     createGame(): void {
         if (!this.props.gameURL) {
-            this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
+            this.context.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
             return;
         }
         GameManager.createGame()
