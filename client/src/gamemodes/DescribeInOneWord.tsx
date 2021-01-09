@@ -20,7 +20,6 @@ import React, { Component, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase/app";
 import "firebase/auth";
-import DIOWStyle from "../css/App.module.scss";
 import { Alerts } from "../helper/AlertTypes";
 import { AlertContext } from "../Components/Functional/AlertProvider";
 
@@ -91,7 +90,7 @@ export class DescribeInOneWord extends Component<Props, State> {
                             <input
                                 ref={this.wordInputRef}
                                 id="word-input"
-                                className={DIOWStyle.wordInput}
+                                className="fuck"
                                 name="name"
                                 type="text"
                                 placeholder="Word"
