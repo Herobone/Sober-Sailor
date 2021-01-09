@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement, RefObject } from "react";
+import React, { Component, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
 import DIOWStyle from "../css/App.module.scss";
-import { Alert, Alerts } from "../helper/AlertTypes";
+import { Alerts } from "../helper/AlertTypes";
 import { AlertContext } from "../Components/Functional/AlertProvider";
 
 interface Props {

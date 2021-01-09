@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
-import React, { Component, ReactElement } from "react";
+import firebase from "firebase/app";
+import "firebase/auth";
+import React, { Component } from "react";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
-import { Alerts, Alert } from "../../helper/AlertTypes";
+import { Alerts } from "../../helper/AlertTypes";
 import { AlertContext } from "./AlertProvider";
 
 export class Logout extends Component {

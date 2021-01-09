@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
 import { TicOptions } from "../../gamemodes/tictactoe/TicUtils";
 
 export interface ITicTacToe {

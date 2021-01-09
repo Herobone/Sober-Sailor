@@ -17,7 +17,8 @@
  */
 
 import React, { Component } from "react";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import * as firebaseui from "firebaseui";
 import { Redirect } from "react-router";
