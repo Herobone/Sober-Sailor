@@ -23,19 +23,19 @@ export interface Alert {
     variant: "default" | "error" | "success" | "warning" | "info";
 }
 
-class Warning implements Alert {
+export class Warning implements Alert {
     variant: "warning" = "warning";
 }
 
-class Success implements Alert {
+export class Success implements Alert {
     variant: "success" = "success";
 }
 
-class Info implements Alert {
+export class Info implements Alert {
     variant: "info" = "info";
 }
 
-class Error implements Alert {
+export class Error implements Alert {
     variant: "error" = "error";
 }
 
