@@ -19,42 +19,21 @@ import { createStyles } from "@material-ui/styles";
 import { Theme } from "@material-ui/core";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-export const DefaultStyle = (theme: Theme) =>
+export const GameProviderStyle = (theme: Theme) =>
     createStyles({
-        root: {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+        nameInput: {
+            width: "40%",
+            margin: theme.spacing(2),
         },
-        settingsButton: {
+        leaveGameFab: {
             position: "absolute",
             bottom: theme.spacing(4),
-            right: theme.spacing(2),
+            left: theme.spacing(2),
         },
-        settingsModal: {
-            width: "60%",
-            margin: "5% auto 15% auto", // 5% from the top, 15% from the bottom and centered
-        },
+
         [theme.breakpoints.down("sm")]: {
-            settingsModal: {
+            nameInput: {
                 width: "90%",
             },
-        },
-        margin: {
-            margin: theme.spacing(1),
-        },
-        margin4: {
-            margin: theme.spacing(4),
-        },
-        gameSelectButton: {
-            width: "100%",
-            fontWeight: "bold",
-            fontSize: "2em",
-            padding: theme.spacing(1),
-            marginTop: theme.spacing(2),
-        },
-        startPage: {
-            padding: theme.spacing(2),
-            textAlign: "center",
         },
     });

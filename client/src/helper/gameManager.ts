@@ -172,6 +172,11 @@ export class GameManager {
         return GameManager.leaveGameP(GameManager.getGameID());
     }
 
+    public static removeLocalData(): void {
+        localStorage.removeItem("playerLookupTable");
+        localStorage.removeItem("gameID");
+    }
+
     private static leaveGameP(gameID: string): void {
         const auth = firebase.auth();
         const user = auth.currentUser;
@@ -191,8 +196,7 @@ export class GameManager {
                 .delete()
                 .then(() => {
                     window.location.pathname = "";
-                    localStorage.removeItem("playerLookupTable");
-                    localStorage.removeItem("gameID");
+                    GameManager.removeLocalData();
                     return Promise.resolve();
                 })
                 .catch(console.error);

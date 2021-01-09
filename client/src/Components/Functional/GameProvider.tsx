@@ -25,10 +25,10 @@ import { Button, Fab, TextField } from "@material-ui/core";
 import { ExitToAppRounded } from "@material-ui/icons";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
-import { DefaultStyle } from "../../css/Style";
 import { AlertContext } from "./AlertProvider";
+import { GameProviderStyle } from "../../css/GameProvider";
 
-interface Props extends WithStyles<typeof DefaultStyle> {
+interface Props extends WithStyles<typeof GameProviderStyle> {
     gameID?: string;
     gameURL?: string;
 }
@@ -61,7 +61,7 @@ class GameProviderClass extends Component<Props, State> {
         if (this.props.gameID) {
             localStorage.setItem("gameID", this.props.gameID);
         } else {
-            localStorage.removeItem("gameID");
+            GameManager.removeLocalData();
         }
     }
 
@@ -168,22 +168,21 @@ class GameProviderClass extends Component<Props, State> {
                     <h1>
                         <FormattedMessage id="account.descriptors.finishsignup" />
                     </h1>
-                    <p>
-                        <TextField
-                            ref={this.nameInputRef}
-                            required
-                            label="Name"
-                            variant="outlined"
-                            color="primary"
-                            style={{ width: "40%" }}
-                            onChange={this.onNameChange}
-                            onKeyPress={(event) => {
-                                if (event.key === "Enter" || event.key === "Accept") {
-                                    this.setName();
-                                }
-                            }}
-                        />
-                    </p>
+                    <br />
+                    <TextField
+                        ref={this.nameInputRef}
+                        required
+                        label="Name"
+                        variant="outlined"
+                        color="primary"
+                        className={classes.nameInput}
+                        onChange={this.onNameChange}
+                        onKeyPress={(event) => {
+                            if (event.key === "Enter" || event.key === "Accept") {
+                                this.setName();
+                            }
+                        }}
+                    />
                     <br />
                     <Button variant="contained" color="primary" onClick={this.setName}>
                         <FormattedMessage id="general.done" />
@@ -196,4 +195,4 @@ class GameProviderClass extends Component<Props, State> {
     }
 }
 
-export const GameProvider = withStyles(DefaultStyle)(GameProviderClass);
+export const GameProvider = withStyles(GameProviderStyle)(GameProviderClass);
