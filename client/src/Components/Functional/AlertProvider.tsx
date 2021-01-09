@@ -16,18 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement, RefObject } from "react";
+import React, { Component, ReactElement } from "react";
 import { withStyles, WithStyles } from "@material-ui/styles";
+import { OptionsObject, SnackbarKey, SnackbarMessage, withSnackbar } from "notistack";
 import { Alert as IAlert, AlertContextType } from "../../helper/AlertTypes";
-import { Alert } from "../Visuals/Alert";
 import { DefaultStyle } from "../../css/Style";
 
-interface State {
-    errorToDisplay: Map<number, ReactElement>;
-    lastIndex: number;
+interface Props extends WithStyles<typeof DefaultStyle> {
+    enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey;
+    closeSnackbar: (key?: SnackbarKey) => void;
 }
-
-interface Props extends WithStyles<typeof DefaultStyle> {}
 
 export const AlertContext = React.createContext<AlertContextType>({
     createAlert: () => {
@@ -36,83 +34,24 @@ export const AlertContext = React.createContext<AlertContextType>({
 });
 AlertContext.displayName = "AlertContext";
 
-export const AlertProvider = withStyles(DefaultStyle)(
-    class extends Component<Props, State> {
-        maxAlerts = 5;
+class AlertProviderRaw extends Component<Props> {
+    createAlert = (type: IAlert, message: string | ReactElement): void => {
+        this.props.enqueueSnackbar(message, {
+            variant: type.variant,
+            preventDuplicate: true,
+        });
+    };
 
-        clearAlerts: Map<number, RefObject<Alert>> = new Map();
+    render(): JSX.Element {
+        return (
+            <AlertContext.Provider value={{ createAlert: this.createAlert }}>
+                {this.props.children}
+            </AlertContext.Provider>
+        );
+    }
+}
 
-        constructor(props: Props) {
-            super(props);
-            this.state = {
-                errorToDisplay: new Map<number, ReactElement>(),
-                lastIndex: 0,
-            };
-        }
+export const AlertProviderWithStyle = withStyles(DefaultStyle)(AlertProviderRaw);
+AlertProviderWithStyle.displayName = "AlertProviderWithStyle";
 
-        prepareAlerts = (): ReactElement[] => {
-            const values: ReactElement[] = [];
-            this.state.errorToDisplay.forEach((val: ReactElement): void => {
-                values.push(val);
-            });
-            return values;
-        };
-
-        clearAlert = (alertIndex: number): void => {
-            this.setState((prev) => {
-                const errorToDisplayClear = prev.errorToDisplay;
-
-                errorToDisplayClear.delete(alertIndex);
-                return {
-                    errorToDisplay: errorToDisplayClear,
-                };
-            });
-            this.clearAlerts.delete(alertIndex);
-        };
-
-        createAlert = (type: IAlert, message: string | ReactElement, header?: ReactElement): void => {
-            const { errorToDisplay, lastIndex } = this.state;
-            const alertIndex = lastIndex + 1;
-            const ref: RefObject<Alert> = React.createRef();
-            const al = (
-                <Alert
-                    key={`alert${alertIndex}`}
-                    type={type}
-                    header={header}
-                    ref={ref}
-                    clear={() => this.clearAlert(alertIndex)}
-                >
-                    {message}
-                </Alert>
-            );
-            if (errorToDisplay.size + 1 > this.maxAlerts) {
-                const alertRef = this.clearAlerts.get(lastIndex - (this.maxAlerts - 1));
-                if (alertRef) {
-                    const cur = alertRef.current;
-                    if (cur) {
-                        cur.close();
-                    }
-                }
-            }
-            this.clearAlerts.set(alertIndex, ref);
-            errorToDisplay.set(alertIndex, al);
-            this.setState({
-                errorToDisplay,
-                lastIndex: alertIndex,
-            });
-        };
-
-        render(): JSX.Element {
-            return (
-                <div className="w3-container w3-content">
-                    {this.prepareAlerts()}
-                    <AlertContext.Provider value={{ createAlert: this.createAlert }}>
-                        {this.props.children}
-                    </AlertContext.Provider>
-                </div>
-            );
-        }
-    },
-);
-
-AlertProvider.displayName = "AlertProvider";
+export const AlertProvider = withSnackbar(AlertProviderWithStyle);

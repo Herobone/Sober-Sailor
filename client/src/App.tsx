@@ -18,7 +18,9 @@
 
 import React, { Component, RefObject } from "react";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import { SnackbarProvider } from "notistack";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
+
 import { LanguageContainer } from "./translations/LanguageContainer";
 import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
@@ -62,12 +64,14 @@ export class App extends Component<Props, State> {
                 <MuiThemeProvider theme={responsiveTheme}>
                     <CssBaseline />
                     <LanguageContainer ref={this.langRef}>
-                        <AlertProvider>
-                            <Routed
-                                changeLanguage={this.state.changeLanguage}
-                                currentLocale={this.state.currentLocale}
-                            />
-                        </AlertProvider>
+                        <SnackbarProvider maxSnack={4}>
+                            <AlertProvider>
+                                <Routed
+                                    changeLanguage={this.state.changeLanguage}
+                                    currentLocale={this.state.currentLocale}
+                                />
+                            </AlertProvider>
+                        </SnackbarProvider>
                     </LanguageContainer>
                 </MuiThemeProvider>
             </React.StrictMode>
