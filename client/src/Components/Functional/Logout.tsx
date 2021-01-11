@@ -16,30 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
-import React, { Component, ReactElement } from "react";
+import firebase from "firebase/app";
+import "firebase/auth";
+import React, { Component } from "react";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
-import { Alerts, Alert } from "../../helper/AlertTypes";
+import { Alerts } from "../../helper/AlertTypes";
+import { AlertContext } from "./AlertProvider";
 
-interface Props {
-  createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-}
+export class Logout extends Component {
+    static contextType = AlertContext;
 
-export class Logout extends Component<Props> {
-  componentDidMount(): void {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        return this.props.createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
-      })
-      .catch(() => {
-        this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
-      });
-  }
+    context!: React.ContextType<typeof AlertContext>;
 
-  render(): JSX.Element {
-    return <Redirect to="/login" />;
-  }
+    componentDidMount(): void {
+        firebase
+            .auth()
+            .signOut()
+            .then(() => {
+                return this.context.createAlert(
+                    Alerts.SUCCESS,
+                    <FormattedMessage id="account.descriptions.signout.success" />,
+                );
+            })
+            .catch(() => {
+                this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            });
+    }
+
+    render(): JSX.Element {
+        return <Redirect to="/login" />;
+    }
 }

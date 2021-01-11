@@ -16,48 +16,49 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
 import { Util } from "../Util";
 
 export interface IRegister {
-  playerUidMap: Map<string, string>;
+    playerUidMap: Map<string, string>;
 }
 
 interface IRegisterExternal {
-  playerUidMap: { [key: string]: string };
+    playerUidMap: { [key: string]: string };
 }
 
 export class Register implements IRegister {
-  constructor(readonly playerUidMap: Map<string, string>) {}
+    constructor(readonly playerUidMap: Map<string, string>) {}
 
-  serialize(): { [key: string]: string } {
-    return Util.strMapToObj(this.playerUidMap);
-  }
+    serialize(): { [key: string]: string } {
+        return Util.strMapToObj(this.playerUidMap);
+    }
 
-  stringify(): string {
-    return JSON.stringify(this.serialize());
-  }
+    stringify(): string {
+        return JSON.stringify(this.serialize());
+    }
 
-  static deserialize(toDeserialize: { [key: string]: string }): Register {
-    return new Register(Util.objToStrMap(toDeserialize));
-  }
+    static deserialize(toDeserialize: { [key: string]: string }): Register {
+        return new Register(Util.objToStrMap(toDeserialize));
+    }
 
-  static parse(toParse: string): Register {
-    return Register.deserialize(JSON.parse(toParse));
-  }
+    static parse(toParse: string): Register {
+        return Register.deserialize(JSON.parse(toParse));
+    }
 }
 
 export const registerConverter = {
-  toFirestore(player: Register): firebase.firestore.DocumentData {
-    return {
-      playerUidMap: Util.strMapToObj(player.playerUidMap),
-    };
-  },
-  fromFirestore(
-    snapshot: firebase.firestore.QueryDocumentSnapshot<IRegisterExternal>,
-    options: firebase.firestore.SnapshotOptions,
-  ): Register {
-    const data = snapshot.data(options);
-    return new Register(Util.objToStrMap(data.playerUidMap));
-  },
+    toFirestore(player: Register): firebase.firestore.DocumentData {
+        return {
+            playerUidMap: Util.strMapToObj(player.playerUidMap),
+        };
+    },
+    fromFirestore(
+        snapshot: firebase.firestore.QueryDocumentSnapshot<IRegisterExternal>,
+        options: firebase.firestore.SnapshotOptions,
+    ): Register {
+        const data = snapshot.data(options);
+        return new Register(Util.objToStrMap(data.playerUidMap));
+    },
 };

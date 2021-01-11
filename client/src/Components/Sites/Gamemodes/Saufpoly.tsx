@@ -18,7 +18,8 @@
 
 import React, { PureComponent, ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { Alert } from "../../../helper/AlertTypes";
 import { GameProvider } from "../../Functional/GameProvider";
 
@@ -30,7 +31,7 @@ interface Props {
 export class Saufpoly extends PureComponent<Props> {
     render(): JSX.Element {
         return (
-            <GameProvider createAlert={this.props.createAlert}>
+            <GameProvider>
                 <div className="w3-center">
                     <FormattedMessage id="gamemodes.saufpoly" />
                     <br />

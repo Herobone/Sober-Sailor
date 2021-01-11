@@ -16,17 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
-import firebase from "firebase";
+import React, { Component } from "react";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { FormattedMessage } from "react-intl";
 import { WithStyles, withStyles } from "@material-ui/styles";
-import { Button, TextField } from "@material-ui/core";
-import { Alerts, Alert } from "../../helper/AlertTypes";
+import { Button, Fab, TextField } from "@material-ui/core";
+import { ExitToAppRounded } from "@material-ui/icons";
+import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
-import { DefaultStyle } from "../../css/Style";
+import { AlertContext } from "./AlertProvider";
+import { GameProviderStyle } from "../../css/GameProvider";
 
-interface Props extends WithStyles<typeof DefaultStyle> {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+interface Props extends WithStyles<typeof GameProviderStyle> {
     gameID?: string;
     gameURL?: string;
 }
@@ -37,7 +39,11 @@ interface State {
 }
 
 class GameProviderClass extends Component<Props, State> {
+    static contextType = AlertContext;
+
     nameInputRef!: React.RefObject<HTMLInputElement>;
+
+    context!: React.ContextType<typeof AlertContext>;
 
     constructor(props: Props) {
         super(props);
@@ -55,7 +61,7 @@ class GameProviderClass extends Component<Props, State> {
         if (this.props.gameID) {
             localStorage.setItem("gameID", this.props.gameID);
         } else {
-            localStorage.removeItem("gameID");
+            GameManager.removeLocalData();
         }
     }
 
@@ -66,7 +72,7 @@ class GameProviderClass extends Component<Props, State> {
                 .auth()
                 .signInAnonymously()
                 .catch((error) => {
-                    this.props.createAlert(Alerts.ERROR, error.message);
+                    this.context.createAlert(Alerts.ERROR, error.message);
                     console.error(error.message);
                 });
         } else {
@@ -96,12 +102,12 @@ class GameProviderClass extends Component<Props, State> {
         const { name } = this.state;
 
         if (!currentUser) {
-            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             return;
         }
 
         if (name.length < 2) {
-            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+            this.context.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
             return;
         }
 
@@ -111,7 +117,7 @@ class GameProviderClass extends Component<Props, State> {
 
     createGame(): void {
         if (!this.props.gameURL) {
-            this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
+            this.context.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
             return;
         }
         GameManager.createGame()
@@ -125,6 +131,7 @@ class GameProviderClass extends Component<Props, State> {
     render(): JSX.Element {
         const { gameID } = this.props;
         const { user } = this.state;
+        const { classes } = this.props;
         if (!gameID) {
             return (
                 <Button variant="contained" color="primary" onClick={this.createGame}>
@@ -144,9 +151,15 @@ class GameProviderClass extends Component<Props, State> {
                 return (
                     <>
                         {this.props.children}
-                        <Button variant="contained" color="primary" onClick={() => GameManager.leaveGame()}>
+                        <Fab
+                            variant="extended"
+                            color="primary"
+                            onClick={() => GameManager.leaveGame()}
+                            className={classes.leaveGameFab}
+                        >
+                            <ExitToAppRounded />
                             <FormattedMessage id="actions.leave" />
-                        </Button>
+                        </Fab>
                     </>
                 );
             }
@@ -155,22 +168,21 @@ class GameProviderClass extends Component<Props, State> {
                     <h1>
                         <FormattedMessage id="account.descriptors.finishsignup" />
                     </h1>
-                    <p>
-                        <TextField
-                            ref={this.nameInputRef}
-                            required
-                            label="Name"
-                            variant="outlined"
-                            color="primary"
-                            style={{ width: "40%" }}
-                            onChange={this.onNameChange}
-                            onKeyPress={(event) => {
-                                if (event.key === "Enter" || event.key === "Accept") {
-                                    this.setName();
-                                }
-                            }}
-                        />
-                    </p>
+                    <br />
+                    <TextField
+                        ref={this.nameInputRef}
+                        required
+                        label="Name"
+                        variant="outlined"
+                        color="primary"
+                        className={classes.nameInput}
+                        onChange={this.onNameChange}
+                        onKeyPress={(event) => {
+                            if (event.key === "Enter" || event.key === "Accept") {
+                                this.setName();
+                            }
+                        }}
+                    />
                     <br />
                     <Button variant="contained" color="primary" onClick={this.setName}>
                         <FormattedMessage id="general.done" />
@@ -183,4 +195,4 @@ class GameProviderClass extends Component<Props, State> {
     }
 }
 
-export const GameProvider = withStyles(DefaultStyle)(GameProviderClass);
+export const GameProvider = withStyles(GameProviderStyle)(GameProviderClass);

@@ -16,17 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent, ReactElement } from "react";
+import React, { PureComponent } from "react";
 import { FormattedMessage } from "react-intl";
 import { Dropdown } from "../Visuals/Dropdown";
 import { Column } from "../Visuals/Column";
-import { Alert } from "../../helper/AlertTypes";
 import { Util } from "../../helper/Util";
 
 interface Props {
     changeLanguage: (locale: string) => void;
     currentLocale: string;
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
 }
 
 export class Settings extends PureComponent<Props> {

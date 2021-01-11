@@ -18,7 +18,10 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+import "firebase/functions";
 import * as serviceWorker from "./serviceWorker";
 import { config } from "./helper/config";
 import { App } from "./App";

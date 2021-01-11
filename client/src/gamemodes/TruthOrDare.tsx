@@ -16,7 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/functions";
 import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { GameManager } from "../helper/gameManager";
@@ -24,85 +26,85 @@ import { Register } from "../helper/models/Register";
 import { SingleTargetRequest } from "../helper/models/SingleTarget";
 
 interface Props {
-  question: string;
-  target: string;
-  penalty: number;
+    question: string;
+    target: string;
+    penalty: number;
 }
 
 interface State {
-  answer: boolean | null;
+    answer: boolean | null;
 }
 
 export class TruthOrDare extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      answer: null,
-    };
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            answer: null,
+        };
 
-    this.setAnswer = this.setAnswer.bind(this);
-    this.reset = this.reset.bind(this);
-  }
-
-  setAnswer(answer: boolean): void {
-    this.setState({
-      answer,
-    });
-    const callData: SingleTargetRequest = { answer, gameID: GameManager.getGameID() };
-    const singleTarget = firebase.functions().httpsCallable("singleTarget");
-    singleTarget(callData).catch(console.error);
-  }
-
-  reset(): void {
-    this.setState({
-      answer: null,
-    });
-  }
-
-  render(): JSX.Element {
-    const pltRaw = localStorage.getItem("playerLookupTable");
-
-    let targetName = "Error";
-    if (pltRaw) {
-      const register = Register.parse(pltRaw);
-      const tar = register.playerUidMap.get(this.props.target);
-      targetName = tar || "Error";
+        this.setAnswer = this.setAnswer.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
-    const user = firebase.auth().currentUser;
-    if (!user) {
-      return <div className="error">Error user not logged in! This area should be restricted!</div>;
+    setAnswer(answer: boolean): void {
+        this.setState({
+            answer,
+        });
+        const callData: SingleTargetRequest = { answer, gameID: GameManager.getGameID() };
+        const singleTarget = firebase.functions().httpsCallable("singleTarget");
+        singleTarget(callData).catch(console.error);
     }
-    return (
-      <div>
-        <h2>{targetName}:</h2>
-        <h2>
-          <FormattedMessage id="gamemodes.truthordare" />
-        </h2>
-        {this.props.question}
-        <br />
-        <FormattedMessage
-          id="elements.general.penalty"
-          values={{
-            penalty: this.props.penalty,
-          }}
-        />
-        <br />
-        {this.props.target === user.uid && this.state.answer === null && (
-          <div className="target-area">
-            <button type="submit" onClick={() => this.setAnswer(true)}>
-              <FormattedMessage id="elements.truthordare.dare" />
-            </button>
-            <button type="submit" onClick={() => this.setAnswer(false)}>
-              <FormattedMessage id="elements.truthordare.drink" />
-            </button>
-          </div>
-        )}
-        <h2>
-          {this.state.answer === false && <FormattedMessage id="elements.truthordare.drink" />}
-          {this.state.answer && <FormattedMessage id="elements.truthordare.dare" />}
-        </h2>
-      </div>
-    );
-  }
+
+    reset(): void {
+        this.setState({
+            answer: null,
+        });
+    }
+
+    render(): JSX.Element {
+        const pltRaw = localStorage.getItem("playerLookupTable");
+
+        let targetName = "Error";
+        if (pltRaw) {
+            const register = Register.parse(pltRaw);
+            const tar = register.playerUidMap.get(this.props.target);
+            targetName = tar || "Error";
+        }
+
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            return <div className="error">Error user not logged in! This area should be restricted!</div>;
+        }
+        return (
+            <div>
+                <h2>{targetName}:</h2>
+                <h2>
+                    <FormattedMessage id="gamemodes.truthordare" />
+                </h2>
+                {this.props.question}
+                <br />
+                <FormattedMessage
+                    id="elements.general.penalty"
+                    values={{
+                        penalty: this.props.penalty,
+                    }}
+                />
+                <br />
+                {this.props.target === user.uid && this.state.answer === null && (
+                    <div className="target-area">
+                        <button type="submit" onClick={() => this.setAnswer(true)}>
+                            <FormattedMessage id="elements.truthordare.dare" />
+                        </button>
+                        <button type="submit" onClick={() => this.setAnswer(false)}>
+                            <FormattedMessage id="elements.truthordare.drink" />
+                        </button>
+                    </div>
+                )}
+                <h2>
+                    {this.state.answer === false && <FormattedMessage id="elements.truthordare.drink" />}
+                    {this.state.answer && <FormattedMessage id="elements.truthordare.dare" />}
+                </h2>
+            </div>
+        );
+    }
 }

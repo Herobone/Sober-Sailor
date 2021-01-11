@@ -27,9 +27,9 @@ export const DefaultStyle = (theme: Theme) =>
             justifyContent: "center",
         },
         settingsButton: {
-            position: "fixed",
-            bottom: "4%",
-            right: "3%",
+            position: "absolute",
+            bottom: theme.spacing(4),
+            right: theme.spacing(2),
         },
         settingsModal: {
             width: "60%",
@@ -45,5 +45,16 @@ export const DefaultStyle = (theme: Theme) =>
         },
         margin4: {
             margin: theme.spacing(4),
+        },
+        gameSelectButton: {
+            width: "100%",
+            fontWeight: "bold",
+            fontSize: "2em",
+            padding: theme.spacing(1),
+            marginTop: theme.spacing(2),
+        },
+        startPage: {
+            padding: theme.spacing(2),
+            textAlign: "center",
         },
     });

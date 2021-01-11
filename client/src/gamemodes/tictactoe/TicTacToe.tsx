@@ -16,7 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
 import { Board } from "./Board";

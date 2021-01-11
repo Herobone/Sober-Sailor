@@ -1,4 +1,4 @@
-/*!****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
  *
@@ -15,15 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { createStyles } from "@material-ui/styles";
+import { Theme } from "@material-ui/core";
 
-.center {
-  text-align: center !important;
-}
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
+export const GameProviderStyle = (theme: Theme) =>
+    createStyles({
+        nameInput: {
+            width: "40%",
+            margin: theme.spacing(2),
+        },
+        leaveGameFab: {
+            position: "absolute",
+            bottom: theme.spacing(4),
+            left: theme.spacing(2),
+        },
 
-.border {
-  border: 1px solid #ccc !important
-}
-
-.round {
-  border-radius: 4px;
-}
+        [theme.breakpoints.down("sm")]: {
+            nameInput: {
+                width: "90%",
+            },
+        },
+    });

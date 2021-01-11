@@ -15,7 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+import "firebase/functions";
 import { Util } from "./Util";
 import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
@@ -169,6 +172,11 @@ export class GameManager {
         return GameManager.leaveGameP(GameManager.getGameID());
     }
 
+    public static removeLocalData(): void {
+        localStorage.removeItem("playerLookupTable");
+        localStorage.removeItem("gameID");
+    }
+
     private static leaveGameP(gameID: string): void {
         const auth = firebase.auth();
         const user = auth.currentUser;
@@ -188,8 +196,7 @@ export class GameManager {
                 .delete()
                 .then(() => {
                     window.location.pathname = "";
-                    localStorage.removeItem("playerLookupTable");
-                    localStorage.removeItem("gameID");
+                    GameManager.removeLocalData();
                     return Promise.resolve();
                 })
                 .catch(console.error);
