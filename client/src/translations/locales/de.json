@@ -36,7 +36,7 @@
 	"elements.truthordare.dare": "Ich mach's!",
 	"elements.truthordare.drink": "Ich trink lieber...",
 	"gamemodes.describeinoneword": "Beschreib's in einem Wort",
-	"gamemodes.mixed": "Gemischt (Alle Typen von Aufgaben)",
+	"gamemodes.start": "Start Sailing",
 	"gamemodes.saufpoly": "Saufpoly",
 	"gamemodes.truthordare": "Wahrheit oder Pflicht",
 	"gamemodes.whowouldrather": "Wer würde eher",
@@ -52,5 +52,5 @@
 	"general.welcome": "Willkommen",
 	"navigation.myprofile": "Mein Profil",
 	"settings.labels.selectlanguage": "Sprache (Language)",
-	"sobersailor.name": "Sober Sailor - Das Online Party Spiel"
+	"sobersailor.name": "Sober Sailor"
 }

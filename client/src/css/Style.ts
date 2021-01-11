@@ -49,9 +49,19 @@ export const DefaultStyle = (theme: Theme) =>
         gameSelectButton: {
             width: "100%",
             fontWeight: "bold",
-            fontSize: "2em",
+            fontSize: 40,
             padding: theme.spacing(1),
             marginTop: theme.spacing(2),
+            border: "3px solid",
+            borderRadius: 100,
+            minWidth: 400,
+            minHeight: 50,
+            
+            
+            '&:hover':{
+                color: theme.palette.getContrastText(theme.palette.primary.main),
+                backgroundColor: theme.palette.primary.main,
+            },
         },
         startPage: {
             padding: theme.spacing(2),

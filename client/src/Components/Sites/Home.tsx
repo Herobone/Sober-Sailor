@@ -25,6 +25,7 @@ import { Alerts } from "../../helper/AlertTypes";
 import { Util } from "../../helper/Util";
 import { DefaultStyle } from "../../css/Style";
 import { AlertContext } from "../Functional/AlertProvider";
+import RowingOutlined from "@material-ui/icons/RowingOutlined";
 
 interface Props extends WithStyles<typeof DefaultStyle> {}
 
@@ -44,38 +45,20 @@ class HomeClass extends PureComponent<Props, State> {
                 </h1>
 
                 <Button
-                    variant="contained"
                     color="primary"
                     component={Link}
                     to="/mixed"
                     className={classes.gameSelectButton}
+                    size="large"
+                    startIcon={<RowingOutlined />}
+                    fullWidth
                 >
-                    <FormattedMessage id="gamemodes.mixed" />
-                </Button>
-                <br />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link}
-                    to="/truthordare"
-                    className={classes.gameSelectButton}
-                >
-                    <FormattedMessage id="gamemodes.truthordare" />
-                </Button>
-                <br />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link}
-                    to="/saufpoly"
-                    className={classes.gameSelectButton}
-                >
-                    <FormattedMessage id="gamemodes.saufpoly" />
+                    <FormattedMessage id="gamemodes.start" />
                 </Button>
 
                 <Button
-                    variant="contained"
-                    color="primary"
+                    variant="outlined"
+                    color="secondary"
                     className={classes.margin}
                     onClick={() => {
                         this.context.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
