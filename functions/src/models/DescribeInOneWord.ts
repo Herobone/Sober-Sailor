@@ -1,3 +1,6 @@
+import * as admin from "firebase-admin";
+import Util from "../helper/Util";
+
 /*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -24,3 +27,32 @@ export interface DescribeInOneWordRequest {
 export interface DescribeInOneWordResult {
   writeOK: boolean;
 }
+
+export interface IDescribeInOneWord {
+  word: string;
+  answers: Map<string, string>;
+}
+
+export interface IDescribeInOneWordExternal {
+  word: string;
+  answers: { [player: string]: string };
+}
+
+export class DescribeInOneWord implements IDescribeInOneWord {
+  constructor(readonly word: string, readonly answers: Map<string, string>) {}
+}
+
+export const playerConverter = {
+  toFirestore(game: IDescribeInOneWord): admin.firestore.DocumentData {
+    return {
+      word: game.word,
+      answers: Util.strMapToObj(game.answers),
+    };
+  },
+  fromFirestore(
+    snapshot: admin.firestore.QueryDocumentSnapshot<IDescribeInOneWordExternal>
+  ): DescribeInOneWord {
+    const data = snapshot.data();
+    return new DescribeInOneWord(data.word, Util.objToStrMap(data.answers));
+  },
+};
