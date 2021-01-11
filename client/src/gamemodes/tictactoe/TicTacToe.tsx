@@ -24,7 +24,7 @@ import React, { Component } from "react";
 import { Board } from "./Board";
 import style from "../../css/TicTacToe.module.scss";
 import { TicOptions, TicUtils } from "./TicUtils";
-import { TicTacToe as TicTacToeData, ticTacToeConverter } from "../../helper/models/TicTacToe";
+import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
 import { Player } from "../../helper/models/Player";
 
@@ -57,9 +57,7 @@ export class TicTacToe extends Component<Props, State> {
         this.handleClick = this.handleClick.bind(this);
         this.keyEvent = this.keyEvent.bind(this);
 
-        const gameID = GameManager.getGameID();
-        const tttRef = firebase.firestore().collection("tictactoe").doc(gameID).withConverter(ticTacToeConverter);
-        this.unsubscribe = tttRef.onSnapshot(this.updateFromDoc);
+        this.unsubscribe = TicUtils.getTTTGame().onSnapshot(this.updateFromDoc);
     }
 
     componentDidMount(): void {

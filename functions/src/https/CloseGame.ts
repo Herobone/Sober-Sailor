@@ -43,7 +43,7 @@ export const closeGameHandler = async (
         "Function must be called by host of game!"
       );
     }
-    const gameRef = FirestoreUtil.getGame(data.gameID);
+    const gameRef = FirestoreUtil.getGameDoc(data.gameID);
 
     const players = await FirestoreUtil.getPlayers(data.gameID).get();
     await players.forEach(async (playerToDelete) => {
