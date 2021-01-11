@@ -23,14 +23,6 @@ export const onPlayerJoinHandler = async (
   snapshot: functions.firestore.QueryDocumentSnapshot,
   context: functions.EventContext
 ) => {
-  if (context.params.playerID === "register") {
-    // If the created document was a register don't proceed!
-    throw new functions.https.HttpsError(
-      "ok",
-      "Function triggered on register create"
-    );
-  }
-
   const registerRef = await FirestoreUtil.getRegisterRef(context.params.gameID);
   const playerData = snapshot.data();
 
