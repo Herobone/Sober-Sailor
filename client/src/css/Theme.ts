@@ -1,4 +1,4 @@
-/*!****************************
+/** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
  *
@@ -15,24 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 
-/*
-This file is used if:
-- there should be extra css needed that is not provided by w3.css
-- current layouts have to be overwritten
-*/
-
-.sailor-startpage-gameselector {
-  width: 50%;
-  margin-top: 10%;
-  margin-left: 25%;
-}
-
-.sailor-gameselect-button {
-  font-weight: bold;
-}
-
-/* Only on small screens */
-
-@media only screen and (max-width: 600px) {
-}
+export const StandardTheme = createMuiTheme({
+    palette: {
+        background: {
+            default: "#8a989f",
+        },
+        primary: {
+            main: "#ffaa00",
+        },
+        secondary: {
+            main: "#6c757d",
+            light: "#8a989f",
+        },
+    },
+});
+export const responsiveTheme = responsiveFontSizes(StandardTheme);

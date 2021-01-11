@@ -1,6 +1,6 @@
 /** ***************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { createStyles } from "@material-ui/styles";
+import { Theme } from "@material-ui/core";
 
-import React, { PureComponent } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
-import { Redirect } from "react-router";
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
+export const GameProviderStyle = (theme: Theme) =>
+    createStyles({
+        nameInput: {
+            width: "40%",
+            margin: theme.spacing(2),
+        },
+        leaveGameFab: {
+            position: "absolute",
+            bottom: theme.spacing(4),
+            left: theme.spacing(2),
+        },
 
-interface Props {
-    className?: string;
-}
-
-export class OnlyAuthed extends PureComponent<Props> {
-    render(): JSX.Element {
-        const { currentUser } = firebase.auth();
-
-        return (
-            <div>
-                {currentUser && (
-                    <div className="only-authed">
-                        <div className={this.props.className}>{this.props.children}</div>
-                    </div>
-                )}
-                {!currentUser && <Redirect to="/login" />}
-            </div>
-        );
-    }
-}
+        [theme.breakpoints.down("sm")]: {
+            nameInput: {
+                width: "90%",
+            },
+        },
+    });

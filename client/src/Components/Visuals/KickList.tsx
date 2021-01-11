@@ -16,81 +16,85 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/functions";
 import React, { Component, ReactElement } from "react";
-import { Alerts, Alert } from "../../helper/AlertTypes";
+import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { Register } from "../../helper/models/Register";
+import { AlertContext } from "../Functional/AlertProvider";
 
-interface Props {
-  createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-}
+interface Props {}
 interface State {
-  shown: boolean;
+    shown: boolean;
 }
 
 interface KickPlayer {
-  gameID: string;
-  playerID: string;
+    gameID: string;
+    playerID: string;
 }
 
 export class KickList extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      shown: false,
-    };
-    this.show = this.show.bind(this);
-  }
+    static contextType = AlertContext;
 
-  show(shown?: boolean): void {
-    if (shown === undefined) {
-      this.setState((prev) => {
-        return { shown: !prev.shown };
-      });
-    } else {
-      this.setState({ shown });
+    context!: React.ContextType<typeof AlertContext>;
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            shown: false,
+        };
+        this.show = this.show.bind(this);
     }
-  }
 
-  render(): JSX.Element | null {
-    if (this.state.shown) {
-      const pltRaw = localStorage.getItem("playerLookupTable");
-      const vals: ReactElement[] = [];
-      let register: Register;
-      if (pltRaw) {
-        register = Register.parse(pltRaw);
-        register.playerUidMap.forEach((username: string, uid: string) => {
-          vals.push(
-            <li
-              // eslint-disable-next-line react/no-array-index-key
-              key={`kick${uid}`}
-              className="w3-bar-item w3-button"
-            >
-              <button
-                type="submit"
-                onClick={() => {
-                  const callData: KickPlayer = {
-                    gameID: GameManager.getGameID(),
-                    playerID: uid,
-                  };
-                  const kickPlayer = firebase.functions().httpsCallable("kickPlayer");
-                  kickPlayer(callData)
-                    .then(() => this.setState({ shown: false }))
-                    .catch(console.warn);
-                }}
-              >
-                {username}
-              </button>
-            </li>,
-          );
-        });
-      } else {
-        this.props.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
-      }
-
-      return <ul className="w3-block w3-black w3-bar-block w3-border">{vals}</ul>;
+    show(shown?: boolean): void {
+        if (shown === undefined) {
+            this.setState((prev) => {
+                return { shown: !prev.shown };
+            });
+        } else {
+            this.setState({ shown });
+        }
     }
-    return null;
-  }
+
+    render(): JSX.Element | null {
+        if (this.state.shown) {
+            const pltRaw = localStorage.getItem("playerLookupTable");
+            const vals: ReactElement[] = [];
+            let register: Register;
+            if (pltRaw) {
+                register = Register.parse(pltRaw);
+                register.playerUidMap.forEach((username: string, uid: string) => {
+                    vals.push(
+                        <li
+                            // eslint-disable-next-line react/no-array-index-key
+                            key={`kick${uid}`}
+                            className="w3-bar-item w3-button"
+                        >
+                            <button
+                                type="submit"
+                                onClick={() => {
+                                    const callData: KickPlayer = {
+                                        gameID: GameManager.getGameID(),
+                                        playerID: uid,
+                                    };
+                                    const kickPlayer = firebase.functions().httpsCallable("kickPlayer");
+                                    kickPlayer(callData)
+                                        .then(() => this.setState({ shown: false }))
+                                        .catch(console.warn);
+                                }}
+                            >
+                                {username}
+                            </button>
+                        </li>,
+                    );
+                });
+            } else {
+                this.context.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+            }
+
+            return <ul className="w3-block w3-black w3-bar-block w3-border">{vals}</ul>;
+        }
+        return null;
+    }
 }

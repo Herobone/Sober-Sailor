@@ -1,6 +1,6 @@
 /** ***************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,28 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
-import { Redirect } from "react-router";
-
-interface Props {
-    className?: string;
-}
-
-export class OnlyAuthed extends PureComponent<Props> {
-    render(): JSX.Element {
-        const { currentUser } = firebase.auth();
-
-        return (
-            <div>
-                {currentUser && (
-                    <div className="only-authed">
-                        <div className={this.props.className}>{this.props.children}</div>
-                    </div>
-                )}
-                {!currentUser && <Redirect to="/login" />}
-            </div>
-        );
-    }
+export class DiowUtils {
+    static createGame() {}
 }

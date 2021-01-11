@@ -16,48 +16,76 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent, ReactElement } from "react";
+import React, { PureComponent } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import App from "../../css/App.module.scss";
-import { Alert } from "../../helper/AlertTypes";
+import { WithStyles, withStyles } from "@material-ui/styles";
+import { Button } from "@material-ui/core";
+import { Alerts } from "../../helper/AlertTypes";
+import { Util } from "../../helper/Util";
+import { DefaultStyle } from "../../css/Style";
+import { AlertContext } from "../Functional/AlertProvider";
 
-interface Props {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-}
+interface Props extends WithStyles<typeof DefaultStyle> {}
 
 interface State {}
 
-export class Home extends PureComponent<Props, State> {
-    render(): JSX.Element {
-        return (
-            <div className="w3-center">
-                <div className={App.sailorStartpageGameselector}>
-                    <header className="w3-container w3-yellow">
-                        <h1>
-                            <FormattedMessage id="sobersailor.name" />
-                        </h1>
-                    </header>
+class HomeClass extends PureComponent<Props, State> {
+    static contextType = AlertContext;
 
-                    <div className="w3-container">
-                        <p className={App.sailorGameselectButton}>
-                            <Link to="mixed" className="w3-btn w3-round w3-orange w3-xlarge">
-                                <FormattedMessage id="gamemodes.mixed" />
-                            </Link>
-                        </p>
-                        <p className={App.sailorGameselectButton}>
-                            <Link to="/truthordare" className="w3-btn w3-round w3-orange w3-xlarge">
-                                <FormattedMessage id="gamemodes.truthordare" />
-                            </Link>
-                        </p>
-                        <p className={App.sailorGameselectButton}>
-                            <Link to="/saufpoly" className="w3-btn w3-round w3-orange w3-xlarge">
-                                <FormattedMessage id="gamemodes.saufpoly" />
-                            </Link>
-                        </p>
-                    </div>
-                </div>
+    context!: React.ContextType<typeof AlertContext>;
+
+    render(): JSX.Element {
+        const { classes } = this.props;
+        return (
+            <div className={classes.startPage}>
+                <h1>
+                    <FormattedMessage id="sobersailor.name" />
+                </h1>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to="/mixed"
+                    className={classes.gameSelectButton}
+                >
+                    <FormattedMessage id="gamemodes.mixed" />
+                </Button>
+                <br />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to="/truthordare"
+                    className={classes.gameSelectButton}
+                >
+                    <FormattedMessage id="gamemodes.truthordare" />
+                </Button>
+                <br />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={Link}
+                    to="/saufpoly"
+                    className={classes.gameSelectButton}
+                >
+                    <FormattedMessage id="gamemodes.saufpoly" />
+                </Button>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.margin}
+                    onClick={() => {
+                        this.context.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
+                    }}
+                >
+                    Test Alert
+                </Button>
             </div>
         );
     }
 }
+
+export const Home = withStyles(DefaultStyle)(HomeClass);

@@ -16,30 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
-import firebase from "firebase";
+import React, { Component } from "react";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { FormattedMessage } from "react-intl";
-import { Alerts, Alert } from "../../helper/AlertTypes";
+import { WithStyles, withStyles } from "@material-ui/styles";
+import { Button, Fab, TextField } from "@material-ui/core";
+import { ExitToAppRounded } from "@material-ui/icons";
+import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
+import { AlertContext } from "./AlertProvider";
+import { GameProviderStyle } from "../../css/GameProvider";
 
-interface Props {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
+interface Props extends WithStyles<typeof GameProviderStyle> {
     gameID?: string;
     gameURL?: string;
 }
 
 interface State {
     user: firebase.User | null;
+    name: string;
 }
 
-export class GameProvider extends Component<Props, State> {
+class GameProviderClass extends Component<Props, State> {
+    static contextType = AlertContext;
+
     nameInputRef!: React.RefObject<HTMLInputElement>;
+
+    context!: React.ContextType<typeof AlertContext>;
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
             user: null,
+            name: "",
         };
 
         this.createGame = this.createGame.bind(this);
@@ -50,7 +61,7 @@ export class GameProvider extends Component<Props, State> {
         if (this.props.gameID) {
             localStorage.setItem("gameID", this.props.gameID);
         } else {
-            localStorage.removeItem("gameID");
+            GameManager.removeLocalData();
         }
     }
 
@@ -61,7 +72,7 @@ export class GameProvider extends Component<Props, State> {
                 .auth()
                 .signInAnonymously()
                 .catch((error) => {
-                    this.props.createAlert(Alerts.ERROR, error.message);
+                    this.context.createAlert(Alerts.ERROR, error.message);
                     console.error(error.message);
                 });
         } else {
@@ -80,27 +91,33 @@ export class GameProvider extends Component<Props, State> {
         });
     }
 
+    onNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        this.setState({
+            name: event.target.value,
+        });
+    };
+
     setName(): void {
         const { currentUser } = firebase.auth();
-        const input = this.nameInputRef.current;
+        const { name } = this.state;
 
-        if (!input || !currentUser) {
-            this.props.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+        if (!currentUser) {
+            this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             return;
         }
 
-        if (input.value.length < 3) {
-            this.props.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+        if (name.length < 2) {
+            this.context.createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
             return;
         }
 
-        currentUser.updateProfile({ displayName: input.value });
+        currentUser.updateProfile({ displayName: name }).catch(console.error);
         this.forceUpdate();
     }
 
     createGame(): void {
         if (!this.props.gameURL) {
-            this.props.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
+            this.context.createAlert(Alerts.ERROR, "Fatal error! Unexpected missing Prop!");
             return;
         }
         GameManager.createGame()
@@ -114,15 +131,12 @@ export class GameProvider extends Component<Props, State> {
     render(): JSX.Element {
         const { gameID } = this.props;
         const { user } = this.state;
+        const { classes } = this.props;
         if (!gameID) {
             return (
-                <div className="w3-center">
-                    <p className="sailor-creategame-button">
-                        <button type="button" onClick={this.createGame} className="w3-btn w3-round w3-orange w3-xlarge">
-                            <FormattedMessage id="actions.game.create" />
-                        </button>
-                    </p>
-                </div>
+                <Button variant="contained" color="primary" onClick={this.createGame}>
+                    <FormattedMessage id="actions.game.create" />
+                </Button>
             );
         }
 
@@ -135,49 +149,50 @@ export class GameProvider extends Component<Props, State> {
         if (currentUser) {
             if (currentUser.displayName && currentUser.displayName !== "") {
                 return (
-                    <div>
+                    <>
                         {this.props.children}
-                        <button type="button" onClick={() => GameManager.leaveGame()}>
+                        <Fab
+                            variant="extended"
+                            color="primary"
+                            onClick={() => GameManager.leaveGame()}
+                            className={classes.leaveGameFab}
+                        >
+                            <ExitToAppRounded />
                             <FormattedMessage id="actions.leave" />
-                        </button>
-                    </div>
+                        </Fab>
+                    </>
                 );
             }
             return (
-                <div>
+                <>
                     <h1>
                         <FormattedMessage id="account.descriptors.finishsignup" />
                     </h1>
-                    <p>
-                        <label htmlFor="name-input">
-                            <b>
-                                <FormattedMessage id="account.descriptors.yourname" />
-                            </b>
-                        </label>
-                        <br />
-                        <input
-                            ref={this.nameInputRef}
-                            id="name-imput"
-                            className="w3-input w3-border w3-round"
-                            name="name"
-                            type="text"
-                            style={{ width: "40%" }}
-                            placeholder="Name"
-                            onKeyPress={(event) => {
-                                if (event.key === "Enter" || event.key === "Accept") {
-                                    this.setName();
-                                }
-                            }}
-                        />
-                    </p>
                     <br />
-                    <button type="button" className="w3-button w3-round w3-theme-d5" onClick={this.setName}>
+                    <TextField
+                        ref={this.nameInputRef}
+                        required
+                        label="Name"
+                        variant="outlined"
+                        color="primary"
+                        className={classes.nameInput}
+                        onChange={this.onNameChange}
+                        onKeyPress={(event) => {
+                            if (event.key === "Enter" || event.key === "Accept") {
+                                this.setName();
+                            }
+                        }}
+                    />
+                    <br />
+                    <Button variant="contained" color="primary" onClick={this.setName}>
                         <FormattedMessage id="general.done" />
-                    </button>
-                </div>
+                    </Button>
+                </>
             );
         }
 
-        return <div>Eror</div>;
+        return <div>Error</div>;
     }
 }
+
+export const GameProvider = withStyles(GameProviderStyle)(GameProviderClass);
