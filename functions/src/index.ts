@@ -17,12 +17,12 @@ export const singleTarget = functions
 
 export const onPlayerJoin = functions
   .region("europe-west1")
-  .firestore.document("/games/{gameID}/players/{playerID}")
+  .firestore.document("/{gameID}/general/players/{playerID}")
   .onCreate(onPlayerJoinHandler);
 
 export const onPlayerLeave = functions
   .region("europe-west1")
-  .firestore.document("/games/{gameID}/players/{playerID}")
+  .firestore.document("/{gameID}/general/players/{playerID}")
   .onDelete(onPlayerLeaveHandler);
 
 export const garbageCollection = functions
