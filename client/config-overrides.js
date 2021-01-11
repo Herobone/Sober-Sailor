@@ -51,7 +51,7 @@ module.exports = {
                         // Pending further investigation:
                         // https://github.com/terser-js/terser/issues/120
                         inline: 2,
-                        pure_funcs: ["console.log"],
+                        pure_funcs: ["console.log", "console.debug"],
                     },
                     mangle: {
                         safari10: true,
