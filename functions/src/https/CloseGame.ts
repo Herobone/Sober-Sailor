@@ -43,7 +43,6 @@ export const closeGameHandler = async (
         "Function must be called by host of game!"
       );
     }
-    const gameRef = FirestoreUtil.getGameDoc(data.gameID);
 
     const players = await FirestoreUtil.getPlayers(data.gameID).get();
     await players.forEach(async (playerToDelete) => {
@@ -51,7 +50,12 @@ export const closeGameHandler = async (
       await playerToDelete.ref.delete();
     });
 
-    await gameRef.delete();
+    const misc = await FirestoreUtil.getGame(data.gameID).get();
+    await misc.forEach(async (docToDelete) => {
+      console.log(data.gameID, "/", docToDelete.id);
+      await docToDelete.ref.delete();
+    });
+
     await db.collection("tictactoe").doc(data.gameID).delete();
   } else {
     throw new functions.https.HttpsError(
