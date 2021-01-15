@@ -45,15 +45,13 @@ export class TicUtils {
     }
 
     static registerTicTacToe(opponents: string[]): Promise<unknown> {
-        const gameID = GameManager.getGameID();
         return new Promise<unknown>((resolve, reject) => {
             if (opponents.length !== 2) {
                 throw new RangeError("More or less than two players specified!");
             }
-            // console.log(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
-            const tttRef = firebase.firestore().collection("tictactoe").doc(gameID).withConverter(ticTacToeConverter);
+            console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
 
-            tttRef
+            TicUtils.getTTTGame()
                 .set(new TicTacToe(new Array(9).fill(null), 0, true, opponents[0], opponents[1]))
                 .then(resolve)
                 .catch(reject);
@@ -89,10 +87,17 @@ export class TicUtils {
         }
     }
 
+    static getTTTGame(): firebase.firestore.DocumentReference<TicTacToe> {
+        return firebase
+            .firestore()
+            .collection(GameManager.getGameID())
+            .doc("tictactoe")
+            .withConverter(ticTacToeConverter);
+    }
+
     static makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
-        const gameID = GameManager.getGameID();
         return new Promise<void>((resolve, reject) => {
-            const tttRef = firebase.firestore().collection("tictactoe").doc(gameID).withConverter(ticTacToeConverter);
+            const tttRef = TicUtils.getTTTGame();
             tttRef
                 .get({ source: "cache" })
                 .then((data) => {
@@ -104,7 +109,7 @@ export class TicUtils {
                 })
                 .then((value) => {
                     if (!TicUtils.drawAllowed(value.isXNext, player)) {
-                        // console.log("Draw not allowed!");
+                        console.log("Draw not allowed!");
                         resolve();
                         return null;
                     }
