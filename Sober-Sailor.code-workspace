@@ -30,5 +30,15 @@
 			}
 		],
 		"editor.formatOnSave": true
+	},
+	"extensions": {
+		"recommendations": [
+			"esbenp.prettier-vscode",
+			"hasanakg.firebase-snippets",
+			"dsznajder.es7-react-js-snippets",
+			"dbaeumer.vscode-eslint",
+			"toba.vsfire",
+			"xabikos.javascriptsnippets"
+		]
 	}
 }
