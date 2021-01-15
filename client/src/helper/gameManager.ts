@@ -33,13 +33,7 @@ export class GameManager {
         }
 
         console.warn("LocalStorage has no PLT stored! Try again!");
-        GameManager.getGame()
-            .collection("players")
-            .doc("register")
-            .withConverter(registerConverter)
-            .get()
-            .then(GameManager.updatePlayerLookupTable)
-            .catch(console.error);
+        GameManager.getRegister().get().then(GameManager.updatePlayerLookupTable).catch(console.error);
 
         return null;
     }
@@ -105,6 +99,11 @@ export class GameManager {
         });
     }
 
+    static getGameCol(): firebase.firestore.CollectionReference {
+        const db = firebase.firestore();
+        return db.collection(GameManager.getGameID());
+    }
+
     static getGame(): firebase.firestore.DocumentReference<Game> {
         return GameManager.getGameByID(GameManager.getGameID());
     }
@@ -117,9 +116,21 @@ export class GameManager {
         return GameManager.getRawGameByID(GameManager.getGameID());
     }
 
+    static getPlayerCol(): firebase.firestore.CollectionReference {
+        return GameManager.getGame().collection("players");
+    }
+
+    static getPlayer(uid: string): firebase.firestore.DocumentReference<Player> {
+        return GameManager.getPlayerCol().doc(uid).withConverter(playerConverter);
+    }
+
     private static getRawGameByID(gameID: string): firebase.firestore.DocumentReference {
         const db = firebase.firestore();
-        return db.collection("games").doc(gameID);
+        return db.collection(gameID).doc("general");
+    }
+
+    static getRegister(): firebase.firestore.DocumentReference<Register> {
+        return GameManager.getGameCol().doc("register").withConverter(registerConverter);
     }
 
     static joinGame(
@@ -152,7 +163,7 @@ export class GameManager {
             }
 
             const gameRef = GameManager.getGameByID(gameID);
-            const userRef = gameRef.collection("players").doc(uid).withConverter(playerConverter);
+            const userRef = GameManager.getPlayer(uid);
             userRef
                 .get()
                 .then((doc) => {
@@ -164,12 +175,8 @@ export class GameManager {
                 .then(resolve)
                 .catch(reject);
             gameRef.onSnapshot(gameEvent);
-            gameRef.collection("players").doc("register").withConverter(registerConverter).onSnapshot(playerEvent);
+            GameManager.getRegister().onSnapshot(playerEvent);
         });
-    }
-
-    static leaveGame(): void {
-        return GameManager.leaveGameP(GameManager.getGameID());
     }
 
     public static removeLocalData(): void {
@@ -177,7 +184,7 @@ export class GameManager {
         localStorage.removeItem("gameID");
     }
 
-    private static leaveGameP(gameID: string): void {
+    static leaveGame(): void {
         const auth = firebase.auth();
         const user = auth.currentUser;
 
@@ -187,12 +194,8 @@ export class GameManager {
 
         const { uid } = user;
 
-        const gameRef = GameManager.getGameByID(gameID);
-
         const deletePlayer = (): void => {
-            gameRef
-                .collection("players")
-                .doc(uid)
+            GameManager.getPlayer(uid)
                 .delete()
                 .then(() => {
                     window.location.pathname = "";
@@ -245,21 +248,15 @@ export class GameManager {
     }
 
     static getAllPlayers(): Promise<Player[]> {
-        return GameManager.getAllPlayersP(GameManager.getGameID());
-    }
-
-    private static getAllPlayersP(gameID: string): Promise<Player[]> {
         const players: Player[] = [];
-        const gameRef = GameManager.getGameByID(gameID);
-        const playerRef = gameRef.collection("players");
+        const playerRef = GameManager.getPlayerCol().withConverter(playerConverter);
         return new Promise((resolve, reject) => {
             playerRef
-                .withConverter(playerConverter)
                 .get()
                 .then((query) => {
                     query.forEach((doc) => {
                         const data = doc.data();
-                        if (data && doc.id !== "register") {
+                        if (data) {
                             players.push(data);
                         }
                     });
@@ -347,10 +344,6 @@ export class GameManager {
     }
 
     static setAnswer(answer: string): Promise<unknown> {
-        return GameManager.setAnswerP(GameManager.getGameID(), answer);
-    }
-
-    private static setAnswerP(gameID: string, answer: string): Promise<unknown> {
         const auth = firebase.auth();
         const user = auth.currentUser;
         return new Promise((resolve, reject) => {
@@ -360,10 +353,7 @@ export class GameManager {
             }
 
             const { uid } = user;
-            const gameRef = GameManager.getGameByID(gameID);
-            gameRef
-                .collection("players")
-                .doc(uid)
+            GameManager.getPlayer(uid)
                 .update({
                     answer,
                 })
@@ -435,11 +425,6 @@ export class GameManager {
     }
 
     static getMyData(): Promise<Player> {
-        return GameManager.getMyDataP(GameManager.getGameID());
-    }
-
-    private static getMyDataP(gameID: string): Promise<Player> {
-        const gameRef = GameManager.getGameByID(gameID);
         const auth = firebase.auth();
         const user = auth.currentUser;
         return new Promise((resolve, reject) => {
@@ -449,7 +434,7 @@ export class GameManager {
             }
 
             const { uid } = user;
-            const playerRef = gameRef.collection("players").doc(uid);
+            const playerRef = GameManager.getPlayer(uid);
             playerRef
                 .withConverter(playerConverter)
                 .get()
@@ -484,9 +469,8 @@ export class GameManager {
             });
             GameManager.getMyData()
                 .then((data: Player) => {
-                    const gameRef = GameManager.getGame();
                     const sipsToSubmit = data.sips + sipsIHaveToTake;
-                    return gameRef.collection("players").doc(uid).update({
+                    return GameManager.getPlayer(uid).update({
                         sips: sipsToSubmit,
                         answer: null,
                     });
