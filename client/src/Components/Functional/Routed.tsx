@@ -21,6 +21,8 @@ import React, { PureComponent } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Fab, Fade, Modal } from "@material-ui/core";
 import { SettingsRounded } from "@material-ui/icons";
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import CopyrightOutlinedIcon from '@material-ui/icons/CopyrightOutlined';
 import { WithStyles, withStyles } from "@material-ui/styles";
 import { Settings } from "../Sites/Settings";
 import { Login } from "../Sites/Login";
@@ -86,9 +88,38 @@ class RoutedClass extends PureComponent<Props, State> {
                             })
                         }
                         className={classes.settingsButton}
-                        color="primary"
+                        color="secondary"
                     >
+                    
                         <SettingsRounded />
+                    </Fab>
+                    <Fab
+                        onClick={() =>
+                            this.setState((prev) => {
+                                return {
+                                    // show credits
+                                };
+                            })
+                        }
+                        className={classes.infoButton}
+                        color="secondary"
+                    >
+                    
+                        <InfoOutlinedIcon />
+                    </Fab>
+                    <Fab
+                        onClick={() =>
+                            this.setState((prev) => {
+                                return {
+                                    // show info about game
+                                };
+                            })
+                        }
+                        className={classes.creditsButton}
+                        color="secondary"
+                    >
+                    
+                        <CopyrightOutlinedIcon />
                     </Fab>
                     <Switch>
                         <Route

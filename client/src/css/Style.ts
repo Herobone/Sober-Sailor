@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { createStyles } from "@material-ui/styles";
-import { Theme } from "@material-ui/core";
+import { BottomNavigation, Theme } from "@material-ui/core";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export const DefaultStyle = (theme: Theme) =>
@@ -29,6 +29,17 @@ export const DefaultStyle = (theme: Theme) =>
         settingsButton: {
             position: "absolute",
             bottom: theme.spacing(4),
+            right: theme.spacing(2),
+            '&:hover': {},
+        },
+        infoButton: {
+            position: "absolute",
+            bottom: theme.spacing(4+8),
+            right: theme.spacing(2),
+        },
+        creditsButton: {
+            position: "absolute",
+            bottom: theme.spacing(4+2*8),
             right: theme.spacing(2),
         },
         settingsModal: {
@@ -48,23 +59,29 @@ export const DefaultStyle = (theme: Theme) =>
         },
         gameSelectButton: {
             width: "100%",
-            fontWeight: "bold",
+            // fontWeight: "bold",
             fontSize: 40,
             padding: theme.spacing(1),
             marginTop: theme.spacing(2),
-            border: "3px solid",
+            border: "4px solid",
             borderRadius: 100,
             minWidth: 400,
             minHeight: 50,
-            
-            
-            '&:hover':{
-                color: theme.palette.getContrastText(theme.palette.primary.main),
-                backgroundColor: theme.palette.primary.main,
+            '&:hover': {
+                border: "4px solid"
             },
+            
         },
+        gameSelectIcon: {
+            fontSize: 70,
+            padding: 10
+        },
+
         startPage: {
             padding: theme.spacing(2),
             textAlign: "center",
+        },
+        h1: {
+            fontSize: 70,
         },
     });

@@ -34,5 +34,11 @@ export const StandardTheme = createMuiTheme({
             dark: "#ff8000",
         },
     },
+    typography: {
+        fontFamily: [
+            'Ubuntu'
+        ].join(','),
+    }, 
 });
+
 export const responsiveTheme = responsiveFontSizes(StandardTheme);

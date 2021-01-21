@@ -19,7 +19,7 @@
 import React, { PureComponent } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import { WithStyles, withStyles } from "@material-ui/styles";
+import { mergeClasses, WithStyles, withStyles } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
 import { Alerts } from "../../helper/AlertTypes";
 import { Util } from "../../helper/Util";
@@ -40,31 +40,22 @@ class HomeClass extends PureComponent<Props, State> {
         const { classes } = this.props;
         return (
             <div className={classes.startPage}>
-                <h1>
+                <h1 className={classes.h1}>
                     <FormattedMessage id="sobersailor.name" />
                 </h1>
 
                 <Button
+                    variant="outlined"
                     color="primary"
                     component={Link}
                     to="/mixed"
                     className={classes.gameSelectButton}
                     size="large"
-                    startIcon={<RowingOutlined />}
                     fullWidth
                 >
+                    
+                    <RowingOutlined className={classes.gameSelectIcon} />
                     <FormattedMessage id="gamemodes.start" />
-                </Button>
-
-                <Button
-                    variant="outlined"
-                    color="secondary"
-                    className={classes.margin}
-                    onClick={() => {
-                        this.context.createAlert(Alerts.INFO, Util.randomCharOrNumberSequence(5));
-                    }}
-                >
-                    Test Alert
                 </Button>
             </div>
         );
