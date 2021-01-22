@@ -79,48 +79,6 @@ class RoutedClass extends PureComponent<Props, State> {
                         </Fade>
                     </Modal>
 
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    settingsShown: !prev.settingsShown,
-                                };
-                            })
-                        }
-                        className={classes.settingsButton}
-                        color="secondary"
-                    >
-                    
-                        <SettingsRounded />
-                    </Fab>
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    // show credits
-                                };
-                            })
-                        }
-                        className={classes.infoButton}
-                        color="secondary"
-                    >
-                    
-                        <InfoOutlinedIcon />
-                    </Fab>
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    // show info about game
-                                };
-                            })
-                        }
-                        className={classes.creditsButton}
-                        color="secondary"
-                    >
-                    
-                        <CopyrightOutlinedIcon />
-                    </Fab>
                     <Switch>
                         <Route
                             path="/mixed/:gameID"
