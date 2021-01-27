@@ -85,8 +85,11 @@ export const DefaultStyle = (theme: Theme) =>
             fontSize: 70,
         },
 
+
+
         mainGrid: {
             flexGrow: 1,
+            width: "100%"
         },
 
         sideArea: {
@@ -106,7 +109,11 @@ export const DefaultStyle = (theme: Theme) =>
         },
 
         mainArea: {
-            minHeight: 400
-        }
+            minHeight: 400,
+        },
+
+        progressBar: {
+            width: "100%",
+        },
 
     });

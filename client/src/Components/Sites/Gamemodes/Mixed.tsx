@@ -24,11 +24,12 @@ import Cookies from "universal-cookie";
 
 import { Button } from "@material-ui/core";
 import { WithStyles, withStyles } from "@material-ui/styles";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
 import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
-
 import tasks from "../../../gamemodes/tasks.json";
 import { getRandomTask } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
@@ -44,8 +45,6 @@ import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 import { DefaultStyle } from "../../../css/Style";
 import { AlertContext } from "../../Functional/AlertProvider";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 
 interface Props extends WithStyles<typeof DefaultStyle> {}
 
