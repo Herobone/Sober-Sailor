@@ -45,6 +45,7 @@ import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 import { DefaultStyle } from "../../../css/Style";
 import { AlertContext } from "../../Functional/AlertProvider";
+import LinearProgress, { LinearProgressProps } from "@material-ui/core/LinearProgress";
 
 interface Props extends WithStyles<typeof DefaultStyle> {}
 
@@ -422,6 +423,7 @@ class MixedClass extends React.Component<Props, State> {
                         20
                     </span>{" "}
                     <FormattedMessage id="general.seconds" />
+                    <LinearProgress variant="determinate" value={70} />
                 </div>
             </div>
         );

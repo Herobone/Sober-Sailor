@@ -22,7 +22,7 @@ import { Theme } from "@material-ui/core";
 export const DefaultStyle = (theme: Theme) =>
     createStyles({
         root: {
-            display: "flex",
+            margin: theme.spacing(2),
             alignItems: "center",
             justifyContent: "center",
         },
@@ -95,22 +95,20 @@ export const DefaultStyle = (theme: Theme) =>
         sideArea: {
             width: "100%",
             padding: theme.spacing(0.5),
-            margin: theme.spacing(0.5)
+            marginBottom: theme.spacing(0.5)
         },
         sideHeading:  {
-            textAlign: "left",
-            marginBottom: theme.spacing(0.3),
+            textAlign: "center",
+            margin: theme.spacing(0.3),
             fontSize: 20,
         },
         hostButton: {
-            margin: theme.spacing(0.3),
+            marginBottom: theme.spacing(0.6),
             width: "100%",
             textAlign: "center"
         },
 
-        mainArea: {
-            minHeight: 400,
-        },
+        mainArea: {},
 
         progressBar: {
             width: "100%",
