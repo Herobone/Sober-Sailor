@@ -30,6 +30,21 @@ export const GameProviderStyle = (theme: Theme) =>
             bottom: theme.spacing(4),
             left: theme.spacing(2),
         },
+        createGameButton: {
+            position: "absolute",
+            top: theme.spacing(6),
+            
+        },
+        inputGameIDField: {
+            position: "absolute",
+            top: theme.spacing(13),
+            align: "center"
+        },
+        inputGameIDButton: {
+            position: "relative",
+            top: theme.spacing(13),
+            align: "center"
+        },
 
         [theme.breakpoints.down("sm")]: {
             nameInput: {

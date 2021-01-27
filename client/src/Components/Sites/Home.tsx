@@ -53,7 +53,6 @@ class HomeClass extends PureComponent<Props, State> {
                     size="large"
                     fullWidth
                 >
-                    
                     <RowingOutlined className={classes.gameSelectIcon} />
                     <FormattedMessage id="gamemodes.start" />
                 </Button>

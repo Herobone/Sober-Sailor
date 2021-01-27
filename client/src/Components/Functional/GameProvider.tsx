@@ -21,12 +21,15 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { FormattedMessage } from "react-intl";
 import { WithStyles, withStyles } from "@material-ui/styles";
-import { Button, Fab, TextField } from "@material-ui/core";
-import { ExitToAppRounded } from "@material-ui/icons";
+import { Button, Fab, IconButton, TextField } from "@material-ui/core";
+import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { AlertContext } from "./AlertProvider";
 import { GameProviderStyle } from "../../css/GameProvider";
+import { DefaultStyle } from "../../css/Style";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
 interface Props extends WithStyles<typeof GameProviderStyle> {
     gameID?: string;
@@ -134,9 +137,30 @@ class GameProviderClass extends Component<Props, State> {
         const { classes } = this.props;
         if (!gameID) {
             return (
-                <Button variant="contained" color="primary" onClick={this.createGame}>
-                    <FormattedMessage id="actions.game.create" />
-                </Button>
+                <div>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        className={classes.createGameButton}
+                        onClick={this.createGame}
+                        size="large"
+                    >
+                        <FormattedMessage id="actions.game.create" />
+                    </Button>
+                    <IconButton color="secondary" className={classes.inputGameIDButton} aria-label="Go to your game!">
+                        <ArrowForwardIos />
+                    </IconButton>
+                    <TextField
+                        label="GameID"
+                        color="secondary"
+                        id="outlined-start-adornment"
+                        className={classes.inputGameIDField}
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">sober-sailor.web.app/</InputAdornment>,
+                        }}
+                        variant="outlined"
+                    />
+                </div>
             );
         }
 
