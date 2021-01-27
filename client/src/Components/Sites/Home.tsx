@@ -20,7 +20,7 @@ import React, { PureComponent } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import { WithStyles, withStyles } from "@material-ui/styles";
-import { Button } from "@material-ui/core";
+import { Button, Container } from "@material-ui/core";
 import RowingOutlined from "@material-ui/icons/RowingOutlined";
 import { DefaultStyle } from "../../css/Style";
 import { AlertContext } from "../Functional/AlertProvider";
@@ -37,7 +37,7 @@ class HomeClass extends PureComponent<Props, State> {
     render(): JSX.Element {
         const { classes } = this.props;
         return (
-            <div className={classes.startPage}>
+            <Container maxWidth="sm" className={classes.startPage}>
                 <h1 className={classes.h1}>
                     <FormattedMessage id="sobersailor.name" />
                 </h1>
@@ -54,7 +54,7 @@ class HomeClass extends PureComponent<Props, State> {
                     <RowingOutlined className={classes.gameSelectIcon} />
                     <FormattedMessage id="gamemodes.start" />
                 </Button>
-            </div>
+            </Container>
         );
     }
 }

@@ -26,6 +26,7 @@ import { Button } from "@material-ui/core";
 import { WithStyles, withStyles } from "@material-ui/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -45,7 +46,6 @@ import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 import { DefaultStyle } from "../../../css/Style";
 import { AlertContext } from "../../Functional/AlertProvider";
-import LinearProgress, { LinearProgressProps } from "@material-ui/core/LinearProgress";
 
 interface Props extends WithStyles<typeof DefaultStyle> {}
 
@@ -347,17 +347,17 @@ class MixedClass extends React.Component<Props, State> {
 
         return (
             <div className="w3-center">
-                <FormattedMessage id="gamemodes.mixed" />
-
                 <ResultPage ref={this.resultRef} />
                 <Grid container spacing={3} className={classes.mainGrid}>
-                    <Grid item xs={12}>
-                        Heading
+                    <Grid item xs={6}>
+                        <div className={classes.mainHeadingName}>
+                            <FormattedMessage id="sobersailor.name" />
+                        </div>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item xs={8} lg={9}>
                         <Paper>{taskComponent}</Paper>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={4} lg={3}>
                         {this.state.isHost && (
                             <Paper className={classes.sideArea}>
                                 <h2 className={classes.sideHeading}>

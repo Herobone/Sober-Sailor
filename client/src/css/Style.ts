@@ -23,6 +23,7 @@ export const DefaultStyle = (theme: Theme) =>
     createStyles({
         root: {
             margin: theme.spacing(2),
+            textAlign: "center",
             alignItems: "center",
             justifyContent: "center",
         },
@@ -79,6 +80,7 @@ export const DefaultStyle = (theme: Theme) =>
 
         startPage: {
             padding: theme.spacing(2),
+            maxWidth: 500,
             textAlign: "center",
         },
         h1: {
@@ -90,6 +92,12 @@ export const DefaultStyle = (theme: Theme) =>
         mainGrid: {
             flexGrow: 1,
             width: "100%"
+        },
+
+        mainHeadingName: {
+            position: "relative",
+            fontSize: 30,
+            textAlign: "left"
         },
 
         sideArea: {
@@ -108,7 +116,9 @@ export const DefaultStyle = (theme: Theme) =>
             textAlign: "center"
         },
 
-        mainArea: {},
+        mainArea: {
+            textAlign: "left",
+        },
 
         progressBar: {
             width: "100%",
