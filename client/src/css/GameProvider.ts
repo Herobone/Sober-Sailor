@@ -31,19 +31,18 @@ export const GameProviderStyle = (theme: Theme) =>
             left: theme.spacing(2),
         },
         createGameButton: {
-            position: "absolute",
+            position: "relative",
             top: theme.spacing(6),
-            
+
         },
         inputGameIDField: {
-            position: "absolute",
-            top: theme.spacing(13),
-            align: "center"
+            position: "relative",
+            top: theme.spacing(11.5),
+            padding: theme.spacing(1)
         },
         inputGameIDButton: {
             position: "relative",
             top: theme.spacing(13),
-            align: "center"
         },
 
         [theme.breakpoints.down("sm")]: {
@@ -51,4 +50,11 @@ export const GameProviderStyle = (theme: Theme) =>
                 width: "90%",
             },
         },
+        centeraligned: {
+            position: "relative",
+            textAlign: "center"
+        },
+        h1: {
+            fontSize: 70,
+        }
     });

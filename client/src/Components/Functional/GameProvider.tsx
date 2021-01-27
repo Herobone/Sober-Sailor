@@ -137,7 +137,10 @@ class GameProviderClass extends Component<Props, State> {
         const { classes } = this.props;
         if (!gameID) {
             return (
-                <div>
+                <div className={classes.centeraligned}>
+                    <h1 className={classes.h1}>
+                        <FormattedMessage id="sobersailor.name" />
+                    </h1>
                     <Button
                         variant="contained"
                         color="secondary"
@@ -147,19 +150,26 @@ class GameProviderClass extends Component<Props, State> {
                     >
                         <FormattedMessage id="actions.game.create" />
                     </Button>
-                    <IconButton color="secondary" className={classes.inputGameIDButton} aria-label="Go to your game!">
-                        <ArrowForwardIos />
-                    </IconButton>
-                    <TextField
-                        label="GameID"
-                        color="secondary"
-                        id="outlined-start-adornment"
-                        className={classes.inputGameIDField}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">sober-sailor.web.app/</InputAdornment>,
-                        }}
-                        variant="outlined"
-                    />
+                    <div className={classes.centeraligned}>
+                        <TextField
+                            label="GameID"
+                            color="secondary"
+                            id="outlined-start-adornment"
+                            className={classes.inputGameIDField}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">sober-sailor.web.app/</InputAdornment>,
+                            }}
+                            variant="outlined"
+                        />
+                        <IconButton
+                            color="secondary"
+                            className={classes.inputGameIDButton}
+                            aria-label="Go to your game!"
+                            // onClick={this.goToGame} //goToGame needs to redirect to the game URL
+                        >
+                            <ArrowForwardIos />
+                        </IconButton>
+                    </div>
                 </div>
             );
         }
