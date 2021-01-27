@@ -345,22 +345,20 @@ class MixedClass extends React.Component<Props, State> {
         return (
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.mixed" />
-                <div>
-                    <span className="countdown-inner" ref={this.countdownRef}>
-                        20
-                    </span>{" "}
-                    <FormattedMessage id="general.seconds" />
-                </div>
+
                 {taskComponent}
                 <ResultPage ref={this.resultRef} />
                 {this.state.isHost && (
-                    <div className="host-area">
+                    <div className={classes.hostArea}>
+                        <h2 className={classes.sideHeading}>
+                            <FormattedMessage id="elements.admin.control" />
+                        </h2>
                         {!this.state.pollState && (
                             <Button
                                 variant="contained"
                                 color="primary"
                                 onClick={this.randomButtonClick}
-                                className={classes.margin}
+                                className={classes.hostButton}
                             >
                                 Random Button
                             </Button>
@@ -368,7 +366,7 @@ class MixedClass extends React.Component<Props, State> {
                         <Button
                             variant="contained"
                             color="primary"
-                            className={classes.margin}
+                            className={classes.hostButton}
                             onClick={() => {
                                 GameManager.transferHostShip().catch(console.error);
                             }}
@@ -379,7 +377,7 @@ class MixedClass extends React.Component<Props, State> {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                className={classes.margin}
+                                className={classes.hostButton}
                                 onClick={() => {
                                     GameManager.setPollState(true).catch(console.error);
                                 }}
@@ -391,7 +389,7 @@ class MixedClass extends React.Component<Props, State> {
                         <Button
                             variant="contained"
                             color="primary"
-                            className={classes.margin}
+                            className={classes.hostButton}
                             onClick={() => {
                                 const klRef = this.kickListRef.current;
                                 if (klRef) {
@@ -404,6 +402,12 @@ class MixedClass extends React.Component<Props, State> {
                         <KickList ref={this.kickListRef} />
                     </div>
                 )}
+                <div>
+                    <span className="countdown-inner" ref={this.countdownRef}>
+                        20
+                    </span>{" "}
+                    <FormattedMessage id="general.seconds" />
+                </div>
                 <Leaderboard ref={this.leaderboardRef} />
             </div>
         );

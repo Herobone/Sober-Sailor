@@ -84,4 +84,24 @@ export const DefaultStyle = (theme: Theme) =>
         h1: {
             fontSize: 70,
         },
+
+
+        hostArea: {
+            position: "absolute",
+            right: theme.spacing(2),
+            top: theme.spacing(2),
+            width: "25%",
+            textAlign: "right",
+        },
+        sideHeading:  {
+            textAlign: "left",
+            marginBottom: theme.spacing(0.3),
+            fontSize: 20,
+        },
+        hostButton: {
+            margin: theme.spacing(0.3),
+            width: "100%",
+            textAlign: "center"
+        }
+
     });

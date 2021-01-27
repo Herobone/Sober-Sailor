@@ -15,6 +15,7 @@
 	"actions.host.startpoll": "Umfrage starten",
 	"actions.host.transfer": "Host übertragen",
 	"actions.leave": "Spiel verlassen",
+	"elements.admin.control": "Admin Panel",
 	"elements.alerts.error": "Fehler",
 	"elements.alerts.info": "Information:",
 	"elements.alerts.success": "Erfolgreich!",
