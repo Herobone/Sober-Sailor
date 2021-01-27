@@ -32,7 +32,7 @@ export const GameProviderStyle = (theme: Theme) =>
         },
         createGameButton: {
             position: "relative",
-            top: theme.spacing(6),
+            top: theme.spacing(3),
 
         },
         inputGameIDField: {

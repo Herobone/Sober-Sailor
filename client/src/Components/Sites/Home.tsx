@@ -19,13 +19,11 @@
 import React, { PureComponent } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import { mergeClasses, WithStyles, withStyles } from "@material-ui/styles";
+import { WithStyles, withStyles } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
-import { Alerts } from "../../helper/AlertTypes";
-import { Util } from "../../helper/Util";
+import RowingOutlined from "@material-ui/icons/RowingOutlined";
 import { DefaultStyle } from "../../css/Style";
 import { AlertContext } from "../Functional/AlertProvider";
-import RowingOutlined from "@material-ui/icons/RowingOutlined";
 
 interface Props extends WithStyles<typeof DefaultStyle> {}
 

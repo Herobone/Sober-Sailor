@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { createStyles } from "@material-ui/styles";
-import { BottomNavigation, Theme } from "@material-ui/core";
+import { Theme } from "@material-ui/core";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export const DefaultStyle = (theme: Theme) =>

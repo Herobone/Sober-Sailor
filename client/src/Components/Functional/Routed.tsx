@@ -91,30 +91,10 @@ class RoutedClass extends PureComponent<Props, State> {
                     >
                         <SettingsRounded />
                     </Fab>
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    // show credits
-                                };
-                            })
-                        }
-                        className={classes.infoButton}
-                        color="secondary"
-                    >
+                    <Fab className={classes.infoButton} color="secondary">
                         <InfoOutlinedIcon />
                     </Fab>
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    // show info about game
-                                };
-                            })
-                        }
-                        className={classes.creditsButton}
-                        color="secondary"
-                    >
+                    <Fab className={classes.creditsButton} color="secondary">
                         <CopyrightOutlinedIcon />
                     </Fab>
                     <Switch>

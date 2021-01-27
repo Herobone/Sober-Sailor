@@ -23,13 +23,11 @@ import { FormattedMessage } from "react-intl";
 import { WithStyles, withStyles } from "@material-ui/styles";
 import { Button, Fab, IconButton, TextField } from "@material-ui/core";
 import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { AlertContext } from "./AlertProvider";
 import { GameProviderStyle } from "../../css/GameProvider";
-import { DefaultStyle } from "../../css/Style";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
 interface Props extends WithStyles<typeof GameProviderStyle> {
     gameID?: string;
