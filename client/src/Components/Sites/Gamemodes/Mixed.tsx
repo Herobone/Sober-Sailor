@@ -22,11 +22,17 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import Cookies from "universal-cookie";
 
-import { Button } from "@material-ui/core";
+import { Tooltip } from "@material-ui/core";
 import { WithStyles, withStyles } from "@material-ui/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Zoom from "@material-ui/core/Zoom";
+import QueuePlayNextIcon from "@material-ui/icons/QueuePlayNext";
+import IconButton from "@material-ui/core/IconButton";
+import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
+import PollIcon from "@material-ui/icons/Poll";
+import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -360,55 +366,91 @@ class MixedClass extends React.Component<Props, State> {
                     <Grid item xs={4} lg={3}>
                         {this.state.isHost && (
                             <Paper className={classes.sideArea}>
-                                <h2 className={classes.sideHeading}>
-                                    <FormattedMessage id="elements.admin.control" />
-                                </h2>
-                                {!this.state.pollState && (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={this.randomButtonClick}
-                                        className={classes.hostButton}
-                                    >
-                                        Random Button
-                                    </Button>
-                                )}
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.hostButton}
-                                    onClick={() => {
-                                        GameManager.transferHostShip().catch(console.error);
-                                    }}
-                                >
-                                    <FormattedMessage id="actions.host.transfer" />
-                                </Button>
-                                {!this.state.pollState && (
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        className={classes.hostButton}
-                                        onClick={() => {
-                                            GameManager.setPollState(true).catch(console.error);
-                                        }}
-                                    >
-                                        <FormattedMessage id="actions.host.startpoll" />
-                                    </Button>
-                                )}
-                                <br />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.hostButton}
-                                    onClick={() => {
-                                        const klRef = this.kickListRef.current;
-                                        if (klRef) {
-                                            klRef.show();
-                                        }
-                                    }}
-                                >
-                                    <FormattedMessage id="actions.host.kick" />
-                                </Button>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12}>
+                                        <h2 className={classes.sideHeading}>
+                                            <FormattedMessage id="elements.admin.control" />
+                                        </h2>
+                                    </Grid>
+                                    {!this.state.pollState && (
+                                        <Grid item xs>
+                                            <Tooltip
+                                                title="Next Question"
+                                                TransitionComponent={Zoom}
+                                                placement="bottom"
+                                                arrow
+                                            >
+                                                <IconButton
+                                                    color="secondary"
+                                                    className={classes.hostButton}
+                                                    onClick={this.randomButtonClick}
+                                                >
+                                                    <QueuePlayNextIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Grid>
+                                    )}
+                                    <Grid item xs>
+                                        <Tooltip
+                                            title={<FormattedMessage id="actions.host.transfer" />}
+                                            TransitionComponent={Zoom}
+                                            placement="bottom"
+                                            arrow
+                                        >
+                                            <IconButton
+                                                color="secondary"
+                                                className={classes.hostButton}
+                                                onClick={() => {
+                                                    GameManager.transferHostShip().catch(console.error);
+                                                }}
+                                            >
+                                                <TransferWithinAStationIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                    {!this.state.pollState && (
+                                        <Grid item xs>
+                                            <Tooltip
+                                                title={<FormattedMessage id="actions.host.startpoll" />}
+                                                TransitionComponent={Zoom}
+                                                placement="bottom"
+                                                arrow
+                                            >
+                                                <IconButton
+                                                    color="secondary"
+                                                    className={classes.hostButton}
+                                                    onClick={() => {
+                                                        GameManager.setPollState(true).catch(console.error);
+                                                    }}
+                                                >
+                                                    <PollIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Grid>
+                                    )}
+                                    <br />
+                                    <Grid item xs>
+                                        <Tooltip
+                                            title={<FormattedMessage id="actions.host.kick" />}
+                                            TransitionComponent={Zoom}
+                                            placement="bottom"
+                                            arrow
+                                        >
+                                            <IconButton
+                                                color="secondary"
+                                                className={classes.hostButton}
+                                                onClick={() => {
+                                                    const klRef = this.kickListRef.current;
+                                                    if (klRef) {
+                                                        klRef.show();
+                                                    }
+                                                }}
+                                            >
+                                                <FlightTakeoffIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
                             </Paper>
                         )}
                         <Paper className={classes.sideArea}>

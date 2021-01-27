@@ -111,8 +111,6 @@ export const DefaultStyle = (theme: Theme) =>
             fontSize: 20,
         },
         hostButton: {
-            marginBottom: theme.spacing(0.6),
-            width: "100%",
             textAlign: "center"
         },
 
