@@ -46,7 +46,7 @@ class HomeClass extends PureComponent<Props, State> {
 
                 <Button
                     variant="outlined"
-                    color="primary"
+                    color="secondary"
                     component={Link}
                     to="/mixed"
                     className={classes.gameSelectButton}

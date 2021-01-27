@@ -60,12 +60,12 @@ export const DefaultStyle = (theme: Theme) =>
         gameSelectButton: {
             width: "100%",
             // fontWeight: "bold",
-            fontSize: 40,
+            fontSize: 30,
             padding: theme.spacing(1),
             marginTop: theme.spacing(2),
             border: "4px solid",
             borderRadius: 100,
-            minWidth: 400,
+            minWidth: 200,
             minHeight: 50,
             '&:hover': {
                 border: "4px solid"

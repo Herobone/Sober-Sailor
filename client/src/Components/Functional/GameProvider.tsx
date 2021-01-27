@@ -150,6 +150,7 @@ class GameProviderClass extends Component<Props, State> {
                     >
                         <FormattedMessage id="actions.game.create" />
                     </Button>
+
                     <div className={classes.centeraligned}>
                         <TextField
                             label="GameID"
