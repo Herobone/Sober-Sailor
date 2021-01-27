@@ -85,13 +85,14 @@ export const DefaultStyle = (theme: Theme) =>
             fontSize: 70,
         },
 
+        mainGrid: {
+            flexGrow: 1,
+        },
 
-        hostArea: {
-            position: "absolute",
-            right: theme.spacing(2),
-            top: theme.spacing(2),
-            width: "25%",
-            textAlign: "right",
+        sideArea: {
+            width: "100%",
+            padding: theme.spacing(0.5),
+            margin: theme.spacing(0.5)
         },
         sideHeading:  {
             textAlign: "left",
@@ -102,6 +103,10 @@ export const DefaultStyle = (theme: Theme) =>
             margin: theme.spacing(0.3),
             width: "100%",
             textAlign: "center"
+        },
+
+        mainArea: {
+            minHeight: 400
         }
 
     });
