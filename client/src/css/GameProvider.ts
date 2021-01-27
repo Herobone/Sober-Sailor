@@ -22,6 +22,7 @@ import { Theme } from "@material-ui/core";
 export const GameProviderStyle = (theme: Theme) =>
     createStyles({
         nameInput: {
+            position: "relative",
             width: "40%",
             margin: theme.spacing(2),
         },
@@ -44,6 +45,10 @@ export const GameProviderStyle = (theme: Theme) =>
             position: "relative",
             top: theme.spacing(13),
         },
+        inputNameButton: {
+            position: "relative",
+            top: theme.spacing(2)
+        },
 
         [theme.breakpoints.down("sm")]: {
             nameInput: {
@@ -56,5 +61,10 @@ export const GameProviderStyle = (theme: Theme) =>
         },
         h1: {
             fontSize: 70,
+        },
+        h1_long: {
+            textAlign: "center",
+            fontSize: 40,
+            padding: theme.spacing(1)
         }
     });

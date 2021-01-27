@@ -152,7 +152,7 @@ class GameProviderClass extends Component<Props, State> {
                     <div className={classes.centeraligned}>
                         <TextField
                             label="GameID"
-                            color="secondary"
+                            color="primary"
                             id="outlined-start-adornment"
                             className={classes.inputGameIDField}
                             InputProps={{
@@ -161,10 +161,10 @@ class GameProviderClass extends Component<Props, State> {
                             variant="outlined"
                         />
                         <IconButton
-                            color="secondary"
+                            color="primary"
                             className={classes.inputGameIDButton}
                             aria-label="Go to your game!"
-                            // onClick={this.goToGame} //goToGame needs to redirect to the game URL
+                            // goToGame needs to redirect to the game URL
                         >
                             <ArrowForwardIos />
                         </IconButton>
@@ -197,8 +197,8 @@ class GameProviderClass extends Component<Props, State> {
                 );
             }
             return (
-                <>
-                    <h1>
+                <div className={classes.centeraligned}>
+                    <h1 className={classes.h1_long}>
                         <FormattedMessage id="account.descriptors.finishsignup" />
                     </h1>
                     <br />
@@ -216,11 +216,15 @@ class GameProviderClass extends Component<Props, State> {
                             }
                         }}
                     />
-                    <br />
-                    <Button variant="contained" color="primary" onClick={this.setName}>
-                        <FormattedMessage id="general.done" />
-                    </Button>
-                </>
+                    <IconButton
+                        color="primary"
+                        className={classes.inputNameButton}
+                        aria-label="Go to your game!"
+                        onClick={this.setName}
+                    >
+                        <ArrowForwardIos />
+                    </IconButton>
+                </div>
             );
         }
 
