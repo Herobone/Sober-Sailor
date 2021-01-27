@@ -16,53 +16,52 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
+import React, {forwardRef, ReactElement, useImperativeHandle} from "react";
 import { FormattedMessage } from "react-intl";
 import { GameManager } from "../../helper/gameManager";
 import { playerConverter } from "../../helper/models/Player";
+import {useLeaderboardStyles} from "../../css/LeaderboardStyle";
 
-interface Props {}
 
-interface State {
-    leaderboard: Map<string, number>;
+type leaderboard = Map<string, number>;
+type LeaderboardHandles = {
+    updateLeaderboard: () => void
 }
 
-export class Leaderboard extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            leaderboard: new Map<string, number>(),
-        };
-        this.updateLeaderboard = this.updateLeaderboard.bind(this);
-        this.prepareLeaderboard = this.prepareLeaderboard.bind(this);
-    }
+export const Leaderboard = forwardRef<LeaderboardHandles>((props, ref):JSX.Element => {
 
-    updateLeaderboard(): void {
+    const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
+
+    const classes = useLeaderboardStyles();
+
+    const updateLB = (): void => {
         const lead = GameManager.getGame().collection("players").withConverter(playerConverter).orderBy("sips", "desc");
-        const leaderboard = new Map<string, number>();
+        const lb = new Map<string, number>();
         lead.get()
             .then((query) => {
                 query.forEach((doc) => {
                     const data = doc.data();
                     if (data && doc.id !== "register") {
-                        leaderboard.set(data.nickname, data.sips);
+                        lb.set(data.nickname, data.sips);
                     }
                 });
-                this.setState({
-                    leaderboard,
-                });
+                setLeaderboard(lb);
                 return Promise.resolve();
             })
             .catch(console.error);
     }
 
-    prepareLeaderboard(): ReactElement[] {
+    useImperativeHandle(ref, () => ( {
+        updateLeaderboard: updateLB
+    }));
+
+    const prepareLeaderboard = (): ReactElement[] => {
         const vals: ReactElement[] = [];
         let counter = 1;
-        this.state.leaderboard.forEach((value: number, key: string) => {
+        leaderboard.forEach((value: number, key: string) => {
             vals.push(
                 <tr key={`leaderboard${counter}`}>
-                    <td className="leaderboard-place">{counter}</td>
+                    <td className={classes.leaderboardPlace}>{counter}</td>
                     <td className="leaderboard-nickname">{key}</td>
                     <td className="leaderboard-score">{value}</td>
                 </tr>,
@@ -73,9 +72,8 @@ export class Leaderboard extends Component<Props, State> {
         return vals;
     }
 
-    render(): JSX.Element {
-        return (
-            <div>
+    return (
+            <>
                 <h1 className="leaderboard-header">
                     <FormattedMessage id="elements.leaderboard" />
                 </h1>
@@ -93,9 +91,8 @@ export class Leaderboard extends Component<Props, State> {
                             </th>
                         </tr>
                     </thead>
-                    <tbody>{this.prepareLeaderboard()}</tbody>
+                    <tbody>{prepareLeaderboard()}</tbody>
                 </table>
-            </div>
+            </>
         );
-    }
-}
+});

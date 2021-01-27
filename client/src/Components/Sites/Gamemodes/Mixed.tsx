@@ -59,13 +59,14 @@ interface State {
     countdownTimeout: NodeJS.Timeout | undefined;
     penalty: number;
 }
+type LeaderboardHandle = React.ElementRef<typeof Leaderboard>;
 
 class MixedClass extends React.Component<Props, State> {
     static contextType = AlertContext;
 
     context!: React.ContextType<typeof AlertContext>;
 
-    leaderboardRef: RefObject<Leaderboard>;
+    leaderboardRef: RefObject<LeaderboardHandle>;
 
     countdownRef: RefObject<HTMLSpanElement>;
 
