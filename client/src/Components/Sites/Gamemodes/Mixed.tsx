@@ -24,6 +24,8 @@ import Cookies from "universal-cookie";
 
 import { Button } from "@material-ui/core";
 import { WithStyles, withStyles } from "@material-ui/styles";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -44,8 +46,6 @@ import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 import { DefaultStyle } from "../../../css/Style";
 import { AlertContext } from "../../Functional/AlertProvider";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 
 interface Props extends WithStyles<typeof DefaultStyle> {}
 
@@ -60,13 +60,14 @@ interface State {
     countdownTimeout: NodeJS.Timeout | undefined;
     penalty: number;
 }
+type LeaderboardHandle = React.ElementRef<typeof Leaderboard>;
 
 class MixedClass extends React.Component<Props, State> {
     static contextType = AlertContext;
 
     context!: React.ContextType<typeof AlertContext>;
 
-    leaderboardRef: RefObject<Leaderboard>;
+    leaderboardRef: RefObject<LeaderboardHandle>;
 
     countdownRef: RefObject<HTMLSpanElement>;
 
