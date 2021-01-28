@@ -31,28 +31,39 @@ export interface DescribeInOneWordResult {
 export interface IDescribeInOneWord {
   word: string;
   answers: Map<string, string>;
+  initialPlayerCount: number;
 }
 
 export interface IDescribeInOneWordExternal {
   word: string;
   answers: { [player: string]: string };
+  initialPlayerCount: number;
 }
 
 export class DescribeInOneWord implements IDescribeInOneWord {
-  constructor(readonly word: string, readonly answers: Map<string, string>) {}
+  constructor(
+    readonly word: string,
+    readonly answers: Map<string, string>,
+    readonly initialPlayerCount: number
+  ) {}
 }
 
-export const playerConverter = {
+export const diowConverter = {
   toFirestore(game: IDescribeInOneWord): admin.firestore.DocumentData {
     return {
       word: game.word,
       answers: Util.strMapToObj(game.answers),
+      playerCount: game.initialPlayerCount,
     };
   },
   fromFirestore(
     snapshot: admin.firestore.QueryDocumentSnapshot<IDescribeInOneWordExternal>
   ): DescribeInOneWord {
     const data = snapshot.data();
-    return new DescribeInOneWord(data.word, Util.objToStrMap(data.answers));
+    return new DescribeInOneWord(
+      data.word,
+      Util.objToStrMap(data.answers),
+      data.initialPlayerCount
+    );
   },
 };
