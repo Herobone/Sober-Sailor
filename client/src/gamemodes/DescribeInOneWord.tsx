@@ -16,98 +16,76 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, RefObject } from "react";
+import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase/app";
 import "firebase/auth";
+import { TextField } from "@material-ui/core";
 import { Alerts } from "../helper/AlertTypes";
-import { AlertContext } from "../Components/Functional/AlertProvider";
+import { useAlert } from "../Components/Functional/AlertProvider";
+import { useDIOWStyles } from "../css/DIOWStyles";
 
 interface Props {
     target: string;
-}
-interface State {
-    answer?: string;
+    word: string;
 }
 
-export class DescribeInOneWord extends Component<Props, State> {
-    static contextType = AlertContext;
+export function DescribeInOneWord(props: Props): JSX.Element {
+    const { createAlert } = useAlert();
 
-    context!: React.ContextType<typeof AlertContext>;
+    const maxLength = 20;
 
-    wordInputRef: RefObject<HTMLInputElement>;
+    const [answer, setAnswer] = useState<string>();
 
-    maxLength = 20;
+    const classes = useDIOWStyles();
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {};
-
-        this.wordInputRef = React.createRef();
-    }
-
-    setWord = (): void => {
-        const refCurrent = this.wordInputRef.current;
-        if (!refCurrent) {
+    const setWord = (): void => {
+        if (!answer || answer.length < 0) {
+            console.log("Word not valid!");
+            createAlert(Alerts.WARNING, <FormattedMessage id="elements.diow.word.short" />);
             return;
         }
-        const { value } = refCurrent;
-        if (!value || value.length < 0) {
+        if (answer.length > maxLength) {
             console.log("Word not valid!");
-            this.context.createAlert(Alerts.WARNING, <FormattedMessage id="elements.diow.word.short" />);
-            return;
-        }
-        if (value.length > this.maxLength) {
-            console.log("Word not valid!");
-            this.context.createAlert(
-                Alerts.WARNING,
-                <FormattedMessage id="elements.diow.word.long" values={{ len: this.maxLength }} />,
-            );
+            createAlert(Alerts.WARNING, <FormattedMessage id="elements.diow.word.long" values={{ len: maxLength }} />);
             return;
         }
         console.log("Setting Word");
     };
 
-    render(): JSX.Element {
-        const user = firebase.auth().currentUser;
-        if (!user) {
-            throw new Error("No user provided!");
-        }
-        const amITarget = user.uid === this.props.target;
-        return (
-            <div>
-                <h2>
-                    <FormattedMessage id="gamemodes.describeinoneword" />
-                </h2>
-                {amITarget && <div>Waiting...</div>}
-                {!amITarget && (
-                    <div>
-                        <p>
-                            <label htmlFor="word-input">
-                                <b>Word:</b>
-                            </label>
-                            <br />
-                            <input
-                                ref={this.wordInputRef}
-                                id="word-input"
-                                className="fuck"
-                                name="name"
-                                type="text"
-                                placeholder="Word"
-                                onKeyDown={(event) => {
-                                    if (event.key === "Enter" || event.key === "Accept") {
-                                        this.setWord();
-                                    }
-                                }}
-                            />
-                        </p>
-                        <br />
-                        <button type="button" className="w3-button w3-round w3-theme-d5" onClick={this.setWord}>
-                            <FormattedMessage id="general.done" />
-                        </button>
-                    </div>
-                )}
-            </div>
-        );
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        throw new Error("No user provided!");
     }
+    const amITarget = user.uid === props.target;
+    return (
+        <div>
+            <h2>
+                <FormattedMessage id="gamemodes.describeinoneword" />
+            </h2>
+            {amITarget && <div>Waiting...</div>}
+            {!amITarget && (
+                <>
+                    <div>{props.word}</div>
+                    <TextField
+                        required
+                        label={<FormattedMessage id="elements.diow.word.inputlabel" />}
+                        variant="outlined"
+                        color="primary"
+                        className={classes.wordInput}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>): void => setAnswer(event.target.value)}
+                        onKeyPress={(event) => {
+                            if (event.key === "Enter" || event.key === "Accept") {
+                                setWord();
+                            }
+                        }}
+                    />
+                    <br />
+                    <button type="button" className="w3-button w3-round w3-theme-d5" onClick={setWord}>
+                        <FormattedMessage id="general.done" />
+                    </button>
+                </>
+            )}
+        </div>
+    );
 }
