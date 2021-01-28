@@ -21,7 +21,7 @@
     "@typescript-eslint/parser": "^4.14.1",
     "ast-utils": "^1.0.0",
     "eslint": "^7.16.0",
-    "firebase": "^8.1.1",
+    "firebase": "^8.2.4",
     "firebase-tools": "^9.1.0",
     "firebaseui": "^4.7.1",
     "globalize": "^1.6.0",
