@@ -20,6 +20,7 @@ import React, { ReactElement, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import "firebase/messaging";
 import Cookies from "universal-cookie";
 
 import { Button } from "@material-ui/core";
@@ -110,7 +111,13 @@ class MixedClass extends React.Component<Props, State> {
                 return this.setState({ isHost: host });
             })
             .catch(console.error);
+
+        firebase.messaging().onMessage(this.onMessage);
     }
+
+    onMessage = (payload: firebase.messaging.MessagePayload): void => {
+        console.log(payload);
+    };
 
     setTask = (taskType: Task, target: PlayerList, penalty = 0): void => {
         console.log(target);
