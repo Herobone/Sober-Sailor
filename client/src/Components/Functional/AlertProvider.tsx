@@ -34,6 +34,8 @@ export const AlertContext = React.createContext<AlertContextType>({
 });
 AlertContext.displayName = "AlertContext";
 
+export const useAlert = (): AlertContextType => React.useContext(AlertContext);
+
 class AlertProviderRaw extends Component<Props> {
     createAlert = (type: IAlert, message: string | ReactElement): void => {
         this.props.enqueueSnackbar(message, {
