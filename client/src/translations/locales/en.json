@@ -21,6 +21,7 @@
 	"elements.alerts.warning": "Warning!",
 	"elements.diow.word.long": "The word you entered was too long! Maximum of {len} characters allowed!",
 	"elements.diow.word.short": "The word entered was too short! Try a longer one!",
+	"elements.diow.word.inputlabel": "Your solution",
 	"elements.dropdown.select": "Select one",
 	"elements.general.penalty": "Take {penalty} sips, if you don't want to answer or execute the task",
 	"elements.general.rank": "Rank",
