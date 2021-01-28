@@ -128,6 +128,8 @@ class MixedClass extends React.Component<Props, State> {
             if (target && target.length === 2) {
                 TicUtils.registerTicTacToe(target).catch(console.error);
             }
+        } else if (taskType.id === "describe_in_one_word") {
+            console.log("DIOW");
         } else {
             const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
             const localTarget = target ? target[0] : null;

@@ -15,7 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { GameManager } from "./gameManager";
+import { DescribeInOneWord, diowConverter } from "./models/DescribeInOneWord";
 
 export class DiowUtils {
-    static createGame() {}
+    static createGame(word: string): Promise<unknown> {
+        const plt = GameManager.getPlayerLookupTable();
+        if (!plt) {
+            throw new Error("DIOWUtils: No PLT stored!");
+        }
+        const emptyGame = DescribeInOneWord.constructEmptyGame(plt, word);
+        return GameManager.getGameCol().doc("diow").withConverter(diowConverter).set(emptyGame);
+    }
 }
