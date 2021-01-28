@@ -280,7 +280,7 @@ class MixedClass extends React.Component<Props, State> {
             throw new Error("Trying to execute a host method as non Host");
         }
         this.submitAndReset();
-        const testMode = false;
+        const testMode = true;
         const development = process.env.NODE_ENV === "development" && testMode;
         const taskType: Task = development ? tasks[3] : Util.selectRandom(tasks);
 
@@ -330,9 +330,9 @@ class MixedClass extends React.Component<Props, State> {
                     break;
                 }
                 case "describe_in_one_word": {
-                    const { target } = this.state;
-                    if (target !== null) {
-                        taskComponent = <DescribeInOneWord target={target} />;
+                    const { target, nextTask } = this.state;
+                    if (target && nextTask) {
+                        taskComponent = <DescribeInOneWord target={target} word={nextTask} />;
                     }
                     break;
                 }
