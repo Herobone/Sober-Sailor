@@ -41,7 +41,6 @@ import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
-import { DescribeInOneWord } from "../../../gamemodes/DescribeInOneWord";
 import { DefaultStyle } from "../../../css/Style";
 import { AlertContext } from "../../Functional/AlertProvider";
 
@@ -327,13 +326,6 @@ class MixedClass extends React.Component<Props, State> {
                 case "tictactoe": {
                     console.log("TicTacToe");
                     taskComponent = <TicTacToe />;
-                    break;
-                }
-                case "describe_in_one_word": {
-                    const { target } = this.state;
-                    if (target !== null) {
-                        taskComponent = <DescribeInOneWord target={target} />;
-                    }
                     break;
                 }
                 default: {

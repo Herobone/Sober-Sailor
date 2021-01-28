@@ -45,7 +45,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "test": "react-scripts test",
     "lint": "eslint '*/**/*.{js,ts,tsx}'",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write \"{,!(node_modules)/**/}*.js\""
