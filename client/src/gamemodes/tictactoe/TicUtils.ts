@@ -45,17 +45,12 @@ export class TicUtils {
     }
 
     static registerTicTacToe(opponents: string[]): Promise<unknown> {
-        return new Promise<unknown>((resolve, reject) => {
-            if (opponents.length !== 2) {
-                throw new RangeError("More or less than two players specified!");
-            }
-            console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
+        if (opponents.length !== 2) {
+            throw new RangeError("More or less than two players specified!");
+        }
+        console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
 
-            TicUtils.getTTTGame()
-                .set(new TicTacToe(new Array(9).fill(null), 0, true, opponents[0], opponents[1]))
-                .then(resolve)
-                .catch(reject);
-        });
+        return TicUtils.getTTTGame().set(new TicTacToe(new Array(9).fill(null), 0, true, opponents[0], opponents[1]));
     }
 
     static drawAllowed(isXNext: boolean, player: TicOptions): boolean {
