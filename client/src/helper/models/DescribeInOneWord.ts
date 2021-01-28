@@ -1,5 +1,6 @@
 import firebase from "firebase";
 import { Util } from "../Util";
+import { Register } from "./Register";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -42,6 +43,11 @@ export interface IDescribeInOneWordExternal {
 
 export class DescribeInOneWord implements IDescribeInOneWord {
     constructor(readonly word: string, readonly answers: Map<string, string>, readonly initialPlayerCount: number) {}
+
+    static constructEmptyGame(plt: Register, word: string): DescribeInOneWord {
+        const emptyMap = new Map<string, string>();
+        return new DescribeInOneWord(word, emptyMap, plt.playerUidMap.size);
+    }
 }
 
 export const diowConverter = {

@@ -46,6 +46,11 @@ export class DescribeInOneWord implements IDescribeInOneWord {
     readonly answers: Map<string, string>,
     readonly initialPlayerCount: number
   ) {}
+
+  static constructEmptyGame(players: number, word: string): DescribeInOneWord {
+    const emptyMap = new Map<string, string>();
+    return new DescribeInOneWord(word, emptyMap, players);
+  }
 }
 
 export const diowConverter = {
