@@ -18,7 +18,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-test-renderer": "^17.0.0",
-    "@typescript-eslint/parser": "^4.11.0",
+    "@typescript-eslint/parser": "^4.14.1",
     "ast-utils": "^1.0.0",
     "eslint": "^7.16.0",
     "firebase": "^8.1.1",
@@ -45,7 +45,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "test": "react-scripts test",
     "lint": "eslint '*/**/*.{js,ts,tsx}'",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write \"{,!(node_modules)/**/}*.js\""
