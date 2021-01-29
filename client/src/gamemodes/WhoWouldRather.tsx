@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
+import React, { forwardRef, PropsWithChildren, ReactElement, useEffect, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { GameManager } from "../helper/gameManager";
 import { Player } from "../helper/models/Player";
@@ -25,38 +25,30 @@ interface Props {
     question: string;
 }
 
-interface State {
-    players: Player[];
-    inputLocked: boolean;
-    answer: string | null;
-}
+type WhoWouldRatherHandles = {
+    lockInput: (lock: boolean) => void;
+};
 
-export class WhoWouldRather extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            players: [],
-            inputLocked: true,
-            answer: null,
+export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
+    (props: PropsWithChildren<Props>, ref): JSX.Element => {
+        const [inputLock, setInputLock] = useState(true);
+        const [players, setPlayers] = useState<Player[]>([]);
+        const [answer, setAnswer] = useState<string | null>(null);
+
+        useEffect(() => {
+            GameManager.getAllPlayers().then(setPlayers).catch(console.error);
+        }, []);
+
+        const lockInput = (lock: boolean): void => {
+            setInputLock(lock);
         };
-        this.lockInput = this.lockInput.bind(this);
-    }
 
-    componentDidMount(): void {
-        GameManager.getAllPlayers()
-            .then((players) => this.setState({ players }))
-            .catch(console.error);
-    }
+        useImperativeHandle(ref, () => ({
+            lockInput,
+        }));
 
-    lockInput(lock: boolean): void {
-        this.setState({
-            inputLocked: lock,
-        });
-    }
-
-    render(): JSX.Element {
         const values: ReactElement[] = [];
-        this.state.players.forEach((element: Player) => {
+        players.forEach((element: Player) => {
             values.push(
                 <div key={element.uid}>
                     <button
@@ -64,10 +56,8 @@ export class WhoWouldRather extends Component<Props, State> {
                         type="submit"
                         onClick={() => {
                             GameManager.setAnswer(element.uid).catch(console.error);
-                            this.setState({
-                                answer: element.nickname,
-                                inputLocked: true,
-                            });
+                            setAnswer(element.nickname);
+                            setInputLock(true);
                         }}
                     >
                         {element.nickname}
@@ -78,25 +68,25 @@ export class WhoWouldRather extends Component<Props, State> {
         });
 
         return (
-            <div>
+            <>
                 <h2>
-                    <FormattedMessage id="gamemodes.whowouldrather" /> {this.props.question}
+                    <FormattedMessage id="gamemodes.whowouldrather" /> {props.question}
                 </h2>
                 <p>
                     <FormattedMessage id="gamemodes.whowouldrather.description" />
                 </p>
-                {!this.state.inputLocked && !this.state.answer && values}
-                {this.state.answer && (
+                {!inputLock && !answer && values}
+                {answer && (
                     <div>
                         <FormattedMessage
                             id="elements.result.youranswer"
                             values={{
-                                answer: this.state.answer,
+                                answer,
                             }}
                         />
                     </div>
                 )}
-            </div>
+            </>
         );
-    }
-}
+    },
+);

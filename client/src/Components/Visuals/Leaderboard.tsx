@@ -58,10 +58,10 @@ export const Leaderboard = forwardRef<LeaderboardHandles>(
         }));
 
         const prepareLeaderboard = (): ReactElement[] => {
-            const vals: ReactElement[] = [];
+            const values: ReactElement[] = [];
             let counter = 1;
             leaderboard.forEach((value: number, key: string) => {
-                vals.push(
+                values.push(
                     <tr key={`leaderboard${counter}`}>
                         <td className={classes.leaderboardPlace}>{counter}</td>
                         <td className="leaderboard-nickname">{key}</td>
@@ -71,7 +71,7 @@ export const Leaderboard = forwardRef<LeaderboardHandles>(
                 counter++;
             });
 
-            return vals;
+            return values;
         };
 
         return (

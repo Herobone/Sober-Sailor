@@ -25,61 +25,77 @@ import messages_de_AT from "./locales/de_AT.json";
 import { Util } from "../helper/Util";
 
 interface State {
-  locale: string;
+    locale: string;
 }
 
 const MESSAGES = {
-  en: messages_en,
-  de: messages_de,
-  de_AT: messages_de_AT,
+    en: messages_en,
+    de: messages_de,
+    de_AT: messages_de_AT,
 };
 
 interface Props {}
 
+type LanguageContextType = {
+    changeLanguage: (locale: string) => void;
+    currentLocale: string;
+};
+
+export const LanguageContext = React.createContext<LanguageContextType>({
+    currentLocale: "en",
+    changeLanguage: () => {
+        console.error("Tried to change Language on unmounted LanguageContainer!");
+    },
+});
+LanguageContext.displayName = "LanguageContext";
+
+export const useLanguageContext = (): LanguageContextType => React.useContext(LanguageContext);
+
 export class LanguageContainer extends React.Component<Props, State> {
-  cookies: Cookies;
+    cookies: Cookies;
 
-  constructor(props: Props) {
-    super(props);
+    constructor(props: Props) {
+        super(props);
 
-    this.cookies = new Cookies();
+        this.cookies = new Cookies();
 
-    let lang: string | undefined = this.cookies.get("locale");
-    if (!lang) {
-      [lang] = navigator.language.split("-");
+        let lang: string | undefined = this.cookies.get("locale");
+        if (!lang) {
+            [lang] = navigator.language.split("-");
+        }
+        if (!Util.hasKey(MESSAGES, lang)) {
+            lang = "de";
+        }
+        this.state = {
+            locale: lang,
+        };
     }
-    if (!Util.hasKey(MESSAGES, lang)) {
-      lang = "de";
-    }
-    this.state = {
-      locale: lang,
+
+    changeLanguage = (locale: string): void => {
+        this.cookies.set("locale", locale, { expires: new Date(9999, 12) });
+        this.setState({
+            locale,
+        });
     };
-    this.changeLanguage = this.changeLanguage.bind(this);
-    this.getCurrentLocale = this.getCurrentLocale.bind(this);
-  }
 
-  public getCurrentLocale(): string {
-    return this.state.locale;
-  }
+    public render(): JSX.Element {
+        const { locale } = this.state;
+        let msg = {};
+        if (Util.hasKey(MESSAGES, locale)) {
+            msg = MESSAGES[locale];
+        }
 
-  public changeLanguage(locale: string): void {
-    this.cookies.set("locale", locale, { expires: new Date(9999, 12) });
-    this.setState({
-      locale,
-    });
-  }
-
-  public render(): JSX.Element {
-    const { locale } = this.state;
-    let msg = {};
-    if (Util.hasKey(MESSAGES, locale)) {
-      msg = MESSAGES[locale];
+        return (
+            <IntlProvider locale={locale} messages={msg}>
+                <LanguageContext.Provider
+                    value={{
+                        changeLanguage: this.changeLanguage,
+                        currentLocale: this.state.locale,
+                    }}
+                >
+                    {this.props.children}
+                </LanguageContext.Provider>
+            </IntlProvider>
+        );
     }
-
-    return (
-      <IntlProvider locale={locale} messages={msg}>
-        {this.props.children}
-      </IntlProvider>
-    );
-  }
 }

@@ -16,41 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
+import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Dropdown } from "../Visuals/Dropdown";
 import { Column } from "../Visuals/Column";
 import { Util } from "../../helper/Util";
+import { useLanguageContext } from "../../translations/LanguageContainer";
 
-interface Props {
-    changeLanguage: (locale: string) => void;
-    currentLocale: string;
-}
+export function Settings(): JSX.Element {
+    const { currentLocale, changeLanguage } = useLanguageContext();
+    const options = {
+        de: "Deutsch",
+        en: "English",
+        de_AT: "Boarisch",
+    };
 
-export class Settings extends PureComponent<Props> {
-    render(): JSX.Element {
-        const options = {
-            de: "Deutsch",
-            en: "English",
-            de_AT: "Boarisch",
-        };
-
-        return (
-            <Column additionalClasses="app-content">
-                <h1>
-                    <FormattedMessage id="account.navigation.settings" />
-                </h1>
-                <hr />
-                <h5>
-                    <FormattedMessage id="settings.labels.selectlanguage" />
-                </h5>
-                <Dropdown
-                    callback={this.props.changeLanguage}
-                    content={Util.objToStrMap(options)}
-                    selected={this.props.currentLocale}
-                />
-                <hr />
-            </Column>
-        );
-    }
+    return (
+        <Column additionalClasses="app-content">
+            <h1>
+                <FormattedMessage id="account.navigation.settings" />
+            </h1>
+            <hr />
+            <h5>
+                <FormattedMessage id="settings.labels.selectlanguage" />
+            </h5>
+            <Dropdown callback={changeLanguage} content={Util.objToStrMap(options)} selected={currentLocale} />
+            <hr />
+        </Column>
+    );
 }

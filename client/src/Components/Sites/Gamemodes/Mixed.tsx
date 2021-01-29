@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { ReactElement, RefObject } from "react";
+import React, { ElementRef, ReactElement, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -66,7 +66,10 @@ interface State {
     countdownTimeout: NodeJS.Timeout | undefined;
     penalty: number;
 }
-type LeaderboardHandle = React.ElementRef<typeof Leaderboard>;
+type LeaderboardHandle = ElementRef<typeof Leaderboard>;
+type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
+type KickListHandle = ElementRef<typeof KickList>;
+type WhoWouldRatherHandle = ElementRef<typeof WhoWouldRather>;
 
 class MixedClass extends React.Component<Props, State> {
     static contextType = AlertContext;
@@ -77,13 +80,11 @@ class MixedClass extends React.Component<Props, State> {
 
     countdownRef: RefObject<HTMLSpanElement>;
 
-    taskRef: RefObject<WhoWouldRather>;
+    taskRef: RefObject<WhoWouldRatherHandle>;
 
-    resultRef: RefObject<ResultPage>;
+    truthOrDareRef: RefObject<TruthOrDareHandle>;
 
-    truthOrDareRef: RefObject<TruthOrDare>;
-
-    kickListRef: RefObject<KickList>;
+    kickListRef: RefObject<KickListHandle>;
 
     lang: string;
 
@@ -104,7 +105,6 @@ class MixedClass extends React.Component<Props, State> {
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
-        this.resultRef = React.createRef();
         this.truthOrDareRef = React.createRef();
         this.kickListRef = React.createRef();
 
@@ -235,10 +235,6 @@ class MixedClass extends React.Component<Props, State> {
                             this.setState({
                                 result,
                             });
-                            const res = this.resultRef.current;
-                            if (res) {
-                                res.updateResults(result);
-                            }
                             return Promise.resolve();
                         })
                         .catch(console.error);
@@ -267,10 +263,6 @@ class MixedClass extends React.Component<Props, State> {
                     }),
                 )
                 .catch(console.error);
-        }
-        const res = this.resultRef.current;
-        if (res) {
-            res.updateResults([]);
         }
         const tud = this.truthOrDareRef.current;
         if (tud) {
@@ -353,7 +345,7 @@ class MixedClass extends React.Component<Props, State> {
 
         return (
             <div className="w3-center">
-                <ResultPage ref={this.resultRef} />
+                <ResultPage result={this.state.result} />
                 <Grid container spacing={3} className={classes.mainGrid}>
                     <Grid item xs={6}>
                         <div className={classes.mainHeadingName}>
