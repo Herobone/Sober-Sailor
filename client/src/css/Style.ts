@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createStyles } from "@material-ui/styles";
+import { createStyles, makeStyles } from "@material-ui/styles";
 import { Theme } from "@material-ui/core";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
@@ -30,16 +30,16 @@ export const DefaultStyle = (theme: Theme) =>
             position: "absolute",
             bottom: theme.spacing(4),
             right: theme.spacing(2),
-            '&:hover': {},
+            "&:hover": {},
         },
         infoButton: {
             position: "absolute",
-            bottom: theme.spacing(4+8),
+            bottom: theme.spacing(4 + 8),
             right: theme.spacing(2),
         },
         creditsButton: {
             position: "absolute",
-            bottom: theme.spacing(4+2*8),
+            bottom: theme.spacing(4 + 2 * 8),
             right: theme.spacing(2),
         },
         settingsModal: {
@@ -67,14 +67,13 @@ export const DefaultStyle = (theme: Theme) =>
             borderRadius: 100,
             minWidth: 200,
             minHeight: 50,
-            '&:hover': {
-                border: "4px solid"
+            "&:hover": {
+                border: "4px solid",
             },
-            
         },
         gameSelectIcon: {
             fontSize: 70,
-            padding: 10
+            padding: 10,
         },
 
         startPage: {
@@ -92,9 +91,9 @@ export const DefaultStyle = (theme: Theme) =>
         sideArea: {
             width: "100%",
             padding: theme.spacing(0.5),
-            margin: theme.spacing(0.5)
+            margin: theme.spacing(0.5),
         },
-        sideHeading:  {
+        sideHeading: {
             textAlign: "left",
             marginBottom: theme.spacing(0.3),
             fontSize: 20,
@@ -102,11 +101,12 @@ export const DefaultStyle = (theme: Theme) =>
         hostButton: {
             margin: theme.spacing(0.3),
             width: "100%",
-            textAlign: "center"
+            textAlign: "center",
         },
 
         mainArea: {
-            minHeight: 400
-        }
-
+            minHeight: 400,
+        },
     });
+
+export const useDefaultStyles = makeStyles(DefaultStyle);

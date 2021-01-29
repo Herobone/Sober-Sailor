@@ -16,131 +16,81 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Fab, Fade, Modal } from "@material-ui/core";
 import { SettingsRounded } from "@material-ui/icons";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import CopyrightOutlinedIcon from "@material-ui/icons/CopyrightOutlined";
-import { WithStyles, withStyles } from "@material-ui/styles";
+import { withStyles } from "@material-ui/styles";
 import { Settings } from "../Sites/Settings";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
 import { Mixed } from "../Sites/Gamemodes/Mixed";
-import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
-import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
-import { DefaultStyle } from "../../css/Style";
-import { AlertContext } from "./AlertProvider";
+import { DefaultStyle, useDefaultStyles } from "../../css/Style";
 
-interface Props extends WithStyles<typeof DefaultStyle> {}
-interface State {
-    settingsShown: boolean;
-}
+export function RoutedClass(): JSX.Element {
+    const classes = useDefaultStyles();
+    const [settingsShown, setSettingsShown] = useState(false);
 
-class RoutedClass extends PureComponent<Props, State> {
-    static contextType = AlertContext;
+    return (
+        <div className={classes.root}>
+            <Router>
+                <Modal
+                    open={settingsShown}
+                    onClose={() => setSettingsShown(false)}
+                    closeAfterTransition
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={settingsShown}>
+                        <div className={classes.settingsModal}>
+                            <Settings />
+                        </div>
+                    </Fade>
+                </Modal>
+                <Fab
+                    onClick={() => setSettingsShown(!settingsShown)}
+                    className={classes.settingsButton}
+                    color="secondary"
+                >
+                    <SettingsRounded />
+                </Fab>
+                <Fab className={classes.infoButton} color="secondary">
+                    <InfoOutlinedIcon />
+                </Fab>
+                <Fab className={classes.creditsButton} color="secondary">
+                    <CopyrightOutlinedIcon />
+                </Fab>
+                <Switch>
+                    <Route
+                        path="/mixed/:gameID"
+                        render={(props) => (
+                            <GameProvider gameID={props.match.params.gameID}>
+                                <Mixed />
+                            </GameProvider>
+                        )}
+                    />
+                    <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
 
-    context!: React.ContextType<typeof AlertContext>;
+                    <Route path="/login">
+                        <Login />
+                    </Route>
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            settingsShown: false,
-        };
-    }
+                    <Route path="/logout">
+                        <Logout />
+                    </Route>
 
-    render(): JSX.Element {
-        const { classes } = this.props;
-        return (
-            <div className={classes.root}>
-                <Router>
-                    <Modal
-                        open={this.state.settingsShown}
-                        onClose={() => this.setState({ settingsShown: false })}
-                        closeAfterTransition
-                        BackdropProps={{
-                            timeout: 500,
-                        }}
-                    >
-                        <Fade in={this.state.settingsShown}>
-                            <div className={classes.settingsModal}>
-                                <Settings />
-                            </div>
-                        </Fade>
-                    </Modal>
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    settingsShown: !prev.settingsShown,
-                                };
-                            })
-                        }
-                        className={classes.settingsButton}
-                        color="secondary"
-                    >
-                        <SettingsRounded />
-                    </Fab>
-                    <Fab className={classes.infoButton} color="secondary">
-                        <InfoOutlinedIcon />
-                    </Fab>
-                    <Fab className={classes.creditsButton} color="secondary">
-                        <CopyrightOutlinedIcon />
-                    </Fab>
-                    <Switch>
-                        <Route
-                            path="/mixed/:gameID"
-                            render={(props) => (
-                                <GameProvider gameID={props.match.params.gameID}>
-                                    <Mixed />
-                                </GameProvider>
-                            )}
-                        />
-                        <Route
-                            path="/truthordare/:gameID"
-                            render={(props) => (
-                                <GameProvider gameID={props.match.params.gameID}>
-                                    <TruthOrDare
-                                        createAlert={this.context.createAlert}
-                                        gameID={props.match.params.gameID}
-                                    />
-                                </GameProvider>
-                            )}
-                        />
-
-                        <Route
-                            path="/saufpoly/:gameID"
-                            render={(props) => (
-                                <GameProvider gameID={props.match.params.gameID}>
-                                    <Saufpoly
-                                        createAlert={this.context.createAlert}
-                                        gameID={props.match.params.gameID}
-                                    />
-                                </GameProvider>
-                            )}
-                        />
-                        <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
-                        <Route path="/truthordare" render={() => <GameProvider gameURL="truthordare" />} />
-                        <Route path="/saufpoly" render={() => <GameProvider gameURL="saufpoly" />} />
-
-                        <Route path="/login">
-                            <Login />
-                        </Route>
-
-                        <Route path="/logout">
-                            <Logout />
-                        </Route>
-
-                        <Route path="/">
-                            <Home />
-                        </Route>
-                    </Switch>
-                </Router>
-            </div>
-        );
-    }
+                    <Route path="/">
+                        <Home />
+                    </Route>
+                </Switch>
+            </Router>
+        </div>
+    );
 }
 
 export const Routed = withStyles(DefaultStyle)(RoutedClass);
