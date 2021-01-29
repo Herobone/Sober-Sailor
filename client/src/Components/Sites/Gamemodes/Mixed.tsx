@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { ReactElement, RefObject } from "react";
+import React, { ElementRef, ReactElement, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase/app";
 import "firebase/firestore";
@@ -60,7 +60,8 @@ interface State {
     countdownTimeout: NodeJS.Timeout | undefined;
     penalty: number;
 }
-type LeaderboardHandle = React.ElementRef<typeof Leaderboard>;
+type LeaderboardHandle = ElementRef<typeof Leaderboard>;
+type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 
 class MixedClass extends React.Component<Props, State> {
     static contextType = AlertContext;
@@ -75,7 +76,7 @@ class MixedClass extends React.Component<Props, State> {
 
     resultRef: RefObject<ResultPage>;
 
-    truthOrDareRef: RefObject<TruthOrDare>;
+    truthOrDareRef: RefObject<TruthOrDareHandle>;
 
     kickListRef: RefObject<KickList>;
 
