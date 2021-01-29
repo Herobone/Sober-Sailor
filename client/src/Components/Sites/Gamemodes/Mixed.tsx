@@ -76,8 +76,6 @@ class MixedClass extends React.Component<Props, State> {
 
     taskRef: RefObject<WhoWouldRatherHandle>;
 
-    resultRef: RefObject<ResultPage>;
-
     truthOrDareRef: RefObject<TruthOrDareHandle>;
 
     kickListRef: RefObject<KickListHandle>;
@@ -101,7 +99,6 @@ class MixedClass extends React.Component<Props, State> {
         this.leaderboardRef = React.createRef();
         this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
-        this.resultRef = React.createRef();
         this.truthOrDareRef = React.createRef();
         this.kickListRef = React.createRef();
 
@@ -232,10 +229,6 @@ class MixedClass extends React.Component<Props, State> {
                             this.setState({
                                 result,
                             });
-                            const res = this.resultRef.current;
-                            if (res) {
-                                res.updateResults(result);
-                            }
                             return Promise.resolve();
                         })
                         .catch(console.error);
@@ -264,10 +257,6 @@ class MixedClass extends React.Component<Props, State> {
                     }),
                 )
                 .catch(console.error);
-        }
-        const res = this.resultRef.current;
-        if (res) {
-            res.updateResults([]);
         }
         const tud = this.truthOrDareRef.current;
         if (tud) {
@@ -352,7 +341,7 @@ class MixedClass extends React.Component<Props, State> {
             <div className="w3-center">
                 <FormattedMessage id="gamemodes.mixed" />
 
-                <ResultPage ref={this.resultRef} />
+                <ResultPage result={this.state.result} />
                 <Grid container spacing={3} className={classes.mainGrid}>
                     <Grid item xs={12}>
                         Heading
