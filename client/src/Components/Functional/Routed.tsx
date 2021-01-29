@@ -16,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-use-before-define
 import React, { PureComponent } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Fab, Fade, Modal } from "@material-ui/core";
@@ -36,10 +35,7 @@ import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
 import { DefaultStyle } from "../../css/Style";
 import { AlertContext } from "./AlertProvider";
 
-interface Props extends WithStyles<typeof DefaultStyle> {
-    changeLanguage: (locale: string) => void;
-    currentLocale: string;
-}
+interface Props extends WithStyles<typeof DefaultStyle> {}
 interface State {
     settingsShown: boolean;
 }
@@ -71,10 +67,7 @@ class RoutedClass extends PureComponent<Props, State> {
                     >
                         <Fade in={this.state.settingsShown}>
                             <div className={classes.settingsModal}>
-                                <Settings
-                                    changeLanguage={this.props.changeLanguage}
-                                    currentLocale={this.props.currentLocale}
-                                />
+                                <Settings />
                             </div>
                         </Fade>
                     </Modal>
@@ -146,10 +139,7 @@ class RoutedClass extends PureComponent<Props, State> {
                         </Route>
 
                         <Route path="/settings">
-                            <Settings
-                                changeLanguage={this.props.changeLanguage}
-                                currentLocale={this.props.currentLocale}
-                            />
+                            <Settings />
                         </Route>
 
                         <Route path="/">
