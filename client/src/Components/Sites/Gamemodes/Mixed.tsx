@@ -62,6 +62,7 @@ interface State {
 }
 type LeaderboardHandle = ElementRef<typeof Leaderboard>;
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
+type KickListHandle = ElementRef<typeof KickList>;
 
 class MixedClass extends React.Component<Props, State> {
     static contextType = AlertContext;
@@ -78,7 +79,7 @@ class MixedClass extends React.Component<Props, State> {
 
     truthOrDareRef: RefObject<TruthOrDareHandle>;
 
-    kickListRef: RefObject<KickList>;
+    kickListRef: RefObject<KickListHandle>;
 
     lang: string;
 

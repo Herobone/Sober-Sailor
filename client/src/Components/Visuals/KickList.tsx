@@ -18,47 +18,39 @@
 
 import firebase from "firebase/app";
 import "firebase/functions";
-import React, { Component, ReactElement } from "react";
+import React, { forwardRef, ReactElement, useImperativeHandle, useState } from "react";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { Register } from "../../helper/models/Register";
-import { AlertContext } from "../Functional/AlertProvider";
-
-interface Props {}
-interface State {
-    shown: boolean;
-}
+import { useAlert } from "../Functional/AlertProvider";
 
 interface KickPlayer {
     gameID: string;
     playerID: string;
 }
 
-export class KickList extends Component<Props, State> {
-    static contextType = AlertContext;
+type KickListHandles = {
+    show: (shown?: boolean) => void;
+};
 
-    context!: React.ContextType<typeof AlertContext>;
+export const KickList = forwardRef<KickListHandles>(
+    (props, ref): JSX.Element => {
+        const { createAlert } = useAlert();
+        const [shown, setShown] = useState(false);
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            shown: false,
+        const show = (showList?: boolean): void => {
+            if (showList === undefined) {
+                setShown(true);
+            } else {
+                setShown(showList);
+            }
         };
-        this.show = this.show.bind(this);
-    }
 
-    show(shown?: boolean): void {
-        if (shown === undefined) {
-            this.setState((prev) => {
-                return { shown: !prev.shown };
-            });
-        } else {
-            this.setState({ shown });
-        }
-    }
+        useImperativeHandle(ref, () => ({
+            show,
+        }));
 
-    render(): JSX.Element | null {
-        if (this.state.shown) {
+        if (shown) {
             const pltRaw = localStorage.getItem("playerLookupTable");
             const vals: ReactElement[] = [];
             let register: Register;
@@ -80,7 +72,7 @@ export class KickList extends Component<Props, State> {
                                     };
                                     const kickPlayer = firebase.functions().httpsCallable("kickPlayer");
                                     kickPlayer(callData)
-                                        .then(() => this.setState({ shown: false }))
+                                        .then(() => setShown(false))
                                         .catch(console.warn);
                                 }}
                             >
@@ -90,11 +82,11 @@ export class KickList extends Component<Props, State> {
                     );
                 });
             } else {
-                this.context.createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+                createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
             }
 
             return <ul className="w3-block w3-black w3-bar-block w3-border">{vals}</ul>;
         }
-        return null;
-    }
-}
+        return <></>;
+    },
+);
