@@ -31,7 +31,6 @@ import { Mixed } from "../Sites/Gamemodes/Mixed";
 import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
 import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
-import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
 import { DefaultStyle } from "../../css/Style";
 import { AlertContext } from "./AlertProvider";
 
@@ -126,20 +125,12 @@ class RoutedClass extends PureComponent<Props, State> {
                         <Route path="/truthordare" render={() => <GameProvider gameURL="truthordare" />} />
                         <Route path="/saufpoly" render={() => <GameProvider gameURL="saufpoly" />} />
 
-                        <Route path="/ttt">
-                            <TicTacToe />
-                        </Route>
-
                         <Route path="/login">
                             <Login />
                         </Route>
 
                         <Route path="/logout">
                             <Logout />
-                        </Route>
-
-                        <Route path="/settings">
-                            <Settings />
                         </Route>
 
                         <Route path="/">
