@@ -23,7 +23,7 @@ import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 export type TicOptions = "X" | "O" | null;
 
 export class TicUtils {
-    static calculateWinner(squares: TicOptions[]): TicOptions {
+    static calculateWinner(squares: TicOptions[]): TicOptions | "tie" {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],
@@ -34,13 +34,17 @@ export class TicUtils {
             [0, 4, 8],
             [2, 4, 6],
         ];
-        let winner: TicOptions = null;
+        let winner: TicOptions | "tie" = null;
         lines.forEach((line: number[]) => {
             const [a, b, c] = line;
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
                 winner = squares[a];
             }
         });
+        if (winner === null && !squares.includes(null)) {
+            // every square is full
+            winner = "tie";
+        }
         return winner;
     }
 

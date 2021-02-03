@@ -35,7 +35,7 @@ interface State {
     isXNext: boolean;
     spectator: boolean;
     player: TicOptions;
-    winner: TicOptions;
+    winner: TicOptions | "tie";
 }
 
 export class TicTacToe extends Component<Props, State> {
@@ -117,7 +117,9 @@ export class TicTacToe extends Component<Props, State> {
             winner,
         });
         if (winner && !spectator && user && winner !== player) {
-            GameManager.submitPenaltyAndReset([new Player(user.uid, "", data.stepNumber, null)]);
+            GameManager.submitPenaltyAndReset([
+                new Player(user.uid, "", winner === "tie" ? 3 : data.stepNumber, null),
+            ]).catch(console.error);
         }
         // console.log(
         //     `Step Number: ${data.stepNumber} | Is X next: ${data.isXNext} | Player: ${player} | Spectator: ${spectator}`,
