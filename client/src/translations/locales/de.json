@@ -15,6 +15,7 @@
 	"actions.host.startpoll": "Umfrage starten",
 	"actions.host.transfer": "Host übertragen",
 	"actions.leave": "Spiel verlassen",
+	"elements.admin.control": "Admin Panel",
 	"elements.alerts.error": "Fehler",
 	"elements.alerts.info": "Information:",
 	"elements.alerts.success": "Erfolgreich!",
@@ -36,7 +37,8 @@
 	"elements.truthordare.dare": "Ich mach's!",
 	"elements.truthordare.drink": "Ich trink lieber...",
 	"gamemodes.describeinoneword": "Beschreib's in einem Wort",
-	"gamemodes.mixed": "Gemischt (Alle Typen von Aufgaben)",
+	"gamemodes.mixed": "Gemischt",
+	"gamemodes.start": "Stich in See!",
 	"gamemodes.saufpoly": "Saufpoly",
 	"gamemodes.truthordare": "Wahrheit oder Pflicht",
 	"gamemodes.whowouldrather": "Wer würde eher",
@@ -51,6 +53,9 @@
 	"general.sips": "Schlucke",
 	"general.welcome": "Willkommen",
 	"navigation.myprofile": "Mein Profil",
+	"navigation.credits": "Credits",
+	"navigation.information": "Informationen",
+	"navigation.cookies": "Cookies (Kekse)",
 	"settings.labels.selectlanguage": "Sprache (Language)",
-	"sobersailor.name": "Sober Sailor - Das Online Party Spiel"
+	"sobersailor.name": "Sober Sailor"
 }

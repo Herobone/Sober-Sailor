@@ -19,7 +19,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
-import React, { Component } from "react";
+import React, { forwardRef, PropsWithChildren, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { GameManager } from "../helper/gameManager";
 import { Register } from "../helper/models/Register";
@@ -31,43 +31,35 @@ interface Props {
     penalty: number;
 }
 
-interface State {
-    answer: boolean | null;
-}
+type TruthOrDareHandles = {
+    reset: () => void;
+};
 
-export class TruthOrDare extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            answer: null,
+export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
+    (props: PropsWithChildren<Props>, ref): JSX.Element => {
+        const [answer, setAnswer] = useState<boolean | null>(null);
+
+        const submitAnswer = (answerToSet: boolean): void => {
+            setAnswer(answerToSet);
+            const callData: SingleTargetRequest = { answer: answerToSet, gameID: GameManager.getGameID() };
+            const singleTarget = firebase.functions().httpsCallable("singleTarget");
+            singleTarget(callData).catch(console.error);
         };
 
-        this.setAnswer = this.setAnswer.bind(this);
-        this.reset = this.reset.bind(this);
-    }
+        const reset = (): void => {
+            setAnswer(null);
+        };
 
-    setAnswer(answer: boolean): void {
-        this.setState({
-            answer,
-        });
-        const callData: SingleTargetRequest = { answer, gameID: GameManager.getGameID() };
-        const singleTarget = firebase.functions().httpsCallable("singleTarget");
-        singleTarget(callData).catch(console.error);
-    }
+        useImperativeHandle(ref, () => ({
+            reset,
+        }));
 
-    reset(): void {
-        this.setState({
-            answer: null,
-        });
-    }
-
-    render(): JSX.Element {
         const pltRaw = localStorage.getItem("playerLookupTable");
 
         let targetName = "Error";
         if (pltRaw) {
             const register = Register.parse(pltRaw);
-            const tar = register.playerUidMap.get(this.props.target);
+            const tar = register.playerUidMap.get(props.target);
             targetName = tar || "Error";
         }
 
@@ -81,30 +73,30 @@ export class TruthOrDare extends Component<Props, State> {
                 <h2>
                     <FormattedMessage id="gamemodes.truthordare" />
                 </h2>
-                {this.props.question}
+                {props.question}
                 <br />
                 <FormattedMessage
                     id="elements.general.penalty"
                     values={{
-                        penalty: this.props.penalty,
+                        penalty: props.penalty,
                     }}
                 />
                 <br />
-                {this.props.target === user.uid && this.state.answer === null && (
+                {props.target === user.uid && answer === null && (
                     <div className="target-area">
-                        <button type="submit" onClick={() => this.setAnswer(true)}>
+                        <button type="submit" onClick={() => submitAnswer(true)}>
                             <FormattedMessage id="elements.truthordare.dare" />
                         </button>
-                        <button type="submit" onClick={() => this.setAnswer(false)}>
+                        <button type="submit" onClick={() => submitAnswer(false)}>
                             <FormattedMessage id="elements.truthordare.drink" />
                         </button>
                     </div>
                 )}
                 <h2>
-                    {this.state.answer === false && <FormattedMessage id="elements.truthordare.drink" />}
-                    {this.state.answer && <FormattedMessage id="elements.truthordare.dare" />}
+                    {answer === false && <FormattedMessage id="elements.truthordare.drink" />}
+                    {answer && <FormattedMessage id="elements.truthordare.dare" />}
                 </h2>
             </div>
         );
-    }
-}
+    },
+);

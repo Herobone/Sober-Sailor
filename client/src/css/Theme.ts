@@ -23,12 +23,22 @@ export const StandardTheme = createMuiTheme({
             default: "#8a989f",
         },
         primary: {
-            main: "#ffaa00",
+            main: "#48cae4",
+            light: "#90e0ef",
+            dark: "#00b4d8",
+            contrastText: "#4242FF",
         },
         secondary: {
-            main: "#6c757d",
-            light: "#8a989f",
+            main: "#ffaa00",
+            light: "#ffff00",
+            dark: "#ff8000",
         },
     },
+    typography: {
+        fontFamily: [
+            'Ubuntu'
+        ].join(','),
+    }, 
 });
+
 export const responsiveTheme = responsiveFontSizes(StandardTheme);

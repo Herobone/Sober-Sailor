@@ -21,8 +21,9 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { FormattedMessage } from "react-intl";
 import { WithStyles, withStyles } from "@material-ui/styles";
-import { Button, Fab, TextField } from "@material-ui/core";
-import { ExitToAppRounded } from "@material-ui/icons";
+import { Button, Fab, IconButton, TextField } from "@material-ui/core";
+import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { AlertContext } from "./AlertProvider";
@@ -134,9 +135,41 @@ class GameProviderClass extends Component<Props, State> {
         const { classes } = this.props;
         if (!gameID) {
             return (
-                <Button variant="contained" color="primary" onClick={this.createGame}>
-                    <FormattedMessage id="actions.game.create" />
-                </Button>
+                <div className={classes.centeraligned}>
+                    <h1 className={classes.h1}>
+                        <FormattedMessage id="sobersailor.name" />
+                    </h1>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        className={classes.createGameButton}
+                        onClick={this.createGame}
+                        size="large"
+                    >
+                        <FormattedMessage id="actions.game.create" />
+                    </Button>
+
+                    <div className={classes.centeraligned}>
+                        <TextField
+                            label="GameID"
+                            color="primary"
+                            id="outlined-start-adornment"
+                            className={classes.inputGameIDField}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">sober-sailor.web.app/</InputAdornment>,
+                            }}
+                            variant="outlined"
+                        />
+                        <IconButton
+                            color="primary"
+                            className={classes.inputGameIDButton}
+                            aria-label="Go to your game!"
+                            // goToGame needs to redirect to the game URL
+                        >
+                            <ArrowForwardIos />
+                        </IconButton>
+                    </div>
+                </div>
             );
         }
 
@@ -164,8 +197,8 @@ class GameProviderClass extends Component<Props, State> {
                 );
             }
             return (
-                <>
-                    <h1>
+                <div className={classes.centeraligned}>
+                    <h1 className={classes.h1_long}>
                         <FormattedMessage id="account.descriptors.finishsignup" />
                     </h1>
                     <br />
@@ -183,11 +216,15 @@ class GameProviderClass extends Component<Props, State> {
                             }
                         }}
                     />
-                    <br />
-                    <Button variant="contained" color="primary" onClick={this.setName}>
-                        <FormattedMessage id="general.done" />
-                    </Button>
-                </>
+                    <IconButton
+                        color="primary"
+                        className={classes.inputNameButton}
+                        aria-label="Go to your game!"
+                        onClick={this.setName}
+                    >
+                        <ArrowForwardIos />
+                    </IconButton>
+                </div>
             );
         }
 

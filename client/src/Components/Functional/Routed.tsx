@@ -16,143 +16,48 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-use-before-define
-import React, { PureComponent } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Fab, Fade, Modal } from "@material-ui/core";
-import { SettingsRounded } from "@material-ui/icons";
-import { WithStyles, withStyles } from "@material-ui/styles";
-import { Settings } from "../Sites/Settings";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
 import { Mixed } from "../Sites/Gamemodes/Mixed";
-import { TruthOrDare } from "../Sites/Gamemodes/TruthOrDare";
-import { Saufpoly } from "../Sites/Gamemodes/Saufpoly";
 import { GameProvider } from "./GameProvider";
-import { TicTacToe } from "../../gamemodes/tictactoe/TicTacToe";
-import { DefaultStyle } from "../../css/Style";
-import { AlertContext } from "./AlertProvider";
+import { useDefaultStyles } from "../../css/Style";
+import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 
-interface Props extends WithStyles<typeof DefaultStyle> {
-    changeLanguage: (locale: string) => void;
-    currentLocale: string;
+export function Routed(): JSX.Element {
+    const classes = useDefaultStyles();
+
+    return (
+        <div className={classes.root}>
+            <Router>
+                <GlobalOverlay />
+
+                <Switch>
+                    <Route
+                        path="/mixed/:gameID"
+                        render={(props) => (
+                            <GameProvider gameID={props.match.params.gameID}>
+                                <Mixed />
+                            </GameProvider>
+                        )}
+                    />
+                    <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
+
+                    <Route path="/login">
+                        <Login />
+                    </Route>
+
+                    <Route path="/logout">
+                        <Logout />
+                    </Route>
+
+                    <Route path="/">
+                        <Home />
+                    </Route>
+                </Switch>
+            </Router>
+        </div>
+    );
 }
-interface State {
-    settingsShown: boolean;
-}
-
-class RoutedClass extends PureComponent<Props, State> {
-    static contextType = AlertContext;
-
-    context!: React.ContextType<typeof AlertContext>;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            settingsShown: false,
-        };
-    }
-
-    render(): JSX.Element {
-        const { classes } = this.props;
-        return (
-            <div className={classes.root}>
-                <Router>
-                    <Modal
-                        open={this.state.settingsShown}
-                        onClose={() => this.setState({ settingsShown: false })}
-                        closeAfterTransition
-                        BackdropProps={{
-                            timeout: 500,
-                        }}
-                    >
-                        <Fade in={this.state.settingsShown}>
-                            <div className={classes.settingsModal}>
-                                <Settings
-                                    changeLanguage={this.props.changeLanguage}
-                                    currentLocale={this.props.currentLocale}
-                                />
-                            </div>
-                        </Fade>
-                    </Modal>
-
-                    <Fab
-                        onClick={() =>
-                            this.setState((prev) => {
-                                return {
-                                    settingsShown: !prev.settingsShown,
-                                };
-                            })
-                        }
-                        className={classes.settingsButton}
-                        color="primary"
-                    >
-                        <SettingsRounded />
-                    </Fab>
-                    <Switch>
-                        <Route
-                            path="/mixed/:gameID"
-                            render={(props) => (
-                                <GameProvider gameID={props.match.params.gameID}>
-                                    <Mixed />
-                                </GameProvider>
-                            )}
-                        />
-                        <Route
-                            path="/truthordare/:gameID"
-                            render={(props) => (
-                                <GameProvider gameID={props.match.params.gameID}>
-                                    <TruthOrDare
-                                        createAlert={this.context.createAlert}
-                                        gameID={props.match.params.gameID}
-                                    />
-                                </GameProvider>
-                            )}
-                        />
-
-                        <Route
-                            path="/saufpoly/:gameID"
-                            render={(props) => (
-                                <GameProvider gameID={props.match.params.gameID}>
-                                    <Saufpoly
-                                        createAlert={this.context.createAlert}
-                                        gameID={props.match.params.gameID}
-                                    />
-                                </GameProvider>
-                            )}
-                        />
-                        <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
-                        <Route path="/truthordare" render={() => <GameProvider gameURL="truthordare" />} />
-                        <Route path="/saufpoly" render={() => <GameProvider gameURL="saufpoly" />} />
-
-                        <Route path="/ttt">
-                            <TicTacToe />
-                        </Route>
-
-                        <Route path="/login">
-                            <Login />
-                        </Route>
-
-                        <Route path="/logout">
-                            <Logout />
-                        </Route>
-
-                        <Route path="/settings">
-                            <Settings
-                                changeLanguage={this.props.changeLanguage}
-                                currentLocale={this.props.currentLocale}
-                            />
-                        </Route>
-
-                        <Route path="/">
-                            <Home />
-                        </Route>
-                    </Switch>
-                </Router>
-            </div>
-        );
-    }
-}
-
-export const Routed = withStyles(DefaultStyle)(RoutedClass);

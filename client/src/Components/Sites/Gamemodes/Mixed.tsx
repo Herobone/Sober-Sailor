@@ -16,19 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { ReactElement, RefObject } from "react";
+import React, { ElementRef, ReactElement, RefObject } from "react";
 import { FormattedMessage } from "react-intl";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import Cookies from "universal-cookie";
 
-import { Button } from "@material-ui/core";
+import { Tooltip } from "@material-ui/core";
 import { WithStyles, withStyles } from "@material-ui/styles";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Zoom from "@material-ui/core/Zoom";
+import QueuePlayNextIcon from "@material-ui/icons/QueuePlayNext";
+import IconButton from "@material-ui/core/IconButton";
+import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
+import PollIcon from "@material-ui/icons/Poll";
+import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
 import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
-
 import tasks from "../../../gamemodes/tasks.json";
 import { getRandomTask } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
@@ -55,25 +63,27 @@ interface State {
     evalState: boolean;
     result: Player[] | undefined;
     countdownTimeout: NodeJS.Timeout | undefined;
+    timer: number;
+    maxTime: number;
     penalty: number;
 }
+type LeaderboardHandle = ElementRef<typeof Leaderboard>;
+type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
+type KickListHandle = ElementRef<typeof KickList>;
+type WhoWouldRatherHandle = ElementRef<typeof WhoWouldRather>;
 
 class MixedClass extends React.Component<Props, State> {
     static contextType = AlertContext;
 
     context!: React.ContextType<typeof AlertContext>;
 
-    leaderboardRef: RefObject<Leaderboard>;
+    leaderboardRef: RefObject<LeaderboardHandle>;
 
-    countdownRef: RefObject<HTMLSpanElement>;
+    taskRef: RefObject<WhoWouldRatherHandle>;
 
-    taskRef: RefObject<WhoWouldRather>;
+    truthOrDareRef: RefObject<TruthOrDareHandle>;
 
-    resultRef: RefObject<ResultPage>;
-
-    truthOrDareRef: RefObject<TruthOrDare>;
-
-    kickListRef: RefObject<KickList>;
+    kickListRef: RefObject<KickListHandle>;
 
     lang: string;
 
@@ -89,12 +99,12 @@ class MixedClass extends React.Component<Props, State> {
             countdownTimeout: undefined,
             result: undefined,
             penalty: 0,
+            timer: 0,
+            maxTime: 0,
         };
 
         this.leaderboardRef = React.createRef();
-        this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
-        this.resultRef = React.createRef();
         this.truthOrDareRef = React.createRef();
         this.kickListRef = React.createRef();
 
@@ -152,13 +162,13 @@ class MixedClass extends React.Component<Props, State> {
         }
     };
 
-    startTimer = (duration: number, display: RefObject<HTMLSpanElement>): void => {
+    startTimer = (duration: number): void => {
         let timer = duration;
+        this.setState({ maxTime: duration });
         const timeout = setInterval(() => {
-            const cur = display.current;
-            if (cur) {
-                cur.textContent = timer.toString();
-            }
+            this.setState({
+                timer,
+            });
 
             if (--timer < 0) {
                 const tout = this.state.countdownTimeout;
@@ -204,7 +214,7 @@ class MixedClass extends React.Component<Props, State> {
                 });
             }
             if (!this.state.pollState && data.pollState) {
-                this.startTimer(20, this.countdownRef);
+                this.startTimer(20);
                 this.setState({
                     pollState: true,
                 });
@@ -225,10 +235,6 @@ class MixedClass extends React.Component<Props, State> {
                             this.setState({
                                 result,
                             });
-                            const res = this.resultRef.current;
-                            if (res) {
-                                res.updateResults(result);
-                            }
                             return Promise.resolve();
                         })
                         .catch(console.error);
@@ -257,10 +263,6 @@ class MixedClass extends React.Component<Props, State> {
                     }),
                 )
                 .catch(console.error);
-        }
-        const res = this.resultRef.current;
-        if (res) {
-            res.updateResults([]);
         }
         const tud = this.truthOrDareRef.current;
         if (tud) {
@@ -335,69 +337,123 @@ class MixedClass extends React.Component<Props, State> {
         }
 
         return (
-            <div className="w3-center">
-                <FormattedMessage id="gamemodes.mixed" />
-                <div>
-                    <span className="countdown-inner" ref={this.countdownRef}>
-                        20
-                    </span>{" "}
-                    <FormattedMessage id="general.seconds" />
-                </div>
-                {taskComponent}
-                <ResultPage ref={this.resultRef} />
-                {this.state.isHost && (
-                    <div className="host-area">
-                        {!this.state.pollState && (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={this.randomButtonClick}
-                                className={classes.margin}
-                            >
-                                Random Button
-                            </Button>
+            <>
+                <Grid container spacing={3} className={classes.mainGrid}>
+                    <Grid item xs={10} md={6}>
+                        <div className={classes.mainHeadingName}>
+                            <FormattedMessage id="sobersailor.name" />
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <span className="countdown-inner">{this.state.timer}</span>{" "}
+                        <FormattedMessage id="general.seconds" />
+                        <LinearProgress variant="determinate" value={(this.state.timer / this.state.maxTime) * 100} />
+                    </Grid>
+                    <Grid item xs={12} md={8} lg={9}>
+                        <Paper>
+                            {taskComponent}
+
+                            <ResultPage result={this.state.result} />
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={4} lg={3}>
+                        {this.state.isHost && (
+                            <Paper className={classes.sideArea}>
+                                <Grid container spacing={1}>
+                                    <Grid item xs={12}>
+                                        <h2 className={classes.sideHeading}>
+                                            <FormattedMessage id="elements.admin.control" />
+                                        </h2>
+                                    </Grid>
+                                    {!this.state.pollState && (
+                                        <Grid item xs>
+                                            <Tooltip
+                                                title="Next Question"
+                                                TransitionComponent={Zoom}
+                                                placement="bottom"
+                                                arrow
+                                            >
+                                                <IconButton
+                                                    color="secondary"
+                                                    className={classes.hostButton}
+                                                    onClick={this.randomButtonClick}
+                                                >
+                                                    <QueuePlayNextIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Grid>
+                                    )}
+                                    <Grid item xs>
+                                        <Tooltip
+                                            title={<FormattedMessage id="actions.host.transfer" />}
+                                            TransitionComponent={Zoom}
+                                            placement="bottom"
+                                            arrow
+                                        >
+                                            <IconButton
+                                                color="secondary"
+                                                className={classes.hostButton}
+                                                onClick={() => {
+                                                    GameManager.transferHostShip().catch(console.error);
+                                                }}
+                                            >
+                                                <TransferWithinAStationIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                    {!this.state.pollState && (
+                                        <Grid item xs>
+                                            <Tooltip
+                                                title={<FormattedMessage id="actions.host.startpoll" />}
+                                                TransitionComponent={Zoom}
+                                                placement="bottom"
+                                                arrow
+                                            >
+                                                <IconButton
+                                                    color="secondary"
+                                                    className={classes.hostButton}
+                                                    onClick={() => {
+                                                        GameManager.setPollState(true).catch(console.error);
+                                                    }}
+                                                >
+                                                    <PollIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Grid>
+                                    )}
+                                    <br />
+                                    <Grid item xs>
+                                        <Tooltip
+                                            title={<FormattedMessage id="actions.host.kick" />}
+                                            TransitionComponent={Zoom}
+                                            placement="bottom"
+                                            arrow
+                                        >
+                                            <IconButton
+                                                color="secondary"
+                                                className={classes.hostButton}
+                                                onClick={() => {
+                                                    const klRef = this.kickListRef.current;
+                                                    if (klRef) {
+                                                        klRef.show();
+                                                    }
+                                                }}
+                                            >
+                                                <FlightTakeoffIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                </Grid>
+                            </Paper>
                         )}
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.margin}
-                            onClick={() => {
-                                GameManager.transferHostShip().catch(console.error);
-                            }}
-                        >
-                            <FormattedMessage id="actions.host.transfer" />
-                        </Button>
-                        {!this.state.pollState && (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                className={classes.margin}
-                                onClick={() => {
-                                    GameManager.setPollState(true).catch(console.error);
-                                }}
-                            >
-                                <FormattedMessage id="actions.host.startpoll" />
-                            </Button>
-                        )}
-                        <br />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.margin}
-                            onClick={() => {
-                                const klRef = this.kickListRef.current;
-                                if (klRef) {
-                                    klRef.show();
-                                }
-                            }}
-                        >
-                            <FormattedMessage id="actions.host.kick" />
-                        </Button>
+                        <Paper className={classes.sideArea}>
+                            <Leaderboard ref={this.leaderboardRef} />
+                        </Paper>
+
                         <KickList ref={this.kickListRef} />
-                    </div>
-                )}
-                <Leaderboard ref={this.leaderboardRef} />
-            </div>
+                    </Grid>
+                </Grid>
+            </>
         );
     }
 }

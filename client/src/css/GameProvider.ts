@@ -22,18 +22,48 @@ import { Theme } from "@material-ui/core";
 export const GameProviderStyle = (theme: Theme) =>
     createStyles({
         nameInput: {
+            position: "relative",
             width: "40%",
             margin: theme.spacing(2),
         },
         leaveGameFab: {
-            position: "absolute",
+            position: "fixed",
             bottom: theme.spacing(4),
             left: theme.spacing(2),
+        },
+        createGameButton: {
+            position: "relative",
+            top: theme.spacing(3),
+        },
+        inputGameIDField: {
+            position: "relative",
+            top: theme.spacing(11.5),
+            padding: theme.spacing(1),
+        },
+        inputGameIDButton: {
+            position: "relative",
+            top: theme.spacing(13),
+        },
+        inputNameButton: {
+            position: "relative",
+            top: theme.spacing(2),
         },
 
         [theme.breakpoints.down("sm")]: {
             nameInput: {
                 width: "90%",
             },
+        },
+        centeraligned: {
+            position: "relative",
+            textAlign: "center",
+        },
+        h1: {
+            fontSize: 70,
+        },
+        h1_long: {
+            textAlign: "center",
+            fontSize: 40,
+            padding: theme.spacing(1),
         },
     });

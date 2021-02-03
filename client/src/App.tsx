@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, RefObject } from "react";
+import React, { PureComponent } from "react";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
 import { SnackbarProvider } from "notistack";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
@@ -26,50 +26,16 @@ import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
 import { responsiveTheme } from "./css/Theme";
 
-interface Props {}
-
-interface State {
-    changeLanguage: (locale: string) => void;
-    currentLocale: string;
-}
-
-export class App extends Component<Props, State> {
-    langRef: RefObject<LanguageContainer>;
-
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            changeLanguage: () => {
-                console.error("Tried to create alert on unmounted LanguageContainer!");
-            },
-            currentLocale: "en",
-        };
-
-        this.langRef = React.createRef();
-    }
-
-    componentDidMount(): void {
-        if (this.langRef.current) {
-            this.setState({
-                changeLanguage: this.langRef.current.changeLanguage,
-                currentLocale: this.langRef.current.getCurrentLocale(),
-            });
-        }
-    }
-
+export class App extends PureComponent {
     render(): JSX.Element {
         return (
             <React.StrictMode>
                 <MuiThemeProvider theme={responsiveTheme}>
                     <CssBaseline />
-                    <LanguageContainer ref={this.langRef}>
+                    <LanguageContainer>
                         <SnackbarProvider maxSnack={4}>
                             <AlertProvider>
-                                <Routed
-                                    changeLanguage={this.state.changeLanguage}
-                                    currentLocale={this.state.currentLocale}
-                                />
+                                <Routed />
                             </AlertProvider>
                         </SnackbarProvider>
                     </LanguageContainer>
