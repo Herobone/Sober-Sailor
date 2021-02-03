@@ -18,11 +18,14 @@
 
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Fab, Fade, Modal } from "@material-ui/core";
+import { Backdrop, Fade, Modal } from "@material-ui/core";
 import { SettingsRounded } from "@material-ui/icons";
+import SpeedDial from "@material-ui/lab/SpeedDial";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import CopyrightOutlinedIcon from "@material-ui/icons/CopyrightOutlined";
+import CopyrightIcon from "@material-ui/icons/Copyright";
+import MenuOpenIcon from "@material-ui/icons/MenuOpen";
 import { withStyles } from "@material-ui/styles";
+import { SpeedDialAction } from "@material-ui/lab";
 import { Settings } from "../Sites/Settings";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
@@ -34,6 +37,7 @@ import { DefaultStyle, useDefaultStyles } from "../../css/Style";
 export function RoutedClass(): JSX.Element {
     const classes = useDefaultStyles();
     const [settingsShown, setSettingsShown] = useState(false);
+    const [speedDialShown, setSpeedDialShown] = useState(false);
 
     return (
         <div className={classes.root}>
@@ -52,19 +56,47 @@ export function RoutedClass(): JSX.Element {
                         </div>
                     </Fade>
                 </Modal>
-                <Fab
-                    onClick={() => setSettingsShown(!settingsShown)}
+                <Backdrop open={speedDialShown} />
+                <SpeedDial
+                    ariaLabel="SpeedDial tooltip example"
                     className={classes.settingsButton}
-                    color="secondary"
+                    icon={<MenuOpenIcon />}
+                    onClose={() => setSpeedDialShown(false)}
+                    onOpen={() => setSpeedDialShown(true)}
+                    open={speedDialShown}
                 >
-                    <SettingsRounded />
-                </Fab>
-                <Fab className={classes.infoButton} color="secondary">
-                    <InfoOutlinedIcon />
-                </Fab>
-                <Fab className={classes.creditsButton} color="secondary">
-                    <CopyrightOutlinedIcon />
-                </Fab>
+                    <SpeedDialAction
+                        key="Settings"
+                        icon={<SettingsRounded />}
+                        tooltipTitle="Settings"
+                        title="Settings"
+                        tooltipOpen
+                        onClick={() => {
+                            setSpeedDialShown(false);
+                            setSettingsShown(!settingsShown);
+                        }}
+                    />
+                    <SpeedDialAction
+                        key="Info"
+                        icon={<InfoOutlinedIcon />}
+                        tooltipTitle="Info"
+                        title="Info"
+                        tooltipOpen
+                        onClick={() => {
+                            setSpeedDialShown(false);
+                        }}
+                    />
+                    <SpeedDialAction
+                        key="Credits"
+                        icon={<CopyrightIcon />}
+                        tooltipTitle="Credits"
+                        title="Credits"
+                        tooltipOpen
+                        onClick={() => {
+                            setSpeedDialShown(false);
+                        }}
+                    />
+                </SpeedDial>
                 <Switch>
                     <Route
                         path="/mixed/:gameID"
