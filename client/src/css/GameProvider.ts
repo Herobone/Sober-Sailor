@@ -27,19 +27,18 @@ export const GameProviderStyle = (theme: Theme) =>
             margin: theme.spacing(2),
         },
         leaveGameFab: {
-            position: "absolute",
+            position: "fixed",
             bottom: theme.spacing(4),
             left: theme.spacing(2),
         },
         createGameButton: {
             position: "relative",
             top: theme.spacing(3),
-
         },
         inputGameIDField: {
             position: "relative",
             top: theme.spacing(11.5),
-            padding: theme.spacing(1)
+            padding: theme.spacing(1),
         },
         inputGameIDButton: {
             position: "relative",
@@ -47,7 +46,7 @@ export const GameProviderStyle = (theme: Theme) =>
         },
         inputNameButton: {
             position: "relative",
-            top: theme.spacing(2)
+            top: theme.spacing(2),
         },
 
         [theme.breakpoints.down("sm")]: {
@@ -57,7 +56,7 @@ export const GameProviderStyle = (theme: Theme) =>
         },
         centeraligned: {
             position: "relative",
-            textAlign: "center"
+            textAlign: "center",
         },
         h1: {
             fontSize: 70,
@@ -65,6 +64,6 @@ export const GameProviderStyle = (theme: Theme) =>
         h1_long: {
             textAlign: "center",
             fontSize: 40,
-            padding: theme.spacing(1)
-        }
+            padding: theme.spacing(1),
+        },
     });

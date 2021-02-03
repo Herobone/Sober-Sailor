@@ -346,17 +346,20 @@ class MixedClass extends React.Component<Props, State> {
 
         return (
             <div className="w3-center">
-                <ResultPage result={this.state.result} />
                 <Grid container spacing={3} className={classes.mainGrid}>
                     <Grid item xs={6}>
                         <div className={classes.mainHeadingName}>
                             <FormattedMessage id="sobersailor.name" />
                         </div>
                     </Grid>
-                    <Grid item xs={8} lg={9}>
-                        <Paper>{taskComponent}</Paper>
+                    <Grid item xs={12} md={8} lg={9}>
+                        <Paper>
+                            {taskComponent}
+
+                            <ResultPage result={this.state.result} />
+                        </Paper>
                     </Grid>
-                    <Grid item xs={4} lg={3}>
+                    <Grid item xs={12} md={4} lg={3}>
                         {this.state.isHost && (
                             <Paper className={classes.sideArea}>
                                 <Grid container spacing={1}>

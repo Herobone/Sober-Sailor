@@ -28,18 +28,18 @@ export const DefaultStyle = (theme: Theme) =>
             justifyContent: "center",
         },
         settingsButton: {
-            position: "absolute",
+            position: "fixed",
             bottom: theme.spacing(4),
             right: theme.spacing(2),
             "&:hover": {},
         },
         infoButton: {
-            position: "absolute",
+            position: "fixed",
             bottom: theme.spacing(4 + 8),
             right: theme.spacing(2),
         },
         creditsButton: {
-            position: "absolute",
+            position: "fixed",
             bottom: theme.spacing(4 + 2 * 8),
             right: theme.spacing(2),
         },
@@ -86,31 +86,29 @@ export const DefaultStyle = (theme: Theme) =>
             fontSize: 70,
         },
 
-
-
         mainGrid: {
             flexGrow: 1,
-            width: "100%"
+            width: "100%",
         },
 
         mainHeadingName: {
             position: "relative",
             fontSize: 30,
-            textAlign: "left"
+            textAlign: "left",
         },
 
         sideArea: {
             width: "100%",
             padding: theme.spacing(0.5),
-            marginBottom: theme.spacing(0.5)
+            marginBottom: theme.spacing(0.5),
         },
-        sideHeading:  {
+        sideHeading: {
             textAlign: "center",
             margin: theme.spacing(0.3),
             fontSize: 20,
         },
         hostButton: {
-            textAlign: "center"
+            textAlign: "center",
         },
 
         mainArea: {
@@ -120,7 +118,6 @@ export const DefaultStyle = (theme: Theme) =>
         progressBar: {
             width: "100%",
         },
-
     });
 
 export const useDefaultStyles = makeStyles(DefaultStyle);
