@@ -39,6 +39,12 @@ export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
             GameManager.getAllPlayers().then(setPlayers).catch(console.error);
         }, []);
 
+        useEffect(() => {
+            setInputLock(true);
+            setAnswer(null);
+            console.log("Resetting WWR");
+        }, [props.question]);
+
         const lockInput = (lock: boolean): void => {
             setInputLock(lock);
         };
