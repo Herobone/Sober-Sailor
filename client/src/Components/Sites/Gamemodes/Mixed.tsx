@@ -345,12 +345,17 @@ class MixedClass extends React.Component<Props, State> {
         }
 
         return (
-            <div className="w3-center">
+            <>
                 <Grid container spacing={3} className={classes.mainGrid}>
-                    <Grid item xs={6}>
+                    <Grid item xs={10} md={6}>
                         <div className={classes.mainHeadingName}>
                             <FormattedMessage id="sobersailor.name" />
                         </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <span className="countdown-inner">{this.state.timer}</span>{" "}
+                        <FormattedMessage id="general.seconds" />
+                        <LinearProgress variant="determinate" value={(this.state.timer / this.state.maxTime) * 100} />
                     </Grid>
                     <Grid item xs={12} md={8} lg={9}>
                         <Paper>
@@ -456,12 +461,7 @@ class MixedClass extends React.Component<Props, State> {
                         <KickList ref={this.kickListRef} />
                     </Grid>
                 </Grid>
-                <div>
-                    <span className="countdown-inner">{this.state.timer}</span>{" "}
-                    <FormattedMessage id="general.seconds" />
-                    <LinearProgress variant="determinate" value={(this.state.timer / this.state.maxTime) * 100} />
-                </div>
-            </div>
+            </>
         );
     }
 }

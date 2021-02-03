@@ -23,6 +23,9 @@ export const DefaultStyle = (theme: Theme) =>
     createStyles({
         root: {
             margin: theme.spacing(2),
+            [theme.breakpoints.down("sm")]: {
+                margin: theme.spacing(2),
+            },
             textAlign: "center",
             alignItems: "center",
             justifyContent: "center",
@@ -45,13 +48,12 @@ export const DefaultStyle = (theme: Theme) =>
         },
         settingsModal: {
             width: "60%",
-            margin: "5% auto 15% auto", // 5% from the top, 15% from the bottom and centered
-        },
-        [theme.breakpoints.down("sm")]: {
-            settingsModal: {
+            [theme.breakpoints.down("sm")]: {
                 width: "90%",
             },
+            margin: "5% auto 15% auto", // 5% from the top, 15% from the bottom and centered
         },
+
         margin: {
             margin: theme.spacing(1),
         },
@@ -89,6 +91,7 @@ export const DefaultStyle = (theme: Theme) =>
         mainGrid: {
             flexGrow: 1,
             width: "100%",
+            margin: 0,
         },
 
         mainHeadingName: {
