@@ -25,15 +25,17 @@ export const onPlayerLeaveHandler = async (
 ) => {
   if (context.authType === "ADMIN") {
     // If the delete was performed by an ADMIN (console or firebase) ignore it
-    throw new functions.https.HttpsError("ok", "Delete by admin is ignored!");
+    return null;
   }
 
-  const registerRef = await FirestoreUtil.getRegisterRef(context.params.gameID);
+  const gameData = await FirestoreUtil.getGameData(context.params.gameID);
 
-  const map = FirestoreUtil.createMap(registerRef);
-  map.delete(context.params.playerID);
+  if (!gameData) {
+    throw new Error("Data was missing");
+  }
+  gameData.register.removePlayer(context.params.playerID);
 
-  await FirestoreUtil.updateRegister(context.params.gameID, map);
+  await FirestoreUtil.updateRegister(context.params.gameID, gameData);
 
   return null;
 };

@@ -43,7 +43,7 @@ export const Leaderboard = forwardRef<LeaderboardHandles>(
                 .then((query) => {
                     query.forEach((doc) => {
                         const data = doc.data();
-                        if (data && doc.id !== "register") {
+                        if (data) {
                             lb.set(data.nickname, data.sips);
                         }
                     });

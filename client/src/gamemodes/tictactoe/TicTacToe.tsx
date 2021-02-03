@@ -35,11 +35,11 @@ interface State {
     isXNext: boolean;
     spectator: boolean;
     player: TicOptions;
-    winner: TicOptions;
+    winner: TicOptions | "tie";
 }
 
 export class TicTacToe extends Component<Props, State> {
-    unsubscribe: () => void;
+    unsubscribe!: () => void;
 
     constructor(props: Props) {
         super(props);
@@ -56,12 +56,11 @@ export class TicTacToe extends Component<Props, State> {
         this.updateFromDoc = this.updateFromDoc.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.keyEvent = this.keyEvent.bind(this);
-
-        this.unsubscribe = TicUtils.getTTTGame().onSnapshot(this.updateFromDoc);
     }
 
     componentDidMount(): void {
         document.addEventListener("keydown", this.keyEvent, false);
+        this.unsubscribe = TicUtils.getTTTGame().onSnapshot(this.updateFromDoc);
     }
 
     componentWillUnmount(): void {
@@ -118,7 +117,9 @@ export class TicTacToe extends Component<Props, State> {
             winner,
         });
         if (winner && !spectator && user && winner !== player) {
-            GameManager.afterEval([new Player(user.uid, "", data.stepNumber, null)]);
+            GameManager.submitPenaltyAndReset([
+                new Player(user.uid, "", winner === "tie" ? 3 : data.stepNumber, null),
+            ]).catch(console.error);
         }
         // console.log(
         //     `Step Number: ${data.stepNumber} | Is X next: ${data.isXNext} | Player: ${player} | Spectator: ${spectator}`,
