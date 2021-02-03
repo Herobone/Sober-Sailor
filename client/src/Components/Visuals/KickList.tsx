@@ -70,7 +70,10 @@ export const KickList = forwardRef<KickListHandles>(
                                         gameID: GameManager.getGameID(),
                                         playerID: uid,
                                     };
-                                    const kickPlayer = firebase.functions().httpsCallable("kickPlayer");
+                                    const kickPlayer = firebase
+                                        .app()
+                                        .functions("europe-west1")
+                                        .httpsCallable("kickPlayer");
                                     kickPlayer(callData)
                                         .then(() => setShown(false))
                                         .catch(console.warn);

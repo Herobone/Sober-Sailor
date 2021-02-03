@@ -42,7 +42,7 @@ export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
         const submitAnswer = (answerToSet: boolean): void => {
             setAnswer(answerToSet);
             const callData: SingleTargetRequest = { answer: answerToSet, gameID: GameManager.getGameID() };
-            const singleTarget = firebase.functions().httpsCallable("singleTarget");
+            const singleTarget = firebase.app().functions("europe-west2").httpsCallable("singleTarget");
             singleTarget(callData).catch(console.error);
         };
 

@@ -52,8 +52,6 @@ afterEach(() => {
 
 // eslint-disable-next-line jest/expect-expect
 test("Renders the App without GAPI", () => {
-    const okToCall = jest.fn();
-
     domAct(() => {
         render(
             <React.StrictMode>
@@ -62,7 +60,7 @@ test("Renders the App without GAPI", () => {
                     <LanguageContainer>
                         <SnackbarProvider maxSnack={4}>
                             <AlertProvider>
-                                <Routed changeLanguage={okToCall} currentLocale="en" />
+                                <Routed />
                             </AlertProvider>
                         </SnackbarProvider>
                     </LanguageContainer>
@@ -86,15 +84,13 @@ test("Renders the Router and looks for Alerts", () => {
         },
     });
 
-    const okToCall = jest.fn();
-
     domAct(() => {
         render(
             <React.StrictMode>
                 <MuiThemeProvider theme={responsiveTheme}>
                     <AlertContext.Provider value={{ createAlert: alertFN }}>
                         <LanguageContainer>
-                            <Routed changeLanguage={okToCall} currentLocale="en" />
+                            <Routed />
                         </LanguageContainer>
                     </AlertContext.Provider>
                 </MuiThemeProvider>
