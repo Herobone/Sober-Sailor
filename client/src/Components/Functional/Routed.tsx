@@ -18,16 +18,15 @@
 
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { withStyles } from "@material-ui/styles";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
 import { Mixed } from "../Sites/Gamemodes/Mixed";
 import { GameProvider } from "./GameProvider";
-import { DefaultStyle, useDefaultStyles } from "../../css/Style";
+import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 
-export function RoutedClass(): JSX.Element {
+export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
 
     return (
@@ -62,5 +61,3 @@ export function RoutedClass(): JSX.Element {
         </div>
     );
 }
-
-export const Routed = withStyles(DefaultStyle)(RoutedClass);
