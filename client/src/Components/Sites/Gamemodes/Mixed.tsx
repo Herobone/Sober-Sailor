@@ -256,15 +256,18 @@ class MixedClass extends React.Component<Props, State> {
                 .then(() => {
                     this.setState({
                         result: undefined,
-                    }),
-                )
+                    });
+
+                    return this.updateLeaderboard();
+                })
                 .catch(console.error);
+        } else {
+            this.updateLeaderboard();
         }
         const tud = this.truthOrDareRef.current;
         if (tud) {
             tud.reset();
         }
-        this.updateLeaderboard();
     };
 
     playerEvent = (doc: firebase.firestore.DocumentSnapshot<Register>): void => {
