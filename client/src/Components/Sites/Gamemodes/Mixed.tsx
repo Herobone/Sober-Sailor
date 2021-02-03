@@ -64,6 +64,8 @@ interface State {
     evalState: boolean;
     result: Player[] | undefined;
     countdownTimeout: NodeJS.Timeout | undefined;
+    timer: number;
+    maxTime: number;
     penalty: number;
 }
 type LeaderboardHandle = ElementRef<typeof Leaderboard>;
@@ -77,8 +79,6 @@ class MixedClass extends React.Component<Props, State> {
     context!: React.ContextType<typeof AlertContext>;
 
     leaderboardRef: RefObject<LeaderboardHandle>;
-
-    countdownRef: RefObject<HTMLSpanElement>;
 
     taskRef: RefObject<WhoWouldRatherHandle>;
 
@@ -100,10 +100,11 @@ class MixedClass extends React.Component<Props, State> {
             countdownTimeout: undefined,
             result: undefined,
             penalty: 0,
+            timer: 0,
+            maxTime: 0,
         };
 
         this.leaderboardRef = React.createRef();
-        this.countdownRef = React.createRef();
         this.taskRef = React.createRef();
         this.truthOrDareRef = React.createRef();
         this.kickListRef = React.createRef();
@@ -162,13 +163,13 @@ class MixedClass extends React.Component<Props, State> {
         }
     };
 
-    startTimer = (duration: number, display: RefObject<HTMLSpanElement>): void => {
+    startTimer = (duration: number): void => {
         let timer = duration;
+        this.setState({ maxTime: duration });
         const timeout = setInterval(() => {
-            const cur = display.current;
-            if (cur) {
-                cur.textContent = timer.toString();
-            }
+            this.setState({
+                timer,
+            });
 
             if (--timer < 0) {
                 const tout = this.state.countdownTimeout;
@@ -214,7 +215,7 @@ class MixedClass extends React.Component<Props, State> {
                 });
             }
             if (!this.state.pollState && data.pollState) {
-                this.startTimer(20, this.countdownRef);
+                this.startTimer(20);
                 this.setState({
                     pollState: true,
                 });
@@ -453,11 +454,9 @@ class MixedClass extends React.Component<Props, State> {
                     </Grid>
                 </Grid>
                 <div>
-                    <span className="countdown-inner" ref={this.countdownRef}>
-                        20
-                    </span>{" "}
+                    <span className="countdown-inner">{this.state.timer}</span>{" "}
                     <FormattedMessage id="general.seconds" />
-                    <LinearProgress variant="determinate" value={70} />
+                    <LinearProgress variant="determinate" value={(this.state.timer / this.state.maxTime) * 100} />
                 </div>
             </div>
         );
