@@ -16,87 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Backdrop, Fade, Modal } from "@material-ui/core";
-import { SettingsRounded } from "@material-ui/icons";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import CopyrightIcon from "@material-ui/icons/Copyright";
-import MenuOpenIcon from "@material-ui/icons/MenuOpen";
 import { withStyles } from "@material-ui/styles";
-import { SpeedDialAction } from "@material-ui/lab";
-import { Settings } from "../Sites/Settings";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
 import { Mixed } from "../Sites/Gamemodes/Mixed";
 import { GameProvider } from "./GameProvider";
 import { DefaultStyle, useDefaultStyles } from "../../css/Style";
+import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 
 export function RoutedClass(): JSX.Element {
     const classes = useDefaultStyles();
-    const [settingsShown, setSettingsShown] = useState(false);
-    const [speedDialShown, setSpeedDialShown] = useState(false);
 
     return (
         <div className={classes.root}>
             <Router>
-                <Modal
-                    open={settingsShown}
-                    onClose={() => setSettingsShown(false)}
-                    closeAfterTransition
-                    BackdropProps={{
-                        timeout: 500,
-                    }}
-                >
-                    <Fade in={settingsShown}>
-                        <div className={classes.settingsModal}>
-                            <Settings />
-                        </div>
-                    </Fade>
-                </Modal>
-                <Backdrop open={speedDialShown} />
-                <SpeedDial
-                    ariaLabel="SpeedDial tooltip example"
-                    className={classes.settingsButton}
-                    icon={<MenuOpenIcon />}
-                    onClose={() => setSpeedDialShown(false)}
-                    onOpen={() => setSpeedDialShown(true)}
-                    open={speedDialShown}
-                >
-                    <SpeedDialAction
-                        key="Settings"
-                        icon={<SettingsRounded />}
-                        tooltipTitle="Settings"
-                        title="Settings"
-                        tooltipOpen
-                        onClick={() => {
-                            setSpeedDialShown(false);
-                            setSettingsShown(!settingsShown);
-                        }}
-                    />
-                    <SpeedDialAction
-                        key="Info"
-                        icon={<InfoOutlinedIcon />}
-                        tooltipTitle="Info"
-                        title="Info"
-                        tooltipOpen
-                        onClick={() => {
-                            setSpeedDialShown(false);
-                        }}
-                    />
-                    <SpeedDialAction
-                        key="Credits"
-                        icon={<CopyrightIcon />}
-                        tooltipTitle="Credits"
-                        title="Credits"
-                        tooltipOpen
-                        onClick={() => {
-                            setSpeedDialShown(false);
-                        }}
-                    />
-                </SpeedDial>
+                <GlobalOverlay />
+
                 <Switch>
                     <Route
                         path="/mixed/:gameID"

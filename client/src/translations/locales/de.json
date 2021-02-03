@@ -53,6 +53,9 @@
 	"general.sips": "Schlucke",
 	"general.welcome": "Willkommen",
 	"navigation.myprofile": "Mein Profil",
+	"navigation.credits": "Credits",
+	"navigation.information": "Informationen",
+	"navigation.cookies": "Cookies (Kekse)",
 	"settings.labels.selectlanguage": "Sprache (Language)",
 	"sobersailor.name": "Sober Sailor"
 }

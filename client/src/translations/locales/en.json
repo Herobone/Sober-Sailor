@@ -53,6 +53,9 @@
 	"general.sips": "Sips",
 	"general.welcome": "Welcome",
 	"navigation.myprofile": "My Profile",
+	"navigation.credits": "Credits",
+	"navigation.information": "Information",
+	"navigation.cookies": "Cookies",
 	"settings.labels.selectlanguage": "Language",
 	"sobersailor.name": "Sober Sailor - The Online Party Game"
 }
