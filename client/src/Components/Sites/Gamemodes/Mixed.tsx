@@ -252,8 +252,8 @@ class MixedClass extends React.Component<Props, State> {
     submitAndReset = (): void => {
         const resultsWere = this.state.result;
         if (resultsWere) {
-            GameManager.afterEval(resultsWere)
-                .then(() =>
+            GameManager.submitPenaltyAndReset(resultsWere)
+                .then(() => {
                     this.setState({
                         result: undefined,
                     }),

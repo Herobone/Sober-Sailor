@@ -458,7 +458,7 @@ export class GameManager {
      * Increment sips and reset answer
      * @param results   The results that were calculated for the given round
      */
-    static afterEval(results: Player[]): Promise<void> {
+    static submitPenaltyAndReset(results: Player[]): Promise<void> {
         let sipsIHaveToTake = 0;
         const auth = firebase.auth();
         const user = auth.currentUser;
