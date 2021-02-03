@@ -362,6 +362,9 @@ export class GameManager {
         });
     }
 
+    /**
+     * Evaluates the Answers of all Players and distributes sips according to who was voted the most
+     * */
     static evaluateAnswers(): Promise<Player[]> {
         return new Promise<Player[]>((resolve, reject) => {
             GameManager.getAllPlayers()
@@ -451,32 +454,27 @@ export class GameManager {
         });
     }
 
-    static afterEval(results: Player[]): Promise<unknown> {
+    /**
+     * Increment sips and reset answer
+     * @param results   The results that were calculated for the given round
+     */
+    static afterEval(results: Player[]): Promise<void> {
         let sipsIHaveToTake = 0;
         const auth = firebase.auth();
         const user = auth.currentUser;
-        return new Promise((resolve, reject) => {
-            if (!user) {
-                reject();
-                return;
-            }
+        if (!user) {
+            throw new Error("Unauthenticated call to protected function!");
+        }
 
-            const { uid } = user;
-            results.forEach((player: Player) => {
-                if (player.uid === uid) {
-                    sipsIHaveToTake = player.sips;
-                }
-            });
-            GameManager.getMyData()
-                .then((data: Player) => {
-                    const sipsToSubmit = data.sips + sipsIHaveToTake;
-                    return GameManager.getPlayer(uid).update({
-                        sips: sipsToSubmit,
-                        answer: null,
-                    });
-                })
-                .then(resolve)
-                .catch(reject);
+        const { uid } = user;
+        results.forEach((player: Player) => {
+            if (player.uid === uid) {
+                sipsIHaveToTake = player.sips;
+            }
+        });
+        return GameManager.getPlayer(uid).update({
+            sips: firebase.firestore.FieldValue.increment(sipsIHaveToTake),
+            answer: null,
         });
     }
 }
