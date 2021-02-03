@@ -19,7 +19,8 @@
 import React, { forwardRef, PropsWithChildren, ReactElement, useEffect, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { GameManager } from "../helper/gameManager";
-import { Player } from "../helper/models/Player";
+import { useAlert } from "../Components/Functional/AlertProvider";
+import { Alerts } from "../helper/AlertTypes";
 
 interface Props {
     question: string;
@@ -32,12 +33,8 @@ type WhoWouldRatherHandles = {
 export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
     (props: PropsWithChildren<Props>, ref): JSX.Element => {
         const [inputLock, setInputLock] = useState(true);
-        const [players, setPlayers] = useState<Player[]>([]);
         const [answer, setAnswer] = useState<string | null>(null);
-
-        useEffect(() => {
-            GameManager.getAllPlayers().then(setPlayers).catch(console.error);
-        }, []);
+        const { createAlert } = useAlert();
 
         useEffect(() => {
             setInputLock(true);
@@ -53,20 +50,27 @@ export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
             lockInput,
         }));
 
+        const plt = GameManager.getPlayerLookupTable();
+        if (!plt) {
+            createAlert(Alerts.WARNING, "No PLT stored! Reload Page!");
+            return <div>ERROR</div>;
+        }
+
         const values: ReactElement[] = [];
-        players.forEach((element: Player) => {
+        plt.playerUidMap.forEach((nickname: string, uid: string) => {
             values.push(
-                <div key={element.uid}>
+                // eslint-disable-next-line react/no-array-index-key
+                <div key={uid}>
                     <button
                         className="wwr-player-select"
                         type="submit"
                         onClick={() => {
-                            GameManager.setAnswer(element.uid).catch(console.error);
-                            setAnswer(element.nickname);
+                            GameManager.setAnswer(uid).catch(console.error);
+                            setAnswer(nickname);
                             setInputLock(true);
                         }}
                     >
-                        {element.nickname}
+                        {nickname}
                     </button>
                     <br />
                 </div>,
