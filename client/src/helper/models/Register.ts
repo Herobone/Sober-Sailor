@@ -16,16 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { Util } from "../Util";
 
 export interface IRegister {
     playerUidMap: Map<string, string>;
-}
-
-interface IRegisterExternal {
-    playerUidMap: { [key: string]: string };
 }
 
 export class Register implements IRegister {
@@ -43,22 +37,18 @@ export class Register implements IRegister {
         return new Register(Util.objToStrMap(toDeserialize));
     }
 
+    /**
+     * Initialize new Register with one entry
+     * @param uid   Player UID
+     * @param name  Player Name
+     */
+    static init(uid: string, name: string): Register {
+        const map = new Map<string, string>();
+        map.set(uid, name);
+        return new Register(map);
+    }
+
     static parse(toParse: string): Register {
         return Register.deserialize(JSON.parse(toParse));
     }
 }
-
-export const registerConverter = {
-    toFirestore(player: Register): firebase.firestore.DocumentData {
-        return {
-            playerUidMap: Util.strMapToObj(player.playerUidMap),
-        };
-    },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IRegisterExternal>,
-        options: firebase.firestore.SnapshotOptions,
-    ): Register {
-        const data = snapshot.data(options);
-        return new Register(Util.objToStrMap(data.playerUidMap));
-    },
-};

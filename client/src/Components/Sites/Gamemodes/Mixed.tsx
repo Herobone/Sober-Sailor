@@ -44,7 +44,6 @@ import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";
 import { Task } from "../../../helper/models/task";
-import { Register } from "../../../helper/models/Register";
 import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
@@ -113,7 +112,7 @@ class MixedClass extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
-        GameManager.joinGame(this.gameEvent, this.playerEvent).catch(console.error);
+        GameManager.joinGame(this.gameEvent).then(this.updateLeaderboard).catch(console.error);
         GameManager.amIHost()
             .then((host): void => {
                 return this.setState({ isHost: host });
@@ -197,6 +196,9 @@ class MixedClass extends React.Component<Props, State> {
     gameEvent = (doc: firebase.firestore.DocumentSnapshot<Game>): void => {
         const data = doc.data();
         if (data) {
+            GameManager.updatePlayerLookupTable(doc);
+            // this.updateLeaderboard();
+
             if (
                 this.state.nextTask !== data.currentTask ||
                 this.state.taskType !== data.type ||
@@ -268,11 +270,6 @@ class MixedClass extends React.Component<Props, State> {
         if (tud) {
             tud.reset();
         }
-    };
-
-    playerEvent = (doc: firebase.firestore.DocumentSnapshot<Register>): void => {
-        GameManager.updatePlayerLookupTable(doc);
-        this.updateLeaderboard();
     };
 
     randomButtonClick = (): void => {

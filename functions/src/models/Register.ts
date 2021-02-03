@@ -1,9 +1,6 @@
-import * as functions from "firebase-functions";
-import FirestoreUtil from "../helper/FirestoreUtil";
-
-/*****************************
+/** ***************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2021.
+ * Copyright (c) 2020.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +15,28 @@ import FirestoreUtil from "../helper/FirestoreUtil";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import Util from "../helper/Util";
 
-export const onPlayerJoinHandler = async (
-  snapshot: functions.firestore.QueryDocumentSnapshot,
-  context: functions.EventContext
-) => {
-  const gameData = await FirestoreUtil.getGameData(context.params.gameID);
-  const playerData = snapshot.data();
+export interface IRegister {
+  playerUidMap: Map<string, string>;
+}
 
-  if (!gameData) {
-    throw new Error("Data was missing");
+export class Register implements IRegister {
+  constructor(readonly playerUidMap: Map<string, string>) {}
+
+  serialize(): { [key: string]: string } {
+    return Util.strMapToObj(this.playerUidMap);
   }
 
-  gameData.register.addPlayer(context.params.playerID, playerData.nickname);
+  addPlayer(uid: string, name: string): void {
+    this.playerUidMap.set(uid, name);
+  }
 
-  await FirestoreUtil.updateRegister(context.params.gameID, gameData);
+  removePlayer(uid: string): void {
+    this.playerUidMap.delete(uid);
+  }
 
-  return null;
-};
+  static deserialize(toDeserialize: { [key: string]: string }): Register {
+    return new Register(Util.objToStrMap(toDeserialize));
+  }
+}

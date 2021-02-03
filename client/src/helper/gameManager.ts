@@ -22,7 +22,7 @@ import "firebase/functions";
 import { Util } from "./Util";
 import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
-import { Register, registerConverter } from "./models/Register";
+import { Register } from "./models/Register";
 import { PlayerList } from "./models/CustomTypes";
 
 export class GameManager {
@@ -33,7 +33,7 @@ export class GameManager {
         }
 
         console.warn("LocalStorage has no PLT stored! Try again!");
-        GameManager.getRegister().get().then(GameManager.updatePlayerLookupTable).catch(console.error);
+        GameManager.getGame().get().then(GameManager.updatePlayerLookupTable).catch(console.error);
 
         return null;
     }
@@ -61,10 +61,10 @@ export class GameManager {
         return players;
     }
 
-    static updatePlayerLookupTable(doc: firebase.firestore.DocumentSnapshot<Register>): void {
+    static updatePlayerLookupTable(doc: firebase.firestore.DocumentSnapshot<Game>): void {
         const data = doc.data();
         if (data) {
-            localStorage.setItem("playerLookupTable", data.stringify());
+            localStorage.setItem("playerLookupTable", data.register.stringify());
         }
     }
 
@@ -86,14 +86,18 @@ export class GameManager {
                 return;
             }
 
-            const { uid } = user;
+            const { uid, displayName } = user;
             const lenOfUID = uid.length;
             const randomSuffix = Util.randomCharOrNumberSequence(lenOfUID / 5 - 2);
             const gameID = uid.slice(0, 2) + randomSuffix;
             const gameRef = GameManager.getGameByID(gameID);
             const now: Date = new Date();
+            if (!displayName) {
+                throw new Error("Display name missing");
+            }
+            const reg: Register = Register.init(uid, displayName);
             gameRef
-                .set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now))
+                .set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now, reg))
                 .then(() => resolve(gameID))
                 .catch(reject);
         });
@@ -129,21 +133,13 @@ export class GameManager {
         return db.collection(gameID).doc("general");
     }
 
-    static getRegister(): firebase.firestore.DocumentReference<Register> {
-        return GameManager.getGameCol().doc("register").withConverter(registerConverter);
-    }
-
-    static joinGame(
-        gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
-        playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void,
-    ): Promise<unknown> {
-        return GameManager.joinGameP(GameManager.getGameID(), gameEvent, playerEvent);
+    static joinGame(gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void): Promise<unknown> {
+        return GameManager.joinGameP(GameManager.getGameID(), gameEvent);
     }
 
     private static joinGameP(
         gameID: string,
         gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
-        playerEvent: (doc: firebase.firestore.DocumentSnapshot<Register>) => void,
     ): Promise<unknown> {
         const auth = firebase.auth();
         const user = auth.currentUser;
@@ -175,7 +171,6 @@ export class GameManager {
                 .then(resolve)
                 .catch(reject);
             gameRef.onSnapshot(gameEvent);
-            GameManager.getRegister().onSnapshot(playerEvent);
         });
     }
 

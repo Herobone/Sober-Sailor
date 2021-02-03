@@ -44,12 +44,9 @@ export const kickPlayerHandler = async (
 
     await FirestoreUtil.getPlayer(data.gameID, data.playerID).delete();
 
-    const registerRef = await FirestoreUtil.getRegisterRef(data.gameID);
-    const map = FirestoreUtil.createMap(registerRef);
+    gameData.register.removePlayer(data.playerID);
 
-    map.delete(data.playerID);
-
-    await FirestoreUtil.updateRegister(data.gameID, map);
+    await FirestoreUtil.updateRegister(data.gameID, gameData);
   } else {
     throw new functions.https.HttpsError(
       "unauthenticated",

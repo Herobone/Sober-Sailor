@@ -1,6 +1,6 @@
 import { playerConverter } from "../models/Player";
 import * as admin from "firebase-admin";
-import { gameConverter } from "../models/Game";
+import { Game, gameConverter } from "../models/Game";
 import Util from "./Util";
 
 export default class FirestoreUtil {
@@ -29,12 +29,10 @@ export default class FirestoreUtil {
     return playerUid;
   }
 
-  static async updateRegister(gameID: string, playerMap: Map<string, string>) {
-    if (playerMap.size > 0) {
-      await FirestoreUtil.getRegister(gameID).set({
-        playerUidMap: Util.strMapToObj(playerMap),
-      });
-    }
+  static async updateRegister(gameID: string, game: Game) {
+    await FirestoreUtil.getGameDoc(gameID).update({
+      playerUidMap: game.register.serialize(),
+    });
   }
 
   static getRegister(gameID: string) {
