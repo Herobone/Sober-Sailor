@@ -122,7 +122,7 @@ class MixedClass extends React.Component<Props, State> {
     }
 
     setTask = (taskType: Task, target: PlayerList, penalty = 0): void => {
-        console.log(target);
+        console.log({ task: taskType, target, penalty });
         if (taskType.id === "tictactoe") {
             GameManager.getGame()
                 .update({
@@ -141,9 +141,6 @@ class MixedClass extends React.Component<Props, State> {
             const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
             const localTarget = target ? target[0] : null;
 
-            this.setState({
-                target: localTarget,
-            });
             getRandomTask(taskType.id, lang)
                 .then(
                     (task): Promise<void> => {
@@ -231,12 +228,11 @@ class MixedClass extends React.Component<Props, State> {
                     this.updateLeaderboard();
                 } else {
                     GameManager.evaluateAnswers()
-                        .then((result) => {
+                        .then((result) =>
                             this.setState({
                                 result,
-                            });
-                            return Promise.resolve();
-                        })
+                            }),
+                        )
                         .catch(console.error);
                 }
             }
