@@ -68,6 +68,11 @@ export class Util {
         return obj[Util.random(0, obj.length)];
     }
 
+    static getDateIn(years = 0, months = 0, days = 0): Date {
+        const d = new Date();
+        return new Date(d.getFullYear() + years, d.getMonth() + months, d.getDate() + days);
+    }
+
     static countOccurences<T>(array: T[]): Map<T, number> {
         const content: T[] = [];
         const count: number[] = [];

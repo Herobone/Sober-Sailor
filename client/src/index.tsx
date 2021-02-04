@@ -22,14 +22,17 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
+import "firebase/analytics";
+import "firebase/performance";
 import * as serviceWorker from "./serviceWorker";
 import { config } from "./helper/config";
 import { App } from "./App";
+import { Dough } from "./helper/Dough";
 
 // Initialize Firebase with the config
 // Configure in helper/config.ts
 firebase.initializeApp(config);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.error);
 
 // If running local use Emulators for testing!
 // Make sure to start those with "firebase emulators:start"
@@ -38,6 +41,8 @@ if (window.location.hostname === "localhost" && process.env.NODE_ENV !== "produc
     firebase.auth().useEmulator("http://localhost:9099");
     firebase.functions().useEmulator("localhost", 5001);
 }
+
+Dough.startAnalytics();
 
 ReactDOM.render(
     <App />,
