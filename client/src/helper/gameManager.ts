@@ -296,7 +296,7 @@ export class GameManager {
                         }
 
                         console.log("No players left! Closing!");
-                        const closeGame = firebase.app().functions("europe-west2").httpsCallable("closeGame");
+                        const closeGame = firebase.app().functions("europe-west1").httpsCallable("closeGame");
                         return closeGame({ gameID: GameManager.getGameID() });
                     },
                 )
