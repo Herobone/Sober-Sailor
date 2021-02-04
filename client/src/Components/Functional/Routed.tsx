@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
@@ -25,13 +27,60 @@ import { Mixed } from "../Sites/Gamemodes/Mixed";
 import { GameProvider } from "./GameProvider";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
+import { Dough } from "../../helper/Dough";
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
 
+    const [cookieNotice, setCookieNotice] = useState(false);
+
+    useEffect(() => {
+        setCookieNotice(!Dough.isDoughPresent());
+    }, []);
+
     return (
         <div className={classes.root}>
             <Router>
+                <Dialog
+                    open={cookieNotice}
+                    onClose={() => console.warn("Can't close on click away")}
+                    aria-labelledby="cookie-notice-title"
+                    aria-describedby="cookie-notice-description"
+                >
+                    <DialogTitle id="cookie-notice-title">Allow Cookies</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="cookie-notice-description">
+                            Let Google help apps determine location. This means sending anonymous location data to
+                            Google, even when no apps are running.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => {
+                                setCookieNotice(false);
+                                Dough.makeDough([]);
+                            }}
+                            color="secondary"
+                            size="small"
+                        >
+                            Only necessary
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setCookieNotice(false);
+                                Dough.makeDough(["analytics", "marketing"]);
+                                Dough.startAnalytics();
+                            }}
+                            color="primary"
+                            startIcon={<CheckCircleIcon />}
+                            variant="contained"
+                            size="large"
+                            autoFocus
+                        >
+                            Allow All
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <GlobalOverlay />
 
                 <Switch>
