@@ -49,7 +49,7 @@ export function GlobalOverlay(): JSX.Element {
                     timeout: 500,
                 }}
             >
-                <Paper elevation={3} className={classes.settingsModal}>
+                <Paper elevation={5} className={classes.settingsModal}>
                     <Fade in={settingsShown}>
                         <div className={classes.settingsModal}>
                             <Settings />
@@ -57,7 +57,6 @@ export function GlobalOverlay(): JSX.Element {
                     </Fade>
                 </Paper>
             </Modal>
-            <Backdrop open={speedDialShown} />
             <SpeedDial
                 ariaLabel="SpeedDial tooltip example"
                 className={classes.settingsButton}
@@ -108,6 +107,8 @@ export function GlobalOverlay(): JSX.Element {
                     }}
                 />
             </SpeedDial>
+
+            <Backdrop open={speedDialShown} />
         </>
     );
 }
