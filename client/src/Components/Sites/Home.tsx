@@ -46,7 +46,7 @@ class HomeClass extends PureComponent<Props, State> {
                     variant="outlined"
                     color="secondary"
                     component={Link}
-                    to="/mixed"
+                    to="/play"
                     className={classes.gameSelectButton}
                     size="large"
                     fullWidth

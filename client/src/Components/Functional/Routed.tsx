@@ -24,7 +24,7 @@ import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
 import { Mixed } from "../Sites/Gamemodes/Mixed";
-import { GameProvider } from "./GameProvider";
+import { MixedGameProvider } from "./MixedGameProvider";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { Dough } from "../../helper/Dough";
@@ -85,14 +85,14 @@ export function Routed(): JSX.Element {
 
                 <Switch>
                     <Route
-                        path="/mixed/:gameID"
+                        path="/play/:gameID"
                         render={(props) => (
-                            <GameProvider gameID={props.match.params.gameID}>
+                            <MixedGameProvider gameID={props.match.params.gameID}>
                                 <Mixed />
-                            </GameProvider>
+                            </MixedGameProvider>
                         )}
                     />
-                    <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
+                    <Route path="/play" render={() => <MixedGameProvider />} />
 
                     <Route path="/login">
                         <Login />
