@@ -61,6 +61,15 @@ export class Game implements IGame {
         readonly created: Date,
         readonly register: Register,
     ) {}
+
+    static createEmpty(id: string, host: firebase.User): Game {
+        const { uid, displayName } = host;
+        if (!displayName) {
+            throw new Error("Display name missing");
+        }
+        const reg: Register = Register.init(uid, displayName);
+        return new Game(id, null, null, null, 0, 0, uid, false, false, new Date(), reg);
+    }
 }
 
 export const gameConverter = {
