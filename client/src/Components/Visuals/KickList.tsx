@@ -16,13 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/functions";
 import React, { forwardRef, ReactElement, useImperativeHandle, useState } from "react";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { Register } from "../../helper/models/Register";
 import { useAlert } from "../Functional/AlertProvider";
+import { Serverless } from "../../helper/Serverless";
 
 interface KickPlayer {
     gameID: string;
@@ -70,11 +69,7 @@ export const KickList = forwardRef<KickListHandles>(
                                         gameID: GameManager.getGameID(),
                                         playerID: uid,
                                     };
-                                    const kickPlayer = firebase
-                                        .app()
-                                        .functions("europe-west1")
-                                        .httpsCallable("kickPlayer");
-                                    kickPlayer(callData)
+                                    Serverless.callFunction("kickPlayer")(callData)
                                         .then(() => setShown(false))
                                         .catch(console.warn);
                                 }}

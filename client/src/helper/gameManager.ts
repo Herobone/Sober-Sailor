@@ -24,6 +24,7 @@ import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
 import { Register } from "./models/Register";
 import { PlayerList } from "./models/CustomTypes";
+import { Serverless } from "./Serverless";
 
 export class GameManager {
     static getPlayerLookupTable(): Register | null {
@@ -296,8 +297,7 @@ export class GameManager {
                         }
 
                         console.log("No players left! Closing!");
-                        const closeGame = firebase.app().functions("europe-west1").httpsCallable("closeGame");
-                        return closeGame({ gameID: GameManager.getGameID() });
+                        return Serverless.callFunction("closeGame")({ gameID: GameManager.getGameID() });
                     },
                 )
                 .then(resolve)
