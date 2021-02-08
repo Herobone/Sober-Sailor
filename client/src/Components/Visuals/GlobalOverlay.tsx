@@ -1,4 +1,4 @@
-import { Backdrop, Fade, Modal } from "@material-ui/core";
+import { Backdrop, Fade, Modal, Paper } from "@material-ui/core";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import { SpeedDialAction } from "@material-ui/lab";
@@ -44,15 +44,18 @@ export function GlobalOverlay(): JSX.Element {
                     setSpeedDialShown(false);
                 }}
                 closeAfterTransition
+                BackdropComponent={Backdrop}
                 BackdropProps={{
                     timeout: 500,
                 }}
             >
-                <Fade in={settingsShown}>
-                    <div className={classes.settingsModal}>
-                        <Settings />
-                    </div>
-                </Fade>
+                <Paper elevation={3} className={classes.settingsModal}>
+                    <Fade in={settingsShown}>
+                        <div className={classes.settingsModal}>
+                            <Settings />
+                        </div>
+                    </Fade>
+                </Paper>
             </Modal>
             <Backdrop open={speedDialShown} />
             <SpeedDial

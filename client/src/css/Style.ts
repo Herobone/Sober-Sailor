@@ -47,11 +47,20 @@ export const DefaultStyle = (theme: Theme) =>
             right: theme.spacing(2),
         },
         settingsModal: {
-            width: "60%",
+            width: "70%",
             [theme.breakpoints.down("sm")]: {
                 width: "90%",
             },
+            paddingTop: theme.spacing(0.1),
+            paddingBottom: theme.spacing(0.1),
+            paddingRight: theme.spacing(0.2),
+            paddingLeft: theme.spacing(0.2),
             margin: "5% auto 15% auto", // 5% from the top, 15% from the bottom and centered
+        },
+
+        langSelect: {
+            margin: theme.spacing(1),
+            minWidth: theme.spacing(25),
         },
 
         margin: {
