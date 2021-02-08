@@ -30,7 +30,7 @@ module.exports = {
         // No jsx extension: https://github.com/facebook/create-react-app/issues/87#issuecomment-234627904
         "react/jsx-filename-extension": "off",
         // Use function hoisting to improve code readability
-        "no-use-before-define": ["error", { functions: false, classes: true, variables: true }],
+        "no-use-before-define": "off",
         // Makes no sense to allow type inferrence for expression parameters, but require typing the response
         "@typescript-eslint/explicit-function-return-type": [
             "error",
@@ -54,8 +54,6 @@ module.exports = {
             },
         ],
         "@typescript-eslint/no-empty-interface": "off",
-        "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": ["error"],
         "promise/no-return-wrap": "off",
         "no-console": "off",
         "jsx-a11y/label-has-associated-control": [
@@ -69,8 +67,8 @@ module.exports = {
         "no-plusplus": "off",
         "unicorn/no-null": "off",
         "import/no-cycle": "off",
-        "import/no-default-export": "warn",
         "import/order": "warn",
         "react/static-property-placement": "off",
+        "react/require-default-props": "off",
     },
 };
