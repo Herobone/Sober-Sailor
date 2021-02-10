@@ -362,7 +362,7 @@ class MixedClass extends React.Component<Props, State> {
                                         </h2>
                                     </Grid>
                                     {!this.state.pollState && (
-                                        <Grid item xs>
+                                        <Grid item xs className={classes.controlButton}>
                                             <Tooltip
                                                 title="Next Question"
                                                 TransitionComponent={Zoom}
@@ -374,12 +374,12 @@ class MixedClass extends React.Component<Props, State> {
                                                     className={classes.hostButton}
                                                     onClick={this.randomButtonClick}
                                                 >
-                                                    <QueuePlayNextIcon />
+                                                    <QueuePlayNextIcon className={classes.controlButtonIcon} />
                                                 </IconButton>
                                             </Tooltip>
                                         </Grid>
                                     )}
-                                    <Grid item xs>
+                                    <Grid item xs className={classes.controlButton}>
                                         <Tooltip
                                             title={<FormattedMessage id="actions.host.transfer" />}
                                             TransitionComponent={Zoom}
@@ -393,12 +393,12 @@ class MixedClass extends React.Component<Props, State> {
                                                     GameManager.transferHostShip().catch(console.error);
                                                 }}
                                             >
-                                                <TransferWithinAStationIcon />
+                                                <TransferWithinAStationIcon className={classes.controlButtonIcon} />
                                             </IconButton>
                                         </Tooltip>
                                     </Grid>
                                     {!this.state.pollState && (
-                                        <Grid item xs>
+                                        <Grid item xs className={classes.controlButton}>
                                             <Tooltip
                                                 title={<FormattedMessage id="actions.host.startpoll" />}
                                                 TransitionComponent={Zoom}
@@ -412,13 +412,12 @@ class MixedClass extends React.Component<Props, State> {
                                                         GameManager.setPollState(true).catch(console.error);
                                                     }}
                                                 >
-                                                    <PollIcon />
+                                                    <PollIcon className={classes.controlButtonIcon} />
                                                 </IconButton>
                                             </Tooltip>
                                         </Grid>
                                     )}
-                                    <br />
-                                    <Grid item xs>
+                                    <Grid item xs className={classes.controlButton}>
                                         <Tooltip
                                             title={<FormattedMessage id="actions.host.kick" />}
                                             TransitionComponent={Zoom}
@@ -435,16 +434,14 @@ class MixedClass extends React.Component<Props, State> {
                                                     }
                                                 }}
                                             >
-                                                <FlightTakeoffIcon />
+                                                <FlightTakeoffIcon className={classes.controlButtonIcon} />
                                             </IconButton>
                                         </Tooltip>
                                     </Grid>
                                 </Grid>
                             </Paper>
                         )}
-                        <Paper className={classes.sideArea}>
-                            <Leaderboard ref={this.leaderboardRef} />
-                        </Paper>
+                        <Leaderboard ref={this.leaderboardRef} />
 
                         <KickList ref={this.kickListRef} />
                     </Grid>

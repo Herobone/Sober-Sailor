@@ -119,6 +119,24 @@ export const DefaultStyle = (theme: Theme) =>
             margin: theme.spacing(0.3),
             fontSize: 20,
         },
+
+        controlButton: {
+            [theme.breakpoints.up("md")]: {
+                minHeight: theme.spacing(10),
+            },
+        },
+        controlButtonIcon: {
+            [theme.breakpoints.down("sm")]: {
+                fontSize: "min(40px, 10vw)",
+            },
+            [theme.breakpoints.between("sm", "xs")]: {
+                fontSize: "6vw",
+                backgroundColor: "red",
+            },
+            [theme.breakpoints.up("md")]: {
+                fontSize: "min(3vw, 40px)",
+            },
+        },
         hostButton: {
             textAlign: "center",
         },

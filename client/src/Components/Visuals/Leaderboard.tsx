@@ -18,6 +18,7 @@
 
 import React, { forwardRef, ReactElement, useImperativeHandle } from "react";
 import { FormattedMessage } from "react-intl";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { GameManager } from "../../helper/gameManager";
 import { playerConverter } from "../../helper/models/Player";
 import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
@@ -62,11 +63,13 @@ export const Leaderboard = forwardRef<LeaderboardHandles>(
             let counter = 1;
             leaderboard.forEach((value: number, key: string) => {
                 values.push(
-                    <tr key={`leaderboard${counter}`}>
-                        <td className={classes.leaderboardPlace}>{counter}</td>
-                        <td className="leaderboard-nickname">{key}</td>
-                        <td className="leaderboard-score">{value}</td>
-                    </tr>,
+                    <TableRow key={`leaderboard${counter}`}>
+                        <TableCell align="center">{counter}</TableCell>
+                        <TableCell className="leaderboard-nickname">{key}</TableCell>
+                        <TableCell align="center" className="leaderboard-score">
+                            {value}
+                        </TableCell>
+                    </TableRow>,
                 );
                 counter++;
             });
@@ -75,27 +78,27 @@ export const Leaderboard = forwardRef<LeaderboardHandles>(
         };
 
         return (
-            <>
-                <h1 className="leaderboard-header">
+            <TableContainer className={classes.sideArea} component={Paper}>
+                <h1 className={classes.sideHeading}>
                     <FormattedMessage id="elements.leaderboard" />
                 </h1>
-                <table className="leaderboard">
-                    <thead>
-                        <tr>
-                            <th className="leaderboard-header-rank">
+                <Table className="leaderboard">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell className="leaderboard-header-rank">
                                 <FormattedMessage id="elements.general.rank" />
-                            </th>
-                            <th className="leaderboard-header-nickname">
+                            </TableCell>
+                            <TableCell className="leaderboard-header-nickname">
                                 <FormattedMessage id="general.nickname" />
-                            </th>
-                            <th className="leaderboard-header-score">
+                            </TableCell>
+                            <TableCell className="leaderboard-header-score">
                                 <FormattedMessage id="general.sips" />
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>{prepareLeaderboard()}</tbody>
-                </table>
-            </>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>{prepareLeaderboard()}</TableBody>
+                </Table>
+            </TableContainer>
         );
     },
 );

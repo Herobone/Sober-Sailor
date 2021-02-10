@@ -15,13 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import {makeStyles} from "@material-ui/styles";
-import {Theme} from "@material-ui/core";
+import { makeStyles } from "@material-ui/styles";
+import { Theme } from "@material-ui/core";
 
 export const useLeaderboardStyles = makeStyles((theme: Theme) => ({
     leaderboardPlace: {
         color: "red",
         backgroundColor: "blue",
         padding: theme.spacing(1),
-    }
+    },
+    sideHeading: {
+        textAlign: "center",
+        margin: theme.spacing(0.3),
+        fontSize: 20,
+    },
+    sideArea: {
+        width: "100%",
+        padding: theme.spacing(0.5),
+        marginBottom: theme.spacing(0.5),
+    },
 }));
