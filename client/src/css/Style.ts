@@ -148,6 +148,13 @@ export const DefaultStyle = (theme: Theme) =>
         progressBar: {
             width: "100%",
         },
+
+        resultTable: {
+            width: "97%",
+            paddingLeft: "3%",
+            paddingTop: "3%",
+            paddingBottom: "2%",
+        },
     });
 
 export const useDefaultStyles = makeStyles(DefaultStyle);

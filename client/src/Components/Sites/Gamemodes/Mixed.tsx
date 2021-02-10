@@ -442,7 +442,6 @@ class MixedClass extends React.Component<Props, State> {
                             </Paper>
                         )}
                         <Leaderboard ref={this.leaderboardRef} />
-
                         <KickList ref={this.kickListRef} />
                     </Grid>
                 </Grid>
