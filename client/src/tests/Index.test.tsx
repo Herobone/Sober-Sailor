@@ -16,59 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-use-before-define
 import React from "react";
 import { render } from "@testing-library/react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { act as domAct } from "react-dom/test-utils";
-import { unmountComponentAtNode } from "react-dom";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
-import { SnackbarProvider } from "notistack";
 import { LanguageContainer } from "../translations/LanguageContainer";
 import { config } from "../helper/config";
-import { AlertProvider } from "../Components/Functional/AlertProvider";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
 import { responsiveTheme } from "../css/Theme";
 
 firebase.initializeApp(config);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
-
-let container: HTMLDivElement | undefined;
-
-beforeEach(() => {
-    // setup a DOM element as a render target
-    container = document.createElement("div");
-    document.body.append(container);
-});
-
-afterEach(() => {
-    // cleanup on exiting
-    if (container) unmountComponentAtNode(container);
-    container?.remove();
-    container = undefined;
-});
-
-// eslint-disable-next-line jest/expect-expect
-test("Renders the App without GAPI", () => {
-    domAct(() => {
-        render(
-            <React.StrictMode>
-                <MuiThemeProvider theme={responsiveTheme}>
-                    <CssBaseline />
-                    <LanguageContainer>
-                        <SnackbarProvider maxSnack={4}>
-                            <AlertProvider>
-                                <Routed />
-                            </AlertProvider>
-                        </SnackbarProvider>
-                    </LanguageContainer>
-                </MuiThemeProvider>
-            </React.StrictMode>,
-        );
-    });
-});
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE).catch(console.warn);
 
 test("Renders the Router and looks for Alerts", () => {
     const neverCallThis = jest.fn();
@@ -88,6 +49,7 @@ test("Renders the Router and looks for Alerts", () => {
         render(
             <React.StrictMode>
                 <MuiThemeProvider theme={responsiveTheme}>
+                    <CssBaseline />
                     <AlertContext.Provider value={{ createAlert: alertFN }}>
                         <LanguageContainer>
                             <Routed />
