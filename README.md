@@ -1,7 +1,7 @@
 # Sober Sailor ⛵
 
 Sober Sailor is an online drinking game. It's inspiration was that during the lockdown in 2020 the possibilities to meet
-with friends and have a little party were very limited. So we sat down and started planning and programming this game.
+with friends and have a little party were very limited (and also make our own version as a mixup of existing games and our own ideas). So we sat down and started planning and programming this game.
 
 ## Disclaimer ❗
 This game should be used responsibly! We are **not responsible** for any damage caused by this game!
@@ -15,9 +15,9 @@ Any persons or groups that might seem addressed by contents of this app are not 
 There is no intention in discriminating people and any associations are coincidental.
 
 ## To our future employers 😜
-This game might seem like a total waste of time, resources and our talents. And not to forget about the subject it's about.
-Let's have look at it this way: *While programming this game we learned valuable new skills and gathered experience in the
-languages and subjects needed for this masterpiece to work*.
+This game might seem like a total waste of time, resources and our talents. And not to forget about the subject it's about, which might seem like "the youth is only thinking about one thing".
+But let's have look at it this way: *While programming this game we learned valuable new skills and gathered experience in the
+languages and subjects needed for this masterpiece to work*. With our new, improved skillset, we now are really ready for sereous projects. But even though this app might seem useless, it's a lot more fun to learn programming and improving your own abilities on a project you really like and have the will to participate in and that, in conclusion, is all we thought about.
 
 ## Issues / Feature Requests
 If you should encounter issues with the Web App or any other Apps please report them in the Issues tab [over there](https://github.com/Herobone/Sober-Sailor/issues).
