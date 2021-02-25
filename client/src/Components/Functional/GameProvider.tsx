@@ -72,6 +72,7 @@ class GameProviderClass extends Component<Props, State> {
             firebase
                 .auth()
                 .signInAnonymously()
+                .then((user) => user.user?.updateProfile({ displayName: "Developer" }))
                 .catch((error) => {
                     this.context.createAlert(Alerts.ERROR, error.message);
                     console.error(error.message);
@@ -141,7 +142,7 @@ class GameProviderClass extends Component<Props, State> {
                     </h1>
                     <Button
                         variant="contained"
-                        color="secondary"
+                        color="primary"
                         className={classes.createGameButton}
                         onClick={this.createGame}
                         size="large"
