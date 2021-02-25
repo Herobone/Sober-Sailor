@@ -72,7 +72,6 @@ class GameProviderClass extends Component<Props, State> {
             firebase
                 .auth()
                 .signInAnonymously()
-                .then((user) => user.user?.updateProfile({ displayName: "Developer" }))
                 .catch((error) => {
                     this.context.createAlert(Alerts.ERROR, error.message);
                     console.error(error.message);

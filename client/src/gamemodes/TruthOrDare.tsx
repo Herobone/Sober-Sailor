@@ -96,10 +96,12 @@ export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
                         </Button>
                     </ButtonGroup>
                 )}
-                <h2 className={classes.textAtTheBottom}>
-                    {answer === false && <FormattedMessage id="elements.truthordare.drink" />}
-                    {answer && <FormattedMessage id="elements.truthordare.dare" />}
-                </h2>
+                {answer !== null && (
+                    <h2 className={classes.textAtTheBottom}>
+                        {answer === false && <FormattedMessage id="elements.truthordare.drink" />}
+                        {answer && <FormattedMessage id="elements.truthordare.dare" />}
+                    </h2>
+                )}
             </div>
         );
     },
