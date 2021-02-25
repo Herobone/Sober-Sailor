@@ -11,6 +11,7 @@
 	"account.descriptors.yourname": "Your Name",
 	"account.navigation.settings": "Settings",
 	"actions.game.create": "Create Game",
+	"actions.host.nextquestion": "Next Question",
 	"actions.host.kick": "Kick Player",
 	"actions.host.startpoll": "Start Poll",
 	"actions.host.transfer": "Transfer Host",
@@ -32,10 +33,10 @@
 	"elements.leaderboard.score": "Sips",
 	"elements.result.youranswer": "You answered {answer}!",
 	"elements.results": "Results",
-	"elements.tasks.notloaded": "No Task loaded",
+	"elements.tasks.notloaded": "Oh no, it seems there is no Task loaded! Go and load one to start playing!",
 	"elements.tictactoe.spectator": "spectator",
 	"elements.truthordare.dare": "I'll do it!",
-	"elements.truthordare.drink": "I'm gonna drink...",
+	"elements.truthordare.drink": "I better drink...",
 	"gamemodes.describeinoneword": "Describe in one Word",
 	"gamemodes.mixed": "Mixed",
 	"gamemodes.start": "Start Sailing",
@@ -48,7 +49,7 @@
 	"general.done": "Done!",
 	"general.nickname": "Nickname",
 	"general.placeholder": "Placeholder (EN)",
-	"general.seconds": "seconds",
+	"general.seconds": "seconds left",
 	"general.shouldnothappen": "Unknown Error! That should not have happened!",
 	"general.sips": "Sips",
 	"general.welcome": "Welcome",
@@ -57,5 +58,5 @@
 	"navigation.information": "Information",
 	"navigation.cookies": "Cookies",
 	"settings.labels.selectlanguage": "Language",
-	"sobersailor.name": "Sober Sailor - The Online Party Game"
+	"sobersailor.name": "Sober Sailor"
 }

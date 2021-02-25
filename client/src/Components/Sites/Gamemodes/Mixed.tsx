@@ -340,11 +340,16 @@ class MixedClass extends React.Component<Props, State> {
                             <FormattedMessage id="sobersailor.name" />
                         </div>
                     </Grid>
-                    <Grid item xs={12}>
-                        <span className="countdown-inner">{this.state.timer}</span>{" "}
-                        <FormattedMessage id="general.seconds" />
-                        <LinearProgress variant="determinate" value={(this.state.timer / this.state.maxTime) * 100} />
-                    </Grid>
+                    {this.state.timer !== 0 && (
+                        <Grid item xs={12}>
+                            <span className="countdown-inner">{this.state.timer}</span>{" "}
+                            <FormattedMessage id="general.seconds" />
+                            <LinearProgress
+                                variant="determinate"
+                                value={(this.state.timer / this.state.maxTime) * 100}
+                            />
+                        </Grid>
+                    )}
                     <Grid item xs={12} md={8} lg={9}>
                         <Paper>
                             {taskComponent}
@@ -364,7 +369,7 @@ class MixedClass extends React.Component<Props, State> {
                                     {!this.state.pollState && (
                                         <Grid item xs className={classes.controlButton}>
                                             <Tooltip
-                                                title="Next Question"
+                                                title={<FormattedMessage id="actions.host.nextquestion" />}
                                                 TransitionComponent={Zoom}
                                                 placement="bottom"
                                                 arrow
