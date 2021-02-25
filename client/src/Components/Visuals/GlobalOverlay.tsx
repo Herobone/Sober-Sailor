@@ -1,6 +1,6 @@
 import { Backdrop, Fade, Modal, Paper } from "@material-ui/core";
 import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
+import MenuOpenIcon from "@material-ui/lab/SpeedDialIcon";
 import { SpeedDialAction } from "@material-ui/lab";
 import { SettingsRounded } from "@material-ui/icons";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
@@ -60,7 +60,7 @@ export function GlobalOverlay(): JSX.Element {
             <SpeedDial
                 ariaLabel="SpeedDial tooltip example"
                 className={classes.settingsButton}
-                icon={<SpeedDialIcon />}
+                icon={<MenuOpenIcon />}
                 onClose={() => setSpeedDialShown(false)}
                 onOpen={() => setSpeedDialShown(true)}
                 open={speedDialShown}
