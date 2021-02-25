@@ -1,10 +1,10 @@
 {
   "name": "functions",
   "repository": {
-  "type": "git",
-  "url": "git+https://github.com/Herobone/Sober-Sailor.git",
-  "directory": "functions"
-},
+    "type": "git",
+    "url": "git+https://github.com/Herobone/Sober-Sailor.git",
+    "directory": "functions"
+  },
   "scripts": {
     "lint": "eslint \"src/**/*\"",
     "build": "tsc",
