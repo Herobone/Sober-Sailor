@@ -370,7 +370,7 @@ class MixedClass extends React.Component<Props, State> {
                                                 arrow
                                             >
                                                 <IconButton
-                                                    color="secondary"
+                                                    color="primary"
                                                     className={classes.hostButton}
                                                     onClick={this.randomButtonClick}
                                                 >
@@ -387,7 +387,7 @@ class MixedClass extends React.Component<Props, State> {
                                             arrow
                                         >
                                             <IconButton
-                                                color="secondary"
+                                                color="primary"
                                                 className={classes.hostButton}
                                                 onClick={() => {
                                                     GameManager.transferHostShip().catch(console.error);
@@ -406,7 +406,7 @@ class MixedClass extends React.Component<Props, State> {
                                                 arrow
                                             >
                                                 <IconButton
-                                                    color="secondary"
+                                                    color="primary"
                                                     className={classes.hostButton}
                                                     onClick={() => {
                                                         GameManager.setPollState(true).catch(console.error);
@@ -425,7 +425,7 @@ class MixedClass extends React.Component<Props, State> {
                                             arrow
                                         >
                                             <IconButton
-                                                color="secondary"
+                                                color="primary"
                                                 className={classes.hostButton}
                                                 onClick={() => {
                                                     const klRef = this.kickListRef.current;

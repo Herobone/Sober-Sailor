@@ -85,13 +85,13 @@ export const Leaderboard = forwardRef<LeaderboardHandles>(
                 <Table className="leaderboard">
                     <TableHead>
                         <TableRow>
-                            <TableCell className="leaderboard-header-rank">
+                            <TableCell className="leaderboard-header-rank" align="center">
                                 <FormattedMessage id="elements.general.rank" />
                             </TableCell>
                             <TableCell className="leaderboard-header-nickname">
                                 <FormattedMessage id="general.nickname" />
                             </TableCell>
-                            <TableCell className="leaderboard-header-score">
+                            <TableCell className="leaderboard-header-score" align="center">
                                 <FormattedMessage id="general.sips" />
                             </TableCell>
                         </TableRow>
