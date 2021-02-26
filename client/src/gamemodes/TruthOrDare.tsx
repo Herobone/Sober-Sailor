@@ -16,14 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { ButtonGroup } from "@material-ui/core";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
 import React, { forwardRef, PropsWithChildren, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
+import Button from "@material-ui/core/Button";
 import { GameManager } from "../helper/gameManager";
 import { Register } from "../helper/models/Register";
 import { SingleTargetRequest } from "../helper/models/SingleTarget";
+import { useTruthOrDareStyles } from "../css/TruthOrDareStyle";
 
 interface Props {
     question: string;
@@ -38,6 +41,7 @@ type TruthOrDareHandles = {
 export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
     (props: PropsWithChildren<Props>, ref): JSX.Element => {
         const [answer, setAnswer] = useState<boolean | null>(null);
+        const classes = useTruthOrDareStyles();
 
         const submitAnswer = (answerToSet: boolean): void => {
             setAnswer(answerToSet);
@@ -83,19 +87,21 @@ export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
                 />
                 <br />
                 {props.target === user.uid && answer === null && (
-                    <div className="target-area">
-                        <button type="submit" onClick={() => submitAnswer(true)}>
+                    <ButtonGroup variant="contained" color="primary" className={classes.buttonGroup}>
+                        <Button type="submit" onClick={() => submitAnswer(true)}>
                             <FormattedMessage id="elements.truthordare.dare" />
-                        </button>
-                        <button type="submit" onClick={() => submitAnswer(false)}>
+                        </Button>
+                        <Button type="submit" onClick={() => submitAnswer(false)}>
                             <FormattedMessage id="elements.truthordare.drink" />
-                        </button>
-                    </div>
+                        </Button>
+                    </ButtonGroup>
                 )}
-                <h2>
-                    {answer === false && <FormattedMessage id="elements.truthordare.drink" />}
-                    {answer && <FormattedMessage id="elements.truthordare.dare" />}
-                </h2>
+                {answer !== null && (
+                    <h2 className={classes.textAtTheBottom}>
+                        {answer === false && <FormattedMessage id="elements.truthordare.drink" />}
+                        {answer && <FormattedMessage id="elements.truthordare.dare" />}
+                    </h2>
+                )}
             </div>
         );
     },

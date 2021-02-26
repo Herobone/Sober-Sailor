@@ -1,6 +1,6 @@
-import { Backdrop, Fade, Modal } from "@material-ui/core";
+import { Backdrop, Fade, Modal, Paper } from "@material-ui/core";
 import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuOpenIcon from "@material-ui/icons/MenuOpen";
+import MenuOpenIcon from "@material-ui/lab/SpeedDialIcon";
 import { SpeedDialAction } from "@material-ui/lab";
 import { SettingsRounded } from "@material-ui/icons";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
@@ -44,17 +44,19 @@ export function GlobalOverlay(): JSX.Element {
                     setSpeedDialShown(false);
                 }}
                 closeAfterTransition
+                BackdropComponent={Backdrop}
                 BackdropProps={{
                     timeout: 500,
                 }}
             >
-                <Fade in={settingsShown}>
-                    <div className={classes.settingsModal}>
-                        <Settings />
-                    </div>
-                </Fade>
+                <Paper elevation={5} className={classes.settingsModal}>
+                    <Fade in={settingsShown}>
+                        <div className={classes.settingsModal}>
+                            <Settings />
+                        </div>
+                    </Fade>
+                </Paper>
             </Modal>
-            <Backdrop open={speedDialShown} />
             <SpeedDial
                 ariaLabel="SpeedDial tooltip example"
                 className={classes.settingsButton}
@@ -105,6 +107,8 @@ export function GlobalOverlay(): JSX.Element {
                     }}
                 />
             </SpeedDial>
+
+            <Backdrop open={speedDialShown} />
         </>
     );
 }

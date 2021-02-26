@@ -81,7 +81,6 @@ export function Routed(): JSX.Element {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <GlobalOverlay />
 
                 <Switch>
                     <Route
@@ -106,6 +105,8 @@ export function Routed(): JSX.Element {
                         <Home />
                     </Route>
                 </Switch>
+
+                <GlobalOverlay />
             </Router>
         </div>
     );

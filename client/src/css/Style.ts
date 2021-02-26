@@ -47,11 +47,20 @@ export const DefaultStyle = (theme: Theme) =>
             right: theme.spacing(2),
         },
         settingsModal: {
-            width: "60%",
+            width: "70%",
             [theme.breakpoints.down("sm")]: {
                 width: "90%",
             },
+            paddingTop: theme.spacing(0.1),
+            paddingBottom: theme.spacing(0.1),
+            paddingRight: theme.spacing(0.2),
+            paddingLeft: theme.spacing(0.2),
             margin: "5% auto 15% auto", // 5% from the top, 15% from the bottom and centered
+        },
+
+        langSelect: {
+            margin: theme.spacing(1),
+            minWidth: theme.spacing(25),
         },
 
         margin: {
@@ -110,6 +119,24 @@ export const DefaultStyle = (theme: Theme) =>
             margin: theme.spacing(0.3),
             fontSize: 20,
         },
+
+        controlButton: {
+            [theme.breakpoints.up("md")]: {
+                minHeight: theme.spacing(10),
+            },
+        },
+        controlButtonIcon: {
+            [theme.breakpoints.down("sm")]: {
+                fontSize: "min(40px, 10vw)",
+            },
+            [theme.breakpoints.between("sm", "xs")]: {
+                fontSize: "6vw",
+                backgroundColor: "red",
+            },
+            [theme.breakpoints.up("md")]: {
+                fontSize: "min(3vw, 40px)",
+            },
+        },
         hostButton: {
             textAlign: "center",
         },
@@ -120,6 +147,13 @@ export const DefaultStyle = (theme: Theme) =>
 
         progressBar: {
             width: "100%",
+        },
+
+        resultTable: {
+            width: "97%",
+            paddingLeft: "3%",
+            paddingTop: "3%",
+            paddingBottom: "2%",
         },
     });
 

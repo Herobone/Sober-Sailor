@@ -16,27 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper } from "@material-ui/core";
 import React, { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { Player } from "../../helper/models/Player";
+import { useDefaultStyles } from "../../css/Style";
 
 interface Props {
     result: Player[] | undefined;
 }
 
 export function ResultPage(props: Props): JSX.Element {
+    const classes = useDefaultStyles();
     const prepareResults = (): ReactElement[] => {
         const values: ReactElement[] = [];
         let counter = 1;
         if (props.result) {
             props.result.forEach((entry: Player) => {
                 values.push(
-                    <tr key={`rank${counter}`}>
-                        <td className="result-rank">{counter}</td>
-                        <td className="result-nickname">{entry.nickname}</td>
-                        <td className="result-their-answer">{entry.answer}</td>
-                        <td className="result-sips">{entry.sips}</td>
-                    </tr>,
+                    <TableRow key={`rank${counter}`}>
+                        <TableCell align="center" className="result-rank">
+                            {counter}
+                        </TableCell>
+                        <TableCell className="result-nickname">{entry.nickname}</TableCell>
+                        <TableCell className="result-their-answer">{entry.answer}</TableCell>
+                        <TableCell align="center" className="result-sips">
+                            {entry.sips}
+                        </TableCell>
+                    </TableRow>,
                 );
                 counter++;
             });
@@ -50,29 +57,31 @@ export function ResultPage(props: Props): JSX.Element {
     }
 
     return (
-        <div>
-            <h1 className="result-header">
-                <FormattedMessage id="elements.results" />
-            </h1>
-            <table className="result-table">
-                <thead>
-                    <tr>
-                        <th className="result-header-rank">
-                            <FormattedMessage id="elements.general.rank" />
-                        </th>
-                        <th className="result-header-nickname">
-                            <FormattedMessage id="general.nickname" />
-                        </th>
-                        <th className="result-header-their-answer">
-                            <FormattedMessage id="general.answer" />
-                        </th>
-                        <th className="result-header-sips">
-                            <FormattedMessage id="general.sips" />
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>{prepareResults()}</tbody>
-            </table>
+        <div className={classes.resultTable}>
+            <TableContainer component={Paper} elevation={5}>
+                <h2 className={classes.sideHeading}>
+                    <FormattedMessage id="elements.results" />
+                </h2>
+                <Table className="result-table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center" className="result-header-rank">
+                                <FormattedMessage id="elements.general.rank" />
+                            </TableCell>
+                            <TableCell className="result-header-nickname">
+                                <FormattedMessage id="general.nickname" />
+                            </TableCell>
+                            <TableCell className="result-header-their-answer">
+                                <FormattedMessage id="general.answer" />
+                            </TableCell>
+                            <TableCell align="center" className="result-header-sips">
+                                <FormattedMessage id="general.sips" />
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>{prepareResults()}</TableBody>
+                </Table>
+            </TableContainer>
         </div>
     );
 }

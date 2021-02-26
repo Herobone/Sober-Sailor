@@ -141,7 +141,7 @@ class GameProviderClass extends Component<Props, State> {
                     </h1>
                     <Button
                         variant="contained"
-                        color="secondary"
+                        color="primary"
                         className={classes.createGameButton}
                         onClick={this.createGame}
                         size="large"
