@@ -28,9 +28,11 @@ import { MixedGameProvider } from "./MixedGameProvider";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { Dough } from "../../helper/Dough";
+import { useGameProviderStlye } from "../../css/GameProvider";
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
+    const providerClasses = useGameProviderStlye();
 
     const [cookieNotice, setCookieNotice] = useState(false);
 
@@ -87,9 +89,11 @@ export function Routed(): JSX.Element {
                     <Route
                         path="/play/:gameID"
                         render={(props) => (
-                            <MixedGameProvider gameID={props.match.params.gameID}>
-                                <Mixed />
-                            </MixedGameProvider>
+                            <div className={providerClasses.centeraligned}>
+                                <MixedGameProvider gameID={props.match.params.gameID}>
+                                    <Mixed />
+                                </MixedGameProvider>
+                            </div>
                         )}
                     />
                     <Route path="/play" render={() => <MixedGameProvider />} />

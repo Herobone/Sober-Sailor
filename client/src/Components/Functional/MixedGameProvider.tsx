@@ -20,7 +20,7 @@ import React, { PropsWithChildren, useEffect, useState } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { FormattedMessage } from "react-intl";
-import { Fab, IconButton, TextField } from "@material-ui/core";
+import { CircularProgress, Fab, IconButton, TextField } from "@material-ui/core";
 import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
@@ -37,6 +37,8 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     const [name, setName] = useState("");
     const [user, setUser] = useState<firebase.User>();
 
+    const [userReady, setUserReady] = useState(false);
+
     // const { gameID } = props;
     const classes = useGameProviderStlye();
 
@@ -45,6 +47,14 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     } else {
         GameManager.removeLocalData();
     }
+
+    const updateReadyState = (): void => {
+        setUserReady(!!user && !!user.displayName && user.displayName.length >= 2);
+    };
+
+    useEffect((): void => {
+        updateReadyState();
+    }, [user]);
 
     useEffect((): void => {
         const { currentUser } = firebase.auth();
@@ -60,6 +70,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
         firebase.auth().onAuthStateChanged((authStateUser) => {
             console.info("Auth change");
             setUser(authStateUser || undefined);
+            updateReadyState();
         });
     }, []);
 
@@ -80,7 +91,15 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
             return;
         }
 
-        currentUser.updateProfile({ displayName: name }).catch(console.error);
+        currentUser
+            .updateProfile({ displayName: name })
+            .then(() => {
+                createAlert(Alerts.SUCCESS, "Name set");
+                setUser(currentUser);
+                updateReadyState();
+                return Promise.resolve();
+            })
+            .catch(console.error);
     };
 
     const prepareRunningGame = (): JSX.Element => {
@@ -132,14 +151,21 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
         );
     };
 
-    const userReady: boolean = !!user && !!user.displayName && user.displayName.length >= 2;
+    if (user && !userReady) {
+        return prepareNameSetter();
+    }
+
+    if (userReady && !props.gameID) {
+        return <GameCreator />;
+    }
+
+    if (userReady) {
+        return prepareRunningGame();
+    }
 
     return (
-        <div className={classes.centeraligned}>
-            {userReady && !props.gameID && <GameCreator />}
-            {userReady && prepareRunningGame()}
-            {user && (!user.displayName || user.displayName.length <= 1) && prepareNameSetter()}
-            {!user && <div>ERROR!</div>}
-        </div>
+        <>
+            <CircularProgress />
+        </>
     );
 }
