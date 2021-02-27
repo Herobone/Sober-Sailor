@@ -22,6 +22,7 @@ import "firebase/auth";
 import { FormattedMessage } from "react-intl";
 import { CircularProgress, Fab, IconButton, TextField } from "@material-ui/core";
 import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
+import Cookies from "universal-cookie";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useAlert } from "./AlertProvider";
@@ -58,7 +59,9 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
 
     useEffect((): void => {
         const { currentUser } = firebase.auth();
-        if (!currentUser) {
+        const cookies = new Cookies();
+        const globalAccount: boolean = cookies.get("globalAccount");
+        if (!currentUser && !globalAccount) {
             firebase
                 .auth()
                 .signInAnonymously()
