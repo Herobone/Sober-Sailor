@@ -1,22 +1,24 @@
 # Everything that changed in functions gets the backend tag
 Backend:
-  - any: ['functions/**/*.js','functions/**/*.ts']
+  - 'functions/**/*.js'
+  - 'functions/**/*.ts'
 
 # Everything that changed in client gets the frontend tag
 Frontend:
-  - any: ['client/**/*.tsx']
+  - 'client/**/*.tsx'
 
 Style:
-  - any: ['client/src/css/**/*']
+  - 'client/src/css/**/*'
 
 invalid:
-  - any: ['client/**/*.jsx']
+  - 'client/**/*.jsx'
 
 Tasks:
-  - any: ['tasks/**/*']
+  - 'tasks/**/*'
 
 Translation:
-  - any: ['client/src/translations/locales/*']
+  - 'client/src/translations/locales/*'
 
 Gamemode:
-  - any: ['client/src/gamemodes/**/*', 'client/src/Components/Sites/Gamemodes/**/*']
+  - 'client/src/gamemodes/**/*'
+  - 'client/src/Components/Sites/Gamemodes/**/*'
