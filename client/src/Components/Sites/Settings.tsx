@@ -18,18 +18,21 @@
 
 import React from "react";
 import { FormattedMessage } from "react-intl";
-import { Dropdown } from "../Visuals/Dropdown";
+import FormControl from "@material-ui/core/FormControl";
+import { InputLabel, MenuItem, Select } from "@material-ui/core";
 import { Column } from "../Visuals/Column";
-import { Util } from "../../helper/Util";
 import { useLanguageContext } from "../../translations/LanguageContainer";
+import { useDefaultStyles } from "../../css/Style";
+
+type Language = { code: string; name: string };
 
 export function Settings(): JSX.Element {
     const { currentLocale, changeLanguage } = useLanguageContext();
-    const options = {
-        de: "Deutsch",
-        en: "English",
-        de_AT: "Boarisch",
-    };
+    const classes = useDefaultStyles();
+    const options: Language[] = [
+        { code: "de", name: "Deutsch" },
+        { code: "en", name: "English" },
+    ];
 
     return (
         <Column additionalClasses="app-content">
@@ -37,11 +40,25 @@ export function Settings(): JSX.Element {
                 <FormattedMessage id="account.navigation.settings" />
             </h1>
             <hr />
-            <h5>
-                <FormattedMessage id="settings.labels.selectlanguage" />
-            </h5>
-            <Dropdown callback={changeLanguage} content={Util.objToStrMap(options)} selected={currentLocale} />
-            <hr />
+            <br />
+            <FormControl variant="outlined" className={classes.langSelect}>
+                <InputLabel htmlFor="outlined-age-native-simple">
+                    <FormattedMessage id="settings.labels.selectlanguage" />
+                </InputLabel>
+                <br />
+                <Select
+                    value={currentLocale}
+                    label={<FormattedMessage id="settings.labels.selectlanguage" />}
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                        const val = event.target.value as string;
+                        changeLanguage(val);
+                    }}
+                >
+                    {options.map((value: Language) => {
+                        return <MenuItem value={value.code}>{value.name}</MenuItem>;
+                    })}
+                </Select>
+            </FormControl>
         </Column>
     );
 }

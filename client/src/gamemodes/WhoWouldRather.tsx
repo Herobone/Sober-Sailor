@@ -18,6 +18,7 @@
 
 import React, { forwardRef, PropsWithChildren, ReactElement, useEffect, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
+import { Button, ButtonGroup } from "@material-ui/core";
 import { GameManager } from "../helper/gameManager";
 import { useAlert } from "../Components/Functional/AlertProvider";
 import { Alerts } from "../helper/AlertTypes";
@@ -60,8 +61,8 @@ export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
         plt.playerUidMap.forEach((nickname: string, uid: string) => {
             values.push(
                 // eslint-disable-next-line react/no-array-index-key
-                <div key={uid}>
-                    <button
+                <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
+                    <Button
                         className="wwr-player-select"
                         type="submit"
                         onClick={() => {
@@ -71,14 +72,13 @@ export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
                         }}
                     >
                         {nickname}
-                    </button>
-                    <br />
-                </div>,
+                    </Button>
+                </ButtonGroup>,
             );
         });
 
         return (
-            <>
+            <div>
                 <h2>
                     <FormattedMessage id="gamemodes.whowouldrather" /> {props.question}
                 </h2>
@@ -96,7 +96,7 @@ export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
                         />
                     </div>
                 )}
-            </>
+            </div>
         );
     },
 );

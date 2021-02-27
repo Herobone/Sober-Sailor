@@ -16,22 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { makeStyles } from "@material-ui/styles";
-import { Theme } from "@material-ui/core";
 
-export const useLeaderboardStyles = makeStyles((theme: Theme) => ({
-    leaderboardPlace: {
-        color: "red",
-        backgroundColor: "blue",
-        padding: theme.spacing(1),
+export const useTruthOrDareStyles = makeStyles(() => ({
+    buttonGroup: {
+        margin: "0.5vh",
     },
-    sideHeading: {
-        textAlign: "center",
-        margin: theme.spacing(0.3),
-        fontSize: 20,
-    },
-    sideArea: {
-        width: "100%",
-        padding: theme.spacing(0.5),
-        marginBottom: theme.spacing(0.5),
+    textAtTheBottom: {
+        paddingBottom: "3%",
     },
 }));

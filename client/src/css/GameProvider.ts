@@ -33,7 +33,6 @@ export const useGameProviderStlye = makeStyles((theme: Theme) =>
         },
         createGameButton: {
             position: "relative",
-            top: theme.spacing(3),
         },
         inputGameIDField: {
             position: "relative",

@@ -1,0 +1,24 @@
+{
+  "name": "sober-sailor",
+  "description": "Please add a description here. LOL",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "functions": "cd functions && npm run build",
+    "emulators": "firebase emulators:start",
+    "all": "npm run functions && npm run emulators",
+    "install-functions": "cd functions && npm i",
+    "install-client": "cd client && npm i",
+    "install-all": "npm run install-client && npm run install-functions"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Herobone/Sober-Sailor.git"
+  },
+  "author": "Herobone",
+  "license": " GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Herobone/Sober-Sailor/issues"
+  },
+  "homepage": "https://github.com/Herobone/Sober-Sailor#readme"
+}

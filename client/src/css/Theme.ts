@@ -20,25 +20,55 @@ import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 export const StandardTheme = createMuiTheme({
     palette: {
         background: {
-            default: "#8a989f",
+            default: "#7cdbd5",
         },
         primary: {
-            main: "#48cae4",
-            light: "#90e0ef",
-            dark: "#00b4d8",
-            contrastText: "#4242FF",
+            main: "#f53240",
         },
         secondary: {
-            main: "#ffaa00",
-            light: "#ffff00",
-            dark: "#ff8000",
+            main: "#fabd03",
+            contrastText: "#02c8a7",
         },
     },
     typography: {
-        fontFamily: [
-            'Ubuntu'
-        ].join(','),
-    }, 
+        fontFamily: ["Ubuntu"].join(","),
+    },
 });
 
-export const responsiveTheme = responsiveFontSizes(StandardTheme);
+export const DarkTheme = createMuiTheme({
+    palette: {
+        background: {
+            default: "#414141",
+        },
+        primary: {
+            main: "#FF6A5C",
+        },
+        secondary: {
+            main: "#056571",
+            contrastText: "#ccdfcb",
+        },
+    },
+    typography: {
+        fontFamily: ["Ubuntu"].join(","),
+    },
+});
+
+export const CalmTheme = createMuiTheme({
+    palette: {
+        background: {
+            default: "#99ced4",
+        },
+        primary: {
+            main: "#ee8687",
+        },
+        secondary: {
+            main: "#4abdac",
+            contrastText: "#6e7376",
+        },
+    },
+    typography: {
+        fontFamily: ["Ubuntu"].join(","),
+    },
+});
+
+export const responsiveTheme = responsiveFontSizes(CalmTheme);
