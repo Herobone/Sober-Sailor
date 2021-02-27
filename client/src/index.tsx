@@ -36,10 +36,10 @@ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(conso
 
 // If running local use Emulators for testing!
 // Make sure to start those with "firebase emulators:start"
-if (window.location.hostname === "localhost" && process.env.NODE_ENV !== "production") {
-    firebase.firestore().useEmulator("localhost", 8080);
-    firebase.auth().useEmulator("http://localhost:9099");
-    firebase.functions().useEmulator("localhost", 5001);
+if (process.env.NODE_ENV !== "production") {
+    firebase.firestore().useEmulator(window.location.hostname, 8080);
+    firebase.auth().useEmulator(`http://${window.location.hostname}:9099`);
+    firebase.functions().useEmulator(window.location.hostname, 5001);
 }
 
 Dough.startAnalytics();
