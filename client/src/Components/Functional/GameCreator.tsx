@@ -5,8 +5,8 @@ import { ArrowForwardIos } from "@material-ui/icons";
 import React from "react";
 import { useGameProviderStlye } from "../../css/GameProvider";
 import { useAlert } from "./AlertProvider";
-import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
+import { Alerts } from "../../helper/AlertTypes";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -26,9 +26,7 @@ import { GameManager } from "../../helper/gameManager";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-interface Props {}
-
-export function GameCreator(props: Props): JSX.Element {
+export function GameCreator(): JSX.Element {
     const { createAlert } = useAlert();
     const classes = useGameProviderStlye();
 
@@ -38,7 +36,7 @@ export function GameCreator(props: Props): JSX.Element {
                 window.location.pathname = `/play/${newGameID}`;
                 return Promise.resolve();
             })
-            .catch(console.error);
+            .catch((error: string) => createAlert(Alerts.ERROR, error));
     };
 
     return (
