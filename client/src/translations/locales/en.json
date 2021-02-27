@@ -38,8 +38,8 @@
 	"elements.truthordare.drink": "I'm gonna drink...",
 	"gamemodes.describeinoneword": "Describe in one Word",
 	"gamemodes.mixed": "Mixed",
-	"gamemodes.start": "Start Sailing",
 	"gamemodes.saufpoly": "Saufpoly",
+	"gamemodes.start": "Start Sailing",
 	"gamemodes.truthordare": "Truth or Dare",
 	"gamemodes.whowouldrather": "Who would rather",
 	"gamemodes.whowouldrather.description": "Choose the player that fits the question best",
@@ -52,10 +52,10 @@
 	"general.shouldnothappen": "Unknown Error! That should not have happened!",
 	"general.sips": "Sips",
 	"general.welcome": "Welcome",
-	"navigation.myprofile": "My Profile",
+	"navigation.cookies": "Cookies",
 	"navigation.credits": "Credits",
 	"navigation.information": "Information",
-	"navigation.cookies": "Cookies",
+	"navigation.myprofile": "My Profile",
 	"settings.labels.selectlanguage": "Language",
 	"sobersailor.name": "Sober Sailor - The Online Party Game"
 }
