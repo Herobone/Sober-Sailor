@@ -1,6 +1,6 @@
 # Everything that changed in functions gets the backend tag
 Backend:
-  - any: ['functions/**/*.{js,ts}']
+  - any: ['functions/**/*.js','functions/**/*.ts']
 
 # Everything that changed in client gets the frontend tag
 Frontend:
