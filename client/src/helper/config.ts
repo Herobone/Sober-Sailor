@@ -16,12 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export const config = {
-  apiKey: "AIzaSyDK2kzipgJdsN3PLMGoWIdtvJXj0-jqHu8",
-  authDomain: "sober-sailor.firebaseapp.com",
-  projectId: "sober-sailor",
-  storageBucket: "sober-sailor.appspot.com",
-  messagingSenderId: "922767796924",
-  appId: "1:922767796924:web:c224574e42c431d1bd7eb9",
-  measurementId: "G-1G0EXE06XV",
+const betaConfig = {
+    apiKey: "AIzaSyAsjpgvg6fA8icaGSNxYinPoqh08uLQG0A",
+    authDomain: "sober-sailor-beta.firebaseapp.com",
+    projectId: "sober-sailor-beta",
+    storageBucket: "sober-sailor-beta.appspot.com",
+    messagingSenderId: "937950228213",
+    appId: "1:937950228213:web:ccaef905322dda1ef39fbc",
+    measurementId: "G-9W6H706GK7",
 };
+const productionConfig = {
+    apiKey: "AIzaSyDK2kzipgJdsN3PLMGoWIdtvJXj0-jqHu8",
+    authDomain: "sober-sailor.firebaseapp.com",
+    projectId: "sober-sailor",
+    storageBucket: "sober-sailor.appspot.com",
+    messagingSenderId: "922767796924",
+    appId: "1:922767796924:web:c224574e42c431d1bd7eb9",
+    measurementId: "G-1G0EXE06XV",
+};
+export const config = process.env.REACT_APP_BETA_CHANNEL ? betaConfig : productionConfig;
