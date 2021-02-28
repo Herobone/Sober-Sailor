@@ -15,14 +15,11 @@ jobs:
       - run: npm ci && npm run build
         env:
           REACT_APP_BETA_CHANNEL: "true"
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR_BETA }}'
-          channelId: live
-          projectId: sober-sailor-beta
+      - run: npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+          BETA_CHANNEL: "true"
+          FIREBASE_TOKEN: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR_BETA }}'
+
   deploy_except_hosting:
     runs-on: ubuntu-latest
     defaults:
@@ -31,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm run install-all
-      - run: npx firebase-tools --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor-beta
+      - run: npx firebase-tools deploy --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:
           BETA_CHANNEL: "true"
           FIREBASE_TOKEN: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR_BETA }}'
