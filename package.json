@@ -1,6 +1,6 @@
 {
   "name": "sober-sailor",
-  "description": "Please add a description here. LOL",
+  "description": "Sober Sailor is a web based drinking game. It is currently focused every player having one Device for keeping distance",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,7 @@
     "url": "git+https://github.com/Herobone/Sober-Sailor.git"
   },
   "author": "Herobone",
-  "license": " GPL-3.0-or-later",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/Herobone/Sober-Sailor/issues"
   },
