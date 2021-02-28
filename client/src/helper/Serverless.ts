@@ -1,6 +1,6 @@
 /** ***************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,22 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent, ReactElement } from "react";
-import { FormattedMessage } from "react-intl";
-import { Alert } from "../../../helper/AlertTypes";
+import firebase from "firebase/app";
 
-interface Props {
-    createAlert: (type: Alert, message: string | ReactElement, header?: ReactElement) => void;
-    gameID: string;
-}
+export class Serverless {
+    static devel = process.env.NODE_ENV === "development";
 
-export class TruthOrDare extends PureComponent<Props> {
-    render(): JSX.Element {
-        return (
-            <div className="w3-center">
-                <FormattedMessage id="gamemodes.truthordare" />
-                {this.props.gameID}
-            </div>
-        );
-    }
+    static callFunction = (name: string): firebase.functions.HttpsCallable => {
+        return Serverless.devel
+            ? firebase.functions().httpsCallable(name)
+            : firebase.app().functions("europe-west1").httpsCallable(name);
+    };
 }

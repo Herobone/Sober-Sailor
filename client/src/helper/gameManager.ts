@@ -24,6 +24,7 @@ import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
 import { Register } from "./models/Register";
 import { PlayerList } from "./models/CustomTypes";
+import { Serverless } from "./Serverless";
 
 export class GameManager {
     static getPlayerLookupTable(): Register | null {
@@ -76,31 +77,24 @@ export class GameManager {
         return gameID;
     }
 
-    static createGame(): Promise<string> {
-        const auth = firebase.auth();
-        const user = auth.currentUser;
+    static async createGame(): Promise<string> {
+        const { currentUser } = firebase.auth();
 
-        return new Promise<string>((resolve, reject): void => {
-            if (!user) {
-                reject();
-                return;
-            }
+        if (!currentUser) {
+            throw new Error("User not logged in");
+        }
 
-            const { uid, displayName } = user;
-            const lenOfUID = uid.length;
-            const randomSuffix = Util.randomCharOrNumberSequence(lenOfUID / 5 - 2);
-            const gameID = uid.slice(0, 2) + randomSuffix;
-            const gameRef = GameManager.getGameByID(gameID);
-            const now: Date = new Date();
-            if (!displayName) {
-                throw new Error("Display name missing");
-            }
-            const reg: Register = Register.init(uid, displayName);
-            gameRef
-                .set(new Game(gameID, null, null, null, 0, 0, uid, false, false, now, reg))
-                .then(() => resolve(gameID))
-                .catch(reject);
-        });
+        const { uid } = currentUser;
+        const lenOfUID = uid.length;
+        const randomSuffix = Util.randomCharOrNumberSequence(lenOfUID / 5 - 2);
+        const gameID = uid.slice(0, 2) + randomSuffix;
+        const gameRef = GameManager.getGameByID(gameID);
+        try {
+            await gameRef.set(Game.createEmpty(gameID, currentUser));
+        } catch (error) {
+            console.error(error);
+        }
+        return gameID;
     }
 
     static getGameCol(): firebase.firestore.CollectionReference {
@@ -296,8 +290,7 @@ export class GameManager {
                         }
 
                         console.log("No players left! Closing!");
-                        const closeGame = firebase.app().functions("europe-west1").httpsCallable("closeGame");
-                        return closeGame({ gameID: GameManager.getGameID() });
+                        return Serverless.callFunction("closeGame")({ gameID: GameManager.getGameID() });
                     },
                 )
                 .then(resolve)

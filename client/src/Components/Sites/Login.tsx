@@ -16,82 +16,72 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component } from "react";
+import React, { useState } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { StyledFirebaseAuth } from "react-firebaseui";
 import * as firebaseui from "firebaseui";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
+import Cookies from "universal-cookie";
 import { Alerts } from "../../helper/AlertTypes";
-import { AlertContext } from "../Functional/AlertProvider";
+import { useAlert } from "../Functional/AlertProvider";
+import { Util } from "../../helper/Util";
 
-interface Props {}
+export function Login(): JSX.Element {
+    const { createAlert } = useAlert();
 
-interface State {
-    isSignedIn: boolean;
-}
-
-export class Login extends Component<Props, State> {
-    static contextType = AlertContext;
-
-    context!: React.ContextType<typeof AlertContext>;
+    const [loginState, setLoginState] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState(true);
 
     // Configure FirebaseUI.
-    uiConfig = {
+    const uiConfig: firebaseui.auth.Config = {
         // Popup signin flow rather than redirect flow.
-        signInFlow: "redirect",
+        signInFlow: "popup",
         // We will display Google, Email and GitHub as auth providers.
         signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+        autoUpgradeAnonymousUsers: true,
         callbacks: {
             // Avoid redirects after sign-in.
             signInSuccessWithAuthResult: (): boolean => {
+                const cookie = new Cookies();
+                cookie.set("globalAccount", true, {
+                    sameSite: true,
+                    expires: Util.getDateIn(1),
+                });
+
+                setLoginState(true);
+                setIsAnonymous(false);
                 return false;
             },
             signInFailure: (error: firebaseui.auth.AuthUIError): Promise<void> => {
-                this.context.createAlert(Alerts.ERROR, error.message);
+                createAlert(Alerts.ERROR, error.message);
                 console.warn(error.message);
-                return new Promise<void>((resolve) => {
-                    resolve();
-                });
+                return Promise.resolve();
             },
         },
     };
 
-    componentDidMount(): void {
-        const { currentUser } = firebase.auth();
-        if (currentUser && currentUser.isAnonymous) {
-            firebase
-                .auth()
-                .signOut()
-                .then(() => this.forceUpdate())
-                .catch(console.error);
-            console.info("Logged out of anonymous");
-        }
-    }
-
-    render(): JSX.Element {
-        const { currentUser } = firebase.auth();
-        return (
-            <div className="login-page">
-                <div>
-                    <h1 className="w3-center">
-                        <FormattedMessage id="general.welcome" />
-                        !
-                        <br />
-                    </h1>
-                    <h3 className="w3-center">
-                        <FormattedMessage id="account.descriptors.signinneeded" />
-                    </h3>
-                    <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()} />
-                </div>
-                {currentUser && (
-                    <div>
-                        {!currentUser.isAnonymous && <Redirect to="/" />}
-                        Lol
-                    </div>
-                )}
+    const { currentUser } = firebase.auth();
+    return (
+        <div className="login-page">
+            <div>
+                <h1 className="w3-center">
+                    <FormattedMessage id="general.welcome" />
+                    !
+                    <br />
+                </h1>
+                <h3 className="w3-center">
+                    <FormattedMessage id="account.descriptors.signinneeded" />
+                </h3>
+                <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
             </div>
-        );
-    }
+            {currentUser && loginState && (
+                <div>
+                    {!isAnonymous && <Redirect to="/" />}
+                    Lol
+                </div>
+            )}
+        </div>
+    );
 }

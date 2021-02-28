@@ -1,5 +1,7 @@
 import Cookies from "universal-cookie";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/analytics";
+import "firebase/performance";
 import { Util } from "./Util";
 
 /** ***************************
@@ -33,7 +35,7 @@ export class Dough {
     }
 
     public static startAnalytics(): void {
-        if (this.checkCookies("analytics")) {
+        if (this.checkCookies("analytics") && process.env.NODE_ENV === "production") {
             firebase.analytics();
             firebase.performance();
             console.log("Analytics activated");

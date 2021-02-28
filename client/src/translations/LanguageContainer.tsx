@@ -72,7 +72,7 @@ export class LanguageContainer extends React.Component<Props, State> {
     }
 
     changeLanguage = (locale: string): void => {
-        this.cookies.set("locale", locale, { expires: new Date(9999, 12) });
+        this.cookies.set("locale", locale, { expires: Util.getDateIn(10), sameSite: true });
         this.setState({
             locale,
         });

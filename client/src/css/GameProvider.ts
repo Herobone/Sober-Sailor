@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createStyles } from "@material-ui/styles";
+import { createStyles, makeStyles } from "@material-ui/styles";
 import { Theme } from "@material-ui/core";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-export const GameProviderStyle = (theme: Theme) =>
+export const useGameProviderStlye = makeStyles((theme: Theme) =>
     createStyles({
         nameInput: {
             position: "relative",
@@ -65,4 +65,5 @@ export const GameProviderStyle = (theme: Theme) =>
             fontSize: 40,
             padding: theme.spacing(1),
         },
-    });
+    }),
+);

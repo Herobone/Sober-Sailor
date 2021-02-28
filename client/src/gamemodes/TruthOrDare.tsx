@@ -26,6 +26,7 @@ import Button from "@material-ui/core/Button";
 import { GameManager } from "../helper/gameManager";
 import { Register } from "../helper/models/Register";
 import { SingleTargetRequest } from "../helper/models/SingleTarget";
+import { Serverless } from "../helper/Serverless";
 import { useTruthOrDareStyles } from "../css/TruthOrDareStyle";
 
 interface Props {
@@ -46,8 +47,8 @@ export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
         const submitAnswer = (answerToSet: boolean): void => {
             setAnswer(answerToSet);
             const callData: SingleTargetRequest = { answer: answerToSet, gameID: GameManager.getGameID() };
-            const singleTarget = firebase.app().functions("europe-west1").httpsCallable("singleTarget");
-            singleTarget(callData).catch(console.error);
+
+            Serverless.callFunction("singleTarget")(callData).catch(console.error);
         };
 
         const reset = (): void => {

@@ -24,13 +24,15 @@ import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
 import { Mixed } from "../Sites/Gamemodes/Mixed";
-import { GameProvider } from "./GameProvider";
+import { MixedGameProvider } from "./MixedGameProvider";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { Dough } from "../../helper/Dough";
+import { useGameProviderStlye } from "../../css/GameProvider";
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
+    const providerClasses = useGameProviderStlye();
 
     const [cookieNotice, setCookieNotice] = useState(false);
 
@@ -84,14 +86,16 @@ export function Routed(): JSX.Element {
 
                 <Switch>
                     <Route
-                        path="/mixed/:gameID"
+                        path="/play/:gameID"
                         render={(props) => (
-                            <GameProvider gameID={props.match.params.gameID}>
-                                <Mixed />
-                            </GameProvider>
+                            <div className={providerClasses.centeraligned}>
+                                <MixedGameProvider gameID={props.match.params.gameID}>
+                                    <Mixed />
+                                </MixedGameProvider>
+                            </div>
                         )}
                     />
-                    <Route path="/mixed" render={() => <GameProvider gameURL="mixed" />} />
+                    <Route path="/play" render={() => <MixedGameProvider />} />
 
                     <Route path="/login">
                         <Login />
