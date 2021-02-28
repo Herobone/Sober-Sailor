@@ -34,6 +34,9 @@ export class Dough {
         return false;
     }
 
+    /**
+     * Start Analysis if cookie is present
+     */
     public static startAnalytics(): void {
         if (this.checkCookies("analytics") && process.env.NODE_ENV === "production") {
             firebase.analytics();
