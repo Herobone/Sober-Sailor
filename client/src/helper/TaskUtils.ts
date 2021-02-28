@@ -28,10 +28,10 @@ export class TaskUtils {
      * @returns Promise that contains all the Questions in the document
      */
     private static storeToLocalFromGit(task: string, lang: string): Promise<Question[]> {
-      const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
-          process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
-      }/tasks/${task}/${lang}.json`;
-      return new Promise<string[]>((resolve, reject) => {
+        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
+            process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
+        }/tasks/${task}/${lang}.json`;
+        return new Promise<string[]>((resolve, reject) => {
             fetch(url)
                 .then((response) => response.text())
                 .then((json) => {
@@ -70,9 +70,9 @@ export class TaskUtils {
      * @returns Promise that contains all the Questions in the document
      */
     private static async storeLocalFromGitMultiAnswer(task: string, lang: string): Promise<MultiAnswerQuestion[]> {
-      const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
-          process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
-      }/tasks/${task}/${lang}.json`;
+        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
+            process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
+        }/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
         const data = await response.text();
         localStorage.setItem(`${task}_${lang}`, data);
