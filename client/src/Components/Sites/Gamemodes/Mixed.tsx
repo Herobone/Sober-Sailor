@@ -38,7 +38,7 @@ import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
 import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
 import tasks from "../../../gamemodes/tasks.json";
-import { getRandomTask } from "../../../helper/TaskUtils";
+import { TaskUtils } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
 import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
@@ -140,7 +140,7 @@ class MixedClass extends React.Component<Props, State> {
             const lang = this.lang in taskType.lang ? this.lang : taskType.lang[0];
             const localTarget = target ? target[0] : null;
 
-            getRandomTask(taskType.id, lang)
+            TaskUtils.getRandomTask(taskType.id, lang)
                 .then(
                     (task): Promise<void> => {
                         this.setState({ nextTask: task });

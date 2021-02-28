@@ -17,7 +17,19 @@
  */
 
 export interface Task {
-  id: string;
-  lang: string[];
-  singleTarget: boolean;
+    id: string;
+    lang: string[];
+    singleTarget: boolean;
+    multiAnswer: boolean;
+}
+
+export type Question = string;
+export type Answer = string;
+
+export interface MultiAnswerQuestion {
+    question: Question;
+    answers: {
+        answer: Answer;
+        rightAnswer?: boolean;
+    }[];
 }
