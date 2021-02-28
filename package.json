@@ -9,7 +9,7 @@
     "all": "npm run functions && npm run emulators",
     "install-functions": "cd functions && npm i",
     "install-client": "cd client && npm i",
-    "install-all": "npm run install-client && npm run install-functions"
+    "install-all": "npm install && npm run install-client && npm run install-functions"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Herobone/Sober-Sailor/issues"
   },
-  "homepage": "https://github.com/Herobone/Sober-Sailor#readme"
+  "homepage": "https://github.com/Herobone/Sober-Sailor#readme",
+  "dependencies": {
+    "firebase-tools": "^9.5.0"
+  }
 }
