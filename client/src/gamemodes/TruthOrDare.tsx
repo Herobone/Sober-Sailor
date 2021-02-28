@@ -48,7 +48,7 @@ export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
             setAnswer(answerToSet);
             const callData: SingleTargetRequest = { answer: answerToSet, gameID: GameManager.getGameID() };
 
-            Serverless.callFunction("singleTarget")(callData).catch(console.error);
+            Serverless.callFunction(Serverless.SINGLE_TARGET)(callData).catch(console.error);
         };
 
         const reset = (): void => {
@@ -99,7 +99,7 @@ export const TruthOrDare = forwardRef<TruthOrDareHandles, Props>(
                 )}
                 {answer !== null && (
                     <h2 className={classes.textAtTheBottom}>
-                        {answer === false && <FormattedMessage id="elements.truthordare.drink" />}
+                        {!answer && <FormattedMessage id="elements.truthordare.drink" />}
                         {answer && <FormattedMessage id="elements.truthordare.dare" />}
                     </h2>
                 )}

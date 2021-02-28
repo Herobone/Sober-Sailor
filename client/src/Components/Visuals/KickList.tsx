@@ -69,7 +69,7 @@ export const KickList = forwardRef<KickListHandles>(
                                         gameID: GameManager.getGameID(),
                                         playerID: uid,
                                     };
-                                    Serverless.callFunction("kickPlayer")(callData)
+                                    Serverless.callFunction(Serverless.KICK_PLAYER)(callData)
                                         .then(() => setShown(false))
                                         .catch(console.warn);
                                 }}

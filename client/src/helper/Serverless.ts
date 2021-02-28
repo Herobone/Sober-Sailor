@@ -19,9 +19,15 @@
 import firebase from "firebase/app";
 
 export class Serverless {
-    static devel = process.env.NODE_ENV === "development";
+    private static devel = process.env.NODE_ENV === "development";
 
-    static callFunction = (name: string): firebase.functions.HttpsCallable => {
+    public static KICK_PLAYER = "kickPlayer";
+
+    public static SINGLE_TARGET = "singleTarget";
+
+    public static CLOSE_GAME = "closeGame";
+
+    public static callFunction = (name: string): firebase.functions.HttpsCallable => {
         return Serverless.devel
             ? firebase.functions().httpsCallable(name)
             : firebase.app().functions("europe-west1").httpsCallable(name);

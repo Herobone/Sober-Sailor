@@ -290,7 +290,7 @@ export class GameManager {
                         }
 
                         console.log("No players left! Closing!");
-                        return Serverless.callFunction("closeGame")({ gameID: GameManager.getGameID() });
+                        return Serverless.callFunction(Serverless.CLOSE_GAME)({ gameID: GameManager.getGameID() });
                     },
                 )
                 .then(resolve)
