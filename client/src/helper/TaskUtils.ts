@@ -18,39 +18,41 @@
 import { Util } from "./Util";
 
 export function storeToLocalFromGit(task: string, lang: string): Promise<string[]> {
-  const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/main/tasks/${task}/${lang}.json`;
-  return new Promise<string[]>((resolve, reject) => {
-    fetch(url)
-      .then((response) => response.text())
-      .then((json) => {
-        localStorage.setItem(`${task}_${lang}`, json);
-        resolve(JSON.parse(json));
-        return Promise.resolve();
-      })
-      .catch((error) => {
-        console.error("Error while downloading JSON from GitHub!", error);
-        reject(error);
-      });
-  });
+    const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
+        process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
+    }/tasks/${task}/${lang}.json`;
+    return new Promise<string[]>((resolve, reject) => {
+        fetch(url)
+            .then((response) => response.text())
+            .then((json) => {
+                localStorage.setItem(`${task}_${lang}`, json);
+                resolve(JSON.parse(json));
+                return Promise.resolve();
+            })
+            .catch((error) => {
+                console.error("Error while downloading JSON from GitHub!", error);
+                reject(error);
+            });
+    });
 }
 
 export function getTasks(task: string, lang: string): Promise<string[]> {
-  return new Promise<string[]>((resolve, reject) => {
-    const stored = localStorage.getItem(`${task}_${lang}`);
-    if (stored) {
-      resolve(JSON.parse(stored));
-    } else {
-      storeToLocalFromGit(task, lang).then(resolve).catch(reject);
-    }
-  });
+    return new Promise<string[]>((resolve, reject) => {
+        const stored = localStorage.getItem(`${task}_${lang}`);
+        if (stored) {
+            resolve(JSON.parse(stored));
+        } else {
+            storeToLocalFromGit(task, lang).then(resolve).catch(reject);
+        }
+    });
 }
 
 export function getRandomTask(task: string, lang: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    getTasks(task, lang)
-      .then((tasks) => {
-        return resolve(Util.selectRandom(tasks));
-      })
-      .catch(reject);
-  });
+    return new Promise<string>((resolve, reject) => {
+        getTasks(task, lang)
+            .then((tasks) => {
+                return resolve(Util.selectRandom(tasks));
+            })
+            .catch(reject);
+    });
 }
