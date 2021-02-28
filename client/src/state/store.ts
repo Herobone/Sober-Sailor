@@ -36,5 +36,5 @@ export const store = createStore(
         result: resultReducer,
         game: gameReducer,
     }),
-    devToolsEnhancer({ trace: true, traceLimit: 25 }),
+    process.env.NODE_ENV !== "production" ? devToolsEnhancer({ trace: true, traceLimit: 25 }) : undefined,
 );
