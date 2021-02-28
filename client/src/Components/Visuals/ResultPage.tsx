@@ -19,20 +19,23 @@
 import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper } from "@material-ui/core";
 import React, { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
+import { useSelector } from "react-redux";
 import { Player } from "../../helper/models/Player";
 import { useDefaultStyles } from "../../css/Style";
+import { ResultState } from "../../state/reducers/resultReducer";
+import { RootState } from "../../state/store";
 
-interface Props {
-    result: Player[] | undefined;
-}
-
-export function ResultPage(props: Props): JSX.Element {
+export function ResultPage(): JSX.Element {
     const classes = useDefaultStyles();
+
+    const result = useSelector<RootState, ResultState["result"]>((state) => state.result.result);
+
     const prepareResults = (): ReactElement[] => {
+        console.log("Results:", result);
         const values: ReactElement[] = [];
         let counter = 1;
-        if (props.result) {
-            props.result.forEach((entry: Player) => {
+        if (result !== null) {
+            result.forEach((entry: Player) => {
                 values.push(
                     <TableRow key={`rank${counter}`}>
                         <TableCell align="center" className="result-rank">
@@ -52,7 +55,7 @@ export function ResultPage(props: Props): JSX.Element {
         return values;
     };
 
-    if (!props.result || props.result.length <= 0) {
+    if (!result || result.length <= 0) {
         return <></>;
     }
 

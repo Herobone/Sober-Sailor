@@ -19,12 +19,14 @@
 import React, { PureComponent } from "react";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
 import { SnackbarProvider } from "notistack";
+import { Provider } from "react-redux";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
 import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
 import { responsiveTheme } from "./css/Theme";
+import { store } from "./state/store";
 
 export class App extends PureComponent {
     render(): JSX.Element {
@@ -32,13 +34,15 @@ export class App extends PureComponent {
             <React.StrictMode>
                 <MuiThemeProvider theme={responsiveTheme}>
                     <CssBaseline />
-                    <LanguageContainer>
-                        <SnackbarProvider maxSnack={4}>
-                            <AlertProvider>
-                                <Routed />
-                            </AlertProvider>
-                        </SnackbarProvider>
-                    </LanguageContainer>
+                    <Provider store={store}>
+                        <LanguageContainer>
+                            <SnackbarProvider maxSnack={4}>
+                                <AlertProvider>
+                                    <Routed />
+                                </AlertProvider>
+                            </SnackbarProvider>
+                        </LanguageContainer>
+                    </Provider>
                 </MuiThemeProvider>
             </React.StrictMode>
         );

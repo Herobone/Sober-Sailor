@@ -32,6 +32,7 @@ import IconButton from "@material-ui/core/IconButton";
 import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
 import PollIcon from "@material-ui/icons/Poll";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
+import { useDispatch, useSelector } from "react-redux";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -48,16 +49,22 @@ import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../css/Style";
+import { TaskState } from "../../../state/reducers/taskReducer";
+import * as TaskActions from "../../../state/actions/taskActions";
+import * as DisplayStateActions from "../../../state/actions/displayStateActions";
+import * as ResultActions from "../../../state/actions/resultActions";
+import * as GameActions from "../../../state/actions/gameActions";
+import { DisplayState } from "../../../state/reducers/displayStateReducer";
+import { ResultState } from "../../../state/reducers/resultReducer";
+import { RootState } from "../../../state/store";
+import { GameState } from "../../../state/reducers/gameReducer";
 
 type LeaderboardHandle = ElementRef<typeof Leaderboard>;
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
-type WhoWouldRatherHandle = ElementRef<typeof WhoWouldRather>;
 
 export function Mixed(): JSX.Element {
     const leaderboardRef = useRef<LeaderboardHandle>(null);
-
-    const taskRef = useRef<WhoWouldRatherHandle>(null);
 
     const truthOrDareRef = useRef<TruthOrDareHandle>(null);
 
@@ -67,18 +74,49 @@ export function Mixed(): JSX.Element {
     const lang: string = cookies.get("locale");
 
     const classes = useDefaultStyles();
+    const dispatch = useDispatch();
 
-    const [nextTask, setNextTask] = useState<string>();
-    const [taskType, setTaskType] = useState<string>();
-    const [target, setTarget] = useState<string>();
-    const [isHost, setIsHost] = useState<boolean>(false);
-    const [pollState, setPollState] = useState(false);
-    const [evalState, setEvalState] = useState(false);
-    const [result, setResult] = useState<Player[] | null>(null);
-    const [countdownTimeout, setCountdownTimeout] = useState<NodeJS.Timeout>();
+    const taskType = useSelector<RootState, TaskState["type"]>((state) => state.task.type);
+    const nextTask = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
+    const target = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
+    const isHost = useSelector<RootState, GameState["host"]>((state) => state.game.host);
+    const pollState = useSelector<RootState, DisplayState["pollState"]>((state) => state.displayState.pollState);
+    const evalState = useSelector<RootState, DisplayState["evalState"]>((state) => state.displayState.evalState);
+    const result = useSelector<RootState, ResultState["result"]>((state) => state.result.result);
+
+    const setNextTask = (task: string | undefined): void => {
+        dispatch(TaskActions.setTask(task));
+    };
+    const setTaskType = (type: string | undefined): void => {
+        dispatch(TaskActions.setType(type));
+    };
+
+    const setTarget = (newTarget: string | undefined): void => {
+        dispatch(TaskActions.setTarget(newTarget));
+    };
+
+    const setHost = (host: boolean): void => {
+        dispatch(GameActions.setHost(host));
+    };
+
+    const setPollState = (newPollState: boolean): void => {
+        dispatch(DisplayStateActions.setPollState(newPollState));
+    };
+
+    const setEvalState = (newEvalState: boolean): void => {
+        dispatch(DisplayStateActions.setEvalState(newEvalState));
+    };
+
+    const setResult = (newResult: Player[] | null): void => {
+        dispatch(ResultActions.setResult(newResult));
+    };
+
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
-    const [penalty, setPenalty] = useState(0);
+
+    const setPenalty = (newPenalty: number): void => {
+        dispatch(TaskActions.setPenalty(newPenalty));
+    };
 
     const updateLeaderboard = (): void => {
         const lb = leaderboardRef.current;
@@ -88,16 +126,18 @@ export function Mixed(): JSX.Element {
     };
 
     const submitAndReset = (): void => {
-        const resultsWere = result;
-        if (resultsWere) {
-            GameManager.submitPenaltyAndReset(resultsWere)
+        console.log("Submitting and resetting!");
+        console.log("Results are", result);
+        if (result !== null) {
+            GameManager.submitPenaltyAndReset(result)
                 .then(() => {
                     setResult(null);
-
+                    console.log("Resetting results");
                     return updateLeaderboard();
                 })
                 .catch(console.error);
         } else {
+            console.log("Just updating");
             updateLeaderboard();
         }
         const tud = truthOrDareRef.current;
@@ -107,31 +147,56 @@ export function Mixed(): JSX.Element {
     };
 
     const startTimer = (duration: number): void => {
-        let localTimer = duration;
-        setMaxTime(duration);
-        const timeout = setInterval(() => {
-            setTimer(localTimer);
+        let localTimer = duration; // create a local copy that will be decremented
+        setMaxTime(duration); // set the state so we can calculate the with of the bar
+        console.log(`Starting Timer with ${duration}s`);
+        const timeout = setInterval(
+            (horst: boolean) => {
+                setTimer(localTimer);
 
-            if (--localTimer < 0) {
-                if (countdownTimeout) {
-                    clearTimeout(countdownTimeout);
-                }
-                setPollState(false);
+                if (--localTimer < 0) {
+                    console.log("Stopping timer!");
+                    if (timeout) {
+                        console.log("Clearing Timeout");
+                        clearTimeout(timeout); // stop the timeout so it does not get negative
+                    }
+                    setPollState(false); // set poll state to false
 
-                if (isHost) {
-                    GameManager.setPollState(false).catch(console.error);
-                    GameManager.setEvalState(true).catch(console.error);
+                    if (horst) {
+                        console.log("Publishing new states");
+                        GameManager.setPollState(false).catch(console.error);
+                        GameManager.setEvalState(true).catch(console.error);
+                    }
                 }
-            }
-        }, 1000);
-        setCountdownTimeout(timeout);
+            },
+            1000, // run every 1 second
+            isHost, // passing is host in here solves the issue with it being undefined inside the function
+        );
     };
+
+    useEffect(() => {
+        if (pollState && timer === 0) {
+            startTimer(20);
+        }
+    }, [pollState]);
+
+    useEffect(() => {
+        if (evalState) {
+            if (taskType === "truthordare") {
+                updateLeaderboard();
+            } else {
+                GameManager.evaluateAnswers().then(setResult).catch(console.error);
+            }
+        } else {
+            setResult(null);
+        }
+    }, [evalState]);
 
     const gameEvent = (doc: firebase.firestore.DocumentSnapshot<Game>): void => {
         const data = doc.data();
         if (data) {
             GameManager.updatePlayerLookupTable(doc);
-            // this.updateLeaderboard();
+            console.log("Received data from Firestore!");
 
             if (nextTask !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
                 submitAndReset();
@@ -140,36 +205,26 @@ export function Mixed(): JSX.Element {
                 setTarget(data.taskTarget || undefined);
                 setPenalty(data.penalty);
             }
-            if (!pollState && data.pollState) {
-                startTimer(20);
-                setPollState(true);
-                if (taskRef.current) {
-                    taskRef.current.lockInput(false);
-                }
+            if (pollState !== data.pollState) {
+                setPollState(data.pollState);
             }
 
-            if (!evalState && data.evalState) {
-                setEvalState(true);
-                if (taskType === "truthordare") {
-                    updateLeaderboard();
-                } else {
-                    GameManager.evaluateAnswers().then(setResult).catch(console.error);
-                }
+            if (evalState !== data.evalState) {
+                setEvalState(data.evalState);
             }
 
-            if (!data.evalState) {
-                setEvalState(false);
-            }
+            const auth = firebase.auth();
+            const user = auth.currentUser;
 
-            if (!data.pollState && taskRef.current) {
-                taskRef.current.lockInput(true);
+            if (user && (data.host === user.uid) === isHost) {
+                setHost(!isHost);
             }
         }
     };
 
     useEffect((): void => {
         GameManager.joinGame(gameEvent).then(updateLeaderboard).catch(console.error);
-        GameManager.amIHost().then(setIsHost).catch(console.error);
+        GameManager.amIHost().then(setHost).catch(console.error);
     }, []);
 
     const setTask = (type: Task, newTarget: PlayerList, newPenalty = 0): void => {
@@ -215,9 +270,9 @@ export function Mixed(): JSX.Element {
             throw new Error("Trying to execute a host method as non Host");
         }
         submitAndReset();
-        const testMode = false;
+        const testMode = true;
         const development = process.env.NODE_ENV === "development" && testMode;
-        const nextTaskType: Task = development ? tasks[3] : Util.selectRandom(tasks);
+        const nextTaskType: Task = development ? tasks[0] : Util.selectRandom(tasks);
 
         if (nextTaskType.singleTarget) {
             let targetCount = 1;
@@ -236,14 +291,12 @@ export function Mixed(): JSX.Element {
     if (nextTask && taskType) {
         switch (taskType) {
             case "whowouldrather": {
-                taskComponent = <WhoWouldRather question={nextTask} ref={taskRef} />;
+                taskComponent = <WhoWouldRather />;
                 break;
             }
             case "truthordare": {
                 if (target) {
-                    taskComponent = (
-                        <TruthOrDare ref={truthOrDareRef} question={nextTask} target={target} penalty={penalty} />
-                    );
+                    taskComponent = <TruthOrDare ref={truthOrDareRef} />;
                 }
                 break;
             }
@@ -275,8 +328,7 @@ export function Mixed(): JSX.Element {
                 <Grid item xs={12} md={8} lg={9}>
                     <Paper>
                         {taskComponent}
-
-                        <ResultPage result={result || undefined} />
+                        <ResultPage />
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4} lg={3}>
