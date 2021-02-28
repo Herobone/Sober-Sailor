@@ -42,6 +42,10 @@ if (window.location.hostname === "localhost" && process.env.NODE_ENV !== "produc
     firebase.functions().useEmulator("localhost", 5001);
 }
 
+if (process.env.REACT_APP_BETA_CHANNEL) {
+    console.warn("This is the BETA version!");
+}
+
 Dough.startAnalytics();
 
 ReactDOM.render(
