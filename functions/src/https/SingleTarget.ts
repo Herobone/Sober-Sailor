@@ -57,7 +57,7 @@ export const singleTargetHandler = async (
       );
     }
 
-    await FirestoreUtil.getGameDoc(data.gameID).update({
+    await FirestoreUtil.getGame(data.gameID).update({
       evalState: true,
     });
 

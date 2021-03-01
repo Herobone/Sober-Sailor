@@ -30,35 +30,23 @@ export default class FirestoreUtil {
   }
 
   static async updateRegister(gameID: string, game: Game) {
-    await FirestoreUtil.getGameDoc(gameID).update({
+    await FirestoreUtil.getGame(gameID).update({
       playerUidMap: game.register.serialize(),
     });
   }
 
-  static getRegister(gameID: string) {
-    return FirestoreUtil.getGame(gameID).doc("register");
-  }
-
-  static getRegisterRef(gameID: string) {
-    return FirestoreUtil.getRegister(gameID).get();
-  }
-
   static getGame(gameID: string) {
-    return FirestoreUtil.db.collection(gameID);
-  }
-
-  static getGameDoc(gameID: string) {
-    return FirestoreUtil.getGame(gameID).doc("general");
+    return FirestoreUtil.db.collection("games").doc(gameID);
   }
 
   static async getGameData(gameID: string) {
-    const gameDocRef = FirestoreUtil.getGameDoc(gameID);
+    const gameDocRef = FirestoreUtil.getGame(gameID);
     const gameRef = await gameDocRef.withConverter(gameConverter).get();
     return gameRef.data();
   }
 
   static getPlayers(gameID: string) {
-    return FirestoreUtil.getGameDoc(gameID).collection("players");
+    return FirestoreUtil.getGame(gameID).collection("players");
   }
 
   static getPlayer(gameID: string, playerID: string) {
