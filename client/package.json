@@ -82,7 +82,7 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-unicorn": "^25.0.1",
+    "eslint-plugin-unicorn": "^28.0.2",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss-safe-parser": "^5.0.2",
     "react-app-rewired": "^2.1.8",
