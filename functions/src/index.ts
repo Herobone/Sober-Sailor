@@ -10,6 +10,8 @@ import { closeGameHandler } from "./https/CloseGame";
 import { onPlayerLeaveHandler } from "./firestore/OnPlayerLeave";
 import { onPlayerJoinHandler } from "./firestore/OnPlayerJoin";
 import { singleTargetHandler } from "./https/SingleTarget";
+import { garbageCollectionHandler } from "./timed/GarbageCollection";
+import { garbageCollectionHTTPSHandler } from "./https/GarbageCollection";
 
 export const singleTarget = functions
   .region("europe-west1")
@@ -25,14 +27,14 @@ export const onPlayerLeave = functions
   .firestore.document("/{gameID}/general/players/{playerID}")
   .onDelete(onPlayerLeaveHandler);
 
-// export const garbageCollection = functions
-//   .region("europe-west1")
-//   .pubsub.schedule("every 12 hours")
-//   .onRun(garbageCollectionHandler);
-//
-// export const garbageCollectionHTTPS = functions
-//   .region("europe-west1")
-//   .https.onRequest(garbageCollectionHTTPSHandler);
+export const garbageCollection = functions
+  .region("europe-west1")
+  .pubsub.schedule("every 12 hours")
+  .onRun(garbageCollectionHandler);
+
+export const garbageCollectionHTTPS = functions
+  .region("europe-west1")
+  .https.onRequest(garbageCollectionHTTPSHandler);
 
 export const closeGame = functions
   .region("europe-west1")

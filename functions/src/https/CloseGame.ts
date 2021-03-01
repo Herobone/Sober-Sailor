@@ -1,6 +1,5 @@
 import FirestoreUtil from "../helper/FirestoreUtil";
 import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
 
 /*****************************
  * Sober Sailor - The online Party Game
@@ -19,8 +18,6 @@ import * as admin from "firebase-admin";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-const db = admin.firestore();
 
 export const closeGameHandler = async (
   data: { gameID: string },
@@ -50,13 +47,12 @@ export const closeGameHandler = async (
       await playerToDelete.ref.delete();
     });
 
-    const misc = await FirestoreUtil.getGame(data.gameID).get();
-    await misc.forEach(async (docToDelete) => {
-      console.log(data.gameID, "/", docToDelete.id);
-      await docToDelete.ref.delete();
+    const game = await FirestoreUtil.getGame(data.gameID);
+    const minis = await game.collection("minigames").get();
+    await minis.forEach(async (miniToDelete) => {
+      await miniToDelete.ref.delete();
     });
-
-    await db.collection("tictactoe").doc(data.gameID).delete();
+    await game.delete();
   } else {
     throw new functions.https.HttpsError(
       "unauthenticated",
