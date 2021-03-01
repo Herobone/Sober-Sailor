@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { Util } from "./Util";
-import { MultiAnswerQuestion, Question } from "./models/task";
+import { IMultiAnswerQuestion, Question } from "./models/task";
 
 export class TaskUtils {
     /**
@@ -69,7 +69,7 @@ export class TaskUtils {
      * @param lang  Language of the task
      * @returns Promise that contains all the Questions in the document
      */
-    private static async storeLocalFromGitMultiAnswer(task: string, lang: string): Promise<MultiAnswerQuestion[]> {
+    private static async storeLocalFromGitMultiAnswer(task: string, lang: string): Promise<IMultiAnswerQuestion[]> {
         const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
             process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
         }/tasks/${task}/${lang}.json`;
@@ -86,7 +86,7 @@ export class TaskUtils {
      * @param task  Type of the task
      * @param lang  Language of the task
      */
-    public static getTasksMultiAnswer(task: string, lang: string): Promise<MultiAnswerQuestion[]> {
+    public static getTasksMultiAnswer(task: string, lang: string): Promise<IMultiAnswerQuestion[]> {
         const stored = localStorage.getItem(`${task}_${lang}`);
         if (stored) {
             return JSON.parse(stored);

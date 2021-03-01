@@ -1,3 +1,5 @@
+import firebase from "firebase";
+
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
@@ -26,10 +28,37 @@ export interface Task {
 export type Question = string;
 export type Answer = string;
 
-export interface MultiAnswerQuestion {
-    question: Question;
-    answers: {
-        answer: Answer;
-        rightAnswer?: boolean;
-    }[];
+export interface MultiAnswer {
+    answer: Answer;
+    rightAnswer?: boolean;
 }
+
+export interface IMultiAnswerQuestion {
+    question: Question;
+    answers: MultiAnswer[];
+}
+
+export class MultiAnswerQuestion implements IMultiAnswerQuestion {
+    constructor(readonly question: Question, readonly answers: MultiAnswer[]) {}
+
+    // static parse(input: string): MultiAnswerQuestion {
+    //     const parsed: IMultiAnswerQuestion = JSON.parse(input);
+    //     return new MultiAnswerQuestion(parsed.question, parsed.answers);
+    // }
+}
+
+export const multiAnswerQuestionConverter = {
+    toFirestore(question: MultiAnswerQuestion): firebase.firestore.DocumentData {
+        return {
+            question: question.question,
+            answers: question.answers,
+        };
+    },
+    fromFirestore(
+        snapshot: firebase.firestore.QueryDocumentSnapshot<IMultiAnswerQuestion>,
+        options: firebase.firestore.SnapshotOptions,
+    ): MultiAnswerQuestion {
+        const data = snapshot.data(options);
+        return new MultiAnswerQuestion(data.question, data.answers);
+    },
+};
