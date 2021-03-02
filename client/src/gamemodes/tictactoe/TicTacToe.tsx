@@ -44,7 +44,7 @@ export class TicTacToe extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            squares: new Array(9),
+            squares: Array.from({ length: 9 }),
             stepNumber: 0,
             isXNext: true,
             spectator: true,
@@ -73,12 +73,12 @@ export class TicTacToe extends Component<Props, State> {
             return;
         }
 
-        const { squares } = this.state;
+        const { squares, player } = this.state;
         if (TicUtils.calculateWinner(squares) || squares[i]) {
             return;
         }
 
-        TicUtils.makeDraw(i, this.state.player).catch(console.error);
+        TicUtils.makeDraw(i, player).catch(console.error);
     }
 
     private updateFromDoc(doc: firebase.firestore.DocumentSnapshot<TicTacToeData>): void {
@@ -132,15 +132,13 @@ export class TicTacToe extends Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const { squares } = this.state;
+        const { squares, stepNumber, player, spectator, isXNext, winner } = this.state;
 
-        const status = this.state.winner
-            ? `Winner: ${this.state.winner}`
-            : `Next player: ${this.state.isXNext ? "X" : "O"}`;
+        const status = winner ? `Winner: ${winner}` : `Next player: ${isXNext ? "X" : "O"}`;
 
         return (
             <div className={style.game}>
-                {this.state.spectator && (
+                {spectator && (
                     <div className="spectator-area">
                         <h2>
                             <FormattedMessage id="elements.general.youare" />{" "}
@@ -149,10 +147,10 @@ export class TicTacToe extends Component<Props, State> {
                         <br />
                     </div>
                 )}
-                {!this.state.spectator && (
+                {!spectator && (
                     <div className="player-area">
                         <h2>
-                            <FormattedMessage id="elements.general.youare" /> {this.state.player}
+                            <FormattedMessage id="elements.general.youare" /> {player}
                         </h2>
                         <br />
                     </div>
@@ -162,7 +160,7 @@ export class TicTacToe extends Component<Props, State> {
                 </div>
                 <div className={style.gameInfo}>
                     <div>{status}</div>
-                    <div>Step: {this.state.stepNumber}</div>
+                    <div>Step: {stepNumber}</div>
                 </div>
             </div>
         );
