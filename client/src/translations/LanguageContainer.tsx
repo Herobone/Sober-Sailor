@@ -90,7 +90,7 @@ export class LanguageContainer extends React.Component<Props, State> {
                 <LanguageContext.Provider
                     value={{
                         changeLanguage: this.changeLanguage,
-                        currentLocale: this.state.locale,
+                        currentLocale: locale,
                     }}
                 >
                     {this.props.children}

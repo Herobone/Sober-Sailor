@@ -51,7 +51,7 @@ export class GameManager {
         if (n > reg.size) {
             throw new Error(`Trying to get ${n} players while PLT only has ${reg.size} entries`);
         }
-        const players: string[] = new Array(n);
+        const players: string[] = [];
         // console.log(`Array length ${players.length} with n=${n}`);
         for (let i = 0; i < n; i++) {
             const choose = Util.getRandomKey(reg);
@@ -144,10 +144,9 @@ export class GameManager {
                 return;
             }
 
-            const { uid } = user;
-            const nickname = user.displayName;
+            const { uid, displayName } = user;
 
-            if (!nickname) {
+            if (!displayName) {
                 reject(new Error("User tried to join without name!"));
                 return;
             }
@@ -158,7 +157,7 @@ export class GameManager {
                 .get()
                 .then((doc) => {
                     if (!doc.exists) {
-                        return userRef.set(new Player(uid, nickname, 0, null));
+                        return userRef.set(new Player(uid, displayName, 0, null));
                     }
                     return Promise.resolve();
                 })

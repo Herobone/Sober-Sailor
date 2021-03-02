@@ -70,5 +70,6 @@ module.exports = {
         "import/order": "warn",
         "react/static-property-placement": "off",
         "react/require-default-props": "off",
+        "unicorn/no-array-for-each": "off",
     },
 };
