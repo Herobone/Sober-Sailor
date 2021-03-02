@@ -308,15 +308,10 @@ class MixedClass extends React.Component<Props, State> {
                     break;
                 }
                 case "truthordare": {
-                    const { target } = this.state;
+                    const { target, penalty } = this.state;
                     if (target !== null) {
                         taskComponent = (
-                            <TruthOrDare
-                                ref={this.truthOrDareRef}
-                                question={task}
-                                target={target}
-                                penalty={this.state.penalty}
-                            />
+                            <TruthOrDare ref={this.truthOrDareRef} question={task} target={target} penalty={penalty} />
                         );
                     }
                     break;

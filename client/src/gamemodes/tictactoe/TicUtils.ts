@@ -56,7 +56,15 @@ export class TicUtils {
             console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
 
             TicUtils.getTTTGame()
-                .set(new TicTacToe(new Array(9).fill(null), 0, true, opponents[0], opponents[1]))
+                .set(
+                    new TicTacToe(
+                        Array.from<TicOptions>({ length: 9 }).fill(null),
+                        0,
+                        true,
+                        opponents[0],
+                        opponents[1],
+                    ),
+                )
                 .then(resolve)
                 .catch(reject);
         });
