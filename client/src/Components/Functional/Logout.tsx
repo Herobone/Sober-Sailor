@@ -18,33 +18,37 @@
 
 import firebase from "firebase/app";
 import "firebase/auth";
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
+import Cookies from "universal-cookie";
 import { Alerts } from "../../helper/AlertTypes";
-import { AlertContext } from "./AlertProvider";
+import { useAlert } from "./AlertProvider";
 
-export class Logout extends Component {
-    static contextType = AlertContext;
-
-    context!: React.ContextType<typeof AlertContext>;
-
-    componentDidMount(): void {
+export function Logout(): JSX.Element {
+    const { createAlert } = useAlert();
+    const [redirect, setRedirect] = useState(false);
+    useEffect((): void => {
         firebase
             .auth()
             .signOut()
             .then(() => {
-                return this.context.createAlert(
-                    Alerts.SUCCESS,
-                    <FormattedMessage id="account.descriptions.signout.success" />,
-                );
+                createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
+                // Delete cookie that saves the global account.
+                const cookies = new Cookies();
+                cookies.remove("globalAccount");
+                setRedirect(true);
+                return Promise.resolve();
             })
             .catch(() => {
-                this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+                createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             });
-    }
+    });
 
-    render(): JSX.Element {
-        return <Redirect to="/login" />;
-    }
+    return (
+        <>
+            Logging out...
+            {redirect && <Redirect to="/" />}
+        </>
+    );
 }
