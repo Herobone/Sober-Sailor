@@ -16,9 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
+import React from "react";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
-import { SnackbarProvider } from "notistack";
 import { Provider } from "react-redux";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
@@ -28,23 +27,19 @@ import { Routed } from "./Components/Functional/Routed";
 import { responsiveTheme } from "./css/Theme";
 import { store } from "./state/store";
 
-export class App extends PureComponent {
-    render(): JSX.Element {
-        return (
-            <React.StrictMode>
-                <MuiThemeProvider theme={responsiveTheme}>
-                    <CssBaseline />
-                    <Provider store={store}>
-                        <LanguageContainer>
-                            <SnackbarProvider maxSnack={4}>
-                                <AlertProvider>
-                                    <Routed />
-                                </AlertProvider>
-                            </SnackbarProvider>
-                        </LanguageContainer>
-                    </Provider>
-                </MuiThemeProvider>
-            </React.StrictMode>
-        );
-    }
+export function App(): JSX.Element {
+    return (
+        <React.StrictMode>
+            <MuiThemeProvider theme={responsiveTheme}>
+                <CssBaseline />
+                <Provider store={store}>
+                    <LanguageContainer>
+                        <AlertProvider>
+                            <Routed />
+                        </AlertProvider>
+                    </LanguageContainer>
+                </Provider>
+            </MuiThemeProvider>
+        </React.StrictMode>
+    );
 }
