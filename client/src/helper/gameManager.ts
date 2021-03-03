@@ -51,7 +51,7 @@ export class GameManager {
         if (n > reg.size) {
             throw new Error(`Trying to get ${n} players while PLT only has ${reg.size} entries`);
         }
-        const players: string[] = new Array(n);
+        const players: string[] = Array.from({ length: n });
         // console.log(`Array length ${players.length} with n=${n}`);
         for (let i = 0; i < n; i++) {
             const choose = Util.getRandomKey(reg);
@@ -122,8 +122,8 @@ export class GameManager {
             throw new Error("Unauthenticated");
         }
 
-        const { uid } = user;
-        const nickname = user.displayName;
+        const { uid, displayName } = user;
+        const nickname = displayName;
 
         if (!nickname) {
             throw new Error("User tried to join without name!");
