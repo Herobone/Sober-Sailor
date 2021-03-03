@@ -16,47 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
+import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import { WithStyles, withStyles } from "@material-ui/styles";
 import { Button, Container } from "@material-ui/core";
 import RowingOutlined from "@material-ui/icons/RowingOutlined";
-import { DefaultStyle } from "../../css/Style";
-import { AlertContext } from "../Functional/AlertProvider";
+import { useDefaultStyles } from "../../css/Style";
 
-interface Props extends WithStyles<typeof DefaultStyle> {}
+export function Home(): JSX.Element {
+    const classes = useDefaultStyles();
+    return (
+        <Container maxWidth="sm" className={classes.startPage}>
+            <h1 className={classes.h1}>
+                <FormattedMessage id="sobersailor.name" />
+            </h1>
 
-interface State {}
-
-class HomeClass extends PureComponent<Props, State> {
-    static contextType = AlertContext;
-
-    context!: React.ContextType<typeof AlertContext>;
-
-    render(): JSX.Element {
-        const { classes } = this.props;
-        return (
-            <Container maxWidth="sm" className={classes.startPage}>
-                <h1 className={classes.h1}>
-                    <FormattedMessage id="sobersailor.name" />
-                </h1>
-
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    component={Link}
-                    to="/play"
-                    className={classes.gameSelectButton}
-                    size="large"
-                    fullWidth
-                >
-                    <RowingOutlined className={classes.gameSelectIcon} />
-                    <FormattedMessage id="gamemodes.start" />
-                </Button>
-            </Container>
-        );
-    }
+            <Button
+                variant="outlined"
+                color="primary"
+                component={Link}
+                to="/play"
+                className={classes.gameSelectButton}
+                size="large"
+                fullWidth
+            >
+                <RowingOutlined className={classes.gameSelectIcon} />
+                <FormattedMessage id="gamemodes.start" />
+            </Button>
+        </Container>
+    );
 }
-
-export const Home = withStyles(DefaultStyle)(HomeClass);
