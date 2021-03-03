@@ -19,8 +19,7 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import FormControl from "@material-ui/core/FormControl";
-import { InputLabel, MenuItem, Select } from "@material-ui/core";
-import { Column } from "../Visuals/Column";
+import { Container, InputLabel, MenuItem, Select } from "@material-ui/core";
 import { useLanguageContext } from "../../translations/LanguageContainer";
 import { useDefaultStyles } from "../../css/Style";
 
@@ -35,7 +34,7 @@ export function Settings(): JSX.Element {
     ];
 
     return (
-        <Column additionalClasses="app-content">
+        <Container>
             <h1>
                 <FormattedMessage id="account.navigation.settings" />
             </h1>
@@ -59,6 +58,6 @@ export function Settings(): JSX.Element {
                     })}
                 </Select>
             </FormControl>
-        </Column>
+        </Container>
     );
 }
