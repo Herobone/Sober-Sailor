@@ -21,12 +21,14 @@ import { taskReducer, TaskState } from "./reducers/taskReducer";
 import { DisplayState, displayStateReducer } from "./reducers/displayStateReducer";
 import { resultReducer, ResultState } from "./reducers/resultReducer";
 import { gameReducer, GameState } from "./reducers/gameReducer";
+import { languageReducer, LanguageState } from "./reducers/languageReducer";
 
 export interface RootState {
     task: TaskState;
     displayState: DisplayState;
     result: ResultState;
     game: GameState;
+    language: LanguageState;
 }
 
 export const store = createStore(
@@ -35,6 +37,7 @@ export const store = createStore(
         displayState: displayStateReducer,
         result: resultReducer,
         game: gameReducer,
+        language: languageReducer,
     }),
     process.env.NODE_ENV !== "production" ? devToolsEnhancer({ trace: true, traceLimit: 25 }) : undefined,
 );

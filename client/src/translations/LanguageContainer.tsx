@@ -16,17 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import Cookies from "universal-cookie";
+import { useDispatch, useSelector } from "react-redux";
 import messages_en from "./locales/en.json";
 import messages_de from "./locales/de.json";
 import messages_de_AT from "./locales/de_AT.json";
 import { Util } from "../helper/Util";
-
-interface State {
-    locale: string;
-}
+import { RootState } from "../state/store";
+import { LanguageState } from "../state/reducers/languageReducer";
+import { setLanguage } from "../state/actions/languageActions";
 
 const MESSAGES = {
     en: messages_en,
@@ -34,68 +34,44 @@ const MESSAGES = {
     de_AT: messages_de_AT,
 };
 
-interface Props {}
+export function LanguageContainer(props: React.PropsWithChildren<unknown>): JSX.Element {
+    const cookies: Cookies = new Cookies();
+    const language = useSelector<RootState, LanguageState["language"]>((state) => state.language.language);
+    const [msg, setMsg] = useState({});
+    const dispatch = useDispatch();
 
-type LanguageContextType = {
-    changeLanguage: (locale: string) => void;
-    currentLocale: string;
-};
+    useEffect(() => {
+        // Get language selection from cookie
+        let lang: string | undefined = cookies.get("locale");
 
-export const LanguageContext = React.createContext<LanguageContextType>({
-    currentLocale: "en",
-    changeLanguage: () => {
-        console.error("Tried to change Language on unmounted LanguageContainer!");
-    },
-});
-LanguageContext.displayName = "LanguageContext";
-
-export const useLanguageContext = (): LanguageContextType => React.useContext(LanguageContext);
-
-export class LanguageContainer extends React.Component<Props, State> {
-    cookies: Cookies;
-
-    constructor(props: Props) {
-        super(props);
-
-        this.cookies = new Cookies();
-
-        let lang: string | undefined = this.cookies.get("locale");
+        // If the language was not available, get it from the browser navigator
         if (!lang) {
             [lang] = navigator.language.split("-");
         }
+
+        // If the language that was selected does not exist in Translations, use english
         if (!Util.hasKey(MESSAGES, lang)) {
-            lang = "de";
-        }
-        this.state = {
-            locale: lang,
-        };
-    }
-
-    changeLanguage = (locale: string): void => {
-        this.cookies.set("locale", locale, { expires: Util.getDateIn(10), sameSite: true });
-        this.setState({
-            locale,
-        });
-    };
-
-    public render(): JSX.Element {
-        const { locale } = this.state;
-        let msg = {};
-        if (Util.hasKey(MESSAGES, locale)) {
-            msg = MESSAGES[locale];
+            lang = "en";
         }
 
-        return (
-            <IntlProvider locale={locale} messages={msg}>
-                <LanguageContext.Provider
-                    value={{
-                        changeLanguage: this.changeLanguage,
-                        currentLocale: locale,
-                    }}
-                >
-                    {this.props.children}
-                </LanguageContext.Provider>
-            </IntlProvider>
-        );
-    }
+        // Dispatch language
+        dispatch(setLanguage(lang));
+    }, []);
+
+    // If language changed
+    useEffect(() => {
+        // Update cookie
+        cookies.set("locale", language, { expires: Util.getDateIn(10), sameSite: true });
+
+        // Set messages if the selected language exists
+        if (Util.hasKey(MESSAGES, language)) {
+            setMsg(MESSAGES[language]);
+        }
+    }, [language]);
+
+    return (
+        <IntlProvider locale={language} messages={msg}>
+            {props.children}
+        </IntlProvider>
+    );
 }

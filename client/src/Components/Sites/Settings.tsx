@@ -20,14 +20,19 @@ import React from "react";
 import { FormattedMessage } from "react-intl";
 import FormControl from "@material-ui/core/FormControl";
 import { Container, InputLabel, MenuItem, Select } from "@material-ui/core";
-import { useLanguageContext } from "../../translations/LanguageContainer";
+import { useDispatch, useSelector } from "react-redux";
 import { useDefaultStyles } from "../../css/Style";
+import { setLanguage } from "../../state/actions/languageActions";
+import { RootState } from "../../state/store";
+import { LanguageState } from "../../state/reducers/languageReducer";
 
 type Language = { code: string; name: string };
 
 export function Settings(): JSX.Element {
-    const { currentLocale, changeLanguage } = useLanguageContext();
     const classes = useDefaultStyles();
+    const dispatch = useDispatch();
+
+    const language = useSelector<RootState, LanguageState["language"]>((state) => state.language.language);
     const options: Language[] = [
         { code: "de", name: "Deutsch" },
         { code: "en", name: "English" },
@@ -46,11 +51,11 @@ export function Settings(): JSX.Element {
                 </InputLabel>
                 <br />
                 <Select
-                    value={currentLocale}
+                    value={language}
                     label={<FormattedMessage id="settings.labels.selectlanguage" />}
                     onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                         const val = event.target.value as string;
-                        changeLanguage(val);
+                        dispatch(setLanguage(val));
                     }}
                 >
                     {options.map((value: Language) => {
