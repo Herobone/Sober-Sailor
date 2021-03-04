@@ -39,5 +39,5 @@ export const store = createStore(
         game: gameReducer,
         language: languageReducer,
     }),
-    process.env.NODE_ENV !== "production" ? devToolsEnhancer({ trace: true, traceLimit: 25 }) : undefined,
+    devToolsEnhancer({ trace: true, traceLimit: 25 }),
 );
