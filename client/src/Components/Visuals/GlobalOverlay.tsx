@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Settings } from "../Sites/Settings";
 import { useDefaultStyles } from "../../css/Style";
+import { CookieNotice } from "./CookieNotice";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -35,34 +36,37 @@ export function GlobalOverlay(): JSX.Element {
     const [speedDialShown, setSpeedDialShown] = useState(false);
     const intl = useIntl();
 
+    const openSettings = (): void => {
+        setSettingsShown(true);
+        setSpeedDialShown(false);
+    };
+
+    const closeSettings = (): void => {
+        setSettingsShown(false);
+        setSpeedDialShown(false);
+    };
+
     return (
         <>
-            <Modal
-                open={settingsShown}
-                onClose={() => {
-                    setSettingsShown(false);
-                    setSpeedDialShown(false);
-                }}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                }}
-            >
-                <Paper elevation={5} className={classes.settingsModal}>
-                    <Fade in={settingsShown}>
+            <CookieNotice />
+            <Modal open={settingsShown} onClose={closeSettings} closeAfterTransition>
+                <Fade in={settingsShown}>
+                    <Paper elevation={5} className={classes.settingsModal}>
                         <div className={classes.settingsModal}>
                             <Settings />
                         </div>
-                    </Fade>
-                </Paper>
+                    </Paper>
+                </Fade>
             </Modal>
             <SpeedDial
-                ariaLabel="SpeedDial tooltip example"
+                ariaLabel="Menu"
                 className={classes.settingsButton}
                 icon={<MenuOpenIcon />}
                 onClose={() => setSpeedDialShown(false)}
-                onOpen={() => setSpeedDialShown(true)}
+                onOpen={() => {
+                    setSpeedDialShown(true);
+                    console.log("Open lil cunt");
+                }}
                 open={speedDialShown}
             >
                 <SpeedDialAction
@@ -71,10 +75,7 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipTitle={<FormattedMessage id="account.navigation.settings" />}
                     title={intl.formatMessage({ id: "account.navigation.settings" })}
                     tooltipOpen
-                    onClick={() => {
-                        setSpeedDialShown(false);
-                        setSettingsShown(true);
-                    }}
+                    onClick={openSettings}
                 />
                 <SpeedDialAction
                     key="info_speeddial"
@@ -108,7 +109,7 @@ export function GlobalOverlay(): JSX.Element {
                 />
             </SpeedDial>
 
-            <Backdrop open={speedDialShown} />
+            <Backdrop open={speedDialShown || settingsShown} />
         </>
     );
 }
