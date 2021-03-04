@@ -22,7 +22,6 @@ import { Provider } from "react-redux";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
-import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
 import { responsiveTheme } from "./css/Theme";
 import { store } from "./state/store";
