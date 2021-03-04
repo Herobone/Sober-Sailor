@@ -16,16 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { CircularProgress } from "@material-ui/core";
 import { Login } from "../Sites/Login";
 import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
-import { Mixed } from "../Sites/Gamemodes/Mixed";
 import { MixedGameProvider } from "./MixedGameProvider";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { useGameProviderStlye } from "../../css/GameProvider";
+
+const Mixed = lazy(() => import("../Sites/Gamemodes/Mixed"));
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
@@ -35,31 +37,33 @@ export function Routed(): JSX.Element {
         <div className={classes.root}>
             <GlobalOverlay />
             <Router>
-                <Switch>
-                    <Route
-                        path="/play/:gameID"
-                        render={(props) => (
-                            <div className={providerClasses.centeraligned}>
-                                <MixedGameProvider gameID={props.match.params.gameID}>
-                                    <Mixed />
-                                </MixedGameProvider>
-                            </div>
-                        )}
-                    />
-                    <Route path="/play" render={() => <MixedGameProvider />} />
+                <Suspense fallback={<CircularProgress />}>
+                    <Switch>
+                        <Route
+                            path="/play/:gameID"
+                            render={(props) => (
+                                <div className={providerClasses.centeraligned}>
+                                    <MixedGameProvider gameID={props.match.params.gameID}>
+                                        <Mixed />
+                                    </MixedGameProvider>
+                                </div>
+                            )}
+                        />
+                        <Route path="/play" render={() => <MixedGameProvider />} />
 
-                    <Route path="/login">
-                        <Login />
-                    </Route>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
 
-                    <Route path="/logout">
-                        <Logout />
-                    </Route>
+                        <Route path="/logout">
+                            <Logout />
+                        </Route>
 
-                    <Route path="/">
-                        <Home />
-                    </Route>
-                </Switch>
+                        <Route path="/">
+                            <Home />
+                        </Route>
+                    </Switch>
+                </Suspense>
             </Router>
         </div>
     );

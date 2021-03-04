@@ -19,6 +19,7 @@
 import React from "react";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
 import { Provider } from "react-redux";
+import { SnackbarProvider } from "notistack";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
@@ -33,9 +34,11 @@ export function App(): JSX.Element {
                 <CssBaseline />
                 <Provider store={store}>
                     <LanguageContainer>
-                        <AlertProvider>
-                            <Routed />
-                        </AlertProvider>
+                        <SnackbarProvider maxSnack={4}>
+                            <AlertProvider>
+                                <Routed />
+                            </AlertProvider>
+                        </SnackbarProvider>
                     </LanguageContainer>
                 </Provider>
             </MuiThemeProvider>

@@ -63,7 +63,9 @@ type LeaderboardHandle = ElementRef<typeof Leaderboard>;
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
 
-export function Mixed(): JSX.Element {
+// Default export needed here for being able to lazy load it
+// eslint-disable-next-line import/no-default-export
+export default function Mixed(): JSX.Element {
     const leaderboardRef = useRef<LeaderboardHandle>(null);
 
     const truthOrDareRef = useRef<TruthOrDareHandle>(null);

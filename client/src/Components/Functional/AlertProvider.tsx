@@ -17,7 +17,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { SnackbarProvider, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { Alert as IAlert, AlertContextType } from "../../helper/AlertTypes";
 
 export const AlertContext = React.createContext<AlertContextType>({
@@ -39,9 +39,5 @@ export function AlertProvider(props: React.PropsWithChildren<unknown>): JSX.Elem
         });
     };
 
-    return (
-        <SnackbarProvider maxSnack={4}>
-            <AlertContext.Provider value={{ createAlert }}>{props.children}</AlertContext.Provider>
-        </SnackbarProvider>
-    );
+    return <AlertContext.Provider value={{ createAlert }}>{props.children}</AlertContext.Provider>;
 }
