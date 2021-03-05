@@ -1,3 +1,7 @@
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { TaskState } from "../reducers/taskReducer";
+
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -48,4 +52,44 @@ export const setPenalty = (penalty: number): NumberAction => ({ type: "SET_PENAL
 export type NumberAction = {
     type: "SET_PENALTY";
     payload: number;
+};
+
+export const useTaskType = (): [string | undefined, (content: string | undefined) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["type"]>((state) => state.task.type);
+
+    const set = (content: string | undefined): void => {
+        dispatch(setType(content));
+    };
+    return [get, set];
+};
+
+export const useTask = (): [string | undefined, (content: string | undefined) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
+
+    const set = (content: string | undefined): void => {
+        dispatch(setTask(content));
+    };
+    return [get, set];
+};
+
+export const useTarget = (): [string | undefined, (content: string | undefined) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
+
+    const set = (content: string | undefined): void => {
+        dispatch(setTarget(content));
+    };
+    return [get, set];
+};
+
+export const usePenalty = (): [number, (content: number) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["penalty"]>((state) => state.task.penalty);
+
+    const set = (content: number): void => {
+        dispatch(setPenalty(content));
+    };
+    return [get, set];
 };

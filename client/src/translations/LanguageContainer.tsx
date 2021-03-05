@@ -19,11 +19,8 @@
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import Cookies from "universal-cookie";
-import { useDispatch, useSelector } from "react-redux";
 import { Util } from "../helper/Util";
-import { RootState } from "../state/store";
-import { LanguageState } from "../state/reducers/languageReducer";
-import { setLanguage } from "../state/actions/languageActions";
+import { useLanguage } from "../state/actions/languageActions";
 
 const messageLoader = {
     en: () => import("./locales/en.json"),
@@ -33,11 +30,10 @@ const messageLoader = {
 
 export function LanguageContainer(props: React.PropsWithChildren<unknown>): JSX.Element {
     const cookies: Cookies = new Cookies();
-    const language = useSelector<RootState, LanguageState["language"]>((state) => state.language.language);
     const [intermediateMsg, setIntermediateMsg] = useState({});
     const [msg, setMsg] = useState<{ [key: string]: string }>();
     const [currentLanguage, setCurrentLanguage] = useState<string>();
-    const dispatch = useDispatch();
+    const [language, setGlobalLanguage] = useLanguage();
 
     useEffect(() => {
         // Get language selection from cookie
@@ -53,8 +49,7 @@ export function LanguageContainer(props: React.PropsWithChildren<unknown>): JSX.
             lang = "en";
         }
 
-        // Dispatch language
-        dispatch(setLanguage(lang));
+        setGlobalLanguage(lang);
     }, []);
 
     // If language changed

@@ -16,7 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { useDispatch, useSelector } from "react-redux";
 import { Player } from "../../helper/models/Player";
+import { RootState } from "../store";
+import { ResultState } from "../reducers/resultReducer";
 
 export type ResultAction = {
     type: "SET_RESULT";
@@ -29,3 +32,13 @@ export type ResultAction = {
  * @param result    The results or null
  */
 export const setResult = (result: Player[] | null): ResultAction => ({ type: "SET_RESULT", payload: result });
+
+export const useResult = (): [Player[] | null, (content: Player[] | null) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, ResultState["result"]>((state) => state.result.result);
+
+    const set = (content: Player[] | null): void => {
+        dispatch(setResult(content));
+    };
+    return [get, set];
+};

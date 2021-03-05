@@ -1,3 +1,7 @@
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { DisplayState } from "../reducers/displayStateReducer";
+
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -31,3 +35,23 @@ export const setPollState = (state: boolean): DisplayStateAction => ({ type: "SE
  * @param state     The state of evaluation
  */
 export const setEvalState = (state: boolean): DisplayStateAction => ({ type: "SET_EVAL", payload: state });
+
+export const useEvalState = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, DisplayState["evalState"]>((state) => state.displayState.evalState);
+
+    const set = (content: boolean): void => {
+        dispatch(setEvalState(content));
+    };
+    return [get, set];
+};
+
+export const usePollState = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, DisplayState["pollState"]>((state) => state.displayState.pollState);
+
+    const set = (content: boolean): void => {
+        dispatch(setPollState(content));
+    };
+    return [get, set];
+};

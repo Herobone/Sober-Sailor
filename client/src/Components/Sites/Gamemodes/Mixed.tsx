@@ -32,7 +32,6 @@ import IconButton from "@material-ui/core/IconButton";
 import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
 import PollIcon from "@material-ui/icons/Poll";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
-import { useDispatch, useSelector } from "react-redux";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -40,7 +39,6 @@ import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
 import tasks from "../../../gamemodes/tasks.json";
 import { TaskUtils } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
-import { Player } from "../../../helper/models/Player";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { Game } from "../../../helper/models/Game";
 import { Task } from "../../../helper/models/task";
@@ -49,15 +47,10 @@ import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { PlayerList } from "../../../helper/models/CustomTypes";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../css/Style";
-import { TaskState } from "../../../state/reducers/taskReducer";
-import * as TaskActions from "../../../state/actions/taskActions";
-import * as DisplayStateActions from "../../../state/actions/displayStateActions";
-import * as ResultActions from "../../../state/actions/resultActions";
-import * as GameActions from "../../../state/actions/gameActions";
-import { DisplayState } from "../../../state/reducers/displayStateReducer";
-import { ResultState } from "../../../state/reducers/resultReducer";
-import { RootState } from "../../../state/store";
-import { GameState } from "../../../state/reducers/gameReducer";
+import { usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
+import { useResult } from "../../../state/actions/resultActions";
+import { useIsHost } from "../../../state/actions/gameActions";
+import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 
 type LeaderboardHandle = ElementRef<typeof Leaderboard>;
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
@@ -76,49 +69,18 @@ export default function Mixed(): JSX.Element {
     const lang: string = cookies.get("locale");
 
     const classes = useDefaultStyles();
-    const dispatch = useDispatch();
 
-    const taskType = useSelector<RootState, TaskState["type"]>((state) => state.task.type);
-    const nextTask = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
-    const target = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
-    const isHost = useSelector<RootState, GameState["host"]>((state) => state.game.host);
-    const pollState = useSelector<RootState, DisplayState["pollState"]>((state) => state.displayState.pollState);
-    const evalState = useSelector<RootState, DisplayState["evalState"]>((state) => state.displayState.evalState);
-    const result = useSelector<RootState, ResultState["result"]>((state) => state.result.result);
-
-    const setNextTask = (task: string | undefined): void => {
-        dispatch(TaskActions.setTask(task));
-    };
-    const setTaskType = (type: string | undefined): void => {
-        dispatch(TaskActions.setType(type));
-    };
-
-    const setTarget = (newTarget: string | undefined): void => {
-        dispatch(TaskActions.setTarget(newTarget));
-    };
-
-    const setHost = (host: boolean): void => {
-        dispatch(GameActions.setHost(host));
-    };
-
-    const setPollState = (newPollState: boolean): void => {
-        dispatch(DisplayStateActions.setPollState(newPollState));
-    };
-
-    const setEvalState = (newEvalState: boolean): void => {
-        dispatch(DisplayStateActions.setEvalState(newEvalState));
-    };
-
-    const setResult = (newResult: Player[] | null): void => {
-        dispatch(ResultActions.setResult(newResult));
-    };
+    const [taskType, setTaskType] = useTaskType();
+    const [target, setTarget] = useTarget();
+    const [nextTask, setNextTask] = useTask();
+    const [isHost, setHost] = useIsHost();
+    const [pollState, setPollState] = usePollState();
+    const [evalState, setEvalState] = useEvalState();
+    const [result, setResult] = useResult();
+    const [penalty, setPenalty] = usePenalty();
 
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
-
-    const setPenalty = (newPenalty: number): void => {
-        dispatch(TaskActions.setPenalty(newPenalty));
-    };
 
     const updateLeaderboard = (): void => {
         const lb = leaderboardRef.current;

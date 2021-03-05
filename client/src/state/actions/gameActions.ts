@@ -1,3 +1,7 @@
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { GameState } from "../reducers/gameReducer";
+
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -26,3 +30,13 @@ export type HostGameActions = {
  * @param host  Is the player host or not?
  */
 export const setHost = (host: boolean): HostGameActions => ({ type: "SET_HOST", payload: host });
+
+export const useIsHost = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, GameState["host"]>((state) => state.game.host);
+
+    const set = (content: boolean): void => {
+        dispatch(setHost(content));
+    };
+    return [get, set];
+};
