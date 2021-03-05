@@ -19,21 +19,19 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button, ButtonGroup } from "@material-ui/core";
-import { useSelector } from "react-redux";
 import { GameManager } from "../helper/gameManager";
 import { useAlert } from "../Components/Functional/AlertProvider";
 import { Alerts } from "../helper/AlertTypes";
-import { RootState } from "../state/store";
-import { TaskState } from "../state/reducers/taskReducer";
-import { DisplayState } from "../state/reducers/displayStateReducer";
+import { useTask } from "../state/actions/taskActions";
+import { usePollState } from "../state/actions/displayStateActions";
 
 export function WhoWouldRather(): JSX.Element {
     const [inputLock, setInputLock] = useState(true);
     const [answer, setAnswer] = useState<string | null>(null);
     const { createAlert } = useAlert();
 
-    const question = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
-    const pollState = useSelector<RootState, DisplayState["pollState"]>((state) => state.displayState.pollState);
+    const question = useTask()[0];
+    const pollState = usePollState()[0];
     if (!question) {
         return <></>;
     }
