@@ -59,7 +59,7 @@
     "@imaginary-cloud/prettier-config": "^1.0.0",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
-    "@testing-library/user-event": "^12.6.2",
+    "@testing-library/user-event": "^13.1.1",
     "@types/jest": "^26.0.20",
     "@types/jquery": "^3.5.4",
     "@types/md5": "^2.2.0",
