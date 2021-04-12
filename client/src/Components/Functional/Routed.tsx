@@ -17,7 +17,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { Login } from "../Sites/Login";
@@ -87,13 +87,15 @@ export function Routed(): JSX.Element {
                 <Switch>
                     <Route
                         path="/play/:gameID"
-                        render={(props) => (
-                            <div className={providerClasses.centeraligned}>
-                                <MixedGameProvider gameID={props.match.params.gameID}>
-                                    <Mixed />
-                                </MixedGameProvider>
-                            </div>
-                        )}
+                        render={(props: RouteComponentProps<{ gameID?: string }>) => {
+                            return (
+                                <div className={providerClasses.centeraligned}>
+                                    <MixedGameProvider gameID={props.match.params.gameID}>
+                                        <Mixed />
+                                    </MixedGameProvider>
+                                </div>
+                            );
+                        }}
                     />
                     <Route path="/play" render={() => <MixedGameProvider />} />
 
