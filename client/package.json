@@ -15,7 +15,7 @@
     "ast-utils": "^1.0.0",
     "eslint": "^7.16.0",
     "firebase": "^8.2.9",
-    "firebaseui": "^4.7.3",
+    "firebaseui": "^4.8.0",
     "globalize": "^1.6.0",
     "md5": "^2.2.1",
     "notistack": "^1.0.3",
