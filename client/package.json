@@ -83,7 +83,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-unicorn": "^28.0.2",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
-    "postcss-safe-parser": "^5.0.2",
+    "postcss-safe-parser": "^6.0.0",
     "react-app-rewired": "^2.1.8",
     "react-intl-translations-manager": "^5.0.3",
     "terser-webpack-plugin": "^4.2.3",
