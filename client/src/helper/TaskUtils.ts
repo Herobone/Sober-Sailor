@@ -21,6 +21,7 @@ export function storeToLocalFromGit(task: string, lang: string): Promise<string[
     const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
         process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
     }/tasks/${task}/${lang}.json`;
+
     return new Promise<string[]>((resolve, reject) => {
         fetch(url)
             .then((response) => response.text())
@@ -50,9 +51,7 @@ export function getTasks(task: string, lang: string): Promise<string[]> {
 export function getRandomTask(task: string, lang: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         getTasks(task, lang)
-            .then((tasks) => {
-                return resolve(Util.selectRandom(tasks));
-            })
+            .then((tasks) => resolve(Util.selectRandom(tasks)))
             .catch(reject);
     });
 }

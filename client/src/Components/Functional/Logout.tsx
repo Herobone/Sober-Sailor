@@ -33,12 +33,10 @@ export class Logout extends Component {
         firebase
             .auth()
             .signOut()
-            .then(() => {
-                return this.context.createAlert(
+            .then(() => this.context.createAlert(
                     Alerts.SUCCESS,
                     <FormattedMessage id="account.descriptions.signout.success" />,
-                );
-            })
+                ))
             .catch(() => {
                 this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             });

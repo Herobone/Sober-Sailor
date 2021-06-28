@@ -18,12 +18,10 @@
 
 import firebase from "firebase/app";
 
-export class Serverless {
-    static devel = process.env.NODE_ENV === "development";
+export const Serverless = {
+    devel : process.env.NODE_ENV === "development",
 
-    static callFunction = (name: string): firebase.functions.HttpsCallable => {
-        return Serverless.devel
+    callFunction : (name: string): firebase.functions.HttpsCallable => Serverless.devel
             ? firebase.functions().httpsCallable(name)
-            : firebase.app().functions("europe-west1").httpsCallable(name);
-    };
-}
+            : firebase.app().functions("europe-west1").httpsCallable(name),
+};

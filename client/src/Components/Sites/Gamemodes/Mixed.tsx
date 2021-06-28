@@ -114,9 +114,7 @@ class MixedClass extends React.Component<Props, State> {
     componentDidMount(): void {
         GameManager.joinGame(this.gameEvent).then(this.updateLeaderboard).catch(console.error);
         GameManager.amIHost()
-            .then((host): void => {
-                return this.setState({ isHost: host });
-            })
+            .then((host): void => this.setState({ isHost: host }))
             .catch(console.error);
     }
 
