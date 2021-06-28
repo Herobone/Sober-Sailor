@@ -54,9 +54,7 @@ export function Settings(): JSX.Element {
                         changeLanguage(val);
                     }}
                 >
-                    {options.map((value: Language) => {
-                        return <MenuItem value={value.code}>{value.name}</MenuItem>;
-                    })}
+                    {options.map((value: Language) => <MenuItem value={value.code}>{value.name}</MenuItem>)}
                 </Select>
             </FormControl>
         </Column>

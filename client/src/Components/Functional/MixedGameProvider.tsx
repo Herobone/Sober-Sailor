@@ -105,8 +105,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
             .catch(console.error);
     };
 
-    const prepareRunningGame = (): JSX.Element => {
-        return (
+    const prepareRunningGame = (): JSX.Element => (
             <>
                 {props.children}
                 <Fab
@@ -120,10 +119,8 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 </Fab>
             </>
         );
-    };
 
-    const prepareNameSetter = (): JSX.Element => {
-        return (
+    const prepareNameSetter = (): JSX.Element => (
             <>
                 <h1 className={classes.h1_long}>
                     <FormattedMessage id="account.descriptors.finishsignup" />
@@ -152,7 +149,6 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 </IconButton>
             </>
         );
-    };
 
     if (user && !userReady) {
         return prepareNameSetter();

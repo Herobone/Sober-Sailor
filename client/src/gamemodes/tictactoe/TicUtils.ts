@@ -22,8 +22,8 @@ import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 
 export type TicOptions = "X" | "O" | null;
 
-export class TicUtils {
-    static calculateWinner(squares: TicOptions[]): TicOptions | "tie" {
+export const TicUtils = {
+    calculateWinner(squares: TicOptions[]): TicOptions | "tie" {
         const lines = [
             [0, 1, 2],
             [3, 4, 5],
@@ -46,9 +46,9 @@ export class TicUtils {
             winner = "tie";
         }
         return winner;
-    }
+    },
 
-    static registerTicTacToe(opponents: string[]): Promise<unknown> {
+    registerTicTacToe(opponents: string[]): Promise<unknown> {
         return new Promise<unknown>((resolve, reject) => {
             if (opponents.length !== 2) {
                 throw new RangeError("More or less than two players specified!");
@@ -68,13 +68,13 @@ export class TicUtils {
                 .then(resolve)
                 .catch(reject);
         });
-    }
+    },
 
-    static drawAllowed(isXNext: boolean, player: TicOptions): boolean {
+    drawAllowed(isXNext: boolean, player: TicOptions): boolean {
         return (!isXNext && player === "O") || (isXNext && player === "X");
-    }
+    },
 
-    static numpadToSquare(numpad: number): number {
+    numpadToSquare(numpad: number): number {
         switch (numpad) {
             case 2:
                 return 7;
@@ -97,17 +97,17 @@ export class TicUtils {
             default:
                 throw new RangeError("What kind of numpad do you have?");
         }
-    }
+    },
 
-    static getTTTGame(): firebase.firestore.DocumentReference<TicTacToe> {
+    getTTTGame(): firebase.firestore.DocumentReference<TicTacToe> {
         return firebase
             .firestore()
             .collection(GameManager.getGameID())
             .doc("tictactoe")
             .withConverter(ticTacToeConverter);
-    }
+    },
 
-    static makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
+    makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const tttRef = TicUtils.getTTTGame();
             tttRef
@@ -142,5 +142,5 @@ export class TicUtils {
                 .then(() => resolve())
                 .catch(reject);
         });
-    }
-}
+    },
+};

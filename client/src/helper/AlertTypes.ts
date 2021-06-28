@@ -45,6 +45,7 @@ export type AlertContextType = {
     createAlert: AlertCreator;
 };
 
+// eslint-disable-next-line unicorn/no-static-only-class
 export class Alerts {
     static WARNING: Warning = new Warning();
 

@@ -50,9 +50,7 @@ export function getTasks(task: string, lang: string): Promise<string[]> {
 export function getRandomTask(task: string, lang: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         getTasks(task, lang)
-            .then((tasks) => {
-                return resolve(Util.selectRandom(tasks));
-            })
+            .then((tasks) => resolve(Util.selectRandom(tasks)))
             .catch(reject);
     });
 }

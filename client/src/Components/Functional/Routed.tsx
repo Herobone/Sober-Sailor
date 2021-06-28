@@ -87,15 +87,13 @@ export function Routed(): JSX.Element {
                 <Switch>
                     <Route
                         path="/play/:gameID"
-                        render={(props: RouteComponentProps<{ gameID?: string }>) => {
-                            return (
+                        render={(props: RouteComponentProps<{ gameID?: string }>) => (
                                 <div className={providerClasses.centeraligned}>
                                     <MixedGameProvider gameID={props.match.params.gameID}>
                                         <Mixed />
                                     </MixedGameProvider>
                                 </div>
-                            );
-                        }}
+                            )}
                     />
                     <Route path="/play" render={() => <MixedGameProvider />} />
 
