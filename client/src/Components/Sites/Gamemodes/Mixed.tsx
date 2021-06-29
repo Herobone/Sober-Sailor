@@ -77,6 +77,7 @@ export default function Mixed(): JSX.Element {
     const [pollState, setPollState] = usePollState();
     const [evalState, setEvalState] = useEvalState();
     const [result, setResult] = useResult();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [penalty, setPenalty] = usePenalty();
 
     const [timer, setTimer] = useState(0);

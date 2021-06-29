@@ -15,10 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, PropsWithChildren } from "react";
 
 interface Props {}
 
-export const WouldYouRather: FunctionComponent<Props> = (props) => {
-    return <>Would you Rather?</>;
+export const WouldYouRather: FunctionComponent<Props> = (props: PropsWithChildren<Props>) => {
+    return (
+        <>
+            Would you Rather?
+            {props.children}
+        </>
+    );
 };
