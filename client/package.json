@@ -15,7 +15,7 @@
     "ast-utils": "^1.0.0",
     "browserslist": "^4.16.6",
     "eslint": "^7.29.0",
-    "firebase": "^8.6.8",
+    "firebase": "^9.0.0",
     "firebaseui": "^4.8.0",
     "globalize": "^1.6.0",
     "md5": "^2.2.1",
