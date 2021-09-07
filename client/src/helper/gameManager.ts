@@ -145,10 +145,7 @@ export class GameManager {
 
         const gameRef = GameManager.getGame();
         const userRef = GameManager.getPlayer(uid);
-        const userDoc = await getDoc(userRef);
-        if (!userDoc.exists) {
-            await setDoc(userRef, new Player(uid, nickname, 0, null));
-        }
+        await setDoc(userRef, new Player(uid, nickname, 0, null));
         onSnapshot(gameRef, gameEvent);
     }
 

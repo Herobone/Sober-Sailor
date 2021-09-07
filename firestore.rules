@@ -1,8 +1,39 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    match /games/{game} {
+      function playerExists() {
+        return isAuthenticated() &&
+        exists(/databases/$(database)/documents/games/$(game)/players/$(request.auth.uid));
+      }
+
+      function isHost() {
+        return playerExists() && request.auth.uid == get(/databases/$(database)/documents/games/$(game)).data.host;
+      }
+
+      allow read: if playerExists();
+      allow create: if isAuthenticated();
+      allow update: if isHost();
+      allow delete: if isHost();
+
+      match /players/{playerID} {
+
+        function owns(id) {
+          return request.auth.uid == id;
+        }
+
+        function idsMatch() {
+          return playerExists() && owns(playerID);
+        }
+
+        allow read: if playerExists();
+        allow update: if idsMatch() || isHost();
+        allow create: if isAuthenticated() && owns(playerID);
+        allow delete: if idsMatch() || isHost();
+      }
     }
   }
 }
