@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
-import firebase from "firebase/compat/app";
-import "firebase/compat/analytics";
-import "firebase/compat/performance";
+import { getPerformance } from "firebase/performance";
+import { getAnalytics } from "firebase/analytics";
+import { firebaseApp } from "./config";
 import { Util } from "./Util";
 
 /** ***************************
@@ -39,8 +39,8 @@ export class Dough {
      */
     public static startAnalytics(): void {
         if (this.checkCookies("analytics") && process.env.NODE_ENV === "production") {
-            firebase.analytics();
-            firebase.performance();
+            getAnalytics(firebaseApp);
+            getPerformance(firebaseApp);
             console.log("Analytics activated");
         }
     }

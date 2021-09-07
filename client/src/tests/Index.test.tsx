@@ -19,17 +19,19 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import { act as domAct } from "react-dom/test-utils";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
 import { LanguageContainer } from "../translations/LanguageContainer";
-import { config } from "../helper/config";
+import { config, firebaseApp } from "../helper/config";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
 import { responsiveTheme } from "../css/Theme";
 
 firebase.initializeApp(config);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE).catch(console.warn);
+
+const auth = getAuth(firebaseApp);
+setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 test("Renders the Router and looks for Alerts", () => {
     const neverCallThis = jest.fn();

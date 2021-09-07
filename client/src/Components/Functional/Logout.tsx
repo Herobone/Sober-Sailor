@@ -16,22 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
 import Cookies from "universal-cookie";
+import { getAuth, signOut } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
+import { firebaseApp } from "../../helper/config";
 import { useAlert } from "./AlertProvider";
 
 export function Logout(): JSX.Element {
     const { createAlert } = useAlert();
     const [redirect, setRedirect] = useState(false);
     useEffect((): void => {
-        firebase
-            .auth()
-            .signOut()
+        signOut(getAuth(firebaseApp))
             .then(() => {
                 createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
                 // Delete cookie that saves the global account.

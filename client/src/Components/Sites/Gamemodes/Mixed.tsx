@@ -18,8 +18,8 @@
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
+import { DocumentSnapshot, updateDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import Cookies from "universal-cookie";
 
 import { Tooltip } from "@material-ui/core";
@@ -32,6 +32,7 @@ import IconButton from "@material-ui/core/IconButton";
 import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
 import PollIcon from "@material-ui/icons/Poll";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
+import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Util } from "../../../helper/Util";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -157,7 +158,7 @@ export default function Mixed(): JSX.Element {
         }
     }, [evalState]);
 
-    const gameEvent = (doc: firebase.firestore.DocumentSnapshot<Game>): void => {
+    const gameEvent = (doc: DocumentSnapshot<Game>): void => {
         const data = doc.data();
         if (data) {
             GameManager.updatePlayerLookupTable(doc);
@@ -178,7 +179,7 @@ export default function Mixed(): JSX.Element {
                 setEvalState(data.evalState);
             }
 
-            const auth = firebase.auth();
+            const auth = getAuth(firebaseApp);
             const user = auth.currentUser;
 
             if (user && (data.host === user.uid) === isHost) {
@@ -195,16 +196,14 @@ export default function Mixed(): JSX.Element {
     const setTask = (type: Task, newTarget: PlayerList, newPenalty = 0): void => {
         console.log({ task: type, target: newTarget, penalty: newPenalty });
         if (type.id === "tictactoe") {
-            GameManager.getGame()
-                .update({
-                    currentTask: null,
-                    type: type.id,
-                    evalState: false,
-                    pollState: false,
-                    taskTarget: null,
-                    penalty: newPenalty,
-                })
-                .catch(console.error);
+            updateDoc(GameManager.getGame(), {
+                currentTask: null,
+                type: type.id,
+                evalState: false,
+                pollState: false,
+                taskTarget: null,
+                penalty: newPenalty,
+            }).catch(console.error);
             if (newTarget && newTarget.length === 2) {
                 TicUtils.registerTicTacToe(newTarget).catch(console.error);
             }
@@ -215,7 +214,7 @@ export default function Mixed(): JSX.Element {
             TaskUtils.getRandomTask(type.id, taskLang)
                 .then((task): Promise<void> => {
                     setNextTask(task);
-                    return GameManager.getGame().update({
+                    return updateDoc(GameManager.getGame(), {
                         currentTask: task,
                         type: type.id,
                         evalState: false,

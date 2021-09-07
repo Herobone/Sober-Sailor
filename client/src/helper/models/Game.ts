@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
+import { User } from "firebase/auth";
+import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
 import { Register } from "./Register";
 
 export interface IGame {
@@ -43,7 +43,7 @@ interface IGameExternal {
     host: string;
     pollState: boolean;
     evalState: boolean;
-    created: firebase.firestore.Timestamp;
+    created: Timestamp;
     playerUidMap: { [key: string]: string };
 }
 
@@ -62,7 +62,7 @@ export class Game implements IGame {
         readonly register: Register,
     ) {}
 
-    static createEmpty(id: string, host: firebase.User): Game {
+    static createEmpty(id: string, host: User): Game {
         const { uid, displayName } = host;
         if (!displayName) {
             throw new Error("Display name missing");
@@ -73,7 +73,7 @@ export class Game implements IGame {
 }
 
 export const gameConverter = {
-    toFirestore(game: Game): firebase.firestore.DocumentData {
+    toFirestore(game: Game): DocumentData {
         return {
             currentTask: game.currentTask,
             type: game.type,
@@ -83,14 +83,11 @@ export const gameConverter = {
             host: game.host,
             pollState: game.pollState,
             evalState: game.evalState,
-            created: firebase.firestore.Timestamp.fromDate(game.created),
+            created: Timestamp.fromDate(game.created),
             playerUidMap: game.register.serialize(),
         };
     },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IGameExternal>,
-        options: firebase.firestore.SnapshotOptions,
-    ): Game {
+    fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal>, options: SnapshotOptions): Game {
         const data = snapshot.data(options);
         return new Game(
             snapshot.id,

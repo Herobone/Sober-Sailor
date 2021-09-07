@@ -16,8 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
 
 export interface IPlayer {
     uid: string;
@@ -42,17 +41,14 @@ export class Player implements IPlayer {
 }
 
 export const playerConverter = {
-    toFirestore(player: Player): firebase.firestore.DocumentData {
+    toFirestore(player: Player): DocumentData {
         return {
             nickname: player.nickname,
             sips: player.sips,
             answer: player.answer,
         };
     },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IPlayerExternal>,
-        options: firebase.firestore.SnapshotOptions,
-    ): Player {
+    fromFirestore(snapshot: QueryDocumentSnapshot<IPlayerExternal>, options: SnapshotOptions): Player {
         const data = snapshot.data(options);
         return new Player(snapshot.id, data.nickname, data.sips, data.answer);
     },

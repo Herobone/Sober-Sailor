@@ -19,6 +19,7 @@
 import React, { forwardRef, ReactElement, useImperativeHandle } from "react";
 import { FormattedMessage } from "react-intl";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { GameManager } from "../../helper/gameManager";
 import { playerConverter } from "../../helper/models/Player";
 import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
@@ -34,12 +35,13 @@ const LeaderboardIntern = forwardRef<LeaderboardHandles>((props, ref): JSX.Eleme
     const classes = useLeaderboardStyles();
 
     const updateLB = (): void => {
-        const lead = GameManager.getGame().collection("players").withConverter(playerConverter).orderBy("sips", "desc");
+        const playerColRef = collection(GameManager.getGame(), "players").withConverter(playerConverter);
+        const lead = query(playerColRef, orderBy("sips", "desc"));
         const lb = new Map<string, number>();
-        lead.get()
-            .then((query) => {
-                query.forEach((doc) => {
-                    const data = doc.data();
+        getDocs(lead)
+            .then((queryOut) => {
+                queryOut.forEach((document) => {
+                    const data = document.data();
                     if (data) {
                         lb.set(data.nickname, data.sips);
                     }

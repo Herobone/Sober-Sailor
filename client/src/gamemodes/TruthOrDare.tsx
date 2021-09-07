@@ -17,13 +17,11 @@
  */
 
 import { ButtonGroup } from "@material-ui/core";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/functions";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import Button from "@material-ui/core/Button";
 import { useSelector } from "react-redux";
+import { getAuth } from "firebase/auth";
 import { GameManager } from "../helper/gameManager";
 import { Register } from "../helper/models/Register";
 import { SingleTargetRequest } from "../helper/models/SingleTarget";
@@ -31,6 +29,7 @@ import { Serverless } from "../helper/Serverless";
 import { useTruthOrDareStyles } from "../css/TruthOrDareStyle";
 import { RootState } from "../state/store";
 import { TaskState } from "../state/reducers/taskReducer";
+import { firebaseApp } from "../helper/config";
 
 type TruthOrDareHandles = {
     reset: () => void;
@@ -72,7 +71,7 @@ const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): 
         targetName = tar || "Error";
     }
 
-    const user = firebase.auth().currentUser;
+    const user = getAuth(firebaseApp).currentUser;
     if (!user) {
         return <div className="error">Error user not logged in! This area should be restricted!</div>;
     }

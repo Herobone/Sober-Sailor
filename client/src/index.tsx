@@ -19,11 +19,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
-import "firebase/compat/functions";
-import "firebase/compat/analytics";
-import "firebase/compat/performance";
 import { getAuth, setPersistence, browserLocalPersistence, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";

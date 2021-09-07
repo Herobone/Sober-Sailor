@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
+
+import { doc, DocumentReference, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { GameManager } from "../../helper/gameManager";
 import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
+import { firebaseApp } from "../../helper/config";
 
 export type TicOptions = "X" | "O" | null;
 
@@ -99,19 +100,15 @@ export const TicUtils = {
         }
     },
 
-    getTTTGame(): firebase.firestore.DocumentReference<TicTacToe> {
-        return firebase
-            .firestore()
-            .collection(GameManager.getGameID())
-            .doc("tictactoe")
-            .withConverter(ticTacToeConverter);
+    getTTTGame(): DocumentReference<TicTacToe> {
+        const db = getFirestore(firebaseApp);
+        return doc(db, GameManager.getGameID(), "tictactoe").withConverter(ticTacToeConverter);
     },
 
     makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const tttRef = TicUtils.getTTTGame();
-            tttRef
-                .get({ source: "cache" })
+            getDoc(tttRef)
                 .then((data) => {
                     const ttt = data.data();
                     if (!ttt) {
@@ -133,7 +130,7 @@ export const TicUtils = {
                     }
                     const field = value.squares;
                     field[fieldID] = player;
-                    return tttRef.update({
+                    return updateDoc(tttRef, {
                         squares: field,
                         isXNext: !value.isXNext,
                         stepNumber: value.stepNumber + 1,

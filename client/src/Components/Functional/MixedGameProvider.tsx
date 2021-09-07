@@ -17,15 +17,15 @@
  */
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
 import { FormattedMessage } from "react-intl";
 import { CircularProgress, Fab, IconButton, TextField } from "@material-ui/core";
 import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
 import Cookies from "universal-cookie";
+import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useGameProviderStlye } from "../../css/GameProvider";
+import { firebaseApp } from "../../helper/config";
 import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
 
@@ -36,7 +36,9 @@ interface Props {
 export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element {
     const { createAlert } = useAlert();
     const [name, setName] = useState("");
-    const [user, setUser] = useState<firebase.User>();
+    const [user, setUser] = useState<User>();
+
+    const auth = getAuth(firebaseApp);
 
     const [userReady, setUserReady] = useState(false);
 
@@ -58,19 +60,16 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     }, [user]);
 
     useEffect((): void => {
-        const { currentUser } = firebase.auth();
+        const { currentUser } = auth;
         const cookies = new Cookies();
         const globalAccount: boolean = cookies.get("globalAccount");
         if (!currentUser && !globalAccount) {
-            firebase
-                .auth()
-                .signInAnonymously()
-                .catch((error) => {
-                    createAlert(Alerts.ERROR, error.message);
-                    console.error(error.message);
-                });
+            signInAnonymously(auth).catch((error) => {
+                createAlert(Alerts.ERROR, error.message);
+                console.error(error.message);
+            });
         }
-        firebase.auth().onAuthStateChanged((authStateUser) => {
+        onAuthStateChanged(auth, (authStateUser) => {
             console.info("Auth change");
             setUser(authStateUser || undefined);
             updateReadyState();
@@ -82,7 +81,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     };
 
     const processName = (): void => {
-        const { currentUser } = firebase.auth();
+        const { currentUser } = auth;
 
         if (!currentUser) {
             createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
@@ -94,8 +93,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
             return;
         }
 
-        currentUser
-            .updateProfile({ displayName: name })
+        updateProfile(currentUser, { displayName: name })
             .then(() => {
                 createAlert(Alerts.SUCCESS, "Name set");
                 setUser(currentUser);

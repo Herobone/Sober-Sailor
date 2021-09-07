@@ -16,15 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
 import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
+import { getAuth } from "firebase/auth";
+import { DocumentSnapshot } from "firebase/firestore";
 import style from "../../css/TicTacToe.module.scss";
 import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
 import { Player } from "../../helper/models/Player";
+import { firebaseApp } from "../../helper/config";
 import { TicOptions, TicUtils } from "./TicUtils";
 import { Board } from "./Board";
 
@@ -81,7 +81,7 @@ export class TicTacToe extends Component<Props, State> {
         TicUtils.makeDraw(i, player).catch(console.error);
     }
 
-    private updateFromDoc(doc: firebase.firestore.DocumentSnapshot<TicTacToeData>): void {
+    private updateFromDoc(doc: DocumentSnapshot<TicTacToeData>): void {
         const data = doc.data();
         if (!data) {
             throw new Error("No data in Document Snapshot!");
@@ -90,7 +90,7 @@ export class TicTacToe extends Component<Props, State> {
     }
 
     updateData(data: TicTacToeData): void {
-        const user = firebase.auth().currentUser;
+        const user = getAuth(firebaseApp).currentUser;
         let player: TicOptions = null;
         let spectator = true;
         if (user) {

@@ -15,16 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
-import "firebase/compat/functions";
+
+import {
+    DocumentSnapshot,
+    getFirestore,
+    doc,
+    getDoc,
+    DocumentReference,
+    setDoc,
+    collection,
+    CollectionReference,
+    onSnapshot,
+    deleteDoc,
+    getDocs,
+    updateDoc,
+    increment,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { Util } from "./Util";
 import { Player, playerConverter } from "./models/Player";
 import { Game, gameConverter } from "./models/Game";
 import { Register } from "./models/Register";
 import { PlayerList } from "./models/CustomTypes";
 import { Serverless } from "./Serverless";
+import { firebaseApp } from "./config";
 
 export class GameManager {
     static getPlayerLookupTable(): Register | null {
@@ -34,7 +48,7 @@ export class GameManager {
         }
 
         console.warn("LocalStorage has no PLT stored! Try again!");
-        GameManager.getGame().get().then(GameManager.updatePlayerLookupTable).catch(console.error);
+        getDoc(GameManager.getGame()).then(GameManager.updatePlayerLookupTable).catch(console.error);
 
         return null;
     }
@@ -62,8 +76,8 @@ export class GameManager {
         return players;
     }
 
-    static updatePlayerLookupTable(doc: firebase.firestore.DocumentSnapshot<Game>): void {
-        const data = doc.data();
+    static updatePlayerLookupTable(docIn: DocumentSnapshot<Game>): void {
+        const data = docIn.data();
         if (data) {
             localStorage.setItem("playerLookupTable", data.register.stringify());
         }
@@ -78,7 +92,7 @@ export class GameManager {
     }
 
     static async createGame(): Promise<string> {
-        const { currentUser } = firebase.auth();
+        const { currentUser } = getAuth(firebaseApp);
 
         if (!currentUser) {
             throw new Error("User not logged in");
@@ -90,32 +104,32 @@ export class GameManager {
         const gameID = uid.slice(0, 2) + randomSuffix;
         const gameRef = GameManager.getGameByID(gameID);
         try {
-            await gameRef.set(Game.createEmpty(gameID, currentUser));
+            await setDoc(gameRef, Game.createEmpty(gameID, currentUser));
         } catch (error) {
             console.error(error);
         }
         return gameID;
     }
 
-    static getGame(): firebase.firestore.DocumentReference<Game> {
+    static getGame(): DocumentReference<Game> {
         return GameManager.getGameByID(GameManager.getGameID());
     }
 
-    private static getGameByID(gameID: string): firebase.firestore.DocumentReference<Game> {
-        const db = firebase.firestore();
-        return db.collection("games").doc(gameID).withConverter(gameConverter);
+    private static getGameByID(gameID: string): DocumentReference<Game> {
+        const db = getFirestore(firebaseApp);
+        return doc(db, "games", gameID).withConverter(gameConverter);
     }
 
-    static getPlayerCol(): firebase.firestore.CollectionReference {
-        return GameManager.getGame().collection("players");
+    static getPlayerCol(): CollectionReference {
+        return collection(GameManager.getGame(), "players");
     }
 
-    static getPlayer(uid: string): firebase.firestore.DocumentReference<Player> {
-        return GameManager.getPlayerCol().doc(uid).withConverter(playerConverter);
+    static getPlayer(uid: string): DocumentReference<Player> {
+        return doc(GameManager.getPlayerCol(), uid).withConverter(playerConverter);
     }
 
-    static async joinGame(gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void): Promise<void> {
-        const auth = firebase.auth();
+    static async joinGame(gameEvent: (doc: DocumentSnapshot<Game>) => void): Promise<void> {
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
         if (!user) {
@@ -131,11 +145,11 @@ export class GameManager {
 
         const gameRef = GameManager.getGame();
         const userRef = GameManager.getPlayer(uid);
-        const userDoc = await userRef.get();
+        const userDoc = await getDoc(userRef);
         if (!userDoc.exists) {
-            await userRef.set(new Player(uid, nickname, 0, null));
+            await setDoc(userRef, new Player(uid, nickname, 0, null));
         }
-        gameRef.onSnapshot(gameEvent);
+        onSnapshot(gameRef, gameEvent);
     }
 
     public static removeLocalData(): void {
@@ -144,7 +158,7 @@ export class GameManager {
     }
 
     static leaveGame(): void {
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
         if (!user) {
@@ -154,8 +168,7 @@ export class GameManager {
         const { uid } = user;
 
         const deletePlayer = (): void => {
-            GameManager.getPlayer(uid)
-                .delete()
+            deleteDoc(GameManager.getPlayer(uid))
                 .then(() => {
                     window.location.pathname = "";
                     GameManager.removeLocalData();
@@ -176,7 +189,7 @@ export class GameManager {
     }
 
     static async amIHost(): Promise<boolean> {
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
         if (!user) {
@@ -185,7 +198,7 @@ export class GameManager {
 
         const { uid } = user;
         const gameRef = GameManager.getGame();
-        const gameDoc = await gameRef.get();
+        const gameDoc = await getDoc(gameRef);
         const data = gameDoc.data();
         if (data) {
             return data.host === uid;
@@ -197,9 +210,9 @@ export class GameManager {
         const players: Player[] = [];
         const playerRef = GameManager.getPlayerCol().withConverter(playerConverter);
 
-        const query = await playerRef.get();
-        query.forEach((doc) => {
-            const data = doc.data();
+        const queryIn = await getDocs(playerRef);
+        queryIn.forEach((docIn) => {
+            const data = docIn.data();
             if (data) {
                 players.push(data);
             }
@@ -208,7 +221,7 @@ export class GameManager {
     }
 
     static async transferHostShip(): Promise<void> {
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
         if (!user) {
             throw new Error("Unauthenticated");
@@ -228,7 +241,7 @@ export class GameManager {
         if (ids.length > 0) {
             console.log("Some players left! Transferring!");
             const random = Util.getRandomElement(ids);
-            await gameRef.update({
+            await updateDoc(gameRef, {
                 host: random,
             });
             return;
@@ -243,27 +256,27 @@ export class GameManager {
     static async setPollState(state: boolean): Promise<void> {
         console.log("Changing State to", state);
         const gameRef = GameManager.getGame();
-        await gameRef.update({
+        await updateDoc(gameRef, {
             pollState: state,
         });
     }
 
     static async setEvalState(state: boolean): Promise<void> {
         const gameRef = GameManager.getGame();
-        await gameRef.update({
+        await updateDoc(gameRef, {
             evalState: state,
         });
     }
 
     static async setAnswer(answer: string): Promise<void> {
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
         if (!user) {
             throw new Error("Unauthenticated");
         }
 
         const { uid } = user;
-        await GameManager.getPlayer(uid).update({
+        await updateDoc(GameManager.getPlayer(uid), {
             answer,
         });
     }
@@ -323,7 +336,7 @@ export class GameManager {
     }
 
     static async getMyData(): Promise<Player> {
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
         if (!user) {
             throw new Error("Unauthenticated");
@@ -331,8 +344,8 @@ export class GameManager {
 
         const { uid } = user;
         const playerRef = GameManager.getPlayer(uid);
-        const doc = await playerRef.withConverter(playerConverter).get();
-        const data = doc.data();
+        const docIn = await getDoc(playerRef.withConverter(playerConverter));
+        const data = docIn.data();
         if (data) {
             return data;
         }
@@ -345,7 +358,7 @@ export class GameManager {
      */
     static submitPenaltyAndReset(results: Player[]): Promise<void> {
         let sipsIHaveToTake = 0;
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
         if (!user) {
             throw new Error("Unauthenticated call to protected function!");
@@ -357,8 +370,8 @@ export class GameManager {
                 sipsIHaveToTake = player.sips;
             }
         });
-        return GameManager.getPlayer(uid).update({
-            sips: firebase.firestore.FieldValue.increment(sipsIHaveToTake),
+        return updateDoc(GameManager.getPlayer(uid), {
+            sips: increment(sipsIHaveToTake),
             answer: null,
         });
     }

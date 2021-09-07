@@ -16,8 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
+import { QueryDocumentSnapshot } from "firebase/firestore";
 import { TicOptions } from "../../gamemodes/tictactoe/TicUtils";
 
 export interface ITicTacToe {
@@ -39,7 +38,7 @@ export class TicTacToe implements ITicTacToe {
 }
 
 export const ticTacToeConverter = {
-    toFirestore(game: TicTacToe): firebase.firestore.DocumentData {
+    toFirestore(game: TicTacToe): DocumentData {
         return {
             squares: game.squares,
             stepNumber: game.stepNumber,
@@ -48,10 +47,7 @@ export const ticTacToeConverter = {
             playerO: game.playerO,
         };
     },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<ITicTacToe>,
-        options: firebase.firestore.SnapshotOptions,
-    ): TicTacToe {
+    fromFirestore(snapshot: QueryDocumentSnapshot<ITicTacToe>, options: SnapshotOptions): TicTacToe {
         const data = snapshot.data(options);
         return new TicTacToe(data.squares, data.stepNumber, data.isXNext, data.playerX, data.playerO);
     },
