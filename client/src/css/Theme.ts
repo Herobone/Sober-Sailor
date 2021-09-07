@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
+import { createTheme, responsiveFontSizes } from "@material-ui/core";
 
-export const StandardTheme = createMuiTheme({
+export const StandardTheme = createTheme({
     palette: {
         background: {
             default: "#7cdbd5",
@@ -35,7 +35,7 @@ export const StandardTheme = createMuiTheme({
     },
 });
 
-export const DarkTheme = createMuiTheme({
+export const DarkTheme = createTheme({
     palette: {
         background: {
             default: "#414141",
@@ -53,7 +53,7 @@ export const DarkTheme = createMuiTheme({
     },
 });
 
-export const CalmTheme = createMuiTheme({
+export const CalmTheme = createTheme({
     palette: {
         background: {
             default: "#99ced4",
