@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 import { GameManager } from "../../helper/gameManager";
 import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 

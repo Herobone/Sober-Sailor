@@ -18,8 +18,8 @@
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import firebase from "firebase/app";
-import "firebase/firestore";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 import Cookies from "universal-cookie";
 
 import { Tooltip } from "@material-ui/core";
@@ -213,19 +213,17 @@ export default function Mixed(): JSX.Element {
             const localTarget = newTarget ? newTarget[0] : null;
 
             TaskUtils.getRandomTask(type.id, taskLang)
-                .then(
-                    (task): Promise<void> => {
-                        setNextTask(task);
-                        return GameManager.getGame().update({
-                            currentTask: task,
-                            type: type.id,
-                            evalState: false,
-                            pollState: false,
-                            taskTarget: localTarget,
-                            penalty: newPenalty,
-                        });
-                    },
-                )
+                .then((task): Promise<void> => {
+                    setNextTask(task);
+                    return GameManager.getGame().update({
+                        currentTask: task,
+                        type: type.id,
+                        evalState: false,
+                        pollState: false,
+                        taskTarget: localTarget,
+                        penalty: newPenalty,
+                    });
+                })
                 .catch(console.error);
         }
     };

@@ -19,7 +19,6 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core";
-import { Login } from "../Sites/Login";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
@@ -51,9 +50,9 @@ export function Routed(): JSX.Element {
                         />
                         <Route path="/play" render={() => <MixedGameProvider />} />
 
-                        <Route path="/login">
+                        {/*<Route path="/login">
                             <Login />
-                        </Route>
+                        </Route>*/}
 
                         <Route path="/logout">
                             <Logout />

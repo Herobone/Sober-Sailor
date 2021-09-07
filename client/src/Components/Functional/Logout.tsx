@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";

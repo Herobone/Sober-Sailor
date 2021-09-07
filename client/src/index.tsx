@@ -18,28 +18,34 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/functions";
-import "firebase/analytics";
-import "firebase/performance";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import "firebase/compat/functions";
+import "firebase/compat/analytics";
+import "firebase/compat/performance";
+import { getAuth, setPersistence, browserLocalPersistence, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import * as serviceWorker from "./serviceWorker";
-import { config } from "./helper/config";
+import { config, firebaseApp } from "./helper/config";
 import { App } from "./App";
 import { Dough } from "./helper/Dough";
 
 // Initialize Firebase with the config
 // Configure in helper/config.ts
 firebase.initializeApp(config);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(console.error);
+const auth = getAuth(firebaseApp);
+setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 // If running local use Emulators for testing!
 // Make sure to start those with "firebase emulators:start"
 if (process.env.NODE_ENV !== "production") {
-    firebase.firestore().useEmulator(window.location.hostname, 8080);
-    firebase.auth().useEmulator(`http://${window.location.hostname}:9099`);
-    firebase.functions().useEmulator(window.location.hostname, 5001);
+    const db = getFirestore(firebaseApp);
+    const fn = getFunctions(firebaseApp);
+    connectFirestoreEmulator(db, window.location.hostname, 8080);
+    connectAuthEmulator(auth, `http://${window.location.hostname}:9099`);
+    connectFunctionsEmulator(fn, window.location.hostname, 5001);
 }
 
 if (process.env.REACT_APP_BETA_CHANNEL) {

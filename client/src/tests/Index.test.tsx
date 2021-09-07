@@ -18,8 +18,8 @@
 
 import React from "react";
 import { render } from "@testing-library/react";
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import { act as domAct } from "react-dom/test-utils";
 import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
 import { LanguageContainer } from "../translations/LanguageContainer";

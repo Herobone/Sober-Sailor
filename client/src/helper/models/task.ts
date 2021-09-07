@@ -1,5 +1,3 @@
-import firebase from "firebase";
-
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
@@ -17,6 +15,7 @@ import firebase from "firebase";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import firebase from "firebase/compat/app";
 
 export interface Task {
     id: string;

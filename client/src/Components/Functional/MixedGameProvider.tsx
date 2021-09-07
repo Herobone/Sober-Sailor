@@ -17,8 +17,8 @@
  */
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import { FormattedMessage } from "react-intl";
 import { CircularProgress, Fab, IconButton, TextField } from "@material-ui/core";
 import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
@@ -106,49 +106,49 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     };
 
     const prepareRunningGame = (): JSX.Element => (
-            <>
-                {props.children}
-                <Fab
-                    variant="extended"
-                    color="primary"
-                    onClick={() => GameManager.leaveGame()}
-                    className={classes.leaveGameFab}
-                >
-                    <ExitToAppRounded />
-                    <FormattedMessage id="actions.leave" />
-                </Fab>
-            </>
-        );
+        <>
+            {props.children}
+            <Fab
+                variant="extended"
+                color="primary"
+                onClick={() => GameManager.leaveGame()}
+                className={classes.leaveGameFab}
+            >
+                <ExitToAppRounded />
+                <FormattedMessage id="actions.leave" />
+            </Fab>
+        </>
+    );
 
     const prepareNameSetter = (): JSX.Element => (
-            <>
-                <h1 className={classes.h1_long}>
-                    <FormattedMessage id="account.descriptors.finishsignup" />
-                </h1>
-                <br />
-                <TextField
-                    required
-                    label="Name"
-                    variant="outlined"
-                    color="primary"
-                    className={classes.nameInput}
-                    onChange={onNameChange}
-                    onKeyPress={(event) => {
-                        if (event.key === "Enter" || event.key === "Accept") {
-                            processName();
-                        }
-                    }}
-                />
-                <IconButton
-                    color="primary"
-                    className={classes.inputNameButton}
-                    aria-label="Go to your game!"
-                    onClick={processName}
-                >
-                    <ArrowForwardIos />
-                </IconButton>
-            </>
-        );
+        <>
+            <h1 className={classes.h1_long}>
+                <FormattedMessage id="account.descriptors.finishsignup" />
+            </h1>
+            <br />
+            <TextField
+                required
+                label="Name"
+                variant="outlined"
+                color="primary"
+                className={classes.nameInput}
+                onChange={onNameChange}
+                onKeyPress={(event) => {
+                    if (event.key === "Enter" || event.key === "Accept") {
+                        processName();
+                    }
+                }}
+            />
+            <IconButton
+                color="primary"
+                className={classes.inputNameButton}
+                aria-label="Go to your game!"
+                onClick={processName}
+            >
+                <ArrowForwardIos />
+            </IconButton>
+        </>
+    );
 
     if (user && !userReady) {
         return prepareNameSetter();

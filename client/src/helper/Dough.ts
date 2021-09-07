@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
-import firebase from "firebase/app";
-import "firebase/analytics";
-import "firebase/performance";
+import firebase from "firebase/compat/app";
+import "firebase/compat/analytics";
+import "firebase/compat/performance";
 import { Util } from "./Util";
 
 /** ***************************

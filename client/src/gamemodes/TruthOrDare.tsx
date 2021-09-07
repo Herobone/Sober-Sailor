@@ -17,9 +17,9 @@
  */
 
 import { ButtonGroup } from "@material-ui/core";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/functions";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/functions";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import Button from "@material-ui/core/Button";

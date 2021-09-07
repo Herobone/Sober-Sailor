@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
+import firebase from "firebase/compat/app";
 
 export class Serverless {
     private static devel = process.env.NODE_ENV === "development";
@@ -27,7 +27,8 @@ export class Serverless {
 
     public static CLOSE_GAME = "closeGame";
 
-    public static callFunction = (name: string): firebase.functions.HttpsCallable => Serverless.devel
+    public static callFunction = (name: string): firebase.functions.HttpsCallable =>
+        Serverless.devel
             ? firebase.functions().httpsCallable(name)
             : firebase.app().functions("europe-west1").httpsCallable(name);
 }
