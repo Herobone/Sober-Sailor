@@ -32,7 +32,7 @@ service cloud.firestore {
         allow read: if playerExists();
         allow update: if idsMatch() || isHost();
         allow create: if isAuthenticated() && owns(playerID);
-        allow delete: if idsMatch() || isHost();
+        allow delete: if owns(playerID) || isHost();
       }
     }
   }
