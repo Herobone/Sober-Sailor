@@ -1,0 +1,10 @@
+[
+  {
+    "question": "Was würdest du eher essen?",
+    "answers": [
+      {"answer":  "Hunde"},
+      {"answer":  "Katzen"},
+      {"answer":  "Pferde"}
+    ]
+  }
+]
