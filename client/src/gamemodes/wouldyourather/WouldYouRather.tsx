@@ -19,11 +19,9 @@ import React, { FunctionComponent, PropsWithChildren } from "react";
 
 interface Props {}
 
-export const WouldYouRather: FunctionComponent<Props> = (props: PropsWithChildren<Props>) => {
-    return (
+export const WouldYouRather: FunctionComponent<Props> = (props: PropsWithChildren<Props>) => (
         <>
             Would you Rather?
             {props.children}
         </>
     );
-};

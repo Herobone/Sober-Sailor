@@ -27,9 +27,7 @@ export class Serverless {
 
     public static CLOSE_GAME = "closeGame";
 
-    public static callFunction = (name: string): firebase.functions.HttpsCallable => {
-        return Serverless.devel
+    public static callFunction = (name: string): firebase.functions.HttpsCallable => Serverless.devel
             ? firebase.functions().httpsCallable(name)
             : firebase.app().functions("europe-west1").httpsCallable(name);
-    };
 }
