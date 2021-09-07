@@ -1,0 +1,10 @@
+name: "CodeQL config for Client"
+
+paths:
+  - client
+paths-ignore:
+  - client/node_modules
+  - '**/*.test.js'
+  - '**/*.test.jsx'
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
