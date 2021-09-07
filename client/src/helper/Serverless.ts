@@ -29,7 +29,7 @@ export class Serverless {
 
     public static CLOSE_GAME = "closeGame";
 
-    private static functions = getFunctions(firebaseApp, Serverless.devel ? "europe-west1" : "us-central1");
+    private static functions = getFunctions(firebaseApp, Serverless.devel ? "us-central1" : "europe-west1");
 
     public static callFunction = (name: string): firebase.functions.HttpsCallable =>
         httpsCallable(this.functions, name);
