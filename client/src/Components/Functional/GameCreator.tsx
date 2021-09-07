@@ -4,9 +4,9 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { ArrowForwardIos } from "@material-ui/icons";
 import React from "react";
 import { useGameProviderStlye } from "../../css/GameProvider";
-import { useAlert } from "./AlertProvider";
 import { GameManager } from "../../helper/gameManager";
 import { Alerts } from "../../helper/AlertTypes";
+import { useAlert } from "./AlertProvider";
 
 /** ***************************
  * Sober Sailor - The online Party Game

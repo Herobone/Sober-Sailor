@@ -32,59 +32,60 @@ type KickListHandles = {
     show: (shown?: boolean) => void;
 };
 
-export const KickList = forwardRef<KickListHandles>(
-    (props, ref): JSX.Element => {
-        const { createAlert } = useAlert();
-        const [shown, setShown] = useState(false);
+const KickListIntern = forwardRef<KickListHandles>((props, ref): JSX.Element => {
+    const { createAlert } = useAlert();
+    const [shown, setShown] = useState(false);
 
-        const show = (showList?: boolean): void => {
-            if (showList === undefined) {
-                setShown(true);
-            } else {
-                setShown(showList);
-            }
-        };
-
-        useImperativeHandle(ref, () => ({
-            show,
-        }));
-
-        if (shown) {
-            const pltRaw = localStorage.getItem("playerLookupTable");
-            const vals: ReactElement[] = [];
-            let register: Register;
-            if (pltRaw) {
-                register = Register.parse(pltRaw);
-                register.playerUidMap.forEach((username: string, uid: string) => {
-                    vals.push(
-                        <li
-                            // eslint-disable-next-line react/no-array-index-key
-                            key={`kick${uid}`}
-                            className="w3-bar-item w3-button"
-                        >
-                            <button
-                                type="submit"
-                                onClick={() => {
-                                    const callData: KickPlayer = {
-                                        gameID: GameManager.getGameID(),
-                                        playerID: uid,
-                                    };
-                                    Serverless.callFunction(Serverless.KICK_PLAYER)(callData)
-                                        .then(() => setShown(false))
-                                        .catch(console.warn);
-                                }}
-                            >
-                                {username}
-                            </button>
-                        </li>,
-                    );
-                });
-            } else {
-                createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
-            }
-
-            return <ul className="w3-block w3-black w3-bar-block w3-border">{vals}</ul>;
+    const show = (showList?: boolean): void => {
+        if (showList === undefined) {
+            setShown(true);
+        } else {
+            setShown(showList);
         }
-        return <></>;
-    },
-);
+    };
+
+    useImperativeHandle(ref, () => ({
+        show,
+    }));
+
+    if (shown) {
+        const pltRaw = localStorage.getItem("playerLookupTable");
+        const vals: ReactElement[] = [];
+        let register: Register;
+        if (pltRaw) {
+            register = Register.parse(pltRaw);
+            register.playerUidMap.forEach((username: string, uid: string) => {
+                vals.push(
+                    <li
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={`kick${uid}`}
+                        className="w3-bar-item w3-button"
+                    >
+                        <button
+                            type="submit"
+                            onClick={() => {
+                                const callData: KickPlayer = {
+                                    gameID: GameManager.getGameID(),
+                                    playerID: uid,
+                                };
+                                Serverless.callFunction(Serverless.KICK_PLAYER)(callData)
+                                    .then(() => setShown(false))
+                                    .catch(console.warn);
+                            }}
+                        >
+                            {username}
+                        </button>
+                    </li>,
+                );
+            });
+        } else {
+            createAlert(Alerts.ERROR, "LocalStorage had no PLT stored!");
+        }
+
+        return <ul className="w3-block w3-black w3-bar-block w3-border">{vals}</ul>;
+    }
+    return <></>;
+});
+KickListIntern.displayName = "KickList";
+
+export const KickList = KickListIntern;

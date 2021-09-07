@@ -25,8 +25,8 @@ import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
 import Cookies from "universal-cookie";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
-import { useAlert } from "./AlertProvider";
 import { useGameProviderStlye } from "../../css/GameProvider";
+import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
 
 interface Props {

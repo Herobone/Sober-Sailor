@@ -21,12 +21,12 @@ import "firebase/auth";
 import "firebase/firestore";
 import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
-import { Board } from "./Board";
 import style from "../../css/TicTacToe.module.scss";
-import { TicOptions, TicUtils } from "./TicUtils";
 import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
 import { Player } from "../../helper/models/Player";
+import { TicOptions, TicUtils } from "./TicUtils";
+import { Board } from "./Board";
 
 interface Props {}
 interface State {

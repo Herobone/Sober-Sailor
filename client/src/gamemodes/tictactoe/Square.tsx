@@ -17,8 +17,8 @@
  */
 
 import React, { PureComponent } from "react";
-import { TicOptions } from "./TicUtils";
 import style from "../../css/TicTacToe.module.scss";
+import { TicOptions } from "./TicUtils";
 
 interface Props {
     value: TicOptions;

@@ -1,18 +1,28 @@
 module.exports = {
-    plugins: ["@typescript-eslint", "eslint-comments", "jest", "promise", "unicorn"],
+    plugins: ["@typescript-eslint", "eslint-comments", "jest", "promise", "unicorn", "jsx-a11y", "react"],
     extends: [
+        "eslint:recommended",
         "airbnb-typescript",
+        "plugin:react/recommended",
+        "plugin:react/jsx-runtime",
         "plugin:@typescript-eslint/recommended",
         "plugin:eslint-comments/recommended",
         "plugin:jest/recommended",
         "plugin:promise/recommended",
         "plugin:unicorn/recommended",
+        "plugin:import/recommended",
         "prettier",
     ],
     env: {
         node: true,
         browser: true,
         jest: true,
+    },
+    settings: {
+        react: {
+            version: "detect",
+        },
+        "import/ignore": ["node_modules"],
     },
     parserOptions: {
         project: "./tsconfig.json",
@@ -69,5 +79,9 @@ module.exports = {
         "react/static-property-placement": "off",
         "react/require-default-props": "off",
         "unicorn/no-array-for-each": "off",
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "react/jsx-key": "warn",
+        "react/display-name": "warn",
     },
 };

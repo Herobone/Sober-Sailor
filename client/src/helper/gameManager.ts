@@ -304,7 +304,7 @@ export class GameManager {
             sipsPerPlayer.push(new Player(uid, name, count, theirAnswerReadable));
         });
 
-        const occuredKeys = new Set([...occur.keys()]);
+        const occuredKeys = new Set(occur.keys());
         idNameMap.forEach((name: string, uid: string) => {
             if (!occuredKeys.has(uid)) {
                 const theirAnswer = playerAnwered.get(uid);

@@ -17,9 +17,9 @@
  */
 
 import React, { PureComponent, ReactElement } from "react";
+import style from "../../css/TicTacToe.module.scss";
 import { Square } from "./Square";
 import { TicOptions } from "./TicUtils";
-import style from "../../css/TicTacToe.module.scss";
 
 interface Props {
     squares: TicOptions[];

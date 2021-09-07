@@ -20,12 +20,12 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core";
 import { Login } from "../Sites/Login";
-import { Logout } from "./Logout";
 import { Home } from "../Sites/Home";
-import { MixedGameProvider } from "./MixedGameProvider";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { useGameProviderStlye } from "../../css/GameProvider";
+import { MixedGameProvider } from "./MixedGameProvider";
+import { Logout } from "./Logout";
 
 const Mixed = lazy(() => import("../Sites/Gamemodes/Mixed"));
 

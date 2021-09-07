@@ -28,77 +28,76 @@ type LeaderboardHandles = {
     updateLeaderboard: () => void;
 };
 
-export const Leaderboard = forwardRef<LeaderboardHandles>(
-    (props, ref): JSX.Element => {
-        const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
+const LeaderboardIntern = forwardRef<LeaderboardHandles>((props, ref): JSX.Element => {
+    const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
 
-        const classes = useLeaderboardStyles();
+    const classes = useLeaderboardStyles();
 
-        const updateLB = (): void => {
-            const lead = GameManager.getGame()
-                .collection("players")
-                .withConverter(playerConverter)
-                .orderBy("sips", "desc");
-            const lb = new Map<string, number>();
-            lead.get()
-                .then((query) => {
-                    query.forEach((doc) => {
-                        const data = doc.data();
-                        if (data) {
-                            lb.set(data.nickname, data.sips);
-                        }
-                    });
-                    setLeaderboard(lb);
-                    return Promise.resolve();
-                })
-                .catch(console.error);
-        };
+    const updateLB = (): void => {
+        const lead = GameManager.getGame().collection("players").withConverter(playerConverter).orderBy("sips", "desc");
+        const lb = new Map<string, number>();
+        lead.get()
+            .then((query) => {
+                query.forEach((doc) => {
+                    const data = doc.data();
+                    if (data) {
+                        lb.set(data.nickname, data.sips);
+                    }
+                });
+                setLeaderboard(lb);
+                return Promise.resolve();
+            })
+            .catch(console.error);
+    };
 
-        useImperativeHandle(ref, () => ({
-            updateLeaderboard: updateLB,
-        }));
+    useImperativeHandle(ref, () => ({
+        updateLeaderboard: updateLB,
+    }));
 
-        const prepareLeaderboard = (): ReactElement[] => {
-            const values: ReactElement[] = [];
-            let counter = 1;
-            leaderboard.forEach((value: number, key: string) => {
-                values.push(
-                    <TableRow key={`leaderboard${counter}`}>
-                        <TableCell align="center">{counter}</TableCell>
-                        <TableCell className="leaderboard-nickname">{key}</TableCell>
-                        <TableCell align="center" className="leaderboard-score">
-                            {value}
+    const prepareLeaderboard = (): ReactElement[] => {
+        const values: ReactElement[] = [];
+        let counter = 1;
+        leaderboard.forEach((value: number, key: string) => {
+            values.push(
+                <TableRow key={`leaderboard${counter}`}>
+                    <TableCell align="center">{counter}</TableCell>
+                    <TableCell className="leaderboard-nickname">{key}</TableCell>
+                    <TableCell align="center" className="leaderboard-score">
+                        {value}
+                    </TableCell>
+                </TableRow>,
+            );
+            counter++;
+        });
+
+        return values;
+    };
+
+    return (
+        <TableContainer className={classes.sideArea} component={Paper}>
+            <h1 className={classes.sideHeading}>
+                <FormattedMessage id="elements.leaderboard" />
+            </h1>
+            <Table className="leaderboard">
+                <TableHead>
+                    <TableRow>
+                        <TableCell className="leaderboard-header-rank" align="center">
+                            <FormattedMessage id="elements.general.rank" />
                         </TableCell>
-                    </TableRow>,
-                );
-                counter++;
-            });
+                        <TableCell className="leaderboard-header-nickname">
+                            <FormattedMessage id="general.nickname" />
+                        </TableCell>
+                        <TableCell className="leaderboard-header-score" align="center">
+                            <FormattedMessage id="general.sips" />
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>{prepareLeaderboard()}</TableBody>
+            </Table>
+        </TableContainer>
+    );
+});
 
-            return values;
-        };
+LeaderboardIntern.displayName = "Leaderboard";
 
-        return (
-            <TableContainer className={classes.sideArea} component={Paper}>
-                <h1 className={classes.sideHeading}>
-                    <FormattedMessage id="elements.leaderboard" />
-                </h1>
-                <Table className="leaderboard">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className="leaderboard-header-rank" align="center">
-                                <FormattedMessage id="elements.general.rank" />
-                            </TableCell>
-                            <TableCell className="leaderboard-header-nickname">
-                                <FormattedMessage id="general.nickname" />
-                            </TableCell>
-                            <TableCell className="leaderboard-header-score" align="center">
-                                <FormattedMessage id="general.sips" />
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{prepareLeaderboard()}</TableBody>
-                </Table>
-            </TableContainer>
-        );
-    },
-);
+export const Leaderboard = LeaderboardIntern;

@@ -36,79 +36,81 @@ type TruthOrDareHandles = {
     reset: () => void;
 };
 
-export const TruthOrDare = forwardRef<TruthOrDareHandles>(
-    (props: unknown, ref): JSX.Element => {
-        const [answer, setAnswer] = useState<boolean | null>(null);
-        const classes = useTruthOrDareStyles();
+const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): JSX.Element => {
+    const [answer, setAnswer] = useState<boolean | null>(null);
+    const classes = useTruthOrDareStyles();
 
-        const question = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
-        const target = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
-        const penalty = useSelector<RootState, TaskState["penalty"]>((state) => state.task.penalty);
+    const question = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
+    const target = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
+    const penalty = useSelector<RootState, TaskState["penalty"]>((state) => state.task.penalty);
 
-        if (!target || !question) {
-            return <></>;
-        }
+    if (!target || !question) {
+        return <></>;
+    }
 
-        const submitAnswer = (answerToSet: boolean): void => {
-            setAnswer(answerToSet);
-            const callData: SingleTargetRequest = { answer: answerToSet, gameID: GameManager.getGameID() };
+    const submitAnswer = (answerToSet: boolean): void => {
+        setAnswer(answerToSet);
+        const callData: SingleTargetRequest = { answer: answerToSet, gameID: GameManager.getGameID() };
 
-            Serverless.callFunction(Serverless.SINGLE_TARGET)(callData).catch(console.error);
-        };
+        Serverless.callFunction(Serverless.SINGLE_TARGET)(callData).catch(console.error);
+    };
 
-        const reset = (): void => {
-            setAnswer(null);
-        };
+    const reset = (): void => {
+        setAnswer(null);
+    };
 
-        useImperativeHandle(ref, () => ({
-            reset,
-        }));
+    useImperativeHandle(ref, () => ({
+        reset,
+    }));
 
-        const pltRaw = localStorage.getItem("playerLookupTable");
+    const pltRaw = localStorage.getItem("playerLookupTable");
 
-        let targetName = "Error";
-        if (pltRaw) {
-            const register = Register.parse(pltRaw);
-            const tar = register.playerUidMap.get(target);
-            targetName = tar || "Error";
-        }
+    let targetName = "Error";
+    if (pltRaw) {
+        const register = Register.parse(pltRaw);
+        const tar = register.playerUidMap.get(target);
+        targetName = tar || "Error";
+    }
 
-        const user = firebase.auth().currentUser;
-        if (!user) {
-            return <div className="error">Error user not logged in! This area should be restricted!</div>;
-        }
-        return (
-            <div>
-                <h2>{targetName}:</h2>
-                <h2>
-                    <FormattedMessage id="gamemodes.truthordare" />
+    const user = firebase.auth().currentUser;
+    if (!user) {
+        return <div className="error">Error user not logged in! This area should be restricted!</div>;
+    }
+    return (
+        <div>
+            <h2>{targetName}:</h2>
+            <h2>
+                <FormattedMessage id="gamemodes.truthordare" />
+            </h2>
+            {question}
+            <br />
+            <FormattedMessage
+                id="elements.general.penalty"
+                values={{
+                    penalty,
+                }}
+            />
+            <br />
+            {target === user.uid && answer === null && (
+                <ButtonGroup variant="contained" color="primary" className={classes.buttonGroup}>
+                    <Button type="submit" onClick={() => submitAnswer(true)}>
+                        <FormattedMessage id="elements.truthordare.dare" />
+                    </Button>
+                    <Button type="submit" onClick={() => submitAnswer(false)}>
+                        <FormattedMessage id="elements.truthordare.drink" />
+                    </Button>
+                </ButtonGroup>
+            )}
+            {answer !== null && (
+                <h2 className={classes.textAtTheBottom}>
+                    {!answer && <FormattedMessage id="elements.truthordare.drink" />}
+                    {answer && <FormattedMessage id="elements.truthordare.dare" />}
                 </h2>
-                {question}
-                <br />
-                <FormattedMessage
-                    id="elements.general.penalty"
-                    values={{
-                        penalty,
-                    }}
-                />
-                <br />
-                {target === user.uid && answer === null && (
-                    <ButtonGroup variant="contained" color="primary" className={classes.buttonGroup}>
-                        <Button type="submit" onClick={() => submitAnswer(true)}>
-                            <FormattedMessage id="elements.truthordare.dare" />
-                        </Button>
-                        <Button type="submit" onClick={() => submitAnswer(false)}>
-                            <FormattedMessage id="elements.truthordare.drink" />
-                        </Button>
-                    </ButtonGroup>
-                )}
-                {answer !== null && (
-                    <h2 className={classes.textAtTheBottom}>
-                        {!answer && <FormattedMessage id="elements.truthordare.drink" />}
-                        {answer && <FormattedMessage id="elements.truthordare.dare" />}
-                    </h2>
-                )}
-            </div>
-        );
-    },
-);
+            )}
+        </div>
+    );
+});
+
+TruthOrDareIntern.displayName = "Truth or Dare";
+
+export const TruthOrDare = TruthOrDareIntern;
