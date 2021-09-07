@@ -17,6 +17,8 @@
  */
 
 import firebase from "firebase/compat/app";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { firebaseApp } from "./config";
 
 export class Serverless {
     private static devel = process.env.NODE_ENV === "development";
@@ -27,8 +29,8 @@ export class Serverless {
 
     public static CLOSE_GAME = "closeGame";
 
+    private static functions = getFunctions(firebaseApp, Serverless.devel ? "europe-west1" : "us-central1");
+
     public static callFunction = (name: string): firebase.functions.HttpsCallable =>
-        Serverless.devel
-            ? firebase.functions().httpsCallable(name)
-            : firebase.app().functions("europe-west1").httpsCallable(name);
+        httpsCallable(this.functions, name);
 }

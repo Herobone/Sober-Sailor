@@ -19,7 +19,7 @@
 import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
 import { getAuth } from "firebase/auth";
-import { DocumentSnapshot } from "firebase/firestore";
+import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
 import style from "../../css/TicTacToe.module.scss";
 import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
@@ -60,7 +60,7 @@ export class TicTacToe extends Component<Props, State> {
 
     componentDidMount(): void {
         document.addEventListener("keydown", this.keyEvent, false);
-        this.unsubscribe = TicUtils.getTTTGame().onSnapshot(this.updateFromDoc);
+        this.unsubscribe = onSnapshot(TicUtils.getTTTGame(), this.updateFromDoc);
     }
 
     componentWillUnmount(): void {

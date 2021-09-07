@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { doc, DocumentReference, getDoc, getFirestore, updateDoc } from "firebase/firestore";
+import { doc, DocumentReference, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 import { GameManager } from "../../helper/gameManager";
 import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 import { firebaseApp } from "../../helper/config";
@@ -56,16 +56,10 @@ export const TicUtils = {
             }
             console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
 
-            TicUtils.getTTTGame()
-                .set(
-                    new TicTacToe(
-                        Array.from<TicOptions>({ length: 9 }).fill(null),
-                        0,
-                        true,
-                        opponents[0],
-                        opponents[1],
-                    ),
-                )
+            setDoc(
+                TicUtils.getTTTGame(),
+                new TicTacToe(Array.from<TicOptions>({ length: 9 }).fill(null), 0, true, opponents[0], opponents[1]),
+            )
                 .then(resolve)
                 .catch(reject);
         });
