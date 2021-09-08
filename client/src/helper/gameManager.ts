@@ -128,6 +128,11 @@ export class GameManager {
         return doc(GameManager.getPlayerCol(), uid).withConverter(playerConverter);
     }
 
+    /**
+     * This function will handle the join event. It will create a new Player object in the __players__ collection. It
+     * also attaches a event handler to the main game Document that is used to update the state
+     * @param gameEvent The Event Handler
+     */
     static async joinGame(gameEvent: (doc: DocumentSnapshot<Game>) => void): Promise<void> {
         const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
@@ -145,7 +150,13 @@ export class GameManager {
 
         const gameRef = GameManager.getGame();
         const userRef = GameManager.getPlayer(uid);
-        await setDoc(userRef, new Player(uid, nickname, 0, null));
+        try {
+            await setDoc(userRef, new Player(uid, nickname, 0, null));
+        } catch (error) {
+            console.warn("Problem writing to Database! Either offline or missing permissions!");
+            console.error(error);
+        }
+
         onSnapshot(gameRef, gameEvent);
     }
 
@@ -185,6 +196,15 @@ export class GameManager {
             .catch(console.error);
     }
 
+    /**
+     * Checks if the current user is the host of the game. This fetches the current game document from Firestore and
+     * compares uids. <br />
+     * **IMPORTANT**: This provides no security! This only should be used to display certain UI Elements that are dedicated
+     * to the host!
+     * @return Promise<boolean> Is the current user host?
+     * @throws Error If user was not Authenticated (which should not happen) or if the game document was empty (Happens
+     * if the game was ended)
+     */
     static async amIHost(): Promise<boolean> {
         const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
@@ -241,6 +261,7 @@ export class GameManager {
             await updateDoc(gameRef, {
                 host: random,
             });
+            // store.dispatch(setHost(false));
             return;
         }
 

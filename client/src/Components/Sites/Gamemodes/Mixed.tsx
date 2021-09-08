@@ -84,6 +84,10 @@ export default function Mixed(): JSX.Element {
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
 
+    /**
+     * Updates the leaderboard everytime it's called. Currently works over referencing the leaderboard Element.
+     * TODO: Change to use Redux in future!
+     */
     const updateLeaderboard = (): void => {
         const lb = leaderboardRef.current;
         if (lb) {
@@ -182,15 +186,17 @@ export default function Mixed(): JSX.Element {
             const auth = getAuth(firebaseApp);
             const user = auth.currentUser;
 
-            if (user && (data.host === user.uid) === isHost) {
-                setHost(!isHost);
-            }
+            setHost(user !== null && data.host === user.uid);
         }
     };
 
+    /// This code will get executed on loading of the page
     useEffect((): void => {
-        GameManager.joinGame(gameEvent).then(updateLeaderboard).catch(console.error);
-        GameManager.amIHost().then(setHost).catch(console.error);
+        GameManager.joinGame(gameEvent)
+            .then(updateLeaderboard)
+            .then(GameManager.amIHost)
+            .then(setHost)
+            .catch(console.error);
     }, []);
 
     const setTask = (type: Task, newTarget: PlayerList, newPenalty = 0): void => {
@@ -232,9 +238,9 @@ export default function Mixed(): JSX.Element {
             throw new Error("Trying to execute a host method as non Host");
         }
         submitAndReset();
-        const testMode = true;
+        const testMode = false;
         const development = process.env.NODE_ENV === "development" && testMode;
-        const nextTaskType: Task = development ? tasks[0] : Util.selectRandom(tasks);
+        const nextTaskType: Task = development ? tasks[2] : Util.selectRandom(tasks);
 
         if (nextTaskType.singleTarget) {
             let targetCount = 1;
