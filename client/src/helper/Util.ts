@@ -73,7 +73,7 @@ export const Util = {
         return new Date(d.getFullYear() + years, d.getMonth() + months, d.getDate() + days);
     },
 
-    countOccurences<T>(array: T[]): Map<T, number> {
+    countOccurrences<T>(array: T[]): Map<T, number> {
         const content: T[] = [];
         const count: number[] = [];
         let prev: T;

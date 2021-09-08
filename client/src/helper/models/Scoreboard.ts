@@ -19,21 +19,26 @@ import { Util } from "../Util";
 
 export interface IScoreboard {
     board: Map<string, number>;
+    answers: Map<string, string>;
 }
 
 export class Scoreboard implements IScoreboard {
-    constructor(readonly board: Map<string, number>) {}
+    constructor(readonly board: Map<string, number>, readonly answers: Map<string, string>) {}
 
-    serialize(): { [key: string]: number } {
+    serializeScore(): { [key: string]: number } {
         return Util.mapToObj(this.board);
+    }
+
+    serializeAnswers(): { [key: string]: string } {
+        return Util.mapToObj(this.answers);
     }
 
     addScore(uid: string, score: number): void {
         this.board.set(uid, score);
     }
 
-    static deserialize(toDeserialize: { [key: string]: number }): Scoreboard {
-        return new Scoreboard(Util.objToMap(toDeserialize));
+    static deserialize(score: { [key: string]: number }, answers: { [key: string]: string }): Scoreboard {
+        return new Scoreboard(Util.objToMap(score), Util.objToMap(answers));
     }
 
     /**
@@ -42,7 +47,8 @@ export class Scoreboard implements IScoreboard {
      * @param name  Player Name
      */
     static init(): Scoreboard {
-        const map = new Map<string, number>();
-        return new Scoreboard(map);
+        const score = new Map<string, number>();
+        const answers = new Map<string, string>();
+        return new Scoreboard(score, answers);
     }
 }

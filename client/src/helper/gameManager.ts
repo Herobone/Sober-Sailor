@@ -306,25 +306,25 @@ export class GameManager {
         const players = await GameManager.getAllPlayers();
         const answers: string[] = [];
         const idNameMap: Map<string, string> = new Map();
-        const playerAnwered: Map<string, string> = new Map();
+        const playerAnswered: Map<string, string> = new Map();
         players.forEach((player: Player) => {
             idNameMap.set(player.uid, player.nickname);
             if (player.answer) {
                 answers.push(player.answer);
-                playerAnwered.set(player.uid, player.answer);
+                playerAnswered.set(player.uid, player.answer);
             } else {
                 answers.push(player.uid);
-                playerAnwered.set(player.uid, player.uid);
+                playerAnswered.set(player.uid, player.uid);
             }
         });
-        const occur = Util.countOccurences(answers);
+        const occur = Util.countOccurrences(answers);
         const sipsPerPlayer: Player[] = [];
         occur.forEach((count: number, uid: string) => {
             const name = idNameMap.get(uid);
             if (!name) {
                 throw new Error("Name was not in map. So the answer was not a current player");
             }
-            const theirAnswer = playerAnwered.get(uid);
+            const theirAnswer = playerAnswered.get(uid);
             if (!theirAnswer) {
                 throw new Error("Well, fuck. That is an error that should not happen. Memory leak?");
             }
@@ -338,7 +338,7 @@ export class GameManager {
         const occuredKeys = new Set(occur.keys());
         idNameMap.forEach((name: string, uid: string) => {
             if (!occuredKeys.has(uid)) {
-                const theirAnswer = playerAnwered.get(uid);
+                const theirAnswer = playerAnswered.get(uid);
                 if (!theirAnswer) {
                     throw new Error("Well, fuck. That is an error that should not happen. Memory leak?");
                 }

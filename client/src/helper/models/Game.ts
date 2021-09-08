@@ -48,6 +48,7 @@ interface IGameExternal {
     created: Timestamp;
     playerUidMap: { [key: string]: string };
     evaluationScoreboard: { [key: string]: number };
+    evaluationAnswers: { [key: string]: string };
 }
 
 export class Game implements IGame {
@@ -90,7 +91,8 @@ export const gameConverter = {
             evalState: game.evalState,
             created: Timestamp.fromDate(game.created),
             playerUidMap: game.register.serialize(),
-            evaluationScoreboard: game.evaluationScoreboard.serialize(),
+            evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
+            evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal>, options: SnapshotOptions): Game {
@@ -107,7 +109,7 @@ export const gameConverter = {
             data.evalState,
             data.created.toDate(),
             Register.deserialize(data.playerUidMap),
-            Scoreboard.deserialize(data.evaluationScoreboard),
+            Scoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers),
         );
     },
 };

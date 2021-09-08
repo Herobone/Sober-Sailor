@@ -1,4 +1,4 @@
-import { playerConverter } from "../models/Player";
+import { Player, playerConverter } from "../models/Player";
 import * as admin from "firebase-admin";
 import { Game, gameConverter } from "../models/Game";
 import Util from "./Util";
@@ -19,7 +19,7 @@ export default class FirestoreUtil {
 
     const data = registerRef.data();
     if (data) {
-      Util.objToStrMap(data.playerUidMap).forEach(
+      Util.objToMap<string>(data.playerUidMap).forEach(
         (value: string, key: string) => {
           playerUid.set(key, value);
         }
@@ -47,6 +47,20 @@ export default class FirestoreUtil {
 
   static getPlayers(gameID: string) {
     return FirestoreUtil.getGame(gameID).collection("players");
+  }
+
+  static async getAllPlayers(gameID: string): Promise<Player[]> {
+    const players: Player[] = [];
+    const playerRef =
+      FirestoreUtil.getPlayers(gameID).withConverter(playerConverter);
+    const queryIn = await playerRef.get();
+    queryIn.forEach((docIn) => {
+      const data = docIn.data();
+      if (data) {
+        players.push(data);
+      }
+    });
+    return players;
   }
 
   static getPlayer(gameID: string, playerID: string) {

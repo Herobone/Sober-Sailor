@@ -18,8 +18,30 @@
 
 import FirestoreUtil from "../helper/FirestoreUtil";
 import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 import { Player } from "../models/Player";
 import { EvaluateGame } from "../models/HostEvents";
+import { Scoreboard } from "../models/Scoreboard";
+import Util from "../helper/Util";
+
+/**
+ * Here we sort out the most popular Answer. If some have the same amount of votes, all are added to the array;
+ * @param occurrences A map of occurrences of the answer
+ * @return [answers: string[], count: number] answers are those that occurred most often and count is how often it occurred
+ */
+const getMostPopular = (occurrences: Map<string, number>) => {
+  let mostPoluarAnswers: string[] = [];
+  let mostPoluarAnswer: number = 0;
+  occurrences.forEach((count: number, answer: string) => {
+    if (count > mostPoluarAnswer) {
+      mostPoluarAnswers = [answer];
+      mostPoluarAnswer = count;
+    } else if (count === mostPoluarAnswer) {
+      mostPoluarAnswers.push(answer);
+    }
+  });
+  return [mostPoluarAnswers, mostPoluarAnswer];
+};
 
 export const evaluateGameHandler = async (
   data: EvaluateGame,
@@ -42,5 +64,45 @@ export const evaluateGameHandler = async (
         "Function must be called by host of game!"
       );
     }
+    const players = await FirestoreUtil.getAllPlayers(data.gameID);
+    const answers: string[] = [];
+    const scoreboard = Scoreboard.init();
+    players.forEach((player: Player) => {
+      if (player.answer) {
+        answers.push(player.answer);
+        scoreboard.addAnswer(player.uid, player.answer);
+      } else {
+        answers.push(player.uid);
+        scoreboard.addAnswer(player.uid, "none");
+      }
+    });
+    const occur = Util.countOccurrences(answers);
+    if (gameData.type === "wouldyourather") {
+      // @ts-ignore
+      const [popularAnswers, count] = getMostPopular(occur);
+    } else {
+      occur.forEach((value, key) => {
+        scoreboard.addScore(key, value);
+      });
+      players.forEach((player) => {
+        if (!scoreboard.board.has(player.uid)) {
+          scoreboard.addScore(player.uid, 0);
+        }
+      });
+    }
+
+    await scoreboard.board.forEach(async (value, key) => {
+      await FirestoreUtil.getPlayer(data.gameID, key).update({
+        sips: admin.firestore.FieldValue.increment(value),
+        answer: null,
+      });
+    });
+
+    await FirestoreUtil.getGame(data.gameID).update({
+      evaluationScoreboard: scoreboard.serializeScore(),
+      evaluationAnswers: scoreboard.serializeAnswers(),
+      pollState: false,
+      evalState: true,
+    });
   }
 };
