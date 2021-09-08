@@ -16,21 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { forwardRef, ReactElement, useImperativeHandle } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { GameManager } from "../../helper/gameManager";
 import { playerConverter } from "../../helper/models/Player";
 import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
+import { useLeaderboardUpdate } from "../../state/actions/displayStateActions";
 
 type leaderboard = Map<string, number>;
-type LeaderboardHandles = {
-    updateLeaderboard: () => void;
-};
 
-const LeaderboardIntern = forwardRef<LeaderboardHandles>((props, ref): JSX.Element => {
+export const Leaderboard = (): JSX.Element => {
     const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
+    const [update, setUpdate] = useLeaderboardUpdate();
 
     const classes = useLeaderboardStyles();
 
@@ -52,9 +51,12 @@ const LeaderboardIntern = forwardRef<LeaderboardHandles>((props, ref): JSX.Eleme
             .catch(console.error);
     };
 
-    useImperativeHandle(ref, () => ({
-        updateLeaderboard: updateLB,
-    }));
+    useEffect(() => {
+        if (update) {
+            updateLB();
+            setUpdate(false);
+        }
+    }, [update]);
 
     const prepareLeaderboard = (): ReactElement[] => {
         const values: ReactElement[] = [];
@@ -98,8 +100,4 @@ const LeaderboardIntern = forwardRef<LeaderboardHandles>((props, ref): JSX.Eleme
             </Table>
         </TableContainer>
     );
-});
-
-LeaderboardIntern.displayName = "Leaderboard";
-
-export const Leaderboard = LeaderboardIntern;
+};

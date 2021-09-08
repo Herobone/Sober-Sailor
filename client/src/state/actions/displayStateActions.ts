@@ -20,7 +20,7 @@ import { DisplayState } from "../reducers/displayStateReducer";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export type DisplayStateAction = { type: "SET_POLL" | "SET_EVAL"; payload: boolean };
+export type DisplayStateAction = { type: "SET_POLL" | "SET_EVAL" | "UPDATE_LEADERBOARD"; payload: boolean };
 
 /**
  * Set the Poll state (Whether a poll is currently running)
@@ -52,6 +52,39 @@ export const usePollState = (): [boolean, (content: boolean) => void] => {
 
     const set = (content: boolean): void => {
         dispatch(setPollState(content));
+    };
+    return [get, set];
+};
+
+/**
+ * Set to true to update leaderboard
+ *
+ * @param update    True if a update should occur
+ */
+export const setLeaderboardUpdate = (update: boolean): DisplayStateAction => ({
+    type: "UPDATE_LEADERBOARD",
+    payload: update,
+});
+
+/**
+ * This Hook can only be used to set the Leaderboard Update! Call to update the leaderboard
+ */
+export const useLeaderboardUpdater = (): (() => void) => {
+    const dispatch = useDispatch();
+
+    return (): void => {
+        dispatch(setLeaderboardUpdate(true));
+    };
+};
+
+export const useLeaderboardUpdate = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, DisplayState["leaderboardUpdate"]>(
+        (state) => state.displayState.leaderboardUpdate,
+    );
+
+    const set = (content: boolean): void => {
+        dispatch(setLeaderboardUpdate(content));
     };
     return [get, set];
 };

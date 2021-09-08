@@ -19,6 +19,7 @@
 import { User } from "firebase/auth";
 import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
 import { Register } from "./Register";
+import { Scoreboard } from "./Scoreboard";
 
 export interface IGame {
     gameID: string;
@@ -32,6 +33,7 @@ export interface IGame {
     evalState: boolean;
     created: Date;
     register: Register;
+    evaluationScoreboard: Scoreboard;
 }
 
 interface IGameExternal {
@@ -45,6 +47,7 @@ interface IGameExternal {
     evalState: boolean;
     created: Timestamp;
     playerUidMap: { [key: string]: string };
+    evaluationScoreboard: { [key: string]: number };
 }
 
 export class Game implements IGame {
@@ -60,6 +63,7 @@ export class Game implements IGame {
         readonly evalState: boolean,
         readonly created: Date,
         readonly register: Register,
+        readonly evaluationScoreboard: Scoreboard,
     ) {}
 
     static createEmpty(id: string, host: User): Game {
@@ -68,7 +72,8 @@ export class Game implements IGame {
             throw new Error("Display name missing");
         }
         const reg: Register = Register.init(uid, displayName);
-        return new Game(id, null, null, null, 0, 0, uid, false, false, new Date(), reg);
+        const sco: Scoreboard = Scoreboard.init();
+        return new Game(id, null, null, null, 0, 0, uid, false, false, new Date(), reg, sco);
     }
 }
 
@@ -85,6 +90,7 @@ export const gameConverter = {
             evalState: game.evalState,
             created: Timestamp.fromDate(game.created),
             playerUidMap: game.register.serialize(),
+            evaluationScoreboard: game.evaluationScoreboard.serialize(),
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal>, options: SnapshotOptions): Game {
@@ -101,6 +107,7 @@ export const gameConverter = {
             data.evalState,
             data.created.toDate(),
             Register.deserialize(data.playerUidMap),
+            Scoreboard.deserialize(data.evaluationScoreboard),
         );
     },
 };

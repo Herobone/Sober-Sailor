@@ -25,6 +25,7 @@ export type ResultAction = {
     type: "SET_RESULT";
     payload: Player[] | null;
 };
+
 /**
  * Set the results
  *

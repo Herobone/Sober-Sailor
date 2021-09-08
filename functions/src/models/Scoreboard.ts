@@ -1,6 +1,6 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,28 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 import Util from "../helper/Util";
 
-export interface IRegister {
-  playerUidMap: Map<string, string>;
+export interface IScoreboard {
+  board: Map<string, number>;
 }
 
-export class Register implements IRegister {
-  constructor(readonly playerUidMap: Map<string, string>) {}
+export class Scoreboard implements IScoreboard {
+  constructor(readonly board: Map<string, number>) {}
 
-  serialize(): { [key: string]: string } {
-    return Util.mapToObj(this.playerUidMap);
+  serialize(): { [key: string]: number } {
+    return Util.mapToObj(this.board);
   }
 
-  addPlayer(uid: string, name: string): void {
-    this.playerUidMap.set(uid, name);
+  addScore(uid: string, score: number): void {
+    this.board.set(uid, score);
   }
 
-  removePlayer(uid: string): void {
-    this.playerUidMap.delete(uid);
-  }
-
-  static deserialize(toDeserialize: { [key: string]: string }): Register {
-    return new Register(Util.objToMap(toDeserialize));
+  static deserialize(toDeserialize: { [key: string]: number }): Scoreboard {
+    return new Scoreboard(Util.objToMap(toDeserialize));
   }
 }

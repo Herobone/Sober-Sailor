@@ -51,17 +51,14 @@ import { useDefaultStyles } from "../../../css/Style";
 import { usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
-import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
+import { useEvalState, useLeaderboardUpdater, usePollState } from "../../../state/actions/displayStateActions";
 
-type LeaderboardHandle = ElementRef<typeof Leaderboard>;
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
 
 // Default export needed here for being able to lazy load it
 // eslint-disable-next-line import/no-default-export
 export default function Mixed(): JSX.Element {
-    const leaderboardRef = useRef<LeaderboardHandle>(null);
-
     const truthOrDareRef = useRef<TruthOrDareHandle>(null);
 
     const kickListRef = useRef<KickListHandle>(null);
@@ -86,14 +83,8 @@ export default function Mixed(): JSX.Element {
 
     /**
      * Updates the leaderboard everytime it's called. Currently works over referencing the leaderboard Element.
-     * TODO: Change to use Redux in future!
      */
-    const updateLeaderboard = (): void => {
-        const lb = leaderboardRef.current;
-        if (lb) {
-            lb.updateLeaderboard();
-        }
-    };
+    const updateLeaderboard = useLeaderboardUpdater();
 
     const submitAndReset = (): void => {
         console.log("Submitting and resetting!");
@@ -388,7 +379,7 @@ export default function Mixed(): JSX.Element {
                             </Grid>
                         </Paper>
                     )}
-                    <Leaderboard ref={leaderboardRef} />
+                    <Leaderboard />
                     <KickList ref={kickListRef} />
                 </Grid>
             </Grid>

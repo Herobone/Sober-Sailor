@@ -98,21 +98,21 @@ export const Util = {
         return countMap;
     },
 
-    strMapToObj(strMap: Map<string, string>): { [key: string]: string } {
+    mapToObj<T>(strMap: Map<string, T>): { [key: string]: T } {
         const obj = Object.create(null);
-        strMap.forEach((v: string, k: string) => {
+        for (const [k, v] of strMap) {
             // We don’t escape the key '__proto__'
             // which can cause problems on older engines
             obj[k] = v;
-        });
+        }
         return obj;
     },
 
-    objToStrMap(obj: { [key: string]: string }): Map<string, string> {
-        const strMap: Map<string, string> = new Map();
-        Object.keys(obj).forEach((key: string) => {
-            strMap.set(key, obj[key]);
-        });
+    objToMap<T>(obj: { [key: string]: T }): Map<string, T> {
+        const strMap: Map<string, T> = new Map();
+        for (const k of Object.keys(obj)) {
+            strMap.set(k, obj[k]);
+        }
         return strMap;
     },
 };

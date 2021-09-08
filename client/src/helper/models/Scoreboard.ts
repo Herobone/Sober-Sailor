@@ -1,6 +1,6 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,26 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 import { Util } from "../Util";
 
-export interface IRegister {
-    playerUidMap: Map<string, string>;
+export interface IScoreboard {
+    board: Map<string, number>;
 }
 
-export class Register implements IRegister {
-    constructor(readonly playerUidMap: Map<string, string>) {}
+export class Scoreboard implements IScoreboard {
+    constructor(readonly board: Map<string, number>) {}
 
-    serialize(): { [key: string]: string } {
-        return Util.mapToObj(this.playerUidMap);
+    serialize(): { [key: string]: number } {
+        return Util.mapToObj(this.board);
     }
 
-    stringify(): string {
-        return JSON.stringify(this.serialize());
+    addScore(uid: string, score: number): void {
+        this.board.set(uid, score);
     }
 
-    static deserialize(toDeserialize: { [key: string]: string }): Register {
-        return new Register(Util.objToMap(toDeserialize));
+    static deserialize(toDeserialize: { [key: string]: number }): Scoreboard {
+        return new Scoreboard(Util.objToMap(toDeserialize));
     }
 
     /**
@@ -42,13 +41,8 @@ export class Register implements IRegister {
      * @param uid   Player UID
      * @param name  Player Name
      */
-    static init(uid: string, name: string): Register {
-        const map = new Map<string, string>();
-        map.set(uid, name);
-        return new Register(map);
-    }
-
-    static parse(toParse: string): Register {
-        return Register.deserialize(JSON.parse(toParse));
+    static init(): Scoreboard {
+        const map = new Map<string, number>();
+        return new Scoreboard(map);
     }
 }

@@ -17,6 +17,7 @@
  */
 import * as admin from "firebase-admin";
 import { Register } from "./Register";
+import { Scoreboard } from "./Scoreboard";
 
 export interface IGame {
   gameID: string;
@@ -30,6 +31,7 @@ export interface IGame {
   evalState: boolean;
   created: Date;
   register: Register;
+  evaluationScoreboard: Scoreboard;
 }
 
 interface IGameExternal {
@@ -43,6 +45,7 @@ interface IGameExternal {
   evalState: boolean;
   created: admin.firestore.Timestamp;
   playerUidMap: { [key: string]: string };
+  evaluationScoreboard: { [key: string]: number };
 }
 
 export class Game implements IGame {
@@ -57,7 +60,8 @@ export class Game implements IGame {
     readonly pollState: boolean,
     readonly evalState: boolean,
     readonly created: Date,
-    readonly register: Register
+    readonly register: Register,
+    readonly evaluationScoreboard: Scoreboard
   ) {}
 }
 
@@ -74,6 +78,7 @@ export const gameConverter = {
       evalState: game.evalState,
       created: admin.firestore.Timestamp.fromDate(game.created),
       playerUidMap: game.register.serialize(),
+      evaluationScoreboard: game.evaluationScoreboard.serialize(),
     };
   },
   fromFirestore(
@@ -91,7 +96,8 @@ export const gameConverter = {
       data.pollState,
       data.evalState,
       data.created.toDate(),
-      Register.deserialize(data.playerUidMap)
+      Register.deserialize(data.playerUidMap),
+      Scoreboard.deserialize(data.evaluationScoreboard)
     );
   },
 };
