@@ -42,7 +42,7 @@ service cloud.firestore {
           return playerExists() && owns(playerID);
         }
 
-        allow read: if playerExists();
+        allow read: if isAuthenticated();
         allow update: if idsMatch() || isHost();
         allow create: if isAuthenticated() && owns(playerID);
         allow delete: if owns(playerID) || isHost();

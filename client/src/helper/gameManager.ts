@@ -150,8 +150,11 @@ export class GameManager {
 
         const gameRef = GameManager.getGame();
         const userRef = GameManager.getPlayer(uid);
+        const userDoc = await getDoc(userRef);
         try {
-            await setDoc(userRef, new Player(uid, nickname, 0, null));
+            if (!userDoc.exists()) {
+                await setDoc(userRef, new Player(uid, nickname, 0, null));
+            }
         } catch (error) {
             console.warn("Problem writing to Database! Either offline or missing permissions!");
             console.error(error);
