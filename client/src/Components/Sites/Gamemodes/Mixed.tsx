@@ -52,6 +52,8 @@ import { usePenalty, useTarget, useTask, useTaskType } from "../../../state/acti
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
 import { useEvalState, useLeaderboardUpdater, usePollState } from "../../../state/actions/displayStateActions";
+import { EvaluateGame, Serverless } from "../../../helper/Serverless";
+import { Player } from "../../../helper/models/Player";
 
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
@@ -87,16 +89,10 @@ export default function Mixed(): JSX.Element {
     const updateLeaderboard = useLeaderboardUpdater();
 
     const submitAndReset = (): void => {
-        console.log("Submitting and resetting!");
         console.log("Results are", result);
         if (result !== null) {
-            GameManager.submitPenaltyAndReset(result)
-                .then(() => {
-                    setResult(null);
-                    console.log("Resetting results");
-                    return updateLeaderboard();
-                })
-                .catch(console.error);
+            setResult(null);
+            updateLeaderboard();
         } else {
             console.log("Just updating");
             updateLeaderboard();
@@ -125,8 +121,10 @@ export default function Mixed(): JSX.Element {
 
                     if (horst) {
                         console.log("Publishing new states");
-                        GameManager.setPollState(false).catch(console.error);
-                        GameManager.setEvalState(true).catch(console.error);
+                        const callData: EvaluateGame = {
+                            gameID: GameManager.getGameID(),
+                        };
+                        Serverless.callFunction(Serverless.EVALUATE_GAME)(callData);
                     }
                 }
             },
@@ -145,8 +143,6 @@ export default function Mixed(): JSX.Element {
         if (evalState) {
             if (taskType === "truthordare") {
                 updateLeaderboard();
-            } else {
-                GameManager.evaluateAnswers().then(setResult).catch(console.error);
             }
         } else {
             setResult(null);
@@ -166,12 +162,30 @@ export default function Mixed(): JSX.Element {
                 setTarget(data.taskTarget || undefined);
                 setPenalty(data.penalty);
             }
-            if (pollState !== data.pollState) {
-                setPollState(data.pollState);
-            }
 
-            if (evalState !== data.evalState) {
-                setEvalState(data.evalState);
+            setPollState(data.pollState);
+
+            setEvalState(data.evalState);
+
+            if (data.evalState) {
+                const resultData: Player[] = [];
+                const plt = GameManager.getPlayerLookupTable();
+                if (!plt) {
+                    throw new Error("PLT was missing. Why is it missing?");
+                }
+
+                data.evaluationScoreboard.board.forEach((score: number, uid: string) => {
+                    const answer = data.evaluationScoreboard.answers.get(uid) || "none";
+                    let readableAnswer = "Error Answer";
+                    if (data.type === "wouldyourather") {
+                        console.warn("Not implemented jet");
+                    } else {
+                        readableAnswer = plt.playerUidMap.get(answer) || "Forgot to Answer";
+                    }
+                    resultData.push(new Player(uid, plt.playerUidMap.get(uid) || "Error Name", score, readableAnswer));
+                });
+
+                setResult(resultData);
             }
 
             const auth = getAuth(firebaseApp);

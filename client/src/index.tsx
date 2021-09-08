@@ -36,8 +36,9 @@ setPersistence(auth, browserLocalPersistence).catch(console.error);
 // If running local use Emulators for testing!
 // Make sure to start those with "firebase emulators:start"
 if (process.env.NODE_ENV !== "production") {
+    console.log("Connecting to emulators!");
     const db = getFirestore(firebaseApp);
-    const fn = getFunctions(firebaseApp);
+    const fn = getFunctions(firebaseApp, "europe-west1");
     connectFirestoreEmulator(db, window.location.hostname, 8080);
     connectAuthEmulator(auth, `http://${window.location.hostname}:9099`);
     connectFunctionsEmulator(fn, window.location.hostname, 5001);

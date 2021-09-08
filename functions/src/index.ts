@@ -10,6 +10,7 @@ import { onPlayerJoinHandler } from "./firestore/OnPlayerJoin";
 import { singleTargetHandler } from "./https/SingleTarget";
 import { garbageCollectionHandler } from "./timed/GarbageCollection";
 import { garbageCollectionHTTPSHandler } from "./https/GarbageCollection";
+import { evaluateGameHandler } from "./https/Evaluate";
 
 export const singleTarget = functions
   .region("europe-west1")
@@ -41,3 +42,7 @@ export const closeGame = functions
 export const kickPlayer = functions
   .region("europe-west1")
   .https.onCall(kickPlayerHandler);
+
+export const evaluateGame = functions
+  .region("europe-west1")
+  .https.onCall(evaluateGameHandler);

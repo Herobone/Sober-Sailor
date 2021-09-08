@@ -20,17 +20,21 @@ import firebase from "firebase/compat/app";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseApp } from "./config";
 
-export class Serverless {
-    private static devel = process.env.NODE_ENV === "development";
+export interface EvaluateGame {
+    gameID: string;
+}
 
+export class Serverless {
     public static KICK_PLAYER = "kickPlayer";
 
     public static SINGLE_TARGET = "singleTarget";
 
     public static CLOSE_GAME = "closeGame";
 
-    private static functions = getFunctions(firebaseApp, Serverless.devel ? "us-central1" : "europe-west1");
+    public static EVALUATE_GAME = "evaluateGame";
 
-    public static callFunction = (name: string): firebase.functions.HttpsCallable =>
-        httpsCallable(this.functions, name);
+    public static callFunction = (name: string): firebase.functions.HttpsCallable => {
+        const functions = getFunctions(firebaseApp, "europe-west1");
+        return httpsCallable(functions, name);
+    };
 }

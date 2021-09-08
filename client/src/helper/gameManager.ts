@@ -299,60 +299,6 @@ export class GameManager {
         });
     }
 
-    /**
-     * Evaluates the Answers of all Players and distributes sips according to who was voted the most
-     * */
-    static async evaluateAnswers(): Promise<Player[]> {
-        const players = await GameManager.getAllPlayers();
-        const answers: string[] = [];
-        const idNameMap: Map<string, string> = new Map();
-        const playerAnswered: Map<string, string> = new Map();
-        players.forEach((player: Player) => {
-            idNameMap.set(player.uid, player.nickname);
-            if (player.answer) {
-                answers.push(player.answer);
-                playerAnswered.set(player.uid, player.answer);
-            } else {
-                answers.push(player.uid);
-                playerAnswered.set(player.uid, player.uid);
-            }
-        });
-        const occur = Util.countOccurrences(answers);
-        const sipsPerPlayer: Player[] = [];
-        occur.forEach((count: number, uid: string) => {
-            const name = idNameMap.get(uid);
-            if (!name) {
-                throw new Error("Name was not in map. So the answer was not a current player");
-            }
-            const theirAnswer = playerAnswered.get(uid);
-            if (!theirAnswer) {
-                throw new Error("Well, fuck. That is an error that should not happen. Memory leak?");
-            }
-            const theirAnswerReadable = idNameMap.get(theirAnswer);
-            if (!theirAnswerReadable) {
-                throw new Error("Well, fuck. That is an error that should not happen. Memory leak?");
-            }
-            sipsPerPlayer.push(new Player(uid, name, count, theirAnswerReadable));
-        });
-
-        const occuredKeys = new Set(occur.keys());
-        idNameMap.forEach((name: string, uid: string) => {
-            if (!occuredKeys.has(uid)) {
-                const theirAnswer = playerAnswered.get(uid);
-                if (!theirAnswer) {
-                    throw new Error("Well, fuck. That is an error that should not happen. Memory leak?");
-                }
-                const theirAnswerReadable = idNameMap.get(theirAnswer);
-                if (!theirAnswerReadable) {
-                    throw new Error("Well, fuck. That is an error that should not happen. Memory leak?");
-                }
-                sipsPerPlayer.push(new Player(uid, name, 0, theirAnswerReadable));
-            }
-        });
-
-        return sipsPerPlayer;
-    }
-
     static async getMyData(): Promise<Player> {
         const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
