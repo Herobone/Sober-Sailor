@@ -16,10 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { doc, DocumentReference, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+import { doc, DocumentReference, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { GameManager } from "../../helper/gameManager";
 import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
-import { firebaseApp } from "../../helper/config";
 
 export type TicOptions = "X" | "O" | null;
 
@@ -95,8 +94,7 @@ export const TicUtils = {
     },
 
     getTTTGame(): DocumentReference<TicTacToe> {
-        const db = getFirestore(firebaseApp);
-        return doc(db, GameManager.getGameID(), "tictactoe").withConverter(ticTacToeConverter);
+        return doc(GameManager.getGame(), "minigames", "tictactoe").withConverter(ticTacToeConverter);
     },
 
     makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {

@@ -19,6 +19,19 @@ service cloud.firestore {
       allow update: if isHost();
       allow delete: if isHost();
 
+      match /minigames/tictactoe {
+
+        function isPlaying() {
+          return playerExists() &&
+          (resource.data.playerX == request.auth.uid || resource.data.playerO == request.auth.uid);
+        }
+
+        allow read: if playerExists();
+        allow create: if isHost();
+        allow delete: if isHost();
+        allow update: if isPlaying() || isHost();
+      }
+
       match /players/{playerID} {
 
         function owns(id) {
