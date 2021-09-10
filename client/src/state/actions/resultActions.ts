@@ -17,9 +17,9 @@
  */
 
 import { useDispatch, useSelector } from "react-redux";
-import { Player } from "../../helper/models/Player";
 import { RootState } from "../store";
 import { ResultState } from "../reducers/resultReducer";
+import { Player } from "../../../../common/src/models/Player";
 
 export type ResultAction = {
     type: "SET_RESULT";

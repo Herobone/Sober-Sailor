@@ -32,10 +32,12 @@ import {
     increment,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { Register } from "../../../common/src/models/Register";
+import { Game } from "../../../common/src/models/Game";
+import { Player } from "../../../common/src/models/Player";
 import { Util } from "./Util";
-import { Player, playerConverter } from "./models/Player";
-import { Game, gameConverter } from "./models/Game";
-import { Register } from "./models/Register";
+import { playerConverter } from "./models/Player";
+import { gameConverter } from "./models/Game";
 import { PlayerList } from "./models/CustomTypes";
 import { Serverless } from "./Serverless";
 import { firebaseApp } from "./config";
@@ -98,13 +100,16 @@ export class GameManager {
             throw new Error("User not logged in");
         }
 
-        const { uid } = currentUser;
+        const { uid, displayName } = currentUser;
+        if (!displayName) {
+            throw new Error("Display name missing");
+        }
         const lenOfUID = uid.length;
         const randomSuffix = Util.randomCharOrNumberSequence(lenOfUID / 5 - 2);
         const gameID = uid.slice(0, 2) + randomSuffix;
         const gameRef = GameManager.getGameByID(gameID);
         try {
-            await setDoc(gameRef, Game.createEmpty(gameID, currentUser));
+            await setDoc(gameRef, Game.createEmpty(gameID, uid, displayName));
         } catch (error) {
             console.error(error);
         }

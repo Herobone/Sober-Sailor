@@ -16,25 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { User } from "firebase/auth";
 import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
-import { Register } from "./Register";
-import { EvaluationScoreboard } from "./EvaluationScoreboard";
-
-export interface IGame {
-    gameID: string;
-    currentTask: string | null;
-    type: string | null;
-    taskTarget: string | null;
-    penalty: number;
-    round: number;
-    host: string;
-    pollState: boolean;
-    evalState: boolean;
-    created: Date;
-    register: Register;
-    evaluationScoreboard: EvaluationScoreboard;
-}
+import { EvaluationScoreboard } from "../../../../common/src/models/EvaluationScoreboard";
+import { Game } from "../../../../common/src/models/Game";
+import { Register } from "../../../../common/src/models/Register";
 
 interface IGameExternal {
     currentTask: string | null;
@@ -49,33 +34,6 @@ interface IGameExternal {
     playerUidMap: { [key: string]: string };
     evaluationScoreboard: { [key: string]: number };
     evaluationAnswers: { [key: string]: string };
-}
-
-export class Game implements IGame {
-    constructor(
-        readonly gameID: string,
-        readonly currentTask: string | null,
-        readonly type: string | null,
-        readonly taskTarget: string | null,
-        readonly penalty: number,
-        readonly round: number,
-        readonly host: string,
-        readonly pollState: boolean,
-        readonly evalState: boolean,
-        readonly created: Date,
-        readonly register: Register,
-        readonly evaluationScoreboard: EvaluationScoreboard,
-    ) {}
-
-    static createEmpty(id: string, host: User): Game {
-        const { uid, displayName } = host;
-        if (!displayName) {
-            throw new Error("Display name missing");
-        }
-        const reg: Register = Register.init(uid, displayName);
-        const sco: EvaluationScoreboard = EvaluationScoreboard.init();
-        return new Game(id, null, null, null, 0, 0, uid, false, false, new Date(), reg, sco);
-    }
 }
 
 export const gameConverter = {

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Util from "../helper/Util";
+import Util from "../Util";
 
 export interface IEvaluationScoreboard {
   board: Map<string, number>;

@@ -6,12 +6,12 @@
     "sourceMap": true,
     "rootDir": "src",
     "noUnusedLocals": true,
+    "composite": true,
+    "declaration": true
   },
   "compileOnSave": true,
   "include": [
     "./src"
   ],
-  "references": [
-    { "path": "../common" }
-  ]
+  "references": []
 }

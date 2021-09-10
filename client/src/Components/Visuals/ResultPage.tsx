@@ -20,7 +20,7 @@ import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper
 import React, { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector } from "react-redux";
-import { Player } from "../../helper/models/Player";
+import { Player } from "../../../../common/src/models/Player";
 import { useDefaultStyles } from "../../css/Style";
 import { ResultState } from "../../state/reducers/resultReducer";
 import { RootState } from "../../state/store";

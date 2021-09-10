@@ -1,7 +1,9 @@
-import { Player, playerConverter } from "../models/Player";
+import { playerConverter } from "../models/Player";
 import * as admin from "firebase-admin";
-import { Game, gameConverter } from "../models/Game";
-import Util from "./Util";
+import { gameConverter } from "../models/Game";
+import Util from "../../../common/src/Util";
+import { Player } from "../../../common/src/models/Player";
+import { Game } from "../../../common/src/models/Game";
 
 export default class FirestoreUtil {
   static db = admin.firestore();

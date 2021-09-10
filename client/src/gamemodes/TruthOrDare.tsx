@@ -23,13 +23,13 @@ import Button from "@material-ui/core/Button";
 import { useSelector } from "react-redux";
 import { getAuth } from "firebase/auth";
 import { GameManager } from "../helper/gameManager";
-import { Register } from "../helper/models/Register";
-import { SingleTargetRequest } from "../helper/models/SingleTarget";
 import { Serverless } from "../helper/Serverless";
 import { useTruthOrDareStyles } from "../css/TruthOrDareStyle";
 import { RootState } from "../state/store";
 import { TaskState } from "../state/reducers/taskReducer";
 import { firebaseApp } from "../helper/config";
+import { Register } from "../../../common/src/models/Register";
+import { SingleTargetRequest } from "../../../common/src/SingleTarget";
 
 type TruthOrDareHandles = {
     reset: () => void;

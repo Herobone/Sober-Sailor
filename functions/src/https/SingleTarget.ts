@@ -1,10 +1,10 @@
 import {
   SingleTargetRequest,
   SingleTargetResult,
-} from "../models/SingleTarget";
+} from "../../../common/src/SingleTarget";
 import FirestoreUtil from "../helper/FirestoreUtil";
 import * as functions from "firebase-functions";
-import { Player } from "../models/Player";
+import { Player } from "../../../common/src/models/Player";
 
 /*****************************
  * Sober Sailor - The online Party Game

@@ -15,47 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase/compat/app";
-
-export interface Task {
-    id: string;
-    lang: string[];
-    singleTarget: boolean;
-    multiAnswer: boolean;
-}
-
-export type Question = string;
-export type Answer = string;
-
-export interface MultiAnswer {
-    answer: Answer;
-    rightAnswer?: boolean;
-}
-
-export interface IMultiAnswerQuestion {
-    question: Question;
-    answers: MultiAnswer[];
-}
-
-export class MultiAnswerQuestion implements IMultiAnswerQuestion {
-    constructor(readonly question: Question, readonly answers: MultiAnswer[]) {}
-
-    // static parse(input: string): MultiAnswerQuestion {
-    //     const parsed: IMultiAnswerQuestion = JSON.parse(input);
-    //     return new MultiAnswerQuestion(parsed.question, parsed.answers);
-    // }
-}
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+import { IMultiAnswerQuestion, MultiAnswerQuestion } from "../../../../common/src/models/Task";
 
 export const multiAnswerQuestionConverter = {
-    toFirestore(question: MultiAnswerQuestion): firebase.firestore.DocumentData {
+    toFirestore(question: MultiAnswerQuestion): DocumentData {
         return {
             question: question.question,
             answers: question.answers,
         };
     },
     fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IMultiAnswerQuestion>,
-        options: firebase.firestore.SnapshotOptions,
+        snapshot: QueryDocumentSnapshot<IMultiAnswerQuestion>,
+        options: SnapshotOptions,
     ): MultiAnswerQuestion {
         const data = snapshot.data(options);
         return new MultiAnswerQuestion(data.question, data.answers);

@@ -1,6 +1,6 @@
 /*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as admin from "firebase-admin";
-import { IPlayerExternal, Player } from "../../../common/src/models/Player";
+export interface Task {
+  id: string;
+  lang: string[];
+  singleTarget: boolean;
+  multiAnswer: boolean;
+}
 
-export const playerConverter: admin.firestore.FirestoreDataConverter<Player> = {
-  toFirestore(player: Player): admin.firestore.DocumentData {
-    return {
-      nickname: player.nickname,
-      sips: player.sips,
-      answer: player.answer,
-    };
-  },
-  fromFirestore(
-    snapshot: admin.firestore.QueryDocumentSnapshot<IPlayerExternal>
-  ): Player {
-    const data = snapshot.data();
-    return new Player(snapshot.id, data.nickname, data.sips, data.answer);
-  },
-};
+export type Question = string;
+export type Answer = string;
+
+export interface MultiAnswer {
+  answer: Answer;
+  rightAnswer?: boolean;
+}
+
+export interface IMultiAnswerQuestion {
+  question: Question;
+  answers: MultiAnswer[];
+}
+
+export class MultiAnswerQuestion implements IMultiAnswerQuestion {
+  constructor(readonly question: Question, readonly answers: MultiAnswer[]) {}
+
+  // static parse(input: string): MultiAnswerQuestion {
+  //     const parsed: IMultiAnswerQuestion = JSON.parse(input);
+  //     return new MultiAnswerQuestion(parsed.question, parsed.answers);
+  // }
+}

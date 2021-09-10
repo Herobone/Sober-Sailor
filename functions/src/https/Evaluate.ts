@@ -19,10 +19,10 @@
 import FirestoreUtil from "../helper/FirestoreUtil";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { Player } from "../models/Player";
-import { EvaluateGame } from "../models/HostEvents";
-import { EvaluationScoreboard } from "../models/EvaluationScoreboard";
-import Util from "../helper/Util";
+import { EvaluateGame } from "../../../common/src/HostEvents";
+import { EvaluationScoreboard } from "../../../common/src/models/EvaluationScoreboard";
+import Util from "../../../common/src/Util";
+import { Player } from "../../../common/src/models/Player";
 
 /**
  * Here we sort out the most popular Answer. If some have the same amount of votes, all are added to the array;

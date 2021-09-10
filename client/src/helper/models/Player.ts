@@ -17,28 +17,7 @@
  */
 
 import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
-
-export interface IPlayer {
-    uid: string;
-    nickname: string;
-    sips: number;
-    answer: string | null;
-}
-
-interface IPlayerExternal {
-    nickname: string;
-    sips: number;
-    answer: string | null;
-}
-
-export class Player implements IPlayer {
-    constructor(
-        readonly uid: string,
-        readonly nickname: string,
-        readonly sips: number,
-        readonly answer: string | null,
-    ) {}
-}
+import { IPlayerExternal, Player } from "../../../../common/src/models/Player";
 
 export const playerConverter = {
     toFirestore(player: Player): DocumentData {

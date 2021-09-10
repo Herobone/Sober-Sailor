@@ -19,9 +19,9 @@
 import React, { forwardRef, ReactElement, useImperativeHandle, useState } from "react";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
-import { Register } from "../../helper/models/Register";
 import { useAlert } from "../Functional/AlertProvider";
 import { Serverless } from "../../helper/Serverless";
+import { Register } from "../../../../common/src/models/Register";
 
 interface KickPlayer {
     gameID: string;

@@ -16,23 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import * as admin from "firebase-admin";
-import { Register } from "./Register";
-import { EvaluationScoreboard } from "./EvaluationScoreboard";
-
-export interface IGame {
-  gameID: string;
-  currentTask: string | null;
-  type: string | null;
-  taskTarget: string | null;
-  penalty: number;
-  round: number;
-  host: string;
-  pollState: boolean;
-  evalState: boolean;
-  created: Date;
-  register: Register;
-  evaluationScoreboard: EvaluationScoreboard;
-}
+import { Register } from "../../../common/src/models/Register";
+import { EvaluationScoreboard } from "../../../common/src/models/EvaluationScoreboard";
+import { Game } from "../../../common/src/models/Game";
 
 interface IGameExternal {
   currentTask: string | null;
@@ -47,23 +33,6 @@ interface IGameExternal {
   playerUidMap: { [key: string]: string };
   evaluationScoreboard: { [key: string]: number };
   evaluationAnswers: { [key: string]: string };
-}
-
-export class Game implements IGame {
-  constructor(
-    readonly gameID: string,
-    readonly currentTask: string | null,
-    readonly type: string | null,
-    readonly taskTarget: string | null,
-    readonly penalty: number,
-    readonly round: number,
-    readonly host: string,
-    readonly pollState: boolean,
-    readonly evalState: boolean,
-    readonly created: Date,
-    readonly register: Register,
-    readonly evaluationScoreboard: EvaluationScoreboard
-  ) {}
 }
 
 export const gameConverter = {

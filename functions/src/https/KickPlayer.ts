@@ -1,5 +1,5 @@
 import * as functions from "firebase-functions";
-import { KickPlayer } from "../models/HostEvents";
+import { KickPlayer } from "../../../common/src/HostEvents";
 import FirestoreUtil from "../helper/FirestoreUtil";
 
 /*****************************

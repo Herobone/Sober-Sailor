@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Player } from "../../helper/models/Player";
+import { Player } from "../../../../common/src/models/Player";
 import { ResultAction } from "../actions/resultActions";
 
 export interface ResultState {
