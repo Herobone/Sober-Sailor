@@ -18,12 +18,12 @@
 
 import Util from "../helper/Util";
 
-export interface IScoreboard {
+export interface IEvaluationScoreboard {
   board: Map<string, number>;
   answers: Map<string, string>;
 }
 
-export class Scoreboard implements IScoreboard {
+export class EvaluationScoreboard implements IEvaluationScoreboard {
   constructor(
     readonly board: Map<string, number>,
     readonly answers: Map<string, string>
@@ -48,16 +48,19 @@ export class Scoreboard implements IScoreboard {
   static deserialize(
     score: { [key: string]: number },
     answers: { [key: string]: string }
-  ): Scoreboard {
-    return new Scoreboard(Util.objToMap(score), Util.objToMap(answers));
+  ): EvaluationScoreboard {
+    return new EvaluationScoreboard(
+      Util.objToMap(score),
+      Util.objToMap(answers)
+    );
   }
 
   /**
-   * Initialize new empty Scoreboard
+   * Initialize new empty EvaluationScoreboard
    */
-  static init(): Scoreboard {
+  static init(): EvaluationScoreboard {
     const score = new Map<string, number>();
     const answers = new Map<string, string>();
-    return new Scoreboard(score, answers);
+    return new EvaluationScoreboard(score, answers);
   }
 }

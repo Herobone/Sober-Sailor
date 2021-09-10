@@ -17,7 +17,7 @@
  */
 import * as admin from "firebase-admin";
 import { Register } from "./Register";
-import { Scoreboard } from "./Scoreboard";
+import { EvaluationScoreboard } from "./EvaluationScoreboard";
 
 export interface IGame {
   gameID: string;
@@ -31,7 +31,7 @@ export interface IGame {
   evalState: boolean;
   created: Date;
   register: Register;
-  evaluationScoreboard: Scoreboard;
+  evaluationScoreboard: EvaluationScoreboard;
 }
 
 interface IGameExternal {
@@ -62,7 +62,7 @@ export class Game implements IGame {
     readonly evalState: boolean,
     readonly created: Date,
     readonly register: Register,
-    readonly evaluationScoreboard: Scoreboard
+    readonly evaluationScoreboard: EvaluationScoreboard
   ) {}
 }
 
@@ -99,7 +99,10 @@ export const gameConverter = {
       data.evalState,
       data.created.toDate(),
       Register.deserialize(data.playerUidMap),
-      Scoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers)
+      EvaluationScoreboard.deserialize(
+        data.evaluationScoreboard,
+        data.evaluationAnswers
+      )
     );
   },
 };

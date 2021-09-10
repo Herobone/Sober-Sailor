@@ -19,7 +19,7 @@
 import { User } from "firebase/auth";
 import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
 import { Register } from "./Register";
-import { Scoreboard } from "./Scoreboard";
+import { EvaluationScoreboard } from "./EvaluationScoreboard";
 
 export interface IGame {
     gameID: string;
@@ -33,7 +33,7 @@ export interface IGame {
     evalState: boolean;
     created: Date;
     register: Register;
-    evaluationScoreboard: Scoreboard;
+    evaluationScoreboard: EvaluationScoreboard;
 }
 
 interface IGameExternal {
@@ -64,7 +64,7 @@ export class Game implements IGame {
         readonly evalState: boolean,
         readonly created: Date,
         readonly register: Register,
-        readonly evaluationScoreboard: Scoreboard,
+        readonly evaluationScoreboard: EvaluationScoreboard,
     ) {}
 
     static createEmpty(id: string, host: User): Game {
@@ -73,7 +73,7 @@ export class Game implements IGame {
             throw new Error("Display name missing");
         }
         const reg: Register = Register.init(uid, displayName);
-        const sco: Scoreboard = Scoreboard.init();
+        const sco: EvaluationScoreboard = EvaluationScoreboard.init();
         return new Game(id, null, null, null, 0, 0, uid, false, false, new Date(), reg, sco);
     }
 }
@@ -109,7 +109,7 @@ export const gameConverter = {
             data.evalState,
             data.created.toDate(),
             Register.deserialize(data.playerUidMap),
-            Scoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers),
+            EvaluationScoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers),
         );
     },
 };

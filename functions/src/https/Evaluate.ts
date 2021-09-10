@@ -21,7 +21,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Player } from "../models/Player";
 import { EvaluateGame } from "../models/HostEvents";
-import { Scoreboard } from "../models/Scoreboard";
+import { EvaluationScoreboard } from "../models/EvaluationScoreboard";
 import Util from "../helper/Util";
 
 /**
@@ -66,7 +66,7 @@ export const evaluateGameHandler = async (
     }
     const players = await FirestoreUtil.getAllPlayers(data.gameID);
     const answers: string[] = [];
-    const scoreboard = Scoreboard.init();
+    const scoreboard = EvaluationScoreboard.init();
     players.forEach((player: Player) => {
       if (player.answer) {
         answers.push(player.answer);
