@@ -1,11 +1,3 @@
-import {
-  SingleTargetRequest,
-  SingleTargetResult,
-} from "../../../common/src/SingleTarget";
-import FirestoreUtil from "../helper/FirestoreUtil";
-import * as functions from "firebase-functions";
-import { Player } from "../../../common/src/models/Player";
-
 /*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -23,6 +15,14 @@ import { Player } from "../../../common/src/models/Player";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+import FirestoreUtil from "../helper/FirestoreUtil";
+import * as functions from "firebase-functions";
+import {
+  SingleTargetRequest,
+  SingleTargetResult,
+} from "sobersailor-common/lib/SingleTarget";
+import { Player } from "sobersailor-common/lib/models/Player";
 
 export const singleTargetHandler = async (
   data: SingleTargetRequest,

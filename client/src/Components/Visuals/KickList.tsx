@@ -17,11 +17,11 @@
  */
 
 import React, { forwardRef, ReactElement, useImperativeHandle, useState } from "react";
+import { Register } from "sobersailor-common/lib/models/Register";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useAlert } from "../Functional/AlertProvider";
 import { Serverless } from "../../helper/Serverless";
-import { Register } from "../../../../common/src/models/Register";
 
 interface KickPlayer {
     gameID: string;

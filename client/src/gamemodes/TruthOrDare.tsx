@@ -22,14 +22,14 @@ import { FormattedMessage } from "react-intl";
 import Button from "@material-ui/core/Button";
 import { useSelector } from "react-redux";
 import { getAuth } from "firebase/auth";
+import { SingleTargetRequest } from "sobersailor-common/lib/SingleTarget";
+import { Register } from "sobersailor-common/lib/models/Register";
 import { GameManager } from "../helper/gameManager";
 import { Serverless } from "../helper/Serverless";
 import { useTruthOrDareStyles } from "../css/TruthOrDareStyle";
 import { RootState } from "../state/store";
 import { TaskState } from "../state/reducers/taskReducer";
 import { firebaseApp } from "../helper/config";
-import { Register } from "../../../common/src/models/Register";
-import { SingleTargetRequest } from "../../../common/src/SingleTarget";
 
 type TruthOrDareHandles = {
     reset: () => void;

@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import * as admin from "firebase-admin";
-import { Register } from "../../../common/src/models/Register";
-import { EvaluationScoreboard } from "../../../common/src/models/EvaluationScoreboard";
-import { Game } from "../../../common/src/models/Game";
+import { Game } from "sobersailor-common/lib/models/Game";
+import { Register } from "sobersailor-common/lib/models/Register";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 
 interface IGameExternal {
   currentTask: string | null;

@@ -20,7 +20,7 @@ import { FormattedMessage } from "react-intl";
 import React, { Component } from "react";
 import { getAuth } from "firebase/auth";
 import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
-import { Player } from "common/src/models/Player";
+import { Player } from "sobersailor-common/lib/models/Player";
 import style from "../../css/TicTacToe.module.scss";
 import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";

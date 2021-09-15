@@ -21,7 +21,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "firebase-admin": "^9.11.1",
-    "firebase-functions": "^3.14.1"
+    "firebase-functions": "^3.14.1",
+    "sobersailor-common": "file:../sobersailor-common"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.31.0",

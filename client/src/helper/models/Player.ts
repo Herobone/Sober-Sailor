@@ -17,7 +17,7 @@
  */
 
 import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
-import { IPlayerExternal, Player } from "common/src/models/Player";
+import { IPlayerExternal, Player } from "sobersailor-common/lib/models/Player";
 
 export const playerConverter = {
     toFirestore(player: Player): DocumentData {

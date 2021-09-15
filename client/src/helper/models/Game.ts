@@ -17,9 +17,9 @@
  */
 
 import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
-import { EvaluationScoreboard } from "../../../../common/src/models/EvaluationScoreboard";
-import { Game } from "../../../../common/src/models/Game";
-import { Register } from "../../../../common/src/models/Register";
+import { Game } from "sobersailor-common/lib/models/Game";
+import { Register } from "sobersailor-common/lib/models/Register";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 
 interface IGameExternal {
     currentTask: string | null;

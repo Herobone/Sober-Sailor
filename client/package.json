@@ -34,6 +34,7 @@
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
     "sass": "^1.39.0",
+    "sobersailor-common": "file:../sobersailor-common",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.4.2",
     "universal-cookie": "^4.0.4"

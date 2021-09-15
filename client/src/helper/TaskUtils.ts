@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { IMultiAnswerQuestion, Question } from "../../../common/src/models/Task";
+import { IMultiAnswerQuestion, Question } from "sobersailor-common/lib/models/Task";
 import { Util } from "./Util";
 
 export class TaskUtils {
