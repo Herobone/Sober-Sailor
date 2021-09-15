@@ -32,9 +32,9 @@ import {
     increment,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { Register } from "../../../common/src/models/Register";
-import { Game } from "../../../common/src/models/Game";
-import { Player } from "../../../common/src/models/Player";
+import { Register } from "common/lib/models/Register";
+import { Game } from "common/lib/models/Game";
+import { Player } from "common/lib/models/Player";
 import { Util } from "./Util";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";

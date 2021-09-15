@@ -6,7 +6,8 @@
   "scripts": {
     "functions": "cd functions && npm run build",
     "emulators": "firebase emulators:start",
-    "common": "cd common && npm run build",
+    "common:build": "cd common && npm run build",
+    "common:register": "cd client/node_modules && ln -s ../../common",
     "all": "npm run common && npm run functions && npm run emulators",
     "install-functions": "cd functions && npm i",
     "install-client": "cd client && npm i",
