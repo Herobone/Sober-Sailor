@@ -21,8 +21,8 @@ import * as functions from "firebase-functions";
 import {
   SingleTargetRequest,
   SingleTargetResult,
-} from "sobersailor-common/src/SingleTarget";
-import { Player } from "sobersailor-common/src/models/Player";
+} from "sobersailor-common/lib/SingleTarget";
+import { Player } from "sobersailor-common/lib/models/Player";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 
 export const singleTargetHandler = async (

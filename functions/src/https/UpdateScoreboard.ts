@@ -1,4 +1,4 @@
-import { GameIDContent } from "sobersailor-common/src/HostEvents";
+import { GameIDContent } from "sobersailor-common/lib/HostEvents";
 import * as functions from "firebase-functions";
 import FirestoreUtil from "../helper/FirestoreUtil";
 
