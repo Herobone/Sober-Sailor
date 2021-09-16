@@ -23,12 +23,12 @@ jobs:
           scope: '@herobone'
       - run: npm i && npm run build
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REACT_APP_BETA_CHANNEL: "true"
           GENERATE_SOURCEMAP: "false"
       - run: npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:
           BETA_CHANNEL: "true"
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FIREBASE_TOKEN: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR_BETA }}'
 
   deploy_except_hosting:
@@ -48,8 +48,9 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@herobone'
       - run: npm run install-all
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npx firebase-tools deploy --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:
           BETA_CHANNEL: "true"
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FIREBASE_TOKEN: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR_BETA }}'
