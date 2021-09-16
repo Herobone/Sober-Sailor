@@ -15,14 +15,14 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "12"
+    "node": "14"
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@herobone/sobersailor-common": "^1.0.3",
     "express": "^4.17.1",
     "firebase-admin": "^9.11.1",
-    "firebase-functions": "^3.14.1"
+    "firebase-functions": "^3.14.1",
+    "sobersailor-common": "^1.1.4"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.31.0",

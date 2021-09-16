@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { Scoreboard } from "@herobone/sobersailor-common/lib/models/GameScoreboard";
+import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
 import { useDispatch, useSelector } from "react-redux";
 import { ScoreboardState } from "../reducers/scoreboardReducer";
 import { RootState } from "../store";

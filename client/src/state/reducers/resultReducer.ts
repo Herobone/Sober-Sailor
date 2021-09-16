@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Player } from "@herobone/sobersailor-common/lib/models/Player";
+import { Player } from "sobersailor-common/lib/models/Player";
 import { ResultAction } from "../actions/resultActions";
 
 export interface ResultState {

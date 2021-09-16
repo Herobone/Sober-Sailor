@@ -17,10 +17,10 @@
  */
 
 import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
-import { Game, IGameExternal } from "@herobone/sobersailor-common/lib/models/Game";
-import { Register } from "@herobone/sobersailor-common/lib/models/Register";
-import { EvaluationScoreboard } from "@herobone/sobersailor-common/lib/models/EvaluationScoreboard";
-import { Scoreboard } from "@herobone/sobersailor-common/lib/models/GameScoreboard";
+import { Game, IGameExternal } from "sobersailor-common/lib/models/Game";
+import { Register } from "sobersailor-common/lib/models/Register";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
+import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
 
 export const gameConverter = {
     toFirestore(game: Game): DocumentData {

@@ -1,4 +1,4 @@
-import { GameIDContent } from "@herobone/sobersailor-common/lib/HostEvents";
+import { GameIDContent } from "sobersailor-common/lib/HostEvents";
 import * as functions from "firebase-functions";
 import FirestoreUtil from "../helper/FirestoreUtil";
 
@@ -49,5 +49,10 @@ export const updateScoreboardHandler = async (
     await FirestoreUtil.getGame(data.gameID).update({
       scoreboard: gameData.scoreboard.serializeBoard(),
     });
+  } else {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "User was not authenticated with firebase while calling this function!"
+    );
   }
 };

@@ -19,7 +19,7 @@
 import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import Cookies from "universal-cookie";
-import Util from "@herobone/sobersailor-common/lib/Util";
+import Util from "sobersailor-common/lib/Util";
 import { useLanguage } from "../state/actions/languageActions";
 
 const messageLoader = {
