@@ -19,7 +19,7 @@
 import FirestoreUtil from "../helper/FirestoreUtil";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { EvaluateGame } from "sobersailor-common/src/HostEvents";
+import { GameIDContent } from "sobersailor-common/src/HostEvents";
 import { EvaluationScoreboard } from "sobersailor-common/src/models/EvaluationScoreboard";
 import { Player } from "sobersailor-common/src/models/Player";
 import Util from "sobersailor-common/src/Util";
@@ -44,7 +44,7 @@ const getMostPopular = (occurrences: Map<string, number>) => {
 };
 
 export const evaluateGameHandler = async (
-  data: EvaluateGame,
+  data: GameIDContent,
   context: functions.https.CallableContext
 ) => {
   const auth = context.auth;
@@ -81,8 +81,9 @@ export const evaluateGameHandler = async (
       // @ts-ignore
       const [popularAnswers, count] = getMostPopular(occur);
     } else {
-      occur.forEach((value, key) => {
-        scoreboard.addScore(key, value);
+      occur.forEach((value, uid) => {
+        scoreboard.addScore(uid, value);
+        gameData.scoreboard.updateScore(uid, value);
       });
       players.forEach((player) => {
         if (!scoreboard.board.has(player.uid)) {
@@ -101,6 +102,7 @@ export const evaluateGameHandler = async (
     await FirestoreUtil.getGame(data.gameID).update({
       evaluationScoreboard: scoreboard.serializeScore(),
       evaluationAnswers: scoreboard.serializeAnswers(),
+      scoreboard: gameData.scoreboard.serializeBoard(),
       pollState: false,
       evalState: true,
     });

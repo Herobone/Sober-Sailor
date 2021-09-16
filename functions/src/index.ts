@@ -11,6 +11,7 @@ import { singleTargetHandler } from "./https/SingleTarget";
 import { garbageCollectionHandler } from "./timed/GarbageCollection";
 import { garbageCollectionHTTPSHandler } from "./https/GarbageCollection";
 import { evaluateGameHandler } from "./https/Evaluate";
+import { updateScoreboardHandler } from "./https/UpdateScoreboard";
 
 export const singleTarget = functions
   .region("europe-west1")
@@ -46,3 +47,7 @@ export const kickPlayer = functions
 export const evaluateGame = functions
   .region("europe-west1")
   .https.onCall(evaluateGameHandler);
+
+export const updateScoreboard = functions
+  .region("europe-west1")
+  .https.onCall(updateScoreboardHandler);

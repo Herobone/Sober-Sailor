@@ -3,6 +3,6 @@ export interface KickPlayer {
   playerID: string;
 }
 
-export interface EvaluateGame {
+export interface GameIDContent {
   gameID: string;
 }

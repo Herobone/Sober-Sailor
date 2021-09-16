@@ -23,6 +23,7 @@ import {
   SingleTargetResult,
 } from "sobersailor-common/src/SingleTarget";
 import { Player } from "sobersailor-common/src/models/Player";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 
 export const singleTargetHandler = async (
   data: SingleTargetRequest,
@@ -57,7 +58,22 @@ export const singleTargetHandler = async (
       );
     }
 
+    const scoreboard = EvaluationScoreboard.init();
+
+    const appliedPenalty = data.answer ? 0 : gameData.penalty;
+
+    if (!data.answer) {
+      gameData.scoreboard.updateScore(playerData.uid, gameData.penalty);
+    }
+
+    scoreboard.addScore(playerData.uid, appliedPenalty);
+    scoreboard.addAnswer(playerData.uid, data.answer ? "YES" : "NO");
+
     await FirestoreUtil.getGame(data.gameID).update({
+      evaluationScoreboard: scoreboard.serializeScore(),
+      evaluationAnswers: scoreboard.serializeAnswers(),
+      scoreboard: gameData.scoreboard.serializeBoard(),
+      pollState: false,
       evalState: true,
     });
 
@@ -65,7 +81,7 @@ export const singleTargetHandler = async (
       new Player(
         playerData.uid,
         playerData.nickname,
-        data.answer ? playerData.sips : playerData.sips + gameData.penalty,
+        playerData.sips + appliedPenalty,
         null
       )
     );
