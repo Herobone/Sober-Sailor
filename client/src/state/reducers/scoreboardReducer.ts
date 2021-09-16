@@ -1,4 +1,4 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
  *
@@ -15,24 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
+import { ScoreboardAction } from "../actions/scoreboardAction";
 
-import { DisplayStateAction } from "../actions/displayStateActions";
-export interface DisplayState {
-    pollState: boolean;
-    evalState: boolean;
+export interface ScoreboardState {
+    scoreboard: Scoreboard;
 }
 
-const initialState: DisplayState = {
-    pollState: false,
-    evalState: false,
+const initialState: ScoreboardState = {
+    scoreboard: Scoreboard.init(),
 };
 
-export const displayStateReducer = (state: DisplayState = initialState, action: DisplayStateAction): DisplayState => {
+export const scoreboardReducer = (state: ScoreboardState = initialState, action: ScoreboardAction): ScoreboardState => {
     switch (action.type) {
-        case "SET_EVAL":
-            return { ...state, evalState: action.payload };
-        case "SET_POLL":
-            return { ...state, pollState: action.payload };
+        case "SET_SCOREBOARD":
+            return { ...state, scoreboard: action.payload };
         default:
             return state;
     }

@@ -22,6 +22,7 @@ import { DisplayState, displayStateReducer } from "./reducers/displayStateReduce
 import { resultReducer, ResultState } from "./reducers/resultReducer";
 import { gameReducer, GameState } from "./reducers/gameReducer";
 import { languageReducer, LanguageState } from "./reducers/languageReducer";
+import { scoreboardReducer, ScoreboardState } from "./reducers/scoreboardReducer";
 
 export interface RootState {
     task: TaskState;
@@ -29,6 +30,7 @@ export interface RootState {
     result: ResultState;
     game: GameState;
     language: LanguageState;
+    scoreboard: ScoreboardState;
 }
 
 export const store = createStore(
@@ -38,6 +40,7 @@ export const store = createStore(
         result: resultReducer,
         game: gameReducer,
         language: languageReducer,
+        scoreboard: scoreboardReducer,
     }),
     devToolsEnhancer({ trace: true, traceLimit: 25 }),
 );

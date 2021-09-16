@@ -52,8 +52,9 @@ import { useDefaultStyles } from "../../../css/Style";
 import { usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
-import { useEvalState, useLeaderboardUpdater, usePollState } from "../../../state/actions/displayStateActions";
+import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { EvaluateGame, Serverless } from "../../../helper/Serverless";
+import { useScoreboard } from "../../../state/actions/scoreboardAction";
 
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
@@ -80,22 +81,15 @@ export default function Mixed(): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [penalty, setPenalty] = usePenalty();
 
+    const setScoreboard = useScoreboard()[1];
+
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
-
-    /**
-     * Updates the leaderboard everytime it's called. Currently works over referencing the leaderboard Element.
-     */
-    const updateLeaderboard = useLeaderboardUpdater();
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
         if (result !== null) {
             setResult(null);
-            updateLeaderboard();
-        } else {
-            console.log("Just updating");
-            updateLeaderboard();
         }
         const tud = truthOrDareRef.current;
         if (tud) {
@@ -140,11 +134,7 @@ export default function Mixed(): JSX.Element {
     }, [pollState]);
 
     useEffect(() => {
-        if (evalState) {
-            if (taskType === "truthordare") {
-                updateLeaderboard();
-            }
-        } else {
+        if (!evalState) {
             setResult(null);
         }
     }, [evalState]);
@@ -166,6 +156,8 @@ export default function Mixed(): JSX.Element {
             setPollState(data.pollState);
 
             setEvalState(data.evalState);
+
+            setScoreboard(data.scoreboard);
 
             if (data.evalState) {
                 const resultData: Player[] = [];
@@ -197,11 +189,7 @@ export default function Mixed(): JSX.Element {
 
     /// This code will get executed on loading of the page
     useEffect((): void => {
-        GameManager.joinGame(gameEvent)
-            .then(updateLeaderboard)
-            .then(GameManager.amIHost)
-            .then(setHost)
-            .catch(console.error);
+        GameManager.joinGame(gameEvent).then(GameManager.amIHost).then(setHost).catch(console.error);
     }, []);
 
     const setTask = (type: Task, newTarget: PlayerList, newPenalty = 0): void => {

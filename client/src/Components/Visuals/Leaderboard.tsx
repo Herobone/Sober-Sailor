@@ -19,44 +19,37 @@
 import React, { ReactElement, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { GameManager } from "../../helper/gameManager";
-import { playerConverter } from "../../helper/models/Player";
 import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
-import { useLeaderboardUpdate } from "../../state/actions/displayStateActions";
+import { useScoreboard } from "../../state/actions/scoreboardAction";
 
 type leaderboard = Map<string, number>;
 
 export const Leaderboard = (): JSX.Element => {
     const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
-    const [update, setUpdate] = useLeaderboardUpdate();
+    const [scoreboard] = useScoreboard();
 
     const classes = useLeaderboardStyles();
 
     const updateLB = (): void => {
-        const playerColRef = collection(GameManager.getGame(), "players").withConverter(playerConverter);
-        const lead = query(playerColRef, orderBy("sips", "desc"));
         const lb = new Map<string, number>();
-        getDocs(lead)
-            .then((queryOut) => {
-                queryOut.forEach((document) => {
-                    const data = document.data();
-                    if (data) {
-                        lb.set(data.nickname, data.sips);
-                    }
-                });
-                setLeaderboard(lb);
-                return Promise.resolve();
-            })
-            .catch(console.error);
+
+        const plt = GameManager.getPlayerLookupTable();
+        if (!plt) {
+            throw new Error("PLT was missing. Why is it missing?");
+        }
+
+        scoreboard.board.forEach((value, key) => {
+            const nickname = plt.playerUidMap.get(key) || "Error Name";
+            lb.set(nickname, value);
+        });
+
+        setLeaderboard(lb);
     };
 
     useEffect(() => {
-        if (update) {
-            updateLB();
-            setUpdate(false);
-        }
-    }, [update]);
+        updateLB();
+    }, [scoreboard]);
 
     const prepareLeaderboard = (): ReactElement[] => {
         const values: ReactElement[] = [];
