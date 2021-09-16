@@ -12,6 +12,7 @@ jobs:
         working-directory: client
     steps:
       - uses: actions/checkout@v2
+      - run: cd ../sobersailor-common && npm ci && npm run build && cd ../client
       - run: npm ci && npm run build
         env:
           REACT_APP_BETA_CHANNEL: "true"
@@ -28,7 +29,7 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v2
-      - run: npm run install-all
+      - run: npm run install-all && npm run common
       - run: npx firebase-tools deploy --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:
           BETA_CHANNEL: "true"
