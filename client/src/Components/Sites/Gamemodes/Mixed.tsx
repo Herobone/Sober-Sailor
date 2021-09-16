@@ -288,7 +288,7 @@ export default function Mixed(): JSX.Element {
                                     const callData: EvaluateGame = {
                                         gameID: GameManager.getGameID(),
                                     };
-                                    Serverless.callFunction(Serverless.EVALUATE_GAME)(callData);
+                                    Serverless.callFunction(Serverless.EVALUATE_GAME)(callData).catch(console.error);
                                 }}
                             >
                                 Evaluate
