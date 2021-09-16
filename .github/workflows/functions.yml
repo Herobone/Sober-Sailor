@@ -36,7 +36,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: cd ../sobersailor-common && npm ci && npm run build && cd ../client
     - name: Install dependencies
       run: npm ci
     - name: Lint code

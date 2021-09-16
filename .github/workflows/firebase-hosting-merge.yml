@@ -17,7 +17,6 @@ jobs:
         working-directory: client
     steps:
       - uses: actions/checkout@v2
-      - run: cd ../sobersailor-common && npm ci && npm run build && cd ../client
       - run: npm ci && npm run build
         env:
           GENERATE_SOURCEMAP: "false"
