@@ -35,7 +35,7 @@ import { getAuth } from "firebase/auth";
 import { Register } from "sobersailor-common/lib/models/Register";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { Player } from "sobersailor-common/lib/models/Player";
-import { Util } from "./Util";
+import Util from "sobersailor-common/lib/Util";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";
 import { PlayerList } from "./models/CustomTypes";

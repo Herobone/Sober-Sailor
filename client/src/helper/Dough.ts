@@ -1,8 +1,8 @@
 import Cookies from "universal-cookie";
 import { getPerformance } from "firebase/performance";
 import { getAnalytics } from "firebase/analytics";
+import Util from "sobersailor-common/lib/Util";
 import { firebaseApp } from "./config";
-import { Util } from "./Util";
 
 /** ***************************
  * Sober Sailor - The online Party Game
