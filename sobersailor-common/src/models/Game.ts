@@ -1,5 +1,11 @@
 import { Register } from "./Register";
-import { EvaluationScoreboard } from "./EvaluationScoreboard";
+import { Scoreboard, ExternalScoreboard } from "./GameScoreboard";
+import { ExternalRegister } from "./Register";
+import {
+  ExternalAnswers,
+  ExternalEvaluationScoreboard,
+  EvaluationScoreboard,
+} from "./EvaluationScoreboard";
 
 /*****************************
  * Sober Sailor - The online Party Game
@@ -32,6 +38,23 @@ export interface IGame {
   created: Date;
   register: Register;
   evaluationScoreboard: EvaluationScoreboard;
+  scoreboard: Scoreboard;
+}
+
+export interface IGameExternal<TimeStampClass> {
+  currentTask: string | null;
+  type: string | null;
+  taskTarget: string | null;
+  penalty: number;
+  round: number;
+  host: string;
+  pollState: boolean;
+  evalState: boolean;
+  created: TimeStampClass;
+  playerUidMap: ExternalRegister;
+  evaluationScoreboard: ExternalEvaluationScoreboard;
+  evaluationAnswers: ExternalAnswers;
+  scoreboard: ExternalScoreboard;
 }
 
 export class Game implements IGame {
@@ -47,12 +70,14 @@ export class Game implements IGame {
     readonly evalState: boolean,
     readonly created: Date,
     readonly register: Register,
-    readonly evaluationScoreboard: EvaluationScoreboard
+    readonly evaluationScoreboard: EvaluationScoreboard,
+    readonly scoreboard: Scoreboard
   ) {}
 
   static createEmpty(id: string, uid: string, displayName: string): Game {
     const reg: Register = Register.init(uid, displayName);
     const sco: EvaluationScoreboard = EvaluationScoreboard.init();
+    const board = Scoreboard.init();
     return new Game(
       id,
       null,
@@ -65,7 +90,8 @@ export class Game implements IGame {
       false,
       new Date(),
       reg,
-      sco
+      sco,
+      board
     );
   }
 }

@@ -23,17 +23,20 @@ export interface IEvaluationScoreboard {
   answers: Map<string, string>;
 }
 
+export type ExternalEvaluationScoreboard = { [key: string]: number };
+export type ExternalAnswers = { [key: string]: string };
+
 export class EvaluationScoreboard implements IEvaluationScoreboard {
   constructor(
     readonly board: Map<string, number>,
     readonly answers: Map<string, string>
   ) {}
 
-  serializeScore(): { [key: string]: number } {
+  serializeScore(): ExternalEvaluationScoreboard {
     return Util.mapToObj(this.board);
   }
 
-  serializeAnswers(): { [key: string]: string } {
+  serializeAnswers(): ExternalAnswers {
     return Util.mapToObj(this.answers);
   }
 
@@ -46,8 +49,8 @@ export class EvaluationScoreboard implements IEvaluationScoreboard {
   }
 
   static deserialize(
-    score: { [key: string]: number },
-    answers: { [key: string]: string }
+    score: ExternalEvaluationScoreboard,
+    answers: ExternalAnswers
   ): EvaluationScoreboard {
     return new EvaluationScoreboard(
       Util.objToMap(score),

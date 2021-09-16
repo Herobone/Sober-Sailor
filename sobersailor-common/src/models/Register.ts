@@ -21,10 +21,12 @@ export interface IRegister {
   playerUidMap: Map<string, string>;
 }
 
+export type ExternalRegister = { [key: string]: string };
+
 export class Register implements IRegister {
   constructor(readonly playerUidMap: Map<string, string>) {}
 
-  serialize(): { [key: string]: string } {
+  serialize(): ExternalRegister {
     return Util.mapToObj(this.playerUidMap);
   }
 
@@ -40,7 +42,7 @@ export class Register implements IRegister {
     this.playerUidMap.delete(uid);
   }
 
-  static deserialize(toDeserialize: { [key: string]: string }): Register {
+  static deserialize(toDeserialize: ExternalRegister): Register {
     return new Register(Util.objToMap(toDeserialize));
   }
 

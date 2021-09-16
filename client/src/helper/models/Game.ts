@@ -17,24 +17,10 @@
  */
 
 import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
-import { Game } from "sobersailor-common/lib/models/Game";
+import { Game, IGameExternal } from "sobersailor-common/lib/models/Game";
 import { Register } from "sobersailor-common/lib/models/Register";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
-
-interface IGameExternal {
-    currentTask: string | null;
-    type: string | null;
-    taskTarget: string | null;
-    penalty: number;
-    round: number;
-    host: string;
-    pollState: boolean;
-    evalState: boolean;
-    created: Timestamp;
-    playerUidMap: { [key: string]: string };
-    evaluationScoreboard: { [key: string]: number };
-    evaluationAnswers: { [key: string]: string };
-}
+import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
 
 export const gameConverter = {
     toFirestore(game: Game): DocumentData {
@@ -51,9 +37,10 @@ export const gameConverter = {
             playerUidMap: game.register.serialize(),
             evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
             evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
+            scoreboard: game.scoreboard.serializeBoard(),
         };
     },
-    fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal>, options: SnapshotOptions): Game {
+    fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal<Timestamp>>, options: SnapshotOptions): Game {
         const data = snapshot.data(options);
         return new Game(
             snapshot.id,
@@ -68,6 +55,7 @@ export const gameConverter = {
             data.created.toDate(),
             Register.deserialize(data.playerUidMap),
             EvaluationScoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers),
+            Scoreboard.deserialize(data.scoreboard),
         );
     },
 };

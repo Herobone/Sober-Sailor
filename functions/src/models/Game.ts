@@ -16,24 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import * as admin from "firebase-admin";
-import { Game } from "sobersailor-common/lib/models/Game";
-import { Register } from "sobersailor-common/lib/models/Register";
-import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
-
-interface IGameExternal {
-  currentTask: string | null;
-  type: string | null;
-  taskTarget: string | null;
-  penalty: number;
-  round: number;
-  host: string;
-  pollState: boolean;
-  evalState: boolean;
-  created: admin.firestore.Timestamp;
-  playerUidMap: { [key: string]: string };
-  evaluationScoreboard: { [key: string]: number };
-  evaluationAnswers: { [key: string]: string };
-}
+import { Game, IGameExternal } from "sobersailor-common/src/models/Game";
+import { EvaluationScoreboard } from "sobersailor-common/src/models/EvaluationScoreboard";
+import { Register } from "sobersailor-common/src/models/Register";
+import { Scoreboard } from "sobersailor-common/src/models/GameScoreboard";
 
 export const gameConverter = {
   toFirestore(game: Game): admin.firestore.DocumentData {
@@ -50,10 +36,13 @@ export const gameConverter = {
       playerUidMap: game.register.serialize(),
       evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
       evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
+      scoreboard: game.scoreboard.serializeBoard(),
     };
   },
   fromFirestore(
-    snapshot: admin.firestore.QueryDocumentSnapshot<IGameExternal>
+    snapshot: admin.firestore.QueryDocumentSnapshot<
+      IGameExternal<admin.firestore.Timestamp>
+    >
   ): Game {
     const data = snapshot.data();
     return new Game(
@@ -71,7 +60,8 @@ export const gameConverter = {
       EvaluationScoreboard.deserialize(
         data.evaluationScoreboard,
         data.evaluationAnswers
-      )
+      ),
+      Scoreboard.deserialize(data.scoreboard)
     );
   },
 };
