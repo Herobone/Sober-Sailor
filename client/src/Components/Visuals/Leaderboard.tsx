@@ -36,7 +36,7 @@ export const Leaderboard = (): JSX.Element => {
 
         const plt = GameManager.getPlayerLookupTable();
         if (!plt) {
-            throw new Error("PLT was missing. Why is it missing?");
+            return;
         }
 
         scoreboard.board.forEach((value, key) => {
