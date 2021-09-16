@@ -17,7 +17,7 @@
  */
 
 import React, { forwardRef, ReactElement, useImperativeHandle, useState } from "react";
-import { Register } from "sobersailor-common/lib/models/Register";
+import { Register } from "@herobone/sobersailor-common/lib/models/Register";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useAlert } from "../Functional/AlertProvider";

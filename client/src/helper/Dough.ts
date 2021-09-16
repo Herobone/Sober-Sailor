@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
 import { getPerformance } from "firebase/performance";
 import { getAnalytics } from "firebase/analytics";
-import Util from "sobersailor-common/lib/Util";
+import Util from "@herobone/sobersailor-common/lib/Util";
 import { firebaseApp } from "./config";
 
 /** ***************************

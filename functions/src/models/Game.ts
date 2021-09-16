@@ -16,10 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import * as admin from "firebase-admin";
-import { Game, IGameExternal } from "sobersailor-common/lib/models/Game";
-import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
-import { Register } from "sobersailor-common/lib/models/Register";
-import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
+import {
+  Game,
+  IGameExternal,
+} from "@herobone/sobersailor-common/lib/models/Game";
+import { EvaluationScoreboard } from "@herobone/sobersailor-common/lib/models/EvaluationScoreboard";
+import { Register } from "@herobone/sobersailor-common/lib/models/Register";
+import { Scoreboard } from "@herobone/sobersailor-common/lib/models/GameScoreboard";
 
 export const gameConverter = {
   toFirestore(game: Game): admin.firestore.DocumentData {

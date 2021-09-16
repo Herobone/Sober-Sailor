@@ -17,7 +17,10 @@
  */
 
 import * as admin from "firebase-admin";
-import { IPlayerExternal, Player } from "sobersailor-common/lib/models/Player";
+import {
+  IPlayerExternal,
+  Player,
+} from "@herobone/sobersailor-common/lib/models/Player";
 
 export const playerConverter: admin.firestore.FirestoreDataConverter<Player> = {
   toFirestore(player: Player): admin.firestore.DocumentData {

@@ -32,10 +32,10 @@ import {
     increment,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { Register } from "sobersailor-common/lib/models/Register";
-import { Game } from "sobersailor-common/lib/models/Game";
-import { Player } from "sobersailor-common/lib/models/Player";
-import Util from "sobersailor-common/lib/Util";
+import { Register } from "@herobone/sobersailor-common/lib/models/Register";
+import { Game } from "@herobone/sobersailor-common/lib/models/Game";
+import { Player } from "@herobone/sobersailor-common/lib/models/Player";
+import Util from "@herobone/sobersailor-common/lib/Util";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";
 import { PlayerList } from "./models/CustomTypes";

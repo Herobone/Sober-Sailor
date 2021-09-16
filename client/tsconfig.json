@@ -19,6 +19,6 @@
     "./src"
   ],
   "references": [
-    { "path": "../sobersailor-common" }
+    { "path": "../@herobone/sobersailor-common" }
   ]
 }

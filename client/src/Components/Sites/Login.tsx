@@ -24,7 +24,7 @@ import * as firebaseui from "firebaseui";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
 import Cookies from "universal-cookie";
-import Util from "sobersailor-common/lib/Util";
+import Util from "@herobone/sobersailor-common/lib/Util";
 import { Alerts } from "../../helper/AlertTypes";
 import { useAlert } from "../Functional/AlertProvider";
 

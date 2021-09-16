@@ -17,7 +17,7 @@
  */
 
 import { useDispatch, useSelector } from "react-redux";
-import { Player } from "sobersailor-common/lib/models/Player";
+import { Player } from "@herobone/sobersailor-common/lib/models/Player";
 import { RootState } from "../store";
 import { ResultState } from "../reducers/resultReducer";
 
