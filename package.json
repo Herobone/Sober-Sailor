@@ -10,7 +10,7 @@
     "all": "npm run common && npm run functions && npm run emulators",
     "install-functions": "cd functions && npm i",
     "install-client": "cd client && npm i",
-    "install-common": "cd common && npm i",
+    "install-common": "cd sobersailor-common && npm i",
     "install-all": "npm install && npm run install-common && npm run install-client && npm run install-functions"
   },
   "repository": {
