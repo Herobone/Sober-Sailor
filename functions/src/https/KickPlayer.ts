@@ -23,7 +23,7 @@ import { KickPlayer } from "sobersailor-common/lib/HostEvents";
 export const kickPlayerHandler = async (
   data: KickPlayer,
   context: functions.https.CallableContext
-) => {
+): Promise<void> => {
   const auth = context.auth;
   if (auth) {
     const requestUID = auth.uid;
