@@ -22,7 +22,7 @@ import * as functions from "firebase-functions";
 export const closeGameHandler = async (
   data: { gameID: string },
   context: functions.https.CallableContext
-): Promise<void> => {
+) => {
   const auth = context.auth;
   if (auth) {
     const requestUID = auth.uid;

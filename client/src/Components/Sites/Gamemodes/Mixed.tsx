@@ -22,7 +22,7 @@ import { DocumentSnapshot, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Cookies from "universal-cookie";
 
-import { Button, Tooltip } from "@material-ui/core";
+import { Tooltip } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -84,7 +84,6 @@ export default function Mixed(): JSX.Element {
 
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
-    const [readyToEvaluate, setReadyToEvaluate] = useState(false);
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
@@ -102,7 +101,7 @@ export default function Mixed(): JSX.Element {
         setMaxTime(duration); // set the state so we can calculate the with of the bar
         console.log(`Starting Timer with ${duration}s`);
         const timeout = setInterval(
-            () => {
+            (horst: boolean) => {
                 setTimer(localTimer);
 
                 if (--localTimer < 0) {
@@ -111,12 +110,19 @@ export default function Mixed(): JSX.Element {
                         console.log("Clearing Timeout");
                         clearTimeout(timeout); // stop the timeout so it does not get negative
                     }
-                    // setPollState(false); // set poll state to false
+                    setPollState(false); // set poll state to false
 
-                    setReadyToEvaluate(true);
+                    if (horst) {
+                        console.log("Publishing new states");
+                        const callData: EvaluateGame = {
+                            gameID: GameManager.getGameID(),
+                        };
+                        Serverless.callFunction(Serverless.EVALUATE_GAME)(callData);
+                    }
                 }
             },
             1000, // run every 1 second
+            isHost, // passing is host in here solves the issue with it being undefined inside the function
         );
     };
 
@@ -282,18 +288,6 @@ export default function Mixed(): JSX.Element {
                 <Grid item xs={12} md={8} lg={9}>
                     <Paper>
                         {taskComponent}
-                        {pollState && readyToEvaluate && (
-                            <Button
-                                onClick={() => {
-                                    const callData: EvaluateGame = {
-                                        gameID: GameManager.getGameID(),
-                                    };
-                                    Serverless.callFunction(Serverless.EVALUATE_GAME)(callData).catch(console.error);
-                                }}
-                            >
-                                Evaluate
-                            </Button>
-                        )}
                         <ResultPage />
                     </Paper>
                 </Grid>

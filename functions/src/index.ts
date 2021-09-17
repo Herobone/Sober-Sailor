@@ -17,22 +17,6 @@ export const singleTarget = functions
   .region("europe-west1")
   .https.onCall(singleTargetHandler);
 
-export const closeGame = functions
-  .region("europe-west1")
-  .https.onCall(closeGameHandler);
-
-export const kickPlayer = functions
-  .region("europe-west1")
-  .https.onCall(kickPlayerHandler);
-
-export const evaluateGame = functions
-  .region("europe-west1")
-  .https.onCall(evaluateGameHandler);
-
-export const updateScoreboard = functions
-  .region("europe-west1")
-  .https.onCall(updateScoreboardHandler);
-
 export const onPlayerJoin = functions
   .region("europe-west1")
   .firestore.document("/games/{gameID}/players/{playerID}")
@@ -51,3 +35,19 @@ export const garbageCollection = functions
 export const garbageCollectionHTTPS = functions
   .region("europe-west1")
   .https.onRequest(garbageCollectionHTTPSHandler);
+
+export const closeGame = functions
+  .region("europe-west1")
+  .https.onCall(closeGameHandler);
+
+export const kickPlayer = functions
+  .region("europe-west1")
+  .https.onCall(kickPlayerHandler);
+
+export const evaluateGame = functions
+  .region("europe-west1")
+  .https.onCall(evaluateGameHandler);
+
+export const updateScoreboard = functions
+  .region("europe-west1")
+  .https.onCall(updateScoreboardHandler);

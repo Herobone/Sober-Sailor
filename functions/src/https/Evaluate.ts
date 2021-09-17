@@ -46,7 +46,7 @@ const getMostPopular = (occurrences: Map<string, number>) => {
 export const evaluateGameHandler = async (
   data: GameIDContent,
   context: functions.https.CallableContext
-): Promise<{ success: boolean }> => {
+) => {
   const auth = context.auth;
   if (auth) {
     const requestUID = auth.uid;
@@ -106,8 +106,5 @@ export const evaluateGameHandler = async (
       pollState: false,
       evalState: true,
     });
-    return { success: true };
-  } else {
-    return { success: false };
   }
 };

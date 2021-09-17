@@ -27,7 +27,7 @@ const db = admin.firestore();
 export const garbageCollectionHTTPSHandler = async (
   req: functions.https.Request,
   resp: express.Response
-): Promise<void> => {
+) => {
   const maxAge = Date.now() - 12 * 60 * 60 * 1000;
   const gamesRef = await db
     .collection("games")
