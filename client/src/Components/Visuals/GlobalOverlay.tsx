@@ -1,11 +1,10 @@
-import { Backdrop, Fade, Modal, Paper } from "@material-ui/core";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuOpenIcon from "@material-ui/lab/SpeedDialIcon";
-import { SpeedDialAction } from "@material-ui/lab";
-import { SettingsRounded } from "@material-ui/icons";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import CopyrightIcon from "@material-ui/icons/Copyright";
-import FastfoodIcon from "@material-ui/icons/Fastfood";
+import { Backdrop, Fade, Modal, Paper , SpeedDialAction } from "@mui/material";
+import SpeedDial from '@mui/material/SpeedDial';
+import MenuOpenIcon from '@mui/material/SpeedDialIcon';
+import { SettingsRounded } from "@mui/icons-material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import CopyrightIcon from "@mui/icons-material/Copyright";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
 import React, { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Settings } from "../Sites/Settings";

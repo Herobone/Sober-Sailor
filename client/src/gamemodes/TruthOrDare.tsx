@@ -16,10 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ButtonGroup } from "@material-ui/core";
+import { ButtonGroup } from "@mui/material";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import { getAuth } from "firebase/auth";
 import { SingleTargetRequest } from "sobersailor-common/lib/SingleTarget";

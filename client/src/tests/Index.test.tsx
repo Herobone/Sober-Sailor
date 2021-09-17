@@ -20,7 +20,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 import firebase from "firebase/compat/app";
 import { act as domAct } from "react-dom/test-utils";
-import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material";
 import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
 import { LanguageContainer } from "../translations/LanguageContainer";
 import { config, firebaseApp } from "../helper/config";
@@ -50,14 +50,16 @@ test("Renders the Router and looks for Alerts", () => {
     domAct(() => {
         render(
             <React.StrictMode>
-                <MuiThemeProvider theme={responsiveTheme}>
-                    <CssBaseline />
-                    <AlertContext.Provider value={{ createAlert: alertFN }}>
-                        <LanguageContainer>
-                            <Routed />
-                        </LanguageContainer>
-                    </AlertContext.Provider>
-                </MuiThemeProvider>
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={responsiveTheme}>
+                        <CssBaseline />
+                        <AlertContext.Provider value={{ createAlert: alertFN }}>
+                            <LanguageContainer>
+                                <Routed />
+                            </LanguageContainer>
+                        </AlertContext.Provider>
+                    </ThemeProvider>
+                </StyledEngineProvider>
             </React.StrictMode>,
         );
     });

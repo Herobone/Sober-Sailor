@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createTheme, responsiveFontSizes } from "@material-ui/core";
+import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
 
-export const StandardTheme = createTheme({
+export const StandardTheme = createTheme(adaptV4Theme({
     palette: {
         background: {
             default: "#7cdbd5",
@@ -33,9 +33,9 @@ export const StandardTheme = createTheme({
     typography: {
         fontFamily: ["Ubuntu"].join(","),
     },
-});
+}));
 
-export const DarkTheme = createTheme({
+export const DarkTheme = createTheme(adaptV4Theme({
     palette: {
         background: {
             default: "#414141",
@@ -51,9 +51,9 @@ export const DarkTheme = createTheme({
     typography: {
         fontFamily: ["Ubuntu"].join(","),
     },
-});
+}));
 
-export const CalmTheme = createTheme({
+export const CalmTheme = createTheme(adaptV4Theme({
     palette: {
         background: {
             default: "#99ced4",
@@ -69,6 +69,6 @@ export const CalmTheme = createTheme({
     typography: {
         fontFamily: ["Ubuntu"].join(","),
     },
-});
+}));
 
 export const responsiveTheme = responsiveFontSizes(CalmTheme);

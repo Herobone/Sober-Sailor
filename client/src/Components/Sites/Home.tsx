@@ -19,8 +19,8 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
-import { Button, Container } from "@material-ui/core";
-import RowingOutlined from "@material-ui/icons/RowingOutlined";
+import { Button, Container } from "@mui/material";
+import RowingOutlined from "@mui/icons-material/RowingOutlined";
 import { useDefaultStyles } from "../../css/Style";
 
 export function Home(): JSX.Element {

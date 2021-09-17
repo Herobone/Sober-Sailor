@@ -18,8 +18,8 @@
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { CircularProgress, Fab, IconButton, TextField } from "@material-ui/core";
-import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
+import { CircularProgress, Fab, IconButton, TextField } from "@mui/material";
+import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
 import Cookies from "universal-cookie";
 import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
@@ -142,7 +142,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 className={classes.inputNameButton}
                 aria-label="Go to your game!"
                 onClick={processName}
-            >
+                size="large">
                 <ArrowForwardIos />
             </IconButton>
         </>

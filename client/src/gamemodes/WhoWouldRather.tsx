@@ -18,7 +18,7 @@
 
 import React, { ReactElement, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { Button, ButtonGroup } from "@material-ui/core";
+import { Button, ButtonGroup } from "@mui/material";
 import { GameManager } from "../helper/gameManager";
 import { useAlert } from "../Components/Functional/AlertProvider";
 import { Alerts } from "../helper/AlertTypes";

@@ -17,8 +17,8 @@
  */
 
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Dough } from "../../helper/Dough";
 
 export const CookieNotice: FunctionComponent<unknown> = () => {

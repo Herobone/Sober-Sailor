@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper } from "@material-ui/core";
+import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper } from "@mui/material";
 import React, { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector } from "react-redux";

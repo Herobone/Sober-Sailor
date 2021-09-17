@@ -17,7 +17,7 @@
  */
 
 import React from "react";
-import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material";
 import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
@@ -30,18 +30,20 @@ import { store } from "./state/store";
 export function App(): JSX.Element {
     return (
         <React.StrictMode>
-            <MuiThemeProvider theme={responsiveTheme}>
-                <CssBaseline />
-                <Provider store={store}>
-                    <LanguageContainer>
-                        <SnackbarProvider maxSnack={4}>
-                            <AlertProvider>
-                                <Routed />
-                            </AlertProvider>
-                        </SnackbarProvider>
-                    </LanguageContainer>
-                </Provider>
-            </MuiThemeProvider>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={responsiveTheme}>
+                    <CssBaseline />
+                    <Provider store={store}>
+                        <LanguageContainer>
+                            <SnackbarProvider maxSnack={4}>
+                                <AlertProvider>
+                                    <Routed />
+                                </AlertProvider>
+                            </SnackbarProvider>
+                        </LanguageContainer>
+                    </Provider>
+                </ThemeProvider>
+            </StyledEngineProvider>
         </React.StrictMode>
     );
 }

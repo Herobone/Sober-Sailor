@@ -18,8 +18,8 @@
 
 import React from "react";
 import { FormattedMessage } from "react-intl";
-import FormControl from "@material-ui/core/FormControl";
-import { Container, InputLabel, MenuItem, Select } from "@material-ui/core";
+import FormControl from "@mui/material/FormControl";
+import { Container, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useDefaultStyles } from "../../css/Style";
 import { setLanguage } from "../../state/actions/languageActions";
@@ -53,8 +53,8 @@ export function Settings(): JSX.Element {
                 <Select
                     value={language}
                     label={<FormattedMessage id="settings.labels.selectlanguage" />}
-                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                        const val = event.target.value as string;
+                    onChange={(event: SelectChangeEvent) => {
+                        const val = event.target.value;
                         dispatch(setLanguage(val));
                     }}
                 >

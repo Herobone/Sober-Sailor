@@ -15,15 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { Theme } from "@material-ui/core";
-import { createStyles, makeStyles } from "@material-ui/styles";
+import { Theme } from "@mui/material";
+import { createStyles, makeStyles } from "@mui/styles";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export const DefaultStyle = (theme: Theme) =>
     createStyles({
         root: {
             margin: theme.spacing(2),
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down('md')]: {
                 margin: theme.spacing(2),
             },
             textAlign: "center",
@@ -48,7 +48,7 @@ export const DefaultStyle = (theme: Theme) =>
         },
         settingsModal: {
             width: "70%",
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down('md')]: {
                 width: "90%",
             },
             paddingTop: theme.spacing(0.1),
@@ -126,10 +126,10 @@ export const DefaultStyle = (theme: Theme) =>
             },
         },
         controlButtonIcon: {
-            [theme.breakpoints.down("sm")]: {
+            [theme.breakpoints.down('md')]: {
                 fontSize: "min(40px, 10vw)",
             },
-            [theme.breakpoints.between("sm", "xs")]: {
+            [theme.breakpoints.between("sm", 'sm')]: {
                 fontSize: "6vw",
                 backgroundColor: "red",
             },

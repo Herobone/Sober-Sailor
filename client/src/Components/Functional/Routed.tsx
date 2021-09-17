@@ -18,7 +18,7 @@
 
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress } from "@mui/material";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../css/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
@@ -40,9 +40,9 @@ export function Routed(): JSX.Element {
                     <Switch>
                         <Route
                             path="/play/:gameID"
-                            render={(props: RouteComponentProps<{ gameID?: string }>) => (
+                            render={(routeComponentProps: RouteComponentProps<{ gameID?: string }>) => (
                                 <div className={providerClasses.centeraligned}>
-                                    <MixedGameProvider gameID={props.match.params.gameID}>
+                                    <MixedGameProvider gameID={routeComponentProps.match.params.gameID}>
                                         <Mixed />
                                     </MixedGameProvider>
                                 </div>

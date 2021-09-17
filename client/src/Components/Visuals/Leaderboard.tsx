@@ -18,7 +18,7 @@
 
 import React, { ReactElement, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { GameManager } from "../../helper/gameManager";
 import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
 import { useScoreboard } from "../../state/actions/scoreboardAction";
