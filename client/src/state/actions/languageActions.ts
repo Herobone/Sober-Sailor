@@ -28,7 +28,7 @@ export type LanguageAction = {
  * Set the language of the app
  * @param language    The language code (i.e. "de", "en")
  */
-export const setLanguage = (language: string): LanguageAction => ({ type: "SET_LANGUAGE", payload: language });
+const setLanguage = (language: string): LanguageAction => ({ type: "SET_LANGUAGE", payload: language });
 
 export const useLanguage = (): [string, (content: string) => void] => {
     const dispatch = useDispatch();

@@ -20,19 +20,15 @@ import React from "react";
 import { FormattedMessage } from "react-intl";
 import FormControl from "@mui/material/FormControl";
 import { Container, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+
 import { useDefaultStyles } from "../../css/Style";
-import { setLanguage } from "../../state/actions/languageActions";
-import { RootState } from "../../state/store";
-import { LanguageState } from "../../state/reducers/languageReducer";
+import { useLanguage } from "../../state/actions/languageActions";
 
 type Language = { code: string; name: string };
 
 export function Settings(): JSX.Element {
     const classes = useDefaultStyles();
-    const dispatch = useDispatch();
-
-    const language = useSelector<RootState, LanguageState["language"]>((state) => state.language.language);
+    const [language, setLanguage] = useLanguage();
     const options: Language[] = [
         { code: "de", name: "Deutsch" },
         { code: "en", name: "English" },
@@ -55,7 +51,7 @@ export function Settings(): JSX.Element {
                     label={<FormattedMessage id="settings.labels.selectlanguage" />}
                     onChange={(event: SelectChangeEvent) => {
                         const val = event.target.value;
-                        dispatch(setLanguage(val));
+                        setLanguage(val);
                     }}
                 >
                     {options.map((value: Language) => (
