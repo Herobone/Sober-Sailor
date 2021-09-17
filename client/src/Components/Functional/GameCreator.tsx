@@ -3,7 +3,7 @@ import { FormattedMessage } from "react-intl";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ArrowForwardIos } from "@mui/icons-material";
 import React from "react";
-import { useGameProviderStlye } from "../../style/GameProvider";
+import { useGameProviderStyle } from "../../style/GameProvider";
 import { GameManager } from "../../helper/gameManager";
 import { Alerts } from "../../helper/AlertTypes";
 import { useAlert } from "./AlertProvider";
@@ -28,7 +28,7 @@ import { useAlert } from "./AlertProvider";
 
 export function GameCreator(): JSX.Element {
     const { createAlert } = useAlert();
-    const classes = useGameProviderStlye();
+    const classes = useGameProviderStyle();
 
     const createGame = (): void => {
         GameManager.createGame()

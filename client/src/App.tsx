@@ -17,21 +17,21 @@
  */
 
 import React from "react";
-import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material";
+import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
 import { Routed } from "./Components/Functional/Routed";
-import { responsiveTheme } from "./style/Theme";
+import { CalmTheme } from "./style/Theme";
 import { store } from "./state/store";
 
 export function App(): JSX.Element {
     return (
         <React.StrictMode>
             <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={responsiveTheme}>
+                <ThemeProvider theme={CalmTheme}>
                     <CssBaseline />
                     <Provider store={store}>
                         <LanguageContainer>

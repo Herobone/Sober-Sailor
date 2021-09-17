@@ -1,4 +1,4 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
  *
@@ -15,60 +15,67 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material";
 
-export const StandardTheme = createTheme(adaptV4Theme({
-    palette: {
-        background: {
-            default: "#7cdbd5",
+export const StandardTheme = responsiveFontSizes(
+    createTheme({
+        palette: {
+            mode: "light",
+            background: {
+                default: "#7cdbd5",
+            },
+            primary: {
+                main: "#f53240",
+            },
+            secondary: {
+                main: "#fabd03",
+                contrastText: "#02c8a7",
+            },
         },
-        primary: {
-            main: "#f53240",
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
         },
-        secondary: {
-            main: "#fabd03",
-            contrastText: "#02c8a7",
-        },
-    },
-    typography: {
-        fontFamily: ["Ubuntu"].join(","),
-    },
-}));
+    }),
+);
 
-export const DarkTheme = createTheme(adaptV4Theme({
-    palette: {
-        background: {
-            default: "#414141",
+export const DarkTheme = responsiveFontSizes(
+    createTheme({
+        palette: {
+            mode: "dark",
+            background: {
+                default: "#414141",
+            },
+            primary: {
+                main: "#FF6A5C",
+            },
+            secondary: {
+                main: "#056571",
+                contrastText: "#ccdfcb",
+            },
         },
-        primary: {
-            main: "#FF6A5C",
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
         },
-        secondary: {
-            main: "#056571",
-            contrastText: "#ccdfcb",
-        },
-    },
-    typography: {
-        fontFamily: ["Ubuntu"].join(","),
-    },
-}));
+    }),
+);
 
-export const CalmTheme = createTheme(adaptV4Theme({
-    palette: {
-        background: {
-            default: "#99ced4",
+export const CalmTheme = responsiveFontSizes(
+    createTheme({
+        palette: {
+            mode: "light",
+            background: {
+                default: "#99ced4",
+            },
+            primary: {
+                main: "#ee8687",
+            },
+            secondary: {
+                main: "#4abdac",
+                contrastText: "#6e7376",
+            },
         },
-        primary: {
-            main: "#ee8687",
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
         },
-        secondary: {
-            main: "#4abdac",
-            contrastText: "#6e7376",
-        },
-    },
-    typography: {
-        fontFamily: ["Ubuntu"].join(","),
-    },
-}));
-
-export const responsiveTheme = responsiveFontSizes(CalmTheme);
+    }),
+);

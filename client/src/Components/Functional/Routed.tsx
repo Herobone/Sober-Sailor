@@ -22,7 +22,7 @@ import { CircularProgress } from "@mui/material";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
-import { useGameProviderStlye } from "../../style/GameProvider";
+import { useGameProviderStyle } from "../../style/GameProvider";
 import { MixedGameProvider } from "./MixedGameProvider";
 import { Logout } from "./Logout";
 
@@ -30,7 +30,7 @@ const Mixed = lazy(() => import("../Sites/Gamemodes/Mixed"));
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
-    const providerClasses = useGameProviderStlye();
+    const providerClasses = useGameProviderStyle();
 
     return (
         <div className={classes.root}>

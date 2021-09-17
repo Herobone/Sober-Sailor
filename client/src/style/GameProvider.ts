@@ -1,4 +1,4 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
  *
@@ -15,55 +15,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { createStyles, makeStyles } from "@mui/styles";
+import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material";
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-export const useGameProviderStlye = makeStyles((theme: Theme) =>
-    createStyles({
-        nameInput: {
-            position: "relative",
-            width: "40%",
-            margin: theme.spacing(2),
-        },
-        leaveGameFab: {
-            position: "fixed",
-            bottom: theme.spacing(4),
-            left: theme.spacing(2),
-        },
-        createGameButton: {
-            position: "relative",
-        },
-        inputGameIDField: {
-            position: "relative",
-            top: theme.spacing(11.5),
-            padding: theme.spacing(1),
-        },
-        inputGameIDButton: {
-            position: "relative",
-            top: theme.spacing(13),
-        },
-        inputNameButton: {
-            position: "relative",
-            top: theme.spacing(2),
-        },
+export const useGameProviderStyle = makeStyles((theme: Theme) => ({
+    nameInput: {
+        position: "relative",
+        width: "40%",
+        margin: theme.spacing(2),
+    },
+    leaveGameFab: {
+        position: "fixed",
+        bottom: theme.spacing(4),
+        left: theme.spacing(2),
+    },
+    createGameButton: {
+        position: "relative",
+    },
+    inputGameIDField: {
+        position: "relative",
+        top: theme.spacing(11.5),
+        padding: theme.spacing(1),
+    },
+    inputGameIDButton: {
+        position: "relative",
+        top: theme.spacing(13),
+    },
+    inputNameButton: {
+        position: "relative",
+        top: theme.spacing(2),
+    },
 
-        [theme.breakpoints.down('md')]: {
-            nameInput: {
-                width: "90%",
-            },
+    [theme.breakpoints.down("md")]: {
+        nameInput: {
+            width: "90%",
         },
-        centeraligned: {
-            position: "relative",
-            textAlign: "center",
-        },
-        h1: {
-            fontSize: 70,
-        },
-        h1_long: {
-            textAlign: "center",
-            fontSize: 40,
-            padding: theme.spacing(1),
-        },
-    }),
-);
+    },
+    centeraligned: {
+        position: "relative",
+        textAlign: "center",
+    },
+    h1: {
+        fontSize: 70,
+    },
+    h1_long: {
+        textAlign: "center",
+        fontSize: 40,
+        padding: theme.spacing(1),
+    },
+}));
