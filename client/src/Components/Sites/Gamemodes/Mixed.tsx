@@ -48,7 +48,7 @@ import { ResultPage } from "../../Visuals/ResultPage";
 import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
-import { useDefaultStyles } from "../../../css/Style";
+import { useDefaultStyles } from "../../../style/Style";
 import { usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
@@ -271,74 +271,57 @@ export default function Mixed(): JSX.Element {
         }
     }
 
-    return <>
-        <Grid container spacing={3} className={classes.mainGrid}>
-            <Grid item xs={10} md={6}>
-                <div className={classes.mainHeadingName}>
-                    <FormattedMessage id="sobersailor.name" />
-                </div>
-            </Grid>
-            {timer !== 0 && (
-                <Grid item xs={12}>
-                    <span className="countdown-inner">{timer}</span> <FormattedMessage id="general.seconds" />
-                    <LinearProgress variant="determinate" value={(timer / maxTime) * 100} />
+    return (
+        <>
+            <Grid container spacing={3} className={classes.mainGrid}>
+                <Grid item xs={10} md={6}>
+                    <div className={classes.mainHeadingName}>
+                        <FormattedMessage id="sobersailor.name" />
+                    </div>
                 </Grid>
-            )}
-            <Grid item xs={12} md={8} lg={9}>
-                <Paper>
-                    {taskComponent}
-                    <ResultPage />
-                </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-                {isHost && (
-                    <Paper className={classes.sideArea}>
-                        <Grid container spacing={1}>
-                            <Grid item xs={12}>
-                                <h2 className={classes.sideHeading}>
-                                    <FormattedMessage id="elements.admin.control" />
-                                </h2>
-                            </Grid>
-                            {!pollState && (
-                                <Grid item xs className={classes.controlButton}>
-                                    <Tooltip
-                                        title={<FormattedMessage id="actions.host.nextquestion" />}
-                                        TransitionComponent={Zoom}
-                                        placement="bottom"
-                                        arrow
-                                    >
-                                        <IconButton
-                                            color="primary"
-                                            className={classes.hostButton}
-                                            onClick={randomButtonClick}
-                                            size="large">
-                                            <QueuePlayNextIcon className={classes.controlButtonIcon} />
-                                        </IconButton>
-                                    </Tooltip>
+                {timer !== 0 && (
+                    <Grid item xs={12}>
+                        <span className="countdown-inner">{timer}</span> <FormattedMessage id="general.seconds" />
+                        <LinearProgress variant="determinate" value={(timer / maxTime) * 100} />
+                    </Grid>
+                )}
+                <Grid item xs={12} md={8} lg={9}>
+                    <Paper>
+                        {taskComponent}
+                        <ResultPage />
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} md={4} lg={3}>
+                    {isHost && (
+                        <Paper className={classes.sideArea}>
+                            <Grid container spacing={1}>
+                                <Grid item xs={12}>
+                                    <h2 className={classes.sideHeading}>
+                                        <FormattedMessage id="elements.admin.control" />
+                                    </h2>
                                 </Grid>
-                            )}
-                            <Grid item xs className={classes.controlButton}>
-                                <Tooltip
-                                    title={<FormattedMessage id="actions.host.transfer" />}
-                                    TransitionComponent={Zoom}
-                                    placement="bottom"
-                                    arrow
-                                >
-                                    <IconButton
-                                        color="primary"
-                                        className={classes.hostButton}
-                                        onClick={() => {
-                                            GameManager.transferHostShip().catch(console.error);
-                                        }}
-                                        size="large">
-                                        <TransferWithinAStationIcon className={classes.controlButtonIcon} />
-                                    </IconButton>
-                                </Tooltip>
-                            </Grid>
-                            {!pollState && (
+                                {!pollState && (
+                                    <Grid item xs className={classes.controlButton}>
+                                        <Tooltip
+                                            title={<FormattedMessage id="actions.host.nextquestion" />}
+                                            TransitionComponent={Zoom}
+                                            placement="bottom"
+                                            arrow
+                                        >
+                                            <IconButton
+                                                color="primary"
+                                                className={classes.hostButton}
+                                                onClick={randomButtonClick}
+                                                size="large"
+                                            >
+                                                <QueuePlayNextIcon className={classes.controlButtonIcon} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                )}
                                 <Grid item xs className={classes.controlButton}>
                                     <Tooltip
-                                        title={<FormattedMessage id="actions.host.startpoll" />}
+                                        title={<FormattedMessage id="actions.host.transfer" />}
                                         TransitionComponent={Zoom}
                                         placement="bottom"
                                         arrow
@@ -347,41 +330,64 @@ export default function Mixed(): JSX.Element {
                                             color="primary"
                                             className={classes.hostButton}
                                             onClick={() => {
-                                                GameManager.setPollState(true).catch(console.error);
+                                                GameManager.transferHostShip().catch(console.error);
                                             }}
-                                            size="large">
-                                            <PollIcon className={classes.controlButtonIcon} />
+                                            size="large"
+                                        >
+                                            <TransferWithinAStationIcon className={classes.controlButtonIcon} />
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
-                            )}
-                            <Grid item xs className={classes.controlButton}>
-                                <Tooltip
-                                    title={<FormattedMessage id="actions.host.kick" />}
-                                    TransitionComponent={Zoom}
-                                    placement="bottom"
-                                    arrow
-                                >
-                                    <IconButton
-                                        color="primary"
-                                        className={classes.hostButton}
-                                        onClick={() => {
-                                            const klRef = kickListRef.current;
-                                            if (klRef) {
-                                                klRef.show();
-                                            }
-                                        }}
-                                        size="large">
-                                        <FlightTakeoffIcon className={classes.controlButtonIcon} />
-                                    </IconButton>
-                                </Tooltip>
+                                {!pollState && (
+                                    <Grid item xs className={classes.controlButton}>
+                                        <Tooltip
+                                            title={<FormattedMessage id="actions.host.startpoll" />}
+                                            TransitionComponent={Zoom}
+                                            placement="bottom"
+                                            arrow
+                                        >
+                                            <IconButton
+                                                color="primary"
+                                                className={classes.hostButton}
+                                                onClick={() => {
+                                                    GameManager.setPollState(true).catch(console.error);
+                                                }}
+                                                size="large"
+                                            >
+                                                <PollIcon className={classes.controlButtonIcon} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
+                                )}
+                                <Grid item xs className={classes.controlButton}>
+                                    <Tooltip
+                                        title={<FormattedMessage id="actions.host.kick" />}
+                                        TransitionComponent={Zoom}
+                                        placement="bottom"
+                                        arrow
+                                    >
+                                        <IconButton
+                                            color="primary"
+                                            className={classes.hostButton}
+                                            onClick={() => {
+                                                const klRef = kickListRef.current;
+                                                if (klRef) {
+                                                    klRef.show();
+                                                }
+                                            }}
+                                            size="large"
+                                        >
+                                            <FlightTakeoffIcon className={classes.controlButtonIcon} />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Paper>
-                )}
-                <Leaderboard />
-                <KickList ref={kickListRef} />
+                        </Paper>
+                    )}
+                    <Leaderboard />
+                    <KickList ref={kickListRef} />
+                </Grid>
             </Grid>
-        </Grid>
-    </>;
+        </>
+    );
 }

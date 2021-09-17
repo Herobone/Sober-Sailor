@@ -20,9 +20,9 @@ import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { Home } from "../Sites/Home";
-import { useDefaultStyles } from "../../css/Style";
+import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
-import { useGameProviderStlye } from "../../css/GameProvider";
+import { useGameProviderStlye } from "../../style/GameProvider";
 import { MixedGameProvider } from "./MixedGameProvider";
 import { Logout } from "./Logout";
 

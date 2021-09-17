@@ -1,6 +1,6 @@
-import { Backdrop, Fade, Modal, Paper , SpeedDialAction } from "@mui/material";
-import SpeedDial from '@mui/material/SpeedDial';
-import MenuOpenIcon from '@mui/material/SpeedDialIcon';
+import { Backdrop, Fade, Modal, Paper, SpeedDialAction } from "@mui/material";
+import SpeedDial from "@mui/material/SpeedDial";
+import MenuOpenIcon from "@mui/material/SpeedDialIcon";
 import { SettingsRounded } from "@mui/icons-material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CopyrightIcon from "@mui/icons-material/Copyright";
@@ -8,7 +8,7 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 import React, { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Settings } from "../Sites/Settings";
-import { useDefaultStyles } from "../../css/Style";
+import { useDefaultStyles } from "../../style/Style";
 import { CookieNotice } from "./CookieNotice";
 
 /** ***************************

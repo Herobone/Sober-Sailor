@@ -24,7 +24,7 @@ import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
 import { Routed } from "./Components/Functional/Routed";
-import { responsiveTheme } from "./css/Theme";
+import { responsiveTheme } from "./style/Theme";
 import { store } from "./state/store";
 
 export function App(): JSX.Element {

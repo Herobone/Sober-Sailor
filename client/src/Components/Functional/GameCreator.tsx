@@ -3,7 +3,7 @@ import { FormattedMessage } from "react-intl";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ArrowForwardIos } from "@mui/icons-material";
 import React from "react";
-import { useGameProviderStlye } from "../../css/GameProvider";
+import { useGameProviderStlye } from "../../style/GameProvider";
 import { GameManager } from "../../helper/gameManager";
 import { Alerts } from "../../helper/AlertTypes";
 import { useAlert } from "./AlertProvider";
@@ -39,39 +39,42 @@ export function GameCreator(): JSX.Element {
             .catch((error: string) => createAlert(Alerts.ERROR, error));
     };
 
-    return <>
-        <h1 className={classes.h1}>
-            <FormattedMessage id="sobersailor.name" />
-        </h1>
-        <Button
-            variant="contained"
-            color="secondary"
-            className={classes.createGameButton}
-            onClick={createGame}
-            size="large"
-        >
-            <FormattedMessage id="actions.game.create" />
-        </Button>
+    return (
+        <>
+            <h1 className={classes.h1}>
+                <FormattedMessage id="sobersailor.name" />
+            </h1>
+            <Button
+                variant="contained"
+                color="secondary"
+                className={classes.createGameButton}
+                onClick={createGame}
+                size="large"
+            >
+                <FormattedMessage id="actions.game.create" />
+            </Button>
 
-        <div className={classes.centeraligned}>
-            <TextField
-                label="GameID"
-                color="primary"
-                id="outlined-start-adornment"
-                className={classes.inputGameIDField}
-                InputProps={{
-                    startAdornment: <InputAdornment position="start">{window.location.host}</InputAdornment>,
-                }}
-                variant="outlined"
-            />
-            <IconButton
-                color="primary"
-                className={classes.inputGameIDButton}
-                // goToGame needs to redirect to the game URL
-                aria-label="Go to your game!"
-                size="large">
-                <ArrowForwardIos />
-            </IconButton>
-        </div>
-    </>;
+            <div className={classes.centeraligned}>
+                <TextField
+                    label="GameID"
+                    color="primary"
+                    id="outlined-start-adornment"
+                    className={classes.inputGameIDField}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">{window.location.host}</InputAdornment>,
+                    }}
+                    variant="outlined"
+                />
+                <IconButton
+                    color="primary"
+                    className={classes.inputGameIDButton}
+                    // goToGame needs to redirect to the game URL
+                    aria-label="Go to your game!"
+                    size="large"
+                >
+                    <ArrowForwardIos />
+                </IconButton>
+            </div>
+        </>
+    );
 }

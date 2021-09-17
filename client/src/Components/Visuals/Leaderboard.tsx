@@ -20,7 +20,7 @@ import React, { ReactElement, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { GameManager } from "../../helper/gameManager";
-import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
+import { useLeaderboardStyles } from "../../style/LeaderboardStyle";
 import { useScoreboard } from "../../state/actions/scoreboardAction";
 
 type leaderboard = Map<string, number>;

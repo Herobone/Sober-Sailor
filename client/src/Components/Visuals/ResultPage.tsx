@@ -21,7 +21,7 @@ import React, { ReactElement } from "react";
 import { FormattedMessage } from "react-intl";
 import { useSelector } from "react-redux";
 import { Player } from "sobersailor-common/lib/models/Player";
-import { useDefaultStyles } from "../../css/Style";
+import { useDefaultStyles } from "../../style/Style";
 import { ResultState } from "../../state/reducers/resultReducer";
 import { RootState } from "../../state/store";
 

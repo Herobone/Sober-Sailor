@@ -26,7 +26,7 @@ import { SingleTargetRequest } from "sobersailor-common/lib/SingleTarget";
 import { Register } from "sobersailor-common/lib/models/Register";
 import { GameManager } from "../helper/gameManager";
 import { Serverless } from "../helper/Serverless";
-import { useTruthOrDareStyles } from "../css/TruthOrDareStyle";
+import { useTruthOrDareStyles } from "../style/TruthOrDareStyle";
 import { RootState } from "../state/store";
 import { TaskState } from "../state/reducers/taskReducer";
 import { firebaseApp } from "../helper/config";

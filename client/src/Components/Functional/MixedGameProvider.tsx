@@ -24,7 +24,7 @@ import Cookies from "universal-cookie";
 import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
-import { useGameProviderStlye } from "../../css/GameProvider";
+import { useGameProviderStlye } from "../../style/GameProvider";
 import { firebaseApp } from "../../helper/config";
 import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
@@ -142,7 +142,8 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 className={classes.inputNameButton}
                 aria-label="Go to your game!"
                 onClick={processName}
-                size="large">
+                size="large"
+            >
                 <ArrowForwardIos />
             </IconButton>
         </>

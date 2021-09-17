@@ -26,7 +26,7 @@ import { LanguageContainer } from "../translations/LanguageContainer";
 import { config, firebaseApp } from "../helper/config";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
-import { responsiveTheme } from "../css/Theme";
+import { responsiveTheme } from "../style/Theme";
 
 firebase.initializeApp(config);
 
