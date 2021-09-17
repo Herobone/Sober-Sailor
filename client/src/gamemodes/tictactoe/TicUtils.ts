@@ -48,20 +48,16 @@ export const TicUtils = {
         return winner;
     },
 
-    registerTicTacToe(opponents: string[]): Promise<unknown> {
-        return new Promise<unknown>((resolve, reject) => {
-            if (opponents.length !== 2) {
-                throw new RangeError("More or less than two players specified!");
-            }
-            console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
+    async registerTicTacToe(opponents: string[]): Promise<void> {
+        if (opponents.length !== 2) {
+            throw new RangeError("More or less than two players specified!");
+        }
+        console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
 
-            setDoc(
-                TicUtils.getTTTGame(),
-                new TicTacToe(Array.from<TicOptions>({ length: 9 }).fill(null), 0, true, opponents[0], opponents[1]),
-            )
-                .then(resolve)
-                .catch(reject);
-        });
+        await setDoc(
+            TicUtils.getTTTGame(),
+            new TicTacToe(Array.from<TicOptions>({ length: 9 }).fill(null), 0, true, opponents[0], opponents[1]),
+        );
     },
 
     drawAllowed(isXNext: boolean, player: TicOptions): boolean {
@@ -97,39 +93,23 @@ export const TicUtils = {
         return doc(GameManager.getGame(), "minigames", "tictactoe").withConverter(ticTacToeConverter);
     },
 
-    makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            const tttRef = TicUtils.getTTTGame();
-            getDoc(tttRef)
-                .then((data) => {
-                    const ttt = data.data();
-                    if (!ttt) {
-                        throw new Error("Data from Game was empty");
-                    }
-                    return ttt;
-                })
-                .then((value) => {
-                    if (!TicUtils.drawAllowed(value.isXNext, player)) {
-                        console.log("Draw not allowed!");
-                        resolve();
-                        return null;
-                    }
-                    return value;
-                })
-                .then((value) => {
-                    if (!value) {
-                        return null;
-                    }
-                    const field = value.squares;
-                    field[fieldID] = player;
-                    return updateDoc(tttRef, {
-                        squares: field,
-                        isXNext: !value.isXNext,
-                        stepNumber: value.stepNumber + 1,
-                    });
-                })
-                .then(() => resolve())
-                .catch(reject);
+    async makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
+        const tttRef = TicUtils.getTTTGame();
+        const data = await getDoc(tttRef);
+        const ttt = data.data();
+        if (!ttt) {
+            throw new Error("Data from Game was empty");
+        }
+        if (!TicUtils.drawAllowed(ttt.isXNext, player)) {
+            console.log("Draw not allowed!");
+            return;
+        }
+        const field = ttt.squares;
+        field[fieldID] = player;
+        await updateDoc(tttRef, {
+            squares: field,
+            isXNext: !ttt.isXNext,
+            stepNumber: ttt.stepNumber + 1,
         });
     },
 };

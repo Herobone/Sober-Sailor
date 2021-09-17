@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent, ReactElement } from "react";
+import React, { ReactElement } from "react";
 import style from "../../css/TicTacToe.module.scss";
 import { Square } from "./Square";
 import { TicOptions } from "./TicUtils";
@@ -26,30 +26,28 @@ interface Props {
     onClick: (i: number) => void;
 }
 
-export class Board extends PureComponent<Props> {
-    renderSquare(i: number): ReactElement<Square> {
-        return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
-    }
+export function Board(props: Props): JSX.Element {
+    const renderSquare = (i: number): ReactElement<typeof Square> => {
+        return <Square value={props.squares[i]} onClick={() => props.onClick(i)} />;
+    };
 
-    render(): JSX.Element {
-        return (
-            <div>
-                <div className={style.boardRow}>
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className={style.boardRow}>
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className={style.boardRow}>
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+    return (
+        <div>
+            <div className={style.boardRow}>
+                {renderSquare(0)}
+                {renderSquare(1)}
+                {renderSquare(2)}
             </div>
-        );
-    }
+            <div className={style.boardRow}>
+                {renderSquare(3)}
+                {renderSquare(4)}
+                {renderSquare(5)}
+            </div>
+            <div className={style.boardRow}>
+                {renderSquare(6)}
+                {renderSquare(7)}
+                {renderSquare(8)}
+            </div>
+        </div>
+    );
 }
