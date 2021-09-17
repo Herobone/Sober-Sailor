@@ -97,8 +97,6 @@ export function TicTacToe(): JSX.Element {
         };
     }, []);
 
-    const status = winner ? `Winner: ${winner}` : `Next player: ${isXNext ? "X" : "O"}`;
-
     return (
         <div className={style.game}>
             {spectator && (
@@ -118,13 +116,27 @@ export function TicTacToe(): JSX.Element {
                     <br />
                 </div>
             )}
-            <div className={style.boardRow}>
-                <Board squares={squares} onClick={(i: number) => handleClick(i)} />
-            </div>
-            <div className={style.gameInfo}>
-                <div>{status}</div>
-                <div>Step: {stepNumber}</div>
-            </div>
+            {!winner && (
+                <>
+                    <div className={style.boardRow}>
+                        <Board squares={squares} onClick={(i: number) => handleClick(i)} />
+                    </div>
+                    <div className={style.gameInfo}>
+                        <div>Next player: ${isXNext ? "X" : "O"}</div>
+                        <div>Step: {stepNumber}</div>
+                    </div>
+                </>
+            )}
+            {winner && (
+                <>
+                    <div>GAME OVER!</div>
+                    <br />
+                    <div>
+                        Player ${winner} won the game!
+                        <br />
+                    </div>
+                </>
+            )}
         </div>
     );
 }
