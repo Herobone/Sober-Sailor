@@ -23,7 +23,6 @@ import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { useGameProviderStyle } from "../../style/GameProvider";
-import { PenaltyScreen } from "../Visuals/PenaltyScreen";
 import { MixedGameProvider } from "./MixedGameProvider";
 import { Logout } from "./Logout";
 
@@ -57,10 +56,6 @@ export function Routed(): JSX.Element {
 
                         <Route path="/logout">
                             <Logout />
-                        </Route>
-
-                        <Route path="/test">
-                            <PenaltyScreen penalty={5} />
                         </Route>
 
                         <Route path="/">
