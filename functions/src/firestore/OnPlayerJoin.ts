@@ -31,8 +31,12 @@ export const onPlayerJoinHandler = async (
   }
 
   gameData.register.addPlayer(context.params.playerID, playerData.nickname);
+  gameData.scoreboard.addScore(context.params.playerID, 0);
 
-  await FirestoreUtil.updateRegister(context.params.gameID, gameData);
+  await FirestoreUtil.getGame(context.params.gameID).update({
+    scoreboard: gameData.scoreboard.serializeBoard(),
+    playerUidMap: gameData.register.serialize(),
+  });
 
   return null;
 };
