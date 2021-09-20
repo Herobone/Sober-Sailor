@@ -21,9 +21,6 @@ import { makeStyles } from "@mui/styles";
 export const useDefaultStyles = makeStyles((theme: Theme) => ({
     root: {
         margin: theme.spacing(2),
-        [theme.breakpoints.down("md")]: {
-            margin: theme.spacing(2),
-        },
         textAlign: "center",
         alignItems: "center",
         justifyContent: "center",

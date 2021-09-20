@@ -16,17 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Dough } from "../../helper/Dough";
 
-export const CookieNotice: FunctionComponent<unknown> = () => {
+export function CookieNotice(props: { reopen: boolean }): JSX.Element {
     const [cookieNotice, setCookieNotice] = useState(false);
 
     useEffect(() => {
         setCookieNotice(!Dough.isDoughPresent());
     }, []);
+
+    useEffect(() => {
+        setCookieNotice(props.reopen);
+    }, [props.reopen]);
 
     return (
         <Dialog
@@ -70,4 +74,4 @@ export const CookieNotice: FunctionComponent<unknown> = () => {
             </DialogActions>
         </Dialog>
     );
-};
+}

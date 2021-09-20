@@ -1,4 +1,4 @@
-import { Backdrop, Fade, Modal, Paper, SpeedDialAction } from "@mui/material";
+import { Backdrop, Fade, Modal, Paper, Portal, SpeedDialAction } from "@mui/material";
 import SpeedDial from "@mui/material/SpeedDial";
 import MenuOpenIcon from "@mui/material/SpeedDialIcon";
 import { SettingsRounded } from "@mui/icons-material";
@@ -33,6 +33,7 @@ export function GlobalOverlay(): JSX.Element {
     const classes = useDefaultStyles();
     const [settingsShown, setSettingsShown] = useState(false);
     const [speedDialShown, setSpeedDialShown] = useState(false);
+    const [cookiesOpen, setCookiesOpen] = useState(false);
     const intl = useIntl();
 
     const openSettings = (): void => {
@@ -47,7 +48,7 @@ export function GlobalOverlay(): JSX.Element {
 
     return (
         <>
-            <CookieNotice />
+            <CookieNotice reopen={cookiesOpen} />
             <Modal open={settingsShown} onClose={closeSettings} closeAfterTransition>
                 <Fade in={settingsShown}>
                     <Paper elevation={5} className={classes.settingsModal}>
@@ -84,6 +85,7 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipOpen
                     onClick={() => {
                         setSpeedDialShown(false);
+                        window.open("https://github.com/Herobone/Sober-Sailor/#readme", "_blank ");
                     }}
                 />
                 <SpeedDialAction
@@ -94,6 +96,7 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipOpen
                     onClick={() => {
                         setSpeedDialShown(false);
+                        window.open("https://github.com/Herobone/Sober-Sailor/blob/main/LICENSE", "_blank ");
                     }}
                 />
                 <SpeedDialAction
@@ -104,11 +107,14 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipOpen
                     onClick={() => {
                         setSpeedDialShown(false);
+                        setCookiesOpen(true);
                     }}
                 />
             </SpeedDial>
 
-            <Backdrop open={speedDialShown || settingsShown} />
+            <Portal>
+                <Backdrop open={speedDialShown} />
+            </Portal>
         </>
     );
 }
