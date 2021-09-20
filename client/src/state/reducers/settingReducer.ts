@@ -15,17 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { LanguageAction } from "../actions/languageActions";
+import { SettingAction } from "../actions/settingActions";
 
-export interface LanguageState {
+export interface SettingState {
     language: string;
 }
 
-const initialState: LanguageState = {
+const initialState: SettingState = {
     language: "en",
 };
 
-export const languageReducer = (state: LanguageState = initialState, action: LanguageAction): LanguageState => {
+export const settingReducer = (state: SettingState = initialState, action: SettingAction): SettingState => {
     switch (action.type) {
         case "SET_LANGUAGE":
             return { ...state, language: action.payload };

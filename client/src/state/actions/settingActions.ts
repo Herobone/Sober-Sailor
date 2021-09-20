@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { LanguageState } from "../reducers/languageReducer";
+import { SettingState } from "../reducers/settingReducer";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -20,7 +20,7 @@ import { LanguageState } from "../reducers/languageReducer";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export type LanguageAction = {
+export type SettingAction = {
     type: "SET_LANGUAGE";
     payload: string;
 };
@@ -28,11 +28,11 @@ export type LanguageAction = {
  * Set the language of the app
  * @param language    The language code (i.e. "de", "en")
  */
-const setLanguage = (language: string): LanguageAction => ({ type: "SET_LANGUAGE", payload: language });
+const setLanguage = (language: string): SettingAction => ({ type: "SET_LANGUAGE", payload: language });
 
 export const useLanguage = (): [string, (content: string) => void] => {
     const dispatch = useDispatch();
-    const get = useSelector<RootState, LanguageState["language"]>((state) => state.language.language);
+    const get = useSelector<RootState, SettingState["language"]>((state) => state.settings.language);
 
     const set = (content: string): void => {
         dispatch(setLanguage(content));

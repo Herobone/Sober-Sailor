@@ -20,7 +20,7 @@ import React, { useEffect, useState } from "react";
 import { IntlProvider } from "react-intl";
 import Cookies from "universal-cookie";
 import Util from "sobersailor-common/lib/Util";
-import { useLanguage } from "../state/actions/languageActions";
+import { useLanguage } from "../state/actions/settingActions";
 
 const messageLoader = {
     en: () => import("./locales/en.json"),

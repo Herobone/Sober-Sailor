@@ -22,7 +22,7 @@ import FormControl from "@mui/material/FormControl";
 import { Container, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
 import { useDefaultStyles } from "../../style/Style";
-import { useLanguage } from "../../state/actions/languageActions";
+import { useLanguage } from "../../state/actions/settingActions";
 
 type Language = { code: string; name: string };
 
