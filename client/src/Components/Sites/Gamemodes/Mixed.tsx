@@ -20,7 +20,6 @@ import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "re
 import { FormattedMessage } from "react-intl";
 import { DocumentSnapshot, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import Cookies from "universal-cookie";
 
 import { Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -55,6 +54,7 @@ import { useIsHost } from "../../../state/actions/gameActions";
 import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
+import { useLanguage } from "../../../state/actions/settingActions";
 
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
@@ -66,8 +66,7 @@ export default function Mixed(): JSX.Element {
 
     const kickListRef = useRef<KickListHandle>(null);
 
-    const cookies = new Cookies();
-    const lang: string = cookies.get("locale");
+    const [lang] = useLanguage();
 
     const classes = useDefaultStyles();
 
@@ -87,9 +86,7 @@ export default function Mixed(): JSX.Element {
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
-        if (result !== null) {
-            setResult(null);
-        }
+        setResult(null);
         const tud = truthOrDareRef.current;
         if (tud) {
             tud.reset();
@@ -191,17 +188,31 @@ export default function Mixed(): JSX.Element {
         GameManager.joinGame(gameEvent).then(GameManager.amIHost).then(setHost).catch(console.error);
     }, []);
 
-    const setTask = (type: Task, newTarget: PlayerList, newPenalty = 0): void => {
+    const setMultiAnswerTask = async (type: Task): Promise<void> => {
+        const taskLang = lang in type.lang ? lang : type.lang[0];
+        const task = await TaskUtils.getRandomMultiAnswerTask(type.id, taskLang);
+        await updateDoc(GameManager.getGame(), {
+            currentTask: task.question,
+            answers: task.answers,
+            type: type.id,
+            evalState: false,
+            pollState: false,
+            taskTarget: null,
+            penalty: 0,
+        });
+    };
+
+    const setTask = async (type: Task, newTarget: PlayerList, newPenalty = 0): Promise<void> => {
         console.log({ task: type, target: newTarget, penalty: newPenalty });
         if (type.id === "tictactoe") {
-            updateDoc(GameManager.getGame(), {
+            await updateDoc(GameManager.getGame(), {
                 currentTask: null,
                 type: type.id,
                 evalState: false,
                 pollState: false,
                 taskTarget: null,
                 penalty: newPenalty,
-            }).catch(console.error);
+            });
             if (newTarget && newTarget.length === 2) {
                 TicUtils.registerTicTacToe(newTarget).catch(console.error);
             }
@@ -209,23 +220,20 @@ export default function Mixed(): JSX.Element {
             const taskLang = lang in type.lang ? lang : type.lang[0];
             const localTarget = newTarget ? newTarget[0] : null;
 
-            TaskUtils.getRandomTask(type.id, taskLang)
-                .then((task): Promise<void> => {
-                    setNextTask(task);
-                    return updateDoc(GameManager.getGame(), {
-                        currentTask: task,
-                        type: type.id,
-                        evalState: false,
-                        pollState: false,
-                        taskTarget: localTarget,
-                        penalty: newPenalty,
-                    });
-                })
-                .catch(console.error);
+            const task = await TaskUtils.getRandomTask(type.id, taskLang);
+            setNextTask(task);
+            await updateDoc(GameManager.getGame(), {
+                currentTask: task,
+                type: type.id,
+                evalState: false,
+                pollState: false,
+                taskTarget: localTarget,
+                penalty: newPenalty,
+            });
         }
     };
 
-    const randomButtonClick = (): void => {
+    const nextTaskButtonClick = (): void => {
         if (!isHost) {
             throw new Error("Trying to execute a host method as non Host");
         }
@@ -234,15 +242,20 @@ export default function Mixed(): JSX.Element {
         const development = process.env.NODE_ENV === "development" && testMode;
         const nextTaskType: Task = development ? tasks[2] : Util.selectRandom(tasks);
 
+        if (nextTaskType.multiAnswer) {
+            setMultiAnswerTask(nextTaskType).catch(console.error);
+            return;
+        }
+
         if (nextTaskType.singleTarget) {
             let targetCount = 1;
             if (nextTaskType.id === "tictactoe") {
                 targetCount = 2;
             }
             const nextTarget = GameManager.getRandomPlayer(targetCount);
-            setTask(nextTaskType, nextTarget, Util.random(3, 7));
+            setTask(nextTaskType, nextTarget, Util.random(3, 7)).catch(console.error);
         } else {
-            setTask(nextTaskType, null);
+            setTask(nextTaskType, null).catch(console.error);
         }
     };
 
@@ -315,7 +328,7 @@ export default function Mixed(): JSX.Element {
                                             <IconButton
                                                 color="primary"
                                                 className={classes.hostButton}
-                                                onClick={randomButtonClick}
+                                                onClick={nextTaskButtonClick}
                                                 size="large"
                                             >
                                                 <QueuePlayNextIcon className={classes.controlButtonIcon} />

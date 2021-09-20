@@ -2,9 +2,9 @@
   {
     "question": "Was würdest du eher essen?",
     "answers": [
-      {"answer":  "Hunde"},
-      {"answer":  "Katzen"},
-      {"answer":  "Pferde"}
+      {"id": 1, "answer":  "Hunde"},
+      {"id": 2, "answer":  "Katzen"},
+      {"id": 3, "answer":  "Pferde"}
     ]
   }
 ]

@@ -53,7 +53,7 @@ export class TaskUtils {
      * @param task  Type of the task
      * @param lang  Language of the task
      */
-    public static getTasks(task: string, lang: string): Promise<string[]> {
+    public static getTasks(task: string, lang: string): Promise<Question[]> {
         const stored = localStorage.getItem(`${task}_${lang}`);
         if (stored) {
             return JSON.parse(stored);
@@ -71,7 +71,7 @@ export class TaskUtils {
      */
     private static async storeLocalFromGitMultiAnswer(task: string, lang: string): Promise<IMultiAnswerQuestion[]> {
         const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
-            process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
+            process.env.REACT_APP_BETA_CHANNEL || process.env.NODE_ENV === "development" ? "beta" : "main"
         }/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
         const data = await response.text();
@@ -94,8 +94,13 @@ export class TaskUtils {
         return this.storeLocalFromGitMultiAnswer(task, lang);
     }
 
-    public static async getRandomTask(task: string, lang: string): Promise<string> {
+    public static async getRandomTask(task: string, lang: string): Promise<Question> {
         const tasks = await this.getTasks(task, lang);
+        return Util.selectRandom(tasks);
+    }
+
+    public static async getRandomMultiAnswerTask(task: string, lang: string): Promise<IMultiAnswerQuestion> {
+        const tasks = await this.getTasksMultiAnswer(task, lang);
         return Util.selectRandom(tasks);
     }
 }

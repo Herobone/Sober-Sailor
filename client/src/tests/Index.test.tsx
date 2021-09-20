@@ -26,7 +26,7 @@ import { LanguageContainer } from "../translations/LanguageContainer";
 import { config, firebaseApp } from "../helper/config";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
-import { responsiveTheme } from "../style/Theme";
+import { CalmTheme } from "../style/Theme";
 
 firebase.initializeApp(config);
 
@@ -51,7 +51,7 @@ test("Renders the Router and looks for Alerts", () => {
         render(
             <React.StrictMode>
                 <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={responsiveTheme}>
+                    <ThemeProvider theme={CalmTheme}>
                         <CssBaseline />
                         <AlertContext.Provider value={{ createAlert: alertFN }}>
                             <LanguageContainer>
