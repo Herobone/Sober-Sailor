@@ -17,21 +17,34 @@
  */
 
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import FormControl from "@mui/material/FormControl";
 import { Container, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
+import Util from "sobersailor-common/lib/Util";
+import Cookies from "universal-cookie";
 import { useDefaultStyles } from "../../style/Style";
-import { useLanguage } from "../../state/actions/settingActions";
+import { useLanguage, useThemeSetting } from "../../state/actions/settingActions";
+import { AvailableThemes } from "../../style/Theme";
 
-type Language = { code: string; name: string };
+type LanguageSetting = { code: string; name: string };
+type ThemeSetting = { code: AvailableThemes; name: string };
 
 export function Settings(): JSX.Element {
     const classes = useDefaultStyles();
+    const cookies: Cookies = new Cookies();
+    const intl = useIntl();
     const [language, setLanguage] = useLanguage();
-    const options: Language[] = [
+    const [theme, setTheme] = useThemeSetting();
+    const options: LanguageSetting[] = [
         { code: "de", name: "Deutsch" },
         { code: "en", name: "English" },
+    ];
+
+    const themeOptions: ThemeSetting[] = [
+        { code: "light", name: intl.formatMessage({ id: "settings.options.theme.light" }) },
+        { code: "calm", name: intl.formatMessage({ id: "settings.options.theme.calm" }) },
+        { code: "dark", name: intl.formatMessage({ id: "settings.options.theme.dark" }) },
     ];
 
     return (
@@ -54,8 +67,30 @@ export function Settings(): JSX.Element {
                         setLanguage(val);
                     }}
                 >
-                    {options.map((value: Language) => (
+                    {options.map((value: LanguageSetting) => (
                         <MenuItem value={value.code} key={`lang_${value.code}_option`}>
+                            {value.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <br />
+            <FormControl variant="outlined" className={classes.langSelect}>
+                <InputLabel htmlFor="outlined-age-native-simple">
+                    <FormattedMessage id="settings.labels.selecttheme" />
+                </InputLabel>
+                <br />
+                <Select
+                    value={theme}
+                    label={<FormattedMessage id="settings.labels.selecttheme" />}
+                    onChange={(event: SelectChangeEvent) => {
+                        const val = event.target.value as AvailableThemes;
+                        setTheme(val);
+                        cookies.set("theme", val, { expires: Util.getDateIn(10), sameSite: true });
+                    }}
+                >
+                    {themeOptions.map((value: ThemeSetting) => (
+                        <MenuItem value={value.code} key={`theme_${value.code}_option`}>
                             {value.name}
                         </MenuItem>
                     ))}

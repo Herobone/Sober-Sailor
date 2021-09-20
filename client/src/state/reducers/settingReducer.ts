@@ -16,19 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { SettingAction } from "../actions/settingActions";
+import { AvailableThemes } from "../../style/Theme";
 
 export interface SettingState {
     language: string;
+    theme: AvailableThemes;
 }
 
 const initialState: SettingState = {
     language: "en",
+    theme: "calm",
 };
 
 export const settingReducer = (state: SettingState = initialState, action: SettingAction): SettingState => {
     switch (action.type) {
         case "SET_LANGUAGE":
             return { ...state, language: action.payload };
+        case "SET_THEME":
+            return { ...state, theme: action.payload as AvailableThemes };
         default:
             return state;
     }

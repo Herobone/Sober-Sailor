@@ -17,6 +17,8 @@
  */
 import { createTheme, responsiveFontSizes } from "@mui/material";
 
+export type AvailableThemes = "light" | "calm" | "dark";
+
 export const StandardTheme = responsiveFontSizes(
     createTheme({
         palette: {

@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { SettingState } from "../reducers/settingReducer";
+import { AvailableThemes } from "../../style/Theme";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -21,9 +22,22 @@ import { SettingState } from "../reducers/settingReducer";
  */
 
 export type SettingAction = {
-    type: "SET_LANGUAGE";
+    type: "SET_LANGUAGE" | "SET_THEME";
     payload: string;
 };
+
+const setTheme = (theme: string): SettingAction => ({ type: "SET_THEME", payload: theme });
+
+export const useThemeSetting = (): [AvailableThemes, (content: AvailableThemes) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, SettingState["theme"]>((state) => state.settings.theme);
+
+    const set = (content: AvailableThemes): void => {
+        dispatch(setTheme(content));
+    };
+    return [get, set];
+};
+
 /**
  * Set the language of the app
  * @param language    The language code (i.e. "de", "en")

@@ -59,5 +59,9 @@
 	"navigation.information": "Information",
 	"navigation.myprofile": "My Profile",
 	"settings.labels.selectlanguage": "Language",
+	"settings.labels.selecttheme": "Theme",
+	"settings.options.theme.light": "Light",
+	"settings.options.theme.calm": "Calm",
+	"settings.options.theme.dark": "Dark",
 	"sobersailor.name": "Sober Sailor"
 }
