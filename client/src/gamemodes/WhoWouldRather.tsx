@@ -73,7 +73,7 @@ export function WhoWouldRather(): JSX.Element {
     });
 
     return (
-        <div>
+        <>
             <h2>
                 <FormattedMessage id="gamemodes.whowouldrather" /> {question}
             </h2>
@@ -91,6 +91,6 @@ export function WhoWouldRather(): JSX.Element {
                     />
                 </div>
             )}
-        </div>
+        </>
     );
 }

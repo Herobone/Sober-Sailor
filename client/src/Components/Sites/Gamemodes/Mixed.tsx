@@ -286,9 +286,13 @@ export default function Mixed(): JSX.Element {
                     </Grid>
                 )}
                 <Grid item xs={12} md={8} lg={9}>
-                    <Paper>
-                        {taskComponent}
-                        <ResultPage />
+                    <Paper
+                        sx={{
+                            p: 0.5,
+                        }}
+                    >
+                        {!evalState && taskComponent}
+                        {evalState && <ResultPage />}
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4} lg={3}>

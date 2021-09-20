@@ -17,25 +17,34 @@
  */
 
 import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper } from "@mui/material";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { useSelector } from "react-redux";
 import { Player } from "sobersailor-common/lib/models/Player";
+import { getAuth } from "firebase/auth";
 import { useDefaultStyles } from "../../style/Style";
-import { ResultState } from "../../state/reducers/resultReducer";
-import { RootState } from "../../state/store";
+import { firebaseApp } from "../../helper/config";
+import { useResult } from "../../state/actions/resultActions";
+import { PenaltyScreen } from "./PenaltyScreen";
 
 export function ResultPage(): JSX.Element {
     const classes = useDefaultStyles();
 
-    const result = useSelector<RootState, ResultState["result"]>((state) => state.result.result);
+    const [result] = useResult();
 
-    const prepareResults = (): ReactElement[] => {
+    const [myPenalty, setMyPenalty] = useState<number>(0);
+    const [resultScreen, setResultScreen] = useState<ReactElement[]>();
+
+    const prepareResults = (): void => {
         console.log("Results:", result);
+        const auth = getAuth(firebaseApp);
+        const uid = auth.currentUser ? auth.currentUser.uid : "nouser";
         const values: ReactElement[] = [];
         let counter = 1;
         if (result !== null) {
             result.forEach((entry: Player) => {
+                if (entry.uid == uid) {
+                    setMyPenalty(entry.sips);
+                }
                 values.push(
                     <TableRow key={`rank${counter}`}>
                         <TableCell align="center" className="result-rank">
@@ -52,39 +61,44 @@ export function ResultPage(): JSX.Element {
             });
         }
 
-        return values;
+        setResultScreen(values);
     };
+
+    useEffect(() => prepareResults(), [result]);
 
     if (!result || result.length <= 0) {
         return <></>;
     }
 
     return (
-        <div className={classes.resultTable}>
-            <TableContainer component={Paper} elevation={5}>
-                <h2 className={classes.sideHeading}>
-                    <FormattedMessage id="elements.results" />
-                </h2>
-                <Table className="result-table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center" className="result-header-rank">
-                                <FormattedMessage id="elements.general.rank" />
-                            </TableCell>
-                            <TableCell className="result-header-nickname">
-                                <FormattedMessage id="general.nickname" />
-                            </TableCell>
-                            <TableCell className="result-header-their-answer">
-                                <FormattedMessage id="general.answer" />
-                            </TableCell>
-                            <TableCell align="center" className="result-header-sips">
-                                <FormattedMessage id="general.sips" />
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{prepareResults()}</TableBody>
-                </Table>
-            </TableContainer>
-        </div>
+        <>
+            <PenaltyScreen penalty={myPenalty} />
+            <div className={classes.resultTable}>
+                <TableContainer component={Paper} elevation={5}>
+                    <h2 className={classes.sideHeading}>
+                        <FormattedMessage id="elements.results" />
+                    </h2>
+                    <Table className="result-table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center" className="result-header-rank">
+                                    <FormattedMessage id="elements.general.rank" />
+                                </TableCell>
+                                <TableCell className="result-header-nickname">
+                                    <FormattedMessage id="general.nickname" />
+                                </TableCell>
+                                <TableCell className="result-header-their-answer">
+                                    <FormattedMessage id="general.answer" />
+                                </TableCell>
+                                <TableCell align="center" className="result-header-sips">
+                                    <FormattedMessage id="general.sips" />
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>{resultScreen}</TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
+        </>
     );
 }
