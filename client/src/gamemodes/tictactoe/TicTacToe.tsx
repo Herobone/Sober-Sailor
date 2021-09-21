@@ -66,6 +66,10 @@ export function TicTacToe(): JSX.Element {
             } else if (user.uid === data.playerO) {
                 setPlayer("O");
                 setSpectator(false);
+            } else {
+                // This line is needed for subsequent games, because the component is not destroyed
+                setPlayer(null);
+                setSpectator(true);
             }
         } else {
             console.warn("No user provided!");
@@ -89,7 +93,8 @@ export function TicTacToe(): JSX.Element {
     const updateFromDoc = (doc: DocumentSnapshot<TicTacToeData>): void => {
         const data = doc.data();
         if (!data) {
-            throw new Error("No data in Document Snapshot!");
+            // When the game is created and the clients try to fetch data, the document might not yet exist
+            return;
         }
         updateData(data).catch(console.error);
     };
