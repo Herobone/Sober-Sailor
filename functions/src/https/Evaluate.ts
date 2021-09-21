@@ -144,12 +144,13 @@ export const evaluateGameHandler = async (
     const players = await FirestoreUtil.getAllPlayers(data.gameID);
     const answers: string[] = [];
     const evaluationScoreboard = EvaluationScoreboard.init();
-    players.forEach((player: Player) => {
-      answers.push(player.answer || "none");
-      evaluationScoreboard.addAnswer(player.uid, player.answer || "none");
-    });
-    const occur = Util.countOccurrences(answers);
+
     if (gameData.type === "wouldyourather") {
+      players.forEach((player: Player) => {
+        answers.push(player.answer || "none");
+        evaluationScoreboard.addAnswer(player.uid, player.answer || "none");
+      });
+      const occur = Util.countOccurrences(answers);
       const [popularAnswers, count] = getMostPopular(occur);
       players.forEach((player: Player) => {
         if (popularAnswers.includes(player.answer || "none")) {
@@ -158,9 +159,17 @@ export const evaluateGameHandler = async (
         }
       });
     } else {
-      occur.forEach((value, uid) => {
-        evaluationScoreboard.addScore(uid, value);
-        gameData.scoreboard.updateScore(uid, value);
+      players.forEach((player: Player) => {
+        answers.push(player.answer || player.uid);
+        evaluationScoreboard.addAnswer(player.uid, player.answer || "none");
+      });
+      const occur = Util.countOccurrences(answers);
+      occur.forEach((count, uid) => {
+        if (uid === "none") {
+          return;
+        }
+        evaluationScoreboard.addScore(uid, count);
+        gameData.scoreboard.updateScore(uid, count);
       });
     }
 

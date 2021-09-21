@@ -40,6 +40,7 @@ export function ResultPage(): JSX.Element {
         const uid = auth.currentUser ? auth.currentUser.uid : "nouser";
         const values: ReactElement[] = [];
         let counter = 1;
+        setMyPenalty(0);
         if (result !== null) {
             result.forEach((entry: Player) => {
                 if (entry.uid == uid) {

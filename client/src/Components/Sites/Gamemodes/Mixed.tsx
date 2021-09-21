@@ -36,6 +36,7 @@ import { Game } from "sobersailor-common/lib/models/Game";
 import { Task } from "sobersailor-common/lib/models/Task";
 import Util from "sobersailor-common/lib/Util";
 import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -91,6 +92,7 @@ export default function Mixed(): JSX.Element {
 
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
+    const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
@@ -168,50 +170,7 @@ export default function Mixed(): JSX.Element {
             setEvalState(data.evalState);
 
             setScoreboard(data.scoreboard);
-
-            if (data.evalState) {
-                const resultData: Player[] = [];
-                const plt = GameManager.getPlayerLookupTable();
-                if (!plt) {
-                    throw new Error("PLT was missing. Why is it missing?");
-                }
-
-                data.evaluationScoreboard.board.forEach((score: number, uid: string) => {
-                    const answer = data.evaluationScoreboard.answers.get(uid) || "none";
-                    let readableAnswer = "Error Answer";
-                    if (data.type === "wouldyourather") {
-                        if (answers) {
-                            answers.forEach((possibleAnswer) => {
-                                if (possibleAnswer.id === Number.parseInt(answer, 10)) {
-                                    readableAnswer = possibleAnswer.answer;
-                                }
-                            });
-                        } else {
-                            createAlert(
-                                Alerts.ERROR,
-                                "Answers were not loaded, therefore could not load the right response",
-                            );
-                        }
-                    } else if (data.type === "tictactoe") {
-                        switch (answer) {
-                            case "winner":
-                                readableAnswer = intl.formatMessage({ id: "general.winner" });
-                                break;
-                            case "loser":
-                                readableAnswer = intl.formatMessage({ id: "general.loser" });
-                                break;
-                            default:
-                                readableAnswer = intl.formatMessage({ id: "general.tie" });
-                                break;
-                        }
-                    } else {
-                        readableAnswer = plt.playerUidMap.get(answer) || "Forgot to Answer";
-                    }
-                    resultData.push(new Player(uid, plt.playerUidMap.get(uid) || "Error Name", score, readableAnswer));
-                });
-
-                setResult(resultData);
-            }
+            setEvaluationScoreboard(data.evaluationScoreboard);
 
             const auth = getAuth(firebaseApp);
             const user = auth.currentUser;
@@ -224,6 +183,57 @@ export default function Mixed(): JSX.Element {
     useEffect((): void => {
         GameManager.joinGame(gameEvent).then(GameManager.amIHost).then(setHost).catch(console.error);
     }, []);
+
+    useEffect(() => {
+        if (!evalState) {
+            return;
+        }
+        const resultData: Player[] = [];
+        const plt = GameManager.getPlayerLookupTable();
+        if (!plt) {
+            throw new Error("PLT was missing. Why is it missing?");
+        }
+
+        if (!evaluationScoreboard) {
+            return;
+        }
+
+        evaluationScoreboard.board.forEach((score: number, uid: string) => {
+            const answer = evaluationScoreboard.answers.get(uid) || "none";
+            let readableAnswer = intl.formatMessage({ id: "general.answer.forgot" });
+            if (taskType === "wouldyourather") {
+                if (answers) {
+                    answers.forEach((possibleAnswer) => {
+                        if (possibleAnswer.id === Number.parseInt(answer, 10)) {
+                            readableAnswer = possibleAnswer.answer;
+                        }
+                    });
+                } else {
+                    createAlert(Alerts.ERROR, "Answers were not loaded, therefore could not load the right response");
+                }
+            } else if (taskType === "tictactoe") {
+                switch (answer) {
+                    case "winner":
+                        readableAnswer = intl.formatMessage({ id: "general.winner" });
+                        break;
+                    case "loser":
+                        readableAnswer = intl.formatMessage({ id: "general.loser" });
+                        break;
+                    default:
+                        readableAnswer = intl.formatMessage({ id: "general.tie" });
+                        break;
+                }
+            } else {
+                const temp = plt.playerUidMap.get(answer);
+                if (temp) {
+                    readableAnswer = temp;
+                }
+            }
+            resultData.push(new Player(uid, plt.playerUidMap.get(uid) || "Error Name", score, readableAnswer));
+        });
+
+        setResult(resultData);
+    }, [evalState, evaluationScoreboard]);
 
     const setMultiAnswerTask = async (type: Task): Promise<void> => {
         const taskLang = lang in type.lang ? lang : type.lang[0];

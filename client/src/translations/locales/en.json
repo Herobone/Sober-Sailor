@@ -48,6 +48,7 @@
   "gamemodes.whowouldrather.description": "Choose the player that fits the question best",
   "gamemodes.wouldyourather.description": "Select what you would rather do",
   "general.add": "Add",
+  "general.answer.forgot": "Forgot to answer",
   "general.winner": "Winner",
   "general.loser": "Loser",
   "general.tie": "Tie",
