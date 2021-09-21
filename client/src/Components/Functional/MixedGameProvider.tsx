@@ -17,16 +17,16 @@
  */
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import firebase from "firebase/app";
-import "firebase/auth";
 import { FormattedMessage } from "react-intl";
-import { CircularProgress, Fab, IconButton, TextField } from "@material-ui/core";
-import { ArrowForwardIos, ExitToAppRounded } from "@material-ui/icons";
+import { CircularProgress, Fab, IconButton, TextField } from "@mui/material";
+import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
 import Cookies from "universal-cookie";
+import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
+import { useGameProviderStyle } from "../../style/GameProvider";
+import { firebaseApp } from "../../helper/config";
 import { useAlert } from "./AlertProvider";
-import { useGameProviderStlye } from "../../css/GameProvider";
 import { GameCreator } from "./GameCreator";
 
 interface Props {
@@ -36,12 +36,14 @@ interface Props {
 export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element {
     const { createAlert } = useAlert();
     const [name, setName] = useState("");
-    const [user, setUser] = useState<firebase.User>();
+    const [user, setUser] = useState<User>();
+
+    const auth = getAuth(firebaseApp);
 
     const [userReady, setUserReady] = useState(false);
 
     // const { gameID } = props;
-    const classes = useGameProviderStlye();
+    const classes = useGameProviderStyle();
 
     if (props.gameID) {
         localStorage.setItem("gameID", props.gameID);
@@ -58,19 +60,16 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     }, [user]);
 
     useEffect((): void => {
-        const { currentUser } = firebase.auth();
+        const { currentUser } = auth;
         const cookies = new Cookies();
         const globalAccount: boolean = cookies.get("globalAccount");
         if (!currentUser && !globalAccount) {
-            firebase
-                .auth()
-                .signInAnonymously()
-                .catch((error) => {
-                    createAlert(Alerts.ERROR, error.message);
-                    console.error(error.message);
-                });
+            signInAnonymously(auth).catch((error) => {
+                createAlert(Alerts.ERROR, error.message);
+                console.error(error.message);
+            });
         }
-        firebase.auth().onAuthStateChanged((authStateUser) => {
+        onAuthStateChanged(auth, (authStateUser) => {
             console.info("Auth change");
             setUser(authStateUser || undefined);
             updateReadyState();
@@ -82,7 +81,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     };
 
     const processName = (): void => {
-        const { currentUser } = firebase.auth();
+        const { currentUser } = auth;
 
         if (!currentUser) {
             createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
@@ -94,8 +93,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
             return;
         }
 
-        currentUser
-            .updateProfile({ displayName: name })
+        updateProfile(currentUser, { displayName: name })
             .then(() => {
                 createAlert(Alerts.SUCCESS, "Name set");
                 setUser(currentUser);
@@ -106,49 +104,50 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     };
 
     const prepareRunningGame = (): JSX.Element => (
-            <>
-                {props.children}
-                <Fab
-                    variant="extended"
-                    color="primary"
-                    onClick={() => GameManager.leaveGame()}
-                    className={classes.leaveGameFab}
-                >
-                    <ExitToAppRounded />
-                    <FormattedMessage id="actions.leave" />
-                </Fab>
-            </>
-        );
+        <>
+            {props.children}
+            <Fab
+                variant="extended"
+                color="primary"
+                onClick={() => GameManager.leaveGame()}
+                className={classes.leaveGameFab}
+            >
+                <ExitToAppRounded />
+                <FormattedMessage id="actions.leave" />
+            </Fab>
+        </>
+    );
 
     const prepareNameSetter = (): JSX.Element => (
-            <>
-                <h1 className={classes.h1_long}>
-                    <FormattedMessage id="account.descriptors.finishsignup" />
-                </h1>
-                <br />
-                <TextField
-                    required
-                    label="Name"
-                    variant="outlined"
-                    color="primary"
-                    className={classes.nameInput}
-                    onChange={onNameChange}
-                    onKeyPress={(event) => {
-                        if (event.key === "Enter" || event.key === "Accept") {
-                            processName();
-                        }
-                    }}
-                />
-                <IconButton
-                    color="primary"
-                    className={classes.inputNameButton}
-                    aria-label="Go to your game!"
-                    onClick={processName}
-                >
-                    <ArrowForwardIos />
-                </IconButton>
-            </>
-        );
+        <>
+            <h1 className={classes.h1_long}>
+                <FormattedMessage id="account.descriptors.finishsignup" />
+            </h1>
+            <br />
+            <TextField
+                required
+                label="Name"
+                variant="outlined"
+                color="primary"
+                className={classes.nameInput}
+                onChange={onNameChange}
+                onKeyPress={(event) => {
+                    if (event.key === "Enter" || event.key === "Accept") {
+                        processName();
+                    }
+                }}
+            />
+            <IconButton
+                color="primary"
+                className={classes.inputNameButton}
+                aria-label="Go to your game!"
+                onClick={processName}
+                size="large"
+            >
+                <ArrowForwardIos />
+            </IconButton>
+        </>
+    );
 
     if (user && !userReady) {
         return prepareNameSetter();

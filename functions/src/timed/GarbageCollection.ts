@@ -30,13 +30,19 @@ export const garbageCollectionHandler = async () => {
     .withConverter(gameConverter)
     .get();
   await gamesRef.forEach(async (gameToDelete) => {
+    // Delete Players
     const players = await FirestoreUtil.getPlayers(gameToDelete.id).get();
     await players.forEach(async (playerToDelete) => {
-      console.log("Player, ", playerToDelete.id);
       await playerToDelete.ref.delete();
     });
 
+    // Delete Minigames
+    const minis = await gameToDelete.ref.collection("minigames").get();
+    await minis.forEach(async (miniToDelete) => {
+      await miniToDelete.ref.delete();
+    });
+
+    // Delete Game
     await gameToDelete.ref.delete();
-    await db.collection("tictactoe").doc(gameToDelete.id).delete();
   });
 };

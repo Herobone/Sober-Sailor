@@ -16,44 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as admin from "firebase-admin";
+import { firestore } from "firebase-admin";
+import { IPlayerExternal, Player } from "sobersailor-common/lib/models/Player";
 
-export interface IPlayer {
-    uid: string;
-    nickname: string;
-    sips: number;
-    answer: string | null;
-}
-
-interface IPlayerExternal {
-    nickname: string;
-    sips: number;
-    answer: string | null;
-}
-
-export class Player implements IPlayer {
-
-    constructor(
-        readonly uid: string,
-        readonly nickname: string,
-        readonly sips: number,
-        readonly answer: string | null
-    ) { }
-
-}
-
-export const playerConverter = {
-    toFirestore(player: Player): admin.firestore.DocumentData {
-        return {
-            nickname: player.nickname,
-            sips: player.sips,
-            answer: player.answer,
-        }
-    },
-    fromFirestore(
-        snapshot: admin.firestore.QueryDocumentSnapshot<IPlayerExternal>
-    ): Player {
-        const data = snapshot.data();
-        return new Player(snapshot.id, data.nickname, data.sips, data.answer);
-    },
-}
+export const playerConverter: firestore.FirestoreDataConverter<Player> = {
+  toFirestore(player: Player): firestore.DocumentData {
+    return {
+      nickname: player.nickname,
+      sips: player.sips,
+      answer: player.answer,
+    };
+  },
+  fromFirestore(
+    snapshot: firestore.QueryDocumentSnapshot<IPlayerExternal>
+  ): Player {
+    const data = snapshot.data();
+    return new Player(snapshot.id, data.nickname, data.sips, data.answer);
+  },
+};

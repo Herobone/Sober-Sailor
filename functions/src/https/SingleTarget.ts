@@ -1,11 +1,3 @@
-import {
-  SingleTargetRequest,
-  SingleTargetResult,
-} from "../models/SingleTarget";
-import FirestoreUtil from "../helper/FirestoreUtil";
-import * as functions from "firebase-functions";
-import { Player } from "../models/Player";
-
 /*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -23,6 +15,15 @@ import { Player } from "../models/Player";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+import FirestoreUtil from "../helper/FirestoreUtil";
+import * as functions from "firebase-functions";
+import {
+  SingleTargetRequest,
+  SingleTargetResult,
+} from "sobersailor-common/lib/SingleTarget";
+import { Player } from "sobersailor-common/lib/models/Player";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 
 export const singleTargetHandler = async (
   data: SingleTargetRequest,
@@ -57,7 +58,22 @@ export const singleTargetHandler = async (
       );
     }
 
-    await FirestoreUtil.getGameDoc(data.gameID).update({
+    const scoreboard = EvaluationScoreboard.init();
+
+    const appliedPenalty = data.answer ? 0 : gameData.penalty;
+
+    if (!data.answer) {
+      gameData.scoreboard.updateScore(playerData.uid, gameData.penalty);
+    }
+
+    scoreboard.addScore(playerData.uid, appliedPenalty);
+    scoreboard.addAnswer(playerData.uid, data.answer ? "YES" : "NO");
+
+    await FirestoreUtil.getGame(data.gameID).update({
+      evaluationScoreboard: scoreboard.serializeScore(),
+      evaluationAnswers: scoreboard.serializeAnswers(),
+      scoreboard: gameData.scoreboard.serializeBoard(),
+      pollState: false,
       evalState: true,
     });
 
@@ -65,7 +81,7 @@ export const singleTargetHandler = async (
       new Player(
         playerData.uid,
         playerData.nickname,
-        data.answer ? playerData.sips : playerData.sips + gameData.penalty,
+        playerData.sips + appliedPenalty,
         null
       )
     );

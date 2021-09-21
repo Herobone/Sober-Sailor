@@ -16,30 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { TicOptions } from "../../gamemodes/tictactoe/TicUtils";
-
-export interface ITicTacToe {
-    squares: TicOptions[];
-    stepNumber: number;
-    isXNext: boolean;
-    playerX: string;
-    playerO: string;
-}
-
-export class TicTacToe implements ITicTacToe {
-    constructor(
-        readonly squares: TicOptions[],
-        readonly stepNumber: number,
-        readonly isXNext: boolean,
-        readonly playerX: string,
-        readonly playerO: string,
-    ) {}
-}
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+import { ITicTacToe, TicTacToe } from "sobersailor-common/lib/models/TicTacToe";
 
 export const ticTacToeConverter = {
-    toFirestore(game: TicTacToe): firebase.firestore.DocumentData {
+    toFirestore(game: TicTacToe): DocumentData {
         return {
             squares: game.squares,
             stepNumber: game.stepNumber,
@@ -48,10 +29,7 @@ export const ticTacToeConverter = {
             playerO: game.playerO,
         };
     },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<ITicTacToe>,
-        options: firebase.firestore.SnapshotOptions,
-    ): TicTacToe {
+    fromFirestore(snapshot: QueryDocumentSnapshot<ITicTacToe>, options: SnapshotOptions): TicTacToe {
         const data = snapshot.data(options);
         return new TicTacToe(data.squares, data.stepNumber, data.isXNext, data.playerX, data.playerO);
     },

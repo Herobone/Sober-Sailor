@@ -18,18 +18,20 @@
 
 import React from "react";
 import { render } from "@testing-library/react";
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase/compat/app";
 import { act as domAct } from "react-dom/test-utils";
-import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material";
+import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
 import { LanguageContainer } from "../translations/LanguageContainer";
-import { config } from "../helper/config";
+import { config, firebaseApp } from "../helper/config";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
-import { responsiveTheme } from "../css/Theme";
+import { CalmTheme } from "../style/Theme";
 
 firebase.initializeApp(config);
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE).catch(console.warn);
+
+const auth = getAuth(firebaseApp);
+setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 test("Renders the Router and looks for Alerts", () => {
     const neverCallThis = jest.fn();
@@ -48,14 +50,16 @@ test("Renders the Router and looks for Alerts", () => {
     domAct(() => {
         render(
             <React.StrictMode>
-                <MuiThemeProvider theme={responsiveTheme}>
-                    <CssBaseline />
-                    <AlertContext.Provider value={{ createAlert: alertFN }}>
-                        <LanguageContainer>
-                            <Routed />
-                        </LanguageContainer>
-                    </AlertContext.Provider>
-                </MuiThemeProvider>
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={CalmTheme}>
+                        <CssBaseline />
+                        <AlertContext.Provider value={{ createAlert: alertFN }}>
+                            <LanguageContainer>
+                                <Routed />
+                            </LanguageContainer>
+                        </AlertContext.Provider>
+                    </ThemeProvider>
+                </StyledEngineProvider>
             </React.StrictMode>,
         );
     });

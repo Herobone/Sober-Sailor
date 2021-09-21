@@ -6,15 +6,23 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     defaults:
       run:
         shell: bash
         working-directory: client
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm ci && npm run build
         env:
           REACT_APP_BETA_CHANNEL: "true"
+          GENERATE_SOURCEMAP: "false"
       - run: npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:
           BETA_CHANNEL: "true"
@@ -27,6 +35,10 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm run install-all
       - run: npx firebase-tools deploy --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor-beta
         env:

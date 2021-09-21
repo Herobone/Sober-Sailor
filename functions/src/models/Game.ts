@@ -16,55 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import * as admin from "firebase-admin";
-import { Register } from "./Register";
-
-export interface IGame {
-  gameID: string;
-  currentTask: string | null;
-  type: string | null;
-  taskTarget: string | null;
-  penalty: number;
-  round: number;
-  host: string;
-  pollState: boolean;
-  evalState: boolean;
-  created: Date;
-  register: Register;
-}
-
-interface IGameExternal {
-  currentTask: string | null;
-  type: string | null;
-  taskTarget: string | null;
-  penalty: number;
-  round: number;
-  host: string;
-  pollState: boolean;
-  evalState: boolean;
-  created: admin.firestore.Timestamp;
-  playerUidMap: { [key: string]: string };
-}
-
-export class Game implements IGame {
-  constructor(
-    readonly gameID: string,
-    readonly currentTask: string | null,
-    readonly type: string | null,
-    readonly taskTarget: string | null,
-    readonly penalty: number,
-    readonly round: number,
-    readonly host: string,
-    readonly pollState: boolean,
-    readonly evalState: boolean,
-    readonly created: Date,
-    readonly register: Register
-  ) {}
-}
+import { Game, IGameExternal } from "sobersailor-common/lib/models/Game";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
+import { Register } from "sobersailor-common/lib/models/Register";
+import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
 
 export const gameConverter = {
   toFirestore(game: Game): admin.firestore.DocumentData {
     return {
       currentTask: game.currentTask,
+      answers: game.answers,
       type: game.type,
       taskTarget: game.taskTarget,
       penalty: game.penalty,
@@ -74,15 +35,21 @@ export const gameConverter = {
       evalState: game.evalState,
       created: admin.firestore.Timestamp.fromDate(game.created),
       playerUidMap: game.register.serialize(),
+      evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
+      evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
+      scoreboard: game.scoreboard.serializeBoard(),
     };
   },
   fromFirestore(
-    snapshot: admin.firestore.QueryDocumentSnapshot<IGameExternal>
+    snapshot: admin.firestore.QueryDocumentSnapshot<
+      IGameExternal<admin.firestore.Timestamp>
+    >
   ): Game {
     const data = snapshot.data();
     return new Game(
       snapshot.id,
       data.currentTask,
+      data.answers,
       data.type,
       data.taskTarget,
       data.penalty,
@@ -91,7 +58,12 @@ export const gameConverter = {
       data.pollState,
       data.evalState,
       data.created.toDate(),
-      Register.deserialize(data.playerUidMap)
+      Register.deserialize(data.playerUidMap),
+      EvaluationScoreboard.deserialize(
+        data.evaluationScoreboard,
+        data.evaluationAnswers
+      ),
+      Scoreboard.deserialize(data.scoreboard)
     );
   },
 };

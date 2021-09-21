@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
-import { KickPlayer } from "../models/HostEvents";
 import FirestoreUtil from "../helper/FirestoreUtil";
+import { KickPlayer } from "sobersailor-common/lib/HostEvents";
 
 /*****************************
  * Sober Sailor - The online Party Game

@@ -16,87 +16,81 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { forwardRef, PropsWithChildren, ReactElement, useEffect, useImperativeHandle, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { Button, ButtonGroup } from "@material-ui/core";
+import { Button, ButtonGroup } from "@mui/material";
 import { GameManager } from "../helper/gameManager";
 import { useAlert } from "../Components/Functional/AlertProvider";
 import { Alerts } from "../helper/AlertTypes";
+import { useTask } from "../state/actions/taskActions";
+import { usePollState } from "../state/actions/displayStateActions";
 
-interface Props {
-    question: string;
-}
+export function WhoWouldRather(): JSX.Element {
+    const [inputLock, setInputLock] = useState(true);
+    const [answer, setAnswer] = useState<string | null>(null);
+    const { createAlert } = useAlert();
 
-type WhoWouldRatherHandles = {
-    lockInput: (lock: boolean) => void;
-};
+    const question = useTask()[0];
+    const pollState = usePollState()[0];
+    if (!question) {
+        return <></>;
+    }
 
-export const WhoWouldRather = forwardRef<WhoWouldRatherHandles, Props>(
-    (props: PropsWithChildren<Props>, ref): JSX.Element => {
-        const [inputLock, setInputLock] = useState(true);
-        const [answer, setAnswer] = useState<string | null>(null);
-        const { createAlert } = useAlert();
+    useEffect(() => {
+        setInputLock(true);
+        setAnswer(null);
+        console.log("Resetting WWR");
+    }, [question]);
 
-        useEffect(() => {
-            setInputLock(true);
-            setAnswer(null);
-            console.log("Resetting WWR");
-        }, [props.question]);
+    useEffect(() => {
+        setInputLock(!pollState);
+    }, [pollState]);
 
-        const lockInput = (lock: boolean): void => {
-            setInputLock(lock);
-        };
+    const plt = GameManager.getPlayerLookupTable();
+    if (!plt) {
+        createAlert(Alerts.WARNING, "No PLT stored! Reload Page!");
+        return <div>ERROR</div>;
+    }
 
-        useImperativeHandle(ref, () => ({
-            lockInput,
-        }));
-
-        const plt = GameManager.getPlayerLookupTable();
-        if (!plt) {
-            createAlert(Alerts.WARNING, "No PLT stored! Reload Page!");
-            return <div>ERROR</div>;
-        }
-
-        const values: ReactElement[] = [];
-        plt.playerUidMap.forEach((nickname: string, uid: string) => {
-            values.push(
-                // eslint-disable-next-line react/no-array-index-key
-                <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
-                    <Button
-                        className="wwr-player-select"
-                        type="submit"
-                        onClick={() => {
-                            GameManager.setAnswer(uid).catch(console.error);
-                            setAnswer(nickname);
-                            setInputLock(true);
-                        }}
-                    >
-                        {nickname}
-                    </Button>
-                </ButtonGroup>,
-            );
-        });
-
-        return (
-            <div>
-                <h2>
-                    <FormattedMessage id="gamemodes.whowouldrather" /> {props.question}
-                </h2>
-                <p>
-                    <FormattedMessage id="gamemodes.whowouldrather.description" />
-                </p>
-                {!inputLock && !answer && values}
-                {answer && (
-                    <div>
-                        <FormattedMessage
-                            id="elements.result.youranswer"
-                            values={{
-                                answer,
-                            }}
-                        />
-                    </div>
-                )}
-            </div>
+    const values: ReactElement[] = [];
+    plt.playerUidMap.forEach((nickname: string, uid: string) => {
+        values.push(
+            // eslint-disable-next-line react/no-array-index-key
+            <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
+                <Button
+                    className="wwr-player-select"
+                    type="submit"
+                    onClick={() => {
+                        GameManager.setAnswer(uid).catch(console.error);
+                        setAnswer(nickname);
+                        setInputLock(true);
+                    }}
+                >
+                    {nickname}
+                </Button>
+            </ButtonGroup>,
         );
-    },
-);
+    });
+
+    return (
+        <>
+            <h2>
+                <FormattedMessage id="gamemodes.whowouldrather" /> {question}
+            </h2>
+            <p>
+                <FormattedMessage id="gamemodes.whowouldrather.description" />
+            </p>
+            {!inputLock && !answer && values}
+            {answer && (
+                <div>
+                    <FormattedMessage
+                        id="elements.result.youranswer"
+                        values={{
+                            answer,
+                        }}
+                    />
+                </div>
+            )}
+        </>
+    );
+}

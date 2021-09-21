@@ -1,15 +1,15 @@
-import { Backdrop, Fade, Modal, Paper } from "@material-ui/core";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import MenuOpenIcon from "@material-ui/lab/SpeedDialIcon";
-import { SpeedDialAction } from "@material-ui/lab";
-import { SettingsRounded } from "@material-ui/icons";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import CopyrightIcon from "@material-ui/icons/Copyright";
-import FastfoodIcon from "@material-ui/icons/Fastfood";
+import { Backdrop, Fade, Modal, Paper, Portal, SpeedDialAction } from "@mui/material";
+import SpeedDial from "@mui/material/SpeedDial";
+import MenuOpenIcon from "@mui/material/SpeedDialIcon";
+import { SettingsRounded } from "@mui/icons-material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import CopyrightIcon from "@mui/icons-material/Copyright";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
 import React, { useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Settings } from "../Sites/Settings";
-import { useDefaultStyles } from "../../css/Style";
+import { useDefaultStyles } from "../../style/Style";
+import { CookieNotice } from "./CookieNotice";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -33,36 +33,40 @@ export function GlobalOverlay(): JSX.Element {
     const classes = useDefaultStyles();
     const [settingsShown, setSettingsShown] = useState(false);
     const [speedDialShown, setSpeedDialShown] = useState(false);
+    const [cookiesOpen, setCookiesOpen] = useState(false);
     const intl = useIntl();
+
+    const openSettings = (): void => {
+        setSettingsShown(true);
+        setSpeedDialShown(false);
+    };
+
+    const closeSettings = (): void => {
+        setSettingsShown(false);
+        setSpeedDialShown(false);
+    };
 
     return (
         <>
-            <Modal
-                open={settingsShown}
-                onClose={() => {
-                    setSettingsShown(false);
-                    setSpeedDialShown(false);
-                }}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                    timeout: 500,
-                }}
-            >
-                <Paper elevation={5} className={classes.settingsModal}>
-                    <Fade in={settingsShown}>
+            <CookieNotice reopen={cookiesOpen} />
+            <Modal open={settingsShown} onClose={closeSettings} closeAfterTransition>
+                <Fade in={settingsShown}>
+                    <Paper elevation={5} className={classes.settingsModal}>
                         <div className={classes.settingsModal}>
                             <Settings />
                         </div>
-                    </Fade>
-                </Paper>
+                    </Paper>
+                </Fade>
             </Modal>
             <SpeedDial
-                ariaLabel="SpeedDial tooltip example"
+                ariaLabel="Menu"
                 className={classes.settingsButton}
                 icon={<MenuOpenIcon />}
                 onClose={() => setSpeedDialShown(false)}
-                onOpen={() => setSpeedDialShown(true)}
+                onOpen={() => {
+                    setSpeedDialShown(true);
+                    console.log("Open lil cunt");
+                }}
                 open={speedDialShown}
             >
                 <SpeedDialAction
@@ -71,10 +75,7 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipTitle={<FormattedMessage id="account.navigation.settings" />}
                     title={intl.formatMessage({ id: "account.navigation.settings" })}
                     tooltipOpen
-                    onClick={() => {
-                        setSpeedDialShown(false);
-                        setSettingsShown(true);
-                    }}
+                    onClick={openSettings}
                 />
                 <SpeedDialAction
                     key="info_speeddial"
@@ -84,6 +85,7 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipOpen
                     onClick={() => {
                         setSpeedDialShown(false);
+                        window.open("https://github.com/Herobone/Sober-Sailor/#readme", "_blank ");
                     }}
                 />
                 <SpeedDialAction
@@ -94,6 +96,7 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipOpen
                     onClick={() => {
                         setSpeedDialShown(false);
+                        window.open("https://github.com/Herobone/Sober-Sailor/blob/main/LICENSE", "_blank ");
                     }}
                 />
                 <SpeedDialAction
@@ -104,11 +107,14 @@ export function GlobalOverlay(): JSX.Element {
                     tooltipOpen
                     onClick={() => {
                         setSpeedDialShown(false);
+                        setCookiesOpen(true);
                     }}
                 />
             </SpeedDial>
 
-            <Backdrop open={speedDialShown} />
+            <Portal>
+                <Backdrop open={speedDialShown} />
+            </Portal>
         </>
     );
 }

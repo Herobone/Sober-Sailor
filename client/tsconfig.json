@@ -13,9 +13,12 @@
     "module": "esnext",
     "noEmit": true,
     "jsx": "react-jsx",
-    "rootDir": "./src"
+    "rootDir": "src"
   },
   "include": [
     "./src"
+  ],
+  "references": [
+    { "path": "../sobersailor-common" }
   ]
 }

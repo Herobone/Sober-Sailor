@@ -16,33 +16,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/auth";
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router";
 import { FormattedMessage } from "react-intl";
+import Cookies from "universal-cookie";
+import { getAuth, signOut } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
-import { AlertContext } from "./AlertProvider";
+import { firebaseApp } from "../../helper/config";
+import { useAlert } from "./AlertProvider";
 
-export class Logout extends Component {
-    static contextType = AlertContext;
-
-    context!: React.ContextType<typeof AlertContext>;
-
-    componentDidMount(): void {
-        firebase
-            .auth()
-            .signOut()
-            .then(() => this.context.createAlert(
-                    Alerts.SUCCESS,
-                    <FormattedMessage id="account.descriptions.signout.success" />,
-                ))
+export function Logout(): JSX.Element {
+    const { createAlert } = useAlert();
+    const [redirect, setRedirect] = useState(false);
+    useEffect((): void => {
+        signOut(getAuth(firebaseApp))
+            .then(() => {
+                createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
+                // Delete cookie that saves the global account.
+                const cookies = new Cookies();
+                cookies.remove("globalAccount");
+                setRedirect(true);
+                return Promise.resolve();
+            })
             .catch(() => {
-                this.context.createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+                createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
             });
-    }
+    });
 
-    render(): JSX.Element {
-        return <Redirect to="/login" />;
-    }
+    return (
+        <>
+            Logging out...
+            {redirect && <Redirect to="/" />}
+        </>
+    );
 }

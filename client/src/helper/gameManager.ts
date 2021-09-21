@@ -15,16 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/functions";
-import { Util } from "./Util";
-import { Player, playerConverter } from "./models/Player";
-import { Game, gameConverter } from "./models/Game";
-import { Register } from "./models/Register";
-import { PlayerList } from "./models/CustomTypes";
+
+import {
+    DocumentSnapshot,
+    getFirestore,
+    doc,
+    getDoc,
+    DocumentReference,
+    setDoc,
+    collection,
+    CollectionReference,
+    onSnapshot,
+    deleteDoc,
+    getDocs,
+    updateDoc,
+    increment,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { Register } from "sobersailor-common/lib/models/Register";
+import { Game } from "sobersailor-common/lib/models/Game";
+import { Player } from "sobersailor-common/lib/models/Player";
+import Util from "sobersailor-common/lib/Util";
+import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
+import { playerConverter } from "./models/Player";
+import { gameConverter } from "./models/Game";
 import { Serverless } from "./Serverless";
+import { firebaseApp } from "./config";
 
 export class GameManager {
     static getPlayerLookupTable(): Register | null {
@@ -34,7 +50,7 @@ export class GameManager {
         }
 
         console.warn("LocalStorage has no PLT stored! Try again!");
-        GameManager.getGame().get().then(GameManager.updatePlayerLookupTable).catch(console.error);
+        getDoc(GameManager.getGame()).then(GameManager.updatePlayerLookupTable).catch(console.error);
 
         return null;
     }
@@ -51,7 +67,7 @@ export class GameManager {
         if (n > reg.size) {
             throw new Error(`Trying to get ${n} players while PLT only has ${reg.size} entries`);
         }
-        const players: string[] = [];
+        const players: string[] = Array.from({ length: n });
         // console.log(`Array length ${players.length} with n=${n}`);
         for (let i = 0; i < n; i++) {
             const choose = Util.getRandomKey(reg);
@@ -62,8 +78,8 @@ export class GameManager {
         return players;
     }
 
-    static updatePlayerLookupTable(doc: firebase.firestore.DocumentSnapshot<Game>): void {
-        const data = doc.data();
+    static updatePlayerLookupTable(docIn: DocumentSnapshot<Game>): void {
+        const data = docIn.data();
         if (data) {
             localStorage.setItem("playerLookupTable", data.register.stringify());
         }
@@ -78,93 +94,78 @@ export class GameManager {
     }
 
     static async createGame(): Promise<string> {
-        const { currentUser } = firebase.auth();
+        const { currentUser } = getAuth(firebaseApp);
 
         if (!currentUser) {
             throw new Error("User not logged in");
         }
 
-        const { uid } = currentUser;
+        const { uid, displayName } = currentUser;
+        if (!displayName) {
+            throw new Error("Display name missing");
+        }
         const lenOfUID = uid.length;
         const randomSuffix = Util.randomCharOrNumberSequence(lenOfUID / 5 - 2);
         const gameID = uid.slice(0, 2) + randomSuffix;
         const gameRef = GameManager.getGameByID(gameID);
         try {
-            await gameRef.set(Game.createEmpty(gameID, currentUser));
+            await setDoc(gameRef, Game.createEmpty(gameID, uid, displayName));
         } catch (error) {
             console.error(error);
         }
         return gameID;
     }
 
-    static getGameCol(): firebase.firestore.CollectionReference {
-        const db = firebase.firestore();
-        return db.collection(GameManager.getGameID());
-    }
-
-    static getGame(): firebase.firestore.DocumentReference<Game> {
+    static getGame(): DocumentReference<Game> {
         return GameManager.getGameByID(GameManager.getGameID());
     }
 
-    private static getGameByID(gameID: string): firebase.firestore.DocumentReference<Game> {
-        return GameManager.getRawGameByID(gameID).withConverter(gameConverter);
+    private static getGameByID(gameID: string): DocumentReference<Game> {
+        const db = getFirestore(firebaseApp);
+        return doc(db, "games", gameID).withConverter(gameConverter);
     }
 
-    static getRawGame(): firebase.firestore.DocumentReference {
-        return GameManager.getRawGameByID(GameManager.getGameID());
+    static getPlayerCol(): CollectionReference {
+        return collection(GameManager.getGame(), "players");
     }
 
-    static getPlayerCol(): firebase.firestore.CollectionReference {
-        return GameManager.getGame().collection("players");
+    static getPlayer(uid: string): DocumentReference<Player> {
+        return doc(GameManager.getPlayerCol(), uid).withConverter(playerConverter);
     }
 
-    static getPlayer(uid: string): firebase.firestore.DocumentReference<Player> {
-        return GameManager.getPlayerCol().doc(uid).withConverter(playerConverter);
-    }
-
-    private static getRawGameByID(gameID: string): firebase.firestore.DocumentReference {
-        const db = firebase.firestore();
-        return db.collection(gameID).doc("general");
-    }
-
-    static joinGame(gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void): Promise<unknown> {
-        return GameManager.joinGameP(GameManager.getGameID(), gameEvent);
-    }
-
-    private static joinGameP(
-        gameID: string,
-        gameEvent: (doc: firebase.firestore.DocumentSnapshot<Game>) => void,
-    ): Promise<unknown> {
-        const auth = firebase.auth();
+    /**
+     * This function will handle the join event. It will create a new Player object in the __players__ collection. It
+     * also attaches a event handler to the main game Document that is used to update the state
+     * @param gameEvent The Event Handler
+     */
+    static async joinGame(gameEvent: (doc: DocumentSnapshot<Game>) => void): Promise<void> {
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
-        return new Promise((resolve, reject) => {
-            if (!user) {
-                reject();
-                return;
+        if (!user) {
+            throw new Error("Unauthenticated");
+        }
+
+        const { uid, displayName } = user;
+        const nickname = displayName;
+
+        if (!nickname) {
+            throw new Error("User tried to join without name!");
+        }
+
+        const gameRef = GameManager.getGame();
+        const userRef = GameManager.getPlayer(uid);
+        const userDoc = await getDoc(userRef);
+        try {
+            if (!userDoc.exists()) {
+                await setDoc(userRef, new Player(uid, nickname, 0, null));
             }
+        } catch (error) {
+            console.warn("Problem writing to Database! Either offline or missing permissions!");
+            console.error(error);
+        }
 
-            const { uid, displayName } = user;
-
-            if (!displayName) {
-                reject(new Error("User tried to join without name!"));
-                return;
-            }
-
-            const gameRef = GameManager.getGameByID(gameID);
-            const userRef = GameManager.getPlayer(uid);
-            userRef
-                .get()
-                .then((doc) => {
-                    if (!doc.exists) {
-                        return userRef.set(new Player(uid, displayName, 0, null));
-                    }
-                    return Promise.resolve();
-                })
-                .then(resolve)
-                .catch(reject);
-            gameRef.onSnapshot(gameEvent);
-        });
+        onSnapshot(gameRef, gameEvent);
     }
 
     public static removeLocalData(): void {
@@ -173,7 +174,7 @@ export class GameManager {
     }
 
     static leaveGame(): void {
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
         if (!user) {
@@ -183,8 +184,7 @@ export class GameManager {
         const { uid } = user;
 
         const deletePlayer = (): void => {
-            GameManager.getPlayer(uid)
-                .delete()
+            deleteDoc(GameManager.getPlayer(uid))
                 .then(() => {
                     window.location.pathname = "";
                     GameManager.removeLocalData();
@@ -204,241 +204,124 @@ export class GameManager {
             .catch(console.error);
     }
 
-    static amIHost(): Promise<boolean> {
-        return GameManager.amIHostP(GameManager.getGameID());
-    }
-
-    private static amIHostP(gameID: string): Promise<boolean> {
-        const auth = firebase.auth();
+    /**
+     * Checks if the current user is the host of the game. This fetches the current game document from Firestore and
+     * compares uids. <br />
+     * **IMPORTANT**: This provides no security! This only should be used to display certain UI Elements that are dedicated
+     * to the host!
+     * @return Promise<boolean> Is the current user host?
+     * @throws Error If user was not Authenticated (which should not happen) or if the game document was empty (Happens
+     * if the game was ended)
+     */
+    static async amIHost(): Promise<boolean> {
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
-        return new Promise((resolve, reject): void => {
-            if (!user) {
-                reject();
-                return;
-            }
+        if (!user) {
+            throw new Error("Unauthenticated");
+        }
 
-            const { uid } = user;
-            const gameRef = GameManager.getGameByID(gameID);
-            gameRef
-                .get()
-                .then((doc) => {
-                    const data = doc.data();
-                    if (data) {
-                        resolve(data.host === uid);
-                    } else {
-                        reject();
-                    }
-                    return Promise.resolve();
-                })
-                .catch(console.error);
-        });
+        const { uid } = user;
+        const gameRef = GameManager.getGame();
+        const gameDoc = await getDoc(gameRef);
+        const data = gameDoc.data();
+        if (data) {
+            return data.host === uid;
+        }
+        throw new Error("No data in document!");
     }
 
-    static getAllPlayers(): Promise<Player[]> {
+    static async getAllPlayers(): Promise<Player[]> {
         const players: Player[] = [];
         const playerRef = GameManager.getPlayerCol().withConverter(playerConverter);
-        return new Promise((resolve, reject) => {
-            playerRef
-                .get()
-                .then((query) => {
-                    query.forEach((doc) => {
-                        const data = doc.data();
-                        if (data) {
-                            players.push(data);
-                        }
-                    });
-                    resolve(players);
-                    return Promise.resolve();
-                })
-                .catch((error) => reject(error));
-        });
-    }
 
-    static transferHostShip(): Promise<unknown> {
-        return GameManager.transferHostShipP(GameManager.getGameID());
-    }
-
-    private static transferHostShipP(gameID: string): Promise<unknown> {
-        const auth = firebase.auth();
-        const user = auth.currentUser;
-        return new Promise((resolve, reject) => {
-            if (!user) {
-                reject();
-                return;
+        const queryIn = await getDocs(playerRef);
+        queryIn.forEach((docIn) => {
+            const data = docIn.data();
+            if (data) {
+                players.push(data);
             }
+        });
+        return players;
+    }
 
-            const { uid } = user;
-            GameManager.getAllPlayers()
-                .then(
-                    (players): Promise<void | firebase.functions.HttpsCallableResult> => {
-                        const ids: string[] = [];
-                        players.forEach((element: Player) => {
-                            if (element.uid !== uid) {
-                                ids.push(element.uid);
-                            }
-                        });
+    static async transferHostShip(): Promise<void> {
+        const auth = getAuth(firebaseApp);
+        const user = auth.currentUser;
+        if (!user) {
+            throw new Error("Unauthenticated");
+        }
 
-                        const gameRef = GameManager.getGameByID(gameID);
-                        if (ids.length > 0) {
-                            console.log("Some players left! Transferring!");
-                            const random = Util.getRandomElement(ids);
-                            return gameRef.update({
-                                host: random,
-                            });
-                        }
+        const { uid } = user;
+        const players = await GameManager.getAllPlayers();
 
-                        console.log("No players left! Closing!");
-                        return Serverless.callFunction("closeGame")({ gameID: GameManager.getGameID() });
-                    },
-                )
-                .then(resolve)
-                .catch(reject);
+        const ids: string[] = [];
+        players.forEach((element: Player) => {
+            if (element.uid !== uid) {
+                ids.push(element.uid);
+            }
+        });
+
+        const gameRef = GameManager.getGame();
+        if (ids.length > 0) {
+            console.log("Some players left! Transferring!");
+            const random = Util.getRandomElement(ids);
+            await updateDoc(gameRef, {
+                host: random,
+            });
+            // store.dispatch(setHost(false));
+            return;
+        }
+
+        console.log("No players left! Closing!");
+        await Serverless.callFunction(Serverless.CLOSE_GAME)({
+            gameID: GameManager.getGameID(),
         });
     }
 
-    static setPollState(state: boolean): Promise<unknown> {
-        return GameManager.setPollStateP(GameManager.getGameID(), state);
-    }
-
-    private static setPollStateP(gameID: string, state: boolean): Promise<unknown> {
+    static async setPollState(state: boolean): Promise<void> {
         console.log("Changing State to", state);
-        return new Promise((resolve, reject) => {
-            const gameRef = GameManager.getGameByID(gameID);
-            gameRef
-                .update({
-                    pollState: state,
-                })
-                .then(resolve)
-                .catch(reject);
+        const gameRef = GameManager.getGame();
+        await updateDoc(gameRef, {
+            pollState: state,
         });
     }
 
-    static setEvalState(state: boolean): Promise<unknown> {
-        return GameManager.setEvalStateP(GameManager.getGameID(), state);
-    }
-
-    private static setEvalStateP(gameID: string, state: boolean): Promise<unknown> {
-        return new Promise((resolve, reject) => {
-            const gameRef = GameManager.getGameByID(gameID);
-            gameRef
-                .update({
-                    evalState: state,
-                })
-                .then(resolve)
-                .catch(reject);
+    static async setEvalState(state: boolean): Promise<void> {
+        const gameRef = GameManager.getGame();
+        await updateDoc(gameRef, {
+            evalState: state,
         });
     }
 
-    static setAnswer(answer: string): Promise<unknown> {
-        const auth = firebase.auth();
+    static async setAnswer(answer: string): Promise<void> {
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
-        return new Promise((resolve, reject) => {
-            if (!user) {
-                reject();
-                return;
-            }
+        if (!user) {
+            throw new Error("Unauthenticated");
+        }
 
-            const { uid } = user;
-            GameManager.getPlayer(uid)
-                .update({
-                    answer,
-                })
-                .then(resolve)
-                .catch(reject);
+        const { uid } = user;
+        await updateDoc(GameManager.getPlayer(uid), {
+            answer,
         });
     }
 
-    /**
-     * Evaluates the Answers of all Players and distributes sips according to who was voted the most
-     * */
-    static evaluateAnswers(): Promise<Player[]> {
-        return new Promise<Player[]>((resolve, reject) => {
-            GameManager.getAllPlayers()
-                .then((players: Player[]) => {
-                    const answers: string[] = [];
-                    const idNameMap: Map<string, string> = new Map();
-                    const playerAnwered: Map<string, string> = new Map();
-                    players.forEach((player: Player) => {
-                        idNameMap.set(player.uid, player.nickname);
-                        if (player.answer) {
-                            answers.push(player.answer);
-                            playerAnwered.set(player.uid, player.answer);
-                        } else {
-                            answers.push(player.uid);
-                            playerAnwered.set(player.uid, player.uid);
-                        }
-                    });
-                    const occur = Util.countOccurences(answers);
-                    const sipsPerPlayer: Player[] = [];
-                    occur.forEach((count: number, uid: string) => {
-                        const name = idNameMap.get(uid);
-                        if (!name) {
-                            reject(new Error("Name was not in map. So the answer was not a current player"));
-                            return;
-                        }
-                        const theirAnswer = playerAnwered.get(uid);
-                        if (!theirAnswer) {
-                            reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
-                            return;
-                        }
-                        const theirAnswerReadable = idNameMap.get(theirAnswer);
-                        if (!theirAnswerReadable) {
-                            reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
-                            return;
-                        }
-                        sipsPerPlayer.push(new Player(uid, name, count, theirAnswerReadable));
-                    });
-
-                    const occuredKeys = new Set([...occur.keys()]);
-                    idNameMap.forEach((name: string, uid: string) => {
-                        if (!occuredKeys.has(uid)) {
-                            const theirAnswer = playerAnwered.get(uid);
-                            if (!theirAnswer) {
-                                reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
-                                return;
-                            }
-                            const theirAnswerReadable = idNameMap.get(theirAnswer);
-                            if (!theirAnswerReadable) {
-                                reject(new Error("Well, fuck. That is an error that should not happen. Memory leak?"));
-                                return;
-                            }
-                            sipsPerPlayer.push(new Player(uid, name, 0, theirAnswerReadable));
-                        }
-                    });
-
-                    resolve(sipsPerPlayer);
-                    return Promise.resolve();
-                })
-                .catch(reject);
-        });
-    }
-
-    static getMyData(): Promise<Player> {
-        const auth = firebase.auth();
+    static async getMyData(): Promise<Player> {
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
-        return new Promise((resolve, reject) => {
-            if (!user) {
-                reject();
-                return;
-            }
+        if (!user) {
+            throw new Error("Unauthenticated");
+        }
 
-            const { uid } = user;
-            const playerRef = GameManager.getPlayer(uid);
-            playerRef
-                .withConverter(playerConverter)
-                .get()
-                .then((doc) => {
-                    const data = doc.data();
-                    if (data) {
-                        resolve(data);
-                    } else {
-                        reject(new Error("Player not found"));
-                    }
-                    return Promise.resolve();
-                })
-                .catch(reject);
-        });
+        const { uid } = user;
+        const playerRef = GameManager.getPlayer(uid);
+        const docIn = await getDoc(playerRef.withConverter(playerConverter));
+        const data = docIn.data();
+        if (data) {
+            return data;
+        }
+        throw new Error("Player not found");
     }
 
     /**
@@ -447,7 +330,7 @@ export class GameManager {
      */
     static submitPenaltyAndReset(results: Player[]): Promise<void> {
         let sipsIHaveToTake = 0;
-        const auth = firebase.auth();
+        const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
         if (!user) {
             throw new Error("Unauthenticated call to protected function!");
@@ -459,8 +342,8 @@ export class GameManager {
                 sipsIHaveToTake = player.sips;
             }
         });
-        return GameManager.getPlayer(uid).update({
-            sips: firebase.firestore.FieldValue.increment(sipsIHaveToTake),
+        return updateDoc(GameManager.getPlayer(uid), {
+            sips: increment(sipsIHaveToTake),
             answer: null,
         });
     }

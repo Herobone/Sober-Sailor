@@ -38,12 +38,20 @@ export const garbageCollectionHTTPSHandler = async (
   await gamesRef.forEach(async (gameToDelete) => {
     results.push(gameToDelete.id);
 
+    // Delete Players
     const players = await FirestoreUtil.getPlayers(gameToDelete.id).get();
     await players.forEach(async (playerToDelete) => {
       console.log("Player, ", playerToDelete.id);
       await playerToDelete.ref.delete();
     });
 
+    // Delete Minigames
+    const minis = await gameToDelete.ref.collection("minigames").get();
+    await minis.forEach(async (miniToDelete) => {
+      await miniToDelete.ref.delete();
+    });
+
+    // Delete Game
     await gameToDelete.ref.delete();
   });
   resp.json(results);

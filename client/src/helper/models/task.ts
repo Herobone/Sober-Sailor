@@ -15,9 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+import { IMultiAnswerQuestion, MultiAnswerQuestion } from "sobersailor-common/lib/models/Task";
 
-export interface Task {
-  id: string;
-  lang: string[];
-  singleTarget: boolean;
-}
+export const multiAnswerQuestionConverter = {
+    toFirestore(question: MultiAnswerQuestion): DocumentData {
+        return {
+            question: question.question,
+            answers: question.answers,
+        };
+    },
+    fromFirestore(
+        snapshot: QueryDocumentSnapshot<IMultiAnswerQuestion>,
+        options: SnapshotOptions,
+    ): MultiAnswerQuestion {
+        const data = snapshot.data(options);
+        return new MultiAnswerQuestion(data.question, data.answers);
+    },
+};

@@ -16,12 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
+import firebase from "firebase/compat/app";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { firebaseApp } from "./config";
 
-export const Serverless = {
-    devel : process.env.NODE_ENV === "development",
+export interface EvaluateGame {
+    gameID: string;
+}
 
-    callFunction : (name: string): firebase.functions.HttpsCallable => Serverless.devel
-            ? firebase.functions().httpsCallable(name)
-            : firebase.app().functions("europe-west1").httpsCallable(name),
-};
+export class Serverless {
+    public static KICK_PLAYER = "kickPlayer";
+
+    public static SINGLE_TARGET = "singleTarget";
+
+    public static CLOSE_GAME = "closeGame";
+
+    public static EVALUATE_GAME = "evaluateGame";
+
+    public static UPDATE_SCOREBOARD = "updateScoreboard";
+
+    public static callFunction = (name: string): firebase.functions.HttpsCallable => {
+        const functions = getFunctions(firebaseApp, "europe-west1");
+        return httpsCallable(functions, name);
+    };
+}

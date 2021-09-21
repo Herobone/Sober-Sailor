@@ -16,89 +16,81 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { forwardRef, ReactElement, useImperativeHandle } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { FormattedMessage } from "react-intl";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { GameManager } from "../../helper/gameManager";
-import { playerConverter } from "../../helper/models/Player";
-import { useLeaderboardStyles } from "../../css/LeaderboardStyle";
+import { useLeaderboardStyles } from "../../style/LeaderboardStyle";
+import { useScoreboard } from "../../state/actions/scoreboardAction";
 
 type leaderboard = Map<string, number>;
-type LeaderboardHandles = {
-    updateLeaderboard: () => void;
-};
 
-export const Leaderboard = forwardRef<LeaderboardHandles>(
-    (props, ref): JSX.Element => {
-        const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
+export const Leaderboard = (): JSX.Element => {
+    const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
+    const [scoreboard] = useScoreboard();
 
-        const classes = useLeaderboardStyles();
+    const classes = useLeaderboardStyles();
 
-        const updateLB = (): void => {
-            const lead = GameManager.getGame()
-                .collection("players")
-                .withConverter(playerConverter)
-                .orderBy("sips", "desc");
-            const lb = new Map<string, number>();
-            lead.get()
-                .then((query) => {
-                    query.forEach((doc) => {
-                        const data = doc.data();
-                        if (data) {
-                            lb.set(data.nickname, data.sips);
-                        }
-                    });
-                    setLeaderboard(lb);
-                    return Promise.resolve();
-                })
-                .catch(console.error);
-        };
+    const updateLB = (): void => {
+        const lb = new Map<string, number>();
 
-        useImperativeHandle(ref, () => ({
-            updateLeaderboard: updateLB,
-        }));
+        const plt = GameManager.getPlayerLookupTable();
+        if (!plt) {
+            return;
+        }
 
-        const prepareLeaderboard = (): ReactElement[] => {
-            const values: ReactElement[] = [];
-            let counter = 1;
-            leaderboard.forEach((value: number, key: string) => {
-                values.push(
-                    <TableRow key={`leaderboard${counter}`}>
-                        <TableCell align="center">{counter}</TableCell>
-                        <TableCell className="leaderboard-nickname">{key}</TableCell>
-                        <TableCell align="center" className="leaderboard-score">
-                            {value}
+        scoreboard.board.forEach((value, key) => {
+            const nickname = plt.playerUidMap.get(key) || "Error Name";
+            lb.set(nickname, value);
+        });
+
+        setLeaderboard(lb);
+    };
+
+    useEffect(() => {
+        updateLB();
+    }, [scoreboard]);
+
+    const prepareLeaderboard = (): ReactElement[] => {
+        const values: ReactElement[] = [];
+        let counter = 1;
+        leaderboard.forEach((value: number, key: string) => {
+            values.push(
+                <TableRow key={`leaderboard${counter}`}>
+                    <TableCell align="center">{counter}</TableCell>
+                    <TableCell className="leaderboard-nickname">{key}</TableCell>
+                    <TableCell align="center" className="leaderboard-score">
+                        {value}
+                    </TableCell>
+                </TableRow>,
+            );
+            counter++;
+        });
+
+        return values;
+    };
+
+    return (
+        <TableContainer className={classes.sideArea} component={Paper}>
+            <h1 className={classes.sideHeading}>
+                <FormattedMessage id="elements.leaderboard" />
+            </h1>
+            <Table className="leaderboard">
+                <TableHead>
+                    <TableRow>
+                        <TableCell className="leaderboard-header-rank" align="center">
+                            <FormattedMessage id="elements.general.rank" />
                         </TableCell>
-                    </TableRow>,
-                );
-                counter++;
-            });
-
-            return values;
-        };
-
-        return (
-            <TableContainer className={classes.sideArea} component={Paper}>
-                <h1 className={classes.sideHeading}>
-                    <FormattedMessage id="elements.leaderboard" />
-                </h1>
-                <Table className="leaderboard">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className="leaderboard-header-rank" align="center">
-                                <FormattedMessage id="elements.general.rank" />
-                            </TableCell>
-                            <TableCell className="leaderboard-header-nickname">
-                                <FormattedMessage id="general.nickname" />
-                            </TableCell>
-                            <TableCell className="leaderboard-header-score" align="center">
-                                <FormattedMessage id="general.sips" />
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{prepareLeaderboard()}</TableBody>
-                </Table>
-            </TableContainer>
-        );
-    },
-);
+                        <TableCell className="leaderboard-header-nickname">
+                            <FormattedMessage id="general.nickname" />
+                        </TableCell>
+                        <TableCell className="leaderboard-header-score" align="center">
+                            <FormattedMessage id="general.sips" />
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>{prepareLeaderboard()}</TableBody>
+            </Table>
+        </TableContainer>
+    );
+};

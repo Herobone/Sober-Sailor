@@ -1,0 +1,3 @@
+[submodule "sobersailor-common"]
+	path = sobersailor-common
+	url = git@github.com:Herobone/sobersailor-common.git

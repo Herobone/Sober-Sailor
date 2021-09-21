@@ -1,6 +1,6 @@
 /** ***************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,28 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import Util from "../helper/Util";
 
-export interface IRegister {
-  playerUidMap: Map<string, string>;
+import { DisplayStateAction } from "../actions/displayStateActions";
+export interface DisplayState {
+    pollState: boolean;
+    evalState: boolean;
 }
 
-export class Register implements IRegister {
-  constructor(readonly playerUidMap: Map<string, string>) {}
+const initialState: DisplayState = {
+    pollState: false,
+    evalState: false,
+};
 
-  serialize(): { [key: string]: string } {
-    return Util.strMapToObj(this.playerUidMap);
-  }
-
-  addPlayer(uid: string, name: string): void {
-    this.playerUidMap.set(uid, name);
-  }
-
-  removePlayer(uid: string): void {
-    this.playerUidMap.delete(uid);
-  }
-
-  static deserialize(toDeserialize: { [key: string]: string }): Register {
-    return new Register(Util.objToStrMap(toDeserialize));
-  }
-}
+export const displayStateReducer = (state: DisplayState = initialState, action: DisplayStateAction): DisplayState => {
+    switch (action.type) {
+        case "SET_EVAL":
+            return { ...state, evalState: action.payload };
+        case "SET_POLL":
+            return { ...state, pollState: action.payload };
+        default:
+            return state;
+    }
+};

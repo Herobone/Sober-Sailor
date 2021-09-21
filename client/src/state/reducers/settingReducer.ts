@@ -1,6 +1,6 @@
 /** ***************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,5 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { SettingAction } from "../actions/settingActions";
+import { AvailableThemes } from "../../style/Theme";
 
-export type PlayerList = string[] | null;
+export interface SettingState {
+    language: string;
+    theme: AvailableThemes;
+}
+
+const initialState: SettingState = {
+    language: "en",
+    theme: "calm",
+};
+
+export const settingReducer = (state: SettingState = initialState, action: SettingAction): SettingState => {
+    switch (action.type) {
+        case "SET_LANGUAGE":
+            return { ...state, language: action.payload };
+        case "SET_THEME":
+            return { ...state, theme: action.payload as AvailableThemes };
+        default:
+            return state;
+    }
+};

@@ -16,101 +16,53 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import { Login } from "../Sites/Login";
-import { Logout } from "./Logout";
+import { CircularProgress } from "@mui/material";
 import { Home } from "../Sites/Home";
-import { Mixed } from "../Sites/Gamemodes/Mixed";
-import { MixedGameProvider } from "./MixedGameProvider";
-import { useDefaultStyles } from "../../css/Style";
+import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
-import { Dough } from "../../helper/Dough";
-import { useGameProviderStlye } from "../../css/GameProvider";
+import { useGameProviderStyle } from "../../style/GameProvider";
+import { MixedGameProvider } from "./MixedGameProvider";
+import { Logout } from "./Logout";
+
+const Mixed = lazy(() => import("../Sites/Gamemodes/Mixed"));
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
-    const providerClasses = useGameProviderStlye();
-
-    const [cookieNotice, setCookieNotice] = useState(false);
-
-    useEffect(() => {
-        setCookieNotice(!Dough.isDoughPresent());
-    }, []);
+    const providerClasses = useGameProviderStyle();
 
     return (
         <div className={classes.root}>
+            <GlobalOverlay />
             <Router>
-                <Dialog
-                    open={cookieNotice}
-                    onClose={() => console.warn("Can't close on click away")}
-                    aria-labelledby="cookie-notice-title"
-                    aria-describedby="cookie-notice-description"
-                >
-                    <DialogTitle id="cookie-notice-title">Allow Cookies</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="cookie-notice-description">
-                            Let Google help apps determine location. This means sending anonymous location data to
-                            Google, even when no apps are running.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => {
-                                setCookieNotice(false);
-                                Dough.makeDough([]);
-                            }}
-                            color="secondary"
-                            size="small"
-                        >
-                            Only necessary
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                setCookieNotice(false);
-                                Dough.makeDough(["analytics", "marketing"]);
-                                Dough.startAnalytics();
-                            }}
-                            color="primary"
-                            startIcon={<CheckCircleIcon />}
-                            variant="contained"
-                            size="large"
-                            autoFocus
-                        >
-                            Allow All
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-                <Switch>
-                    <Route
-                        path="/play/:gameID"
-                        render={(props: RouteComponentProps<{ gameID?: string }>) => (
+                <Suspense fallback={<CircularProgress />}>
+                    <Switch>
+                        <Route
+                            path="/play/:gameID"
+                            render={(routeComponentProps: RouteComponentProps<{ gameID?: string }>) => (
                                 <div className={providerClasses.centeraligned}>
-                                    <MixedGameProvider gameID={props.match.params.gameID}>
+                                    <MixedGameProvider gameID={routeComponentProps.match.params.gameID}>
                                         <Mixed />
                                     </MixedGameProvider>
                                 </div>
                             )}
-                    />
-                    <Route path="/play" render={() => <MixedGameProvider />} />
+                        />
+                        <Route path="/play" render={() => <MixedGameProvider />} />
 
-                    <Route path="/login">
-                        <Login />
-                    </Route>
+                        {/*<Route path="/login">
+                            <Login />
+                        </Route>*/}
 
-                    <Route path="/logout">
-                        <Logout />
-                    </Route>
+                        <Route path="/logout">
+                            <Logout />
+                        </Route>
 
-                    <Route path="/">
-                        <Home />
-                    </Route>
-                </Switch>
-
-                <GlobalOverlay />
+                        <Route path="/">
+                            <Home />
+                        </Route>
+                    </Switch>
+                </Suspense>
             </Router>
         </div>
     );

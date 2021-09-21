@@ -15,59 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { GameManager } from "../../helper/gameManager";
-import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
 
-export type TicOptions = "X" | "O" | null;
+import { doc, DocumentReference, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { TicOptions, TicTacToe } from "sobersailor-common/lib/models/TicTacToe";
+import { GameManager } from "../../helper/gameManager";
+import { ticTacToeConverter } from "../../helper/models/TicTacToe";
 
 export const TicUtils = {
-    calculateWinner(squares: TicOptions[]): TicOptions | "tie" {
-        const lines = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ];
-        let winner: TicOptions | "tie" = null;
-        lines.forEach((line: number[]) => {
-            const [a, b, c] = line;
-            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                winner = squares[a];
-            }
-        });
-        if (winner === null && !squares.includes(null)) {
-            // every square is full
-            winner = "tie";
+    async registerTicTacToe(opponents: string[]): Promise<void> {
+        if (opponents.length !== 2) {
+            throw new RangeError("More or less than two players specified!");
         }
-        return winner;
-    },
+        console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
 
-    registerTicTacToe(opponents: string[]): Promise<unknown> {
-        return new Promise<unknown>((resolve, reject) => {
-            if (opponents.length !== 2) {
-                throw new RangeError("More or less than two players specified!");
-            }
-            console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
-
-            TicUtils.getTTTGame()
-                .set(
-                    new TicTacToe(
-                        Array.from<TicOptions>({ length: 9 }).fill(null),
-                        0,
-                        true,
-                        opponents[0],
-                        opponents[1],
-                    ),
-                )
-                .then(resolve)
-                .catch(reject);
-        });
+        await setDoc(
+            TicUtils.getTTTGame(),
+            new TicTacToe(Array.from<TicOptions>({ length: 9 }).fill(null), 0, true, opponents[0], opponents[1]),
+        );
     },
 
     drawAllowed(isXNext: boolean, player: TicOptions): boolean {
@@ -99,48 +63,27 @@ export const TicUtils = {
         }
     },
 
-    getTTTGame(): firebase.firestore.DocumentReference<TicTacToe> {
-        return firebase
-            .firestore()
-            .collection(GameManager.getGameID())
-            .doc("tictactoe")
-            .withConverter(ticTacToeConverter);
+    getTTTGame(): DocumentReference<TicTacToe> {
+        return doc(GameManager.getGame(), "minigames", "tictactoe").withConverter(ticTacToeConverter);
     },
 
-    makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            const tttRef = TicUtils.getTTTGame();
-            tttRef
-                .get({ source: "cache" })
-                .then((data) => {
-                    const ttt = data.data();
-                    if (!ttt) {
-                        throw new Error("Data from Game was empty");
-                    }
-                    return ttt;
-                })
-                .then((value) => {
-                    if (!TicUtils.drawAllowed(value.isXNext, player)) {
-                        console.log("Draw not allowed!");
-                        resolve();
-                        return null;
-                    }
-                    return value;
-                })
-                .then((value) => {
-                    if (!value) {
-                        return null;
-                    }
-                    const field = value.squares;
-                    field[fieldID] = player;
-                    return tttRef.update({
-                        squares: field,
-                        isXNext: !value.isXNext,
-                        stepNumber: value.stepNumber + 1,
-                    });
-                })
-                .then(() => resolve())
-                .catch(reject);
+    async makeDraw(fieldID: number, player: "X" | "O"): Promise<void> {
+        const tttRef = TicUtils.getTTTGame();
+        const data = await getDoc(tttRef);
+        const ttt = data.data();
+        if (!ttt) {
+            throw new Error("Data from Game was empty");
+        }
+        if (!TicUtils.drawAllowed(ttt.isXNext, player)) {
+            console.log("Draw not allowed!");
+            return;
+        }
+        const field = ttt.squares;
+        field[fieldID] = player;
+        await updateDoc(tttRef, {
+            squares: field,
+            isXNext: !ttt.isXNext,
+            stepNumber: ttt.stepNumber + 1,
         });
     },
 };

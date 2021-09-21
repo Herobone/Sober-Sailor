@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { initializeApp } from "firebase/app";
 
 const betaConfig = {
     apiKey: "AIzaSyAsjpgvg6fA8icaGSNxYinPoqh08uLQG0A",
@@ -35,3 +36,4 @@ const productionConfig = {
     measurementId: "G-1G0EXE06XV",
 };
 export const config = process.env.REACT_APP_BETA_CHANNEL ? betaConfig : productionConfig;
+export const firebaseApp = initializeApp(config);

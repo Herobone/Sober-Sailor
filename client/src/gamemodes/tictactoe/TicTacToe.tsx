@@ -16,153 +16,130 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
 import { FormattedMessage } from "react-intl";
-import React, { Component } from "react";
-import { Board } from "./Board";
+import React, { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth";
+import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
+import { TicOptions, TicTacToe as TicTacToeData } from "sobersailor-common/lib/models/TicTacToe";
+import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
 import style from "../../css/TicTacToe.module.scss";
-import { TicOptions, TicUtils } from "./TicUtils";
-import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
-import { Player } from "../../helper/models/Player";
+import { firebaseApp } from "../../helper/config";
+import { useIsHost } from "../../state/actions/gameActions";
+import { EvaluateGame, Serverless } from "../../helper/Serverless";
+import { TicUtils } from "./TicUtils";
+import { Board } from "./Board";
 
-interface Props {}
-interface State {
-    squares: TicOptions[];
-    stepNumber: number;
-    isXNext: boolean;
-    spectator: boolean;
-    player: TicOptions;
-    winner: TicOptions | "tie";
-}
+export function TicTacToe(): JSX.Element {
+    const [squares, setSquares] = useState<TicOptions[]>(Array.from({ length: 9 }));
+    const [stepNumber, setStepNumber] = useState(0);
+    const [isXNext, setIsXNext] = useState(true);
+    const [spectator, setSpectator] = useState(true);
+    const [player, setPlayer] = useState<TicOptions>(null);
+    const [winner, setWinner] = useState<TicOptions | "tie">(null);
 
-export class TicTacToe extends Component<Props, State> {
-    unsubscribe!: () => void;
+    const [isHost] = useIsHost();
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            squares: Array.from({ length: 9 }),
-            stepNumber: 0,
-            isXNext: true,
-            spectator: true,
-            player: null,
-            winner: null,
-        };
-
-        this.updateData = this.updateData.bind(this);
-        this.updateFromDoc = this.updateFromDoc.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-        this.keyEvent = this.keyEvent.bind(this);
-    }
-
-    componentDidMount(): void {
-        document.addEventListener("keydown", this.keyEvent, false);
-        this.unsubscribe = TicUtils.getTTTGame().onSnapshot(this.updateFromDoc);
-    }
-
-    componentWillUnmount(): void {
-        this.unsubscribe();
-        document.removeEventListener("keydown", this.keyEvent, false);
-    }
-
-    handleClick(i: number): void {
-        if (this.state.spectator || !this.state.player) {
+    const handleClick = (i: number): void => {
+        if (spectator || !player) {
             return;
         }
 
-        const { squares, player } = this.state;
-        if (TicUtils.calculateWinner(squares) || squares[i]) {
+        if (TicTacToeUtils.calculateWinner(squares) || squares[i]) {
             return;
         }
 
         TicUtils.makeDraw(i, player).catch(console.error);
-    }
+    };
 
-    private updateFromDoc(doc: firebase.firestore.DocumentSnapshot<TicTacToeData>): void {
-        const data = doc.data();
-        if (!data) {
-            throw new Error("No data in Document Snapshot!");
-        }
-        this.updateData(data);
-    }
+    const keyEvent = (event: KeyboardEvent): void => {
+        const num = Number.parseInt(event.key, 10);
+        if (num < 10 && num > 0) handleClick(TicUtils.numpadToSquare(num));
+    };
 
-    updateData(data: TicTacToeData): void {
-        const user = firebase.auth().currentUser;
-        let player: TicOptions = null;
-        let spectator = true;
+    const updateData = async (data: TicTacToeData): Promise<void> => {
+        const user = getAuth(firebaseApp).currentUser;
         if (user) {
-            // console.log(`Player X: ${data.playerX} === ${user.uid} => ${user.uid === data.playerX}`);
-            // console.log(`Player O: ${data.playerO} === ${user.uid} => ${user.uid === data.playerO}`);
             if (user.uid === data.playerX) {
-                player = "X";
-                spectator = false;
+                setPlayer("X");
+                setSpectator(false);
             } else if (user.uid === data.playerO) {
-                player = "O";
-                spectator = false;
+                setPlayer("O");
+                setSpectator(false);
+            } else {
+                // This line is needed for subsequent games, because the component is not destroyed
+                setPlayer(null);
+                setSpectator(true);
             }
         } else {
             console.warn("No user provided!");
         }
 
-        const winner = TicUtils.calculateWinner(data.squares);
-        this.setState({
-            squares: data.squares,
-            stepNumber: data.stepNumber,
-            isXNext: data.isXNext,
-            player,
-            spectator,
-            winner,
-        });
-        if (winner && !spectator && user && winner !== player) {
-            GameManager.submitPenaltyAndReset([
-                new Player(user.uid, "", winner === "tie" ? 3 : data.stepNumber, null),
-            ]).catch(console.error);
+        setSquares(data.squares);
+        setStepNumber(data.stepNumber);
+        setIsXNext(data.isXNext);
+        setWinner(TicTacToeUtils.calculateWinner(data.squares));
+    };
+
+    useEffect(() => {
+        if (winner && isHost) {
+            const callData: EvaluateGame = {
+                gameID: GameManager.getGameID(),
+            };
+            Serverless.callFunction(Serverless.EVALUATE_GAME)(callData);
         }
-        // console.log(
-        //     `Step Number: ${data.stepNumber} | Is X next: ${data.isXNext} | Player: ${player} | Spectator: ${spectator}`,
-        // );
-    }
+    }, [winner]);
 
-    keyEvent(event: KeyboardEvent): void {
-        const num = Number.parseInt(event.key, 10);
-        if (num < 10 && num > 0) this.handleClick(TicUtils.numpadToSquare(num));
-    }
+    const updateFromDoc = (doc: DocumentSnapshot<TicTacToeData>): void => {
+        const data = doc.data();
+        if (!data) {
+            // When the game is created and the clients try to fetch data, the document might not yet exist
+            return;
+        }
+        updateData(data).catch(console.error);
+    };
 
-    render(): JSX.Element {
-        const { squares, stepNumber, player, spectator, isXNext, winner } = this.state;
+    useEffect(() => {
+        document.addEventListener("keydown", keyEvent, false);
+        const unsubscribe = onSnapshot(TicUtils.getTTTGame(), updateFromDoc);
 
-        const status = winner ? `Winner: ${winner}` : `Next player: ${isXNext ? "X" : "O"}`;
+        return function cleanup() {
+            unsubscribe();
+            document.removeEventListener("keydown", keyEvent, false);
+        };
+    }, []);
 
-        return (
-            <div className={style.game}>
-                {spectator && (
-                    <div className="spectator-area">
-                        <h2>
-                            <FormattedMessage id="elements.general.youare" />{" "}
-                            <FormattedMessage id="elements.tictactoe.spectator" />
-                        </h2>
-                        <br />
-                    </div>
-                )}
-                {!spectator && (
-                    <div className="player-area">
-                        <h2>
-                            <FormattedMessage id="elements.general.youare" /> {player}
-                        </h2>
-                        <br />
-                    </div>
-                )}
-                <div className={style.boardRow}>
-                    <Board squares={squares} onClick={(i: number) => this.handleClick(i)} />
+    return (
+        <div className={style.game}>
+            {spectator && (
+                <div className="spectator-area">
+                    <h2>
+                        <FormattedMessage id="elements.general.youare" />{" "}
+                        <FormattedMessage id="elements.tictactoe.spectator" />
+                    </h2>
+                    <br />
                 </div>
-                <div className={style.gameInfo}>
-                    <div>{status}</div>
-                    <div>Step: {stepNumber}</div>
+            )}
+            {!spectator && (
+                <div className="player-area">
+                    <h2>
+                        <FormattedMessage id="elements.general.youare" /> {player}
+                    </h2>
+                    <br />
                 </div>
-            </div>
-        );
-    }
+            )}
+            {!winner && (
+                <>
+                    <div className={style.boardRow}>
+                        <Board squares={squares} onClick={(i: number) => handleClick(i)} />
+                    </div>
+                    <div className={style.gameInfo}>
+                        <div>Next player: ${isXNext ? "X" : "O"}</div>
+                        <div>Step: {stepNumber}</div>
+                    </div>
+                </>
+            )}
+            {winner && <h2>Player {winner} won the game!</h2>}
+        </div>
+    );
 }

@@ -16,31 +16,70 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
-import { CssBaseline, MuiThemeProvider } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material";
+import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
+import Cookies from "universal-cookie";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
-import "./css/index.css";
 import { Routed } from "./Components/Functional/Routed";
-import { responsiveTheme } from "./css/Theme";
+import { AvailableThemes, CalmTheme, DarkTheme, StandardTheme } from "./style/Theme";
+import { store } from "./state/store";
+import { useThemeSetting } from "./state/actions/settingActions";
 
-export class App extends PureComponent {
-    render(): JSX.Element {
-        return (
-            <React.StrictMode>
-                <MuiThemeProvider theme={responsiveTheme}>
-                    <CssBaseline />
-                    <LanguageContainer>
-                        <SnackbarProvider maxSnack={4}>
-                            <AlertProvider>
-                                <Routed />
-                            </AlertProvider>
-                        </SnackbarProvider>
-                    </LanguageContainer>
-                </MuiThemeProvider>
-            </React.StrictMode>
-        );
-    }
+export function App(): JSX.Element {
+    return (
+        <React.StrictMode>
+            <Provider store={store}>
+                <AppWithStore />
+            </Provider>
+        </React.StrictMode>
+    );
+}
+
+function AppWithStore(): JSX.Element {
+    const cookies: Cookies = new Cookies();
+    const [theme, setTheme] = useThemeSetting();
+    const [muiTheme, setMuiTheme] = useState(CalmTheme);
+
+    useEffect(() => {
+        const themeFromCookie: AvailableThemes | undefined = cookies.get("theme");
+        if (themeFromCookie) {
+            setTheme(themeFromCookie);
+        }
+    }, []);
+
+    useEffect(() => {
+        switch (theme) {
+            case "calm":
+                setMuiTheme(CalmTheme);
+                break;
+            case "dark":
+                setMuiTheme(DarkTheme);
+                break;
+            case "light":
+                setMuiTheme(StandardTheme);
+                break;
+            default:
+                setMuiTheme(CalmTheme);
+                break;
+        }
+    }, [theme]);
+
+    return (
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={muiTheme}>
+                <CssBaseline />
+                <LanguageContainer>
+                    <SnackbarProvider maxSnack={4}>
+                        <AlertProvider>
+                            <Routed />
+                        </AlertProvider>
+                    </SnackbarProvider>
+                </LanguageContainer>
+            </ThemeProvider>
+        </StyledEngineProvider>
+    );
 }

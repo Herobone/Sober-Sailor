@@ -16,66 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { Register } from "./Register";
-
-export interface IGame {
-    gameID: string;
-    currentTask: string | null;
-    type: string | null;
-    taskTarget: string | null;
-    penalty: number;
-    round: number;
-    host: string;
-    pollState: boolean;
-    evalState: boolean;
-    created: Date;
-    register: Register;
-}
-
-interface IGameExternal {
-    currentTask: string | null;
-    type: string | null;
-    taskTarget: string | null;
-    penalty: number;
-    round: number;
-    host: string;
-    pollState: boolean;
-    evalState: boolean;
-    created: firebase.firestore.Timestamp;
-    playerUidMap: { [key: string]: string };
-}
-
-export class Game implements IGame {
-    constructor(
-        readonly gameID: string,
-        readonly currentTask: string | null,
-        readonly type: string | null,
-        readonly taskTarget: string | null,
-        readonly penalty: number,
-        readonly round: number,
-        readonly host: string,
-        readonly pollState: boolean,
-        readonly evalState: boolean,
-        readonly created: Date,
-        readonly register: Register,
-    ) {}
-
-    static createEmpty(id: string, host: firebase.User): Game {
-        const { uid, displayName } = host;
-        if (!displayName) {
-            throw new Error("Display name missing");
-        }
-        const reg: Register = Register.init(uid, displayName);
-        return new Game(id, null, null, null, 0, 0, uid, false, false, new Date(), reg);
-    }
-}
+import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
+import { Game, IGameExternal } from "sobersailor-common/lib/models/Game";
+import { Register } from "sobersailor-common/lib/models/Register";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
+import { Scoreboard } from "sobersailor-common/lib/models/GameScoreboard";
 
 export const gameConverter = {
-    toFirestore(game: Game): firebase.firestore.DocumentData {
+    toFirestore(game: Game): DocumentData {
         return {
             currentTask: game.currentTask,
+            answers: game.answers,
             type: game.type,
             taskTarget: game.taskTarget,
             penalty: game.penalty,
@@ -83,18 +34,19 @@ export const gameConverter = {
             host: game.host,
             pollState: game.pollState,
             evalState: game.evalState,
-            created: firebase.firestore.Timestamp.fromDate(game.created),
+            created: Timestamp.fromDate(game.created),
             playerUidMap: game.register.serialize(),
+            evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
+            evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
+            scoreboard: game.scoreboard.serializeBoard(),
         };
     },
-    fromFirestore(
-        snapshot: firebase.firestore.QueryDocumentSnapshot<IGameExternal>,
-        options: firebase.firestore.SnapshotOptions,
-    ): Game {
+    fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal<Timestamp>>, options: SnapshotOptions): Game {
         const data = snapshot.data(options);
         return new Game(
             snapshot.id,
             data.currentTask,
+            data.answers,
             data.type,
             data.taskTarget,
             data.penalty,
@@ -104,6 +56,8 @@ export const gameConverter = {
             data.evalState,
             data.created.toDate(),
             Register.deserialize(data.playerUidMap),
+            EvaluationScoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers),
+            Scoreboard.deserialize(data.scoreboard),
         );
     },
 };

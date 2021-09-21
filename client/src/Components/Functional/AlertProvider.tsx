@@ -16,16 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { Component, ReactElement } from "react";
-import { withStyles, WithStyles } from "@material-ui/styles";
-import { OptionsObject, SnackbarKey, SnackbarMessage, withSnackbar } from "notistack";
+import React, { ReactElement } from "react";
+import { useSnackbar } from "notistack";
 import { Alert as IAlert, AlertContextType } from "../../helper/AlertTypes";
-import { DefaultStyle } from "../../css/Style";
-
-interface Props extends WithStyles<typeof DefaultStyle> {
-    enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey;
-    closeSnackbar: (key?: SnackbarKey) => void;
-}
 
 export const AlertContext = React.createContext<AlertContextType>({
     createAlert: () => {
@@ -36,24 +29,15 @@ AlertContext.displayName = "AlertContext";
 
 export const useAlert = (): AlertContextType => React.useContext(AlertContext);
 
-class AlertProviderRaw extends Component<Props> {
-    createAlert = (type: IAlert, message: string | ReactElement): void => {
-        this.props.enqueueSnackbar(message, {
+export function AlertProvider(props: React.PropsWithChildren<unknown>): JSX.Element {
+    const snackbar = useSnackbar();
+
+    const createAlert = (type: IAlert, message: string | ReactElement): void => {
+        snackbar.enqueueSnackbar(message, {
             variant: type.variant,
             preventDuplicate: true,
         });
     };
 
-    render(): JSX.Element {
-        return (
-            <AlertContext.Provider value={{ createAlert: this.createAlert }}>
-                {this.props.children}
-            </AlertContext.Provider>
-        );
-    }
+    return <AlertContext.Provider value={{ createAlert }}>{props.children}</AlertContext.Provider>;
 }
-
-export const AlertProviderWithStyle = withStyles(DefaultStyle)(AlertProviderRaw);
-AlertProviderWithStyle.displayName = "AlertProviderWithStyle";
-
-export const AlertProvider = withSnackbar(AlertProviderWithStyle);

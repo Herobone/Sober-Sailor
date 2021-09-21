@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PureComponent } from "react";
-import { TicOptions } from "./TicUtils";
+import React from "react";
+import { TicOptions } from "sobersailor-common/lib/models/TicTacToe";
 import style from "../../css/TicTacToe.module.scss";
 
 interface Props {
@@ -25,12 +25,10 @@ interface Props {
     onClick: () => void;
 }
 
-export class Square extends PureComponent<Props> {
-    render(): JSX.Element {
-        return (
-            <button className={style.square} onClick={this.props.onClick} type="button">
-                {this.props.value}
-            </button>
-        );
-    }
+export function Square(props: Props): JSX.Element {
+    return (
+        <button className={style.square} onClick={props.onClick} type="button">
+            {props.value}
+        </button>
+    );
 }

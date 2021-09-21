@@ -1,8 +1,8 @@
 import Cookies from "universal-cookie";
-import firebase from "firebase/app";
-import "firebase/analytics";
-import "firebase/performance";
-import { Util } from "./Util";
+import { getPerformance } from "firebase/performance";
+import { getAnalytics } from "firebase/analytics";
+import Util from "sobersailor-common/lib/Util";
+import { firebaseApp } from "./config";
 
 /** ***************************
  * Sober Sailor - The online Party Game
@@ -34,10 +34,13 @@ export class Dough {
         return false;
     }
 
+    /**
+     * Start Analysis if cookie is present
+     */
     public static startAnalytics(): void {
         if (this.checkCookies("analytics") && process.env.NODE_ENV === "production") {
-            firebase.analytics();
-            firebase.performance();
+            getAnalytics(firebaseApp);
+            getPerformance(firebaseApp);
             console.log("Analytics activated");
         }
     }

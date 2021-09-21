@@ -6,6 +6,7 @@
     "sourceMap": true,
     "rootDir": "src",
     "noUnusedLocals": true,
+    "noImplicitAny": false
   },
   "compileOnSave": true,
   "include": [
