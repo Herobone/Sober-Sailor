@@ -56,6 +56,8 @@ import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
 import { useLanguage } from "../../../state/actions/settingActions";
 import { WouldYouRather } from "../../../gamemodes/wouldyourather/WouldYouRather";
+import { useAlert } from "../../Functional/AlertProvider";
+import { Alerts } from "../../../helper/AlertTypes";
 
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
@@ -68,6 +70,8 @@ export default function Mixed(): JSX.Element {
     const kickListRef = useRef<KickListHandle>(null);
 
     const [lang] = useLanguage();
+
+    const { createAlert } = useAlert();
 
     const classes = useDefaultStyles();
 
@@ -176,11 +180,18 @@ export default function Mixed(): JSX.Element {
                     const answer = data.evaluationScoreboard.answers.get(uid) || "none";
                     let readableAnswer = "Error Answer";
                     if (data.type === "wouldyourather") {
-                        answers?.forEach((possibleAnswer) => {
-                            if (possibleAnswer.id === Number.parseInt(answer, 10)) {
-                                readableAnswer = possibleAnswer.answer;
-                            }
-                        });
+                        if (answers) {
+                            answers.forEach((possibleAnswer) => {
+                                if (possibleAnswer.id === Number.parseInt(answer, 10)) {
+                                    readableAnswer = possibleAnswer.answer;
+                                }
+                            });
+                        } else {
+                            createAlert(
+                                Alerts.ERROR,
+                                "Answers were not loaded, therefore could not load the right response",
+                            );
+                        }
                     } else if (data.type === "tictactoe") {
                         switch (answer) {
                             case "winner":
