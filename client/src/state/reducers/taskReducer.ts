@@ -16,13 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { NumberAction, StringAction } from "../actions/taskActions";
+import { MultiAnswer } from "sobersailor-common/lib/models/Task";
+import { AnswerAction, NumberAction, StringAction } from "../actions/taskActions";
 
 export interface TaskState {
     task: string | undefined;
     type: string | undefined;
     target: string | undefined;
     penalty: number;
+    answers: MultiAnswer[] | undefined;
 }
 
 const initialState: TaskState = {
@@ -30,9 +32,13 @@ const initialState: TaskState = {
     type: undefined,
     target: undefined,
     penalty: 0,
+    answers: undefined,
 };
 
-export const taskReducer = (state: TaskState = initialState, action: StringAction | NumberAction): TaskState => {
+export const taskReducer = (
+    state: TaskState = initialState,
+    action: StringAction | NumberAction | AnswerAction,
+): TaskState => {
     switch (action.type) {
         case "SET_TASK":
             return { ...state, task: action.payload };
@@ -42,6 +48,8 @@ export const taskReducer = (state: TaskState = initialState, action: StringActio
             return { ...state, type: action.payload };
         case "SET_PENALTY":
             return { ...state, penalty: action.payload };
+        case "SET_ANSWERS":
+            return { ...state, answers: action.payload };
         default:
             return state;
     }

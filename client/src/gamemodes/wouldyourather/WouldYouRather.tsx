@@ -15,13 +15,79 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import React, { FunctionComponent, PropsWithChildren } from "react";
+import React, { FunctionComponent, ReactElement, useEffect, useState } from "react";
+import { Button, ButtonGroup } from "@mui/material";
+import { MultiAnswer } from "sobersailor-common/lib/models/Task";
+import { FormattedMessage } from "react-intl";
+import { useAnswers, useTask } from "../../state/actions/taskActions";
+import { GameManager } from "../../helper/gameManager";
+import { usePollState } from "../../state/actions/displayStateActions";
 
-interface Props {}
+export const WouldYouRather: FunctionComponent = () => {
+    const [inputLock, setInputLock] = useState(true);
+    const [answer, setAnswer] = useState<string | null>(null);
+    const [question] = useTask();
+    const [pollState] = usePollState();
+    const [answers] = useAnswers();
+    const values: ReactElement[] = [];
 
-export const WouldYouRather: FunctionComponent<Props> = (props: PropsWithChildren<Props>) => (
+    useEffect(() => {
+        setInputLock(true);
+        setAnswer(null);
+        console.log("Resetting WYR");
+    }, [question]);
+
+    useEffect(() => {
+        setInputLock(!pollState);
+    }, [pollState]);
+
+    if (!answers) {
+        return <></>;
+    }
+    if (!question) {
+        return <></>;
+    }
+
+    answers.forEach((multiAnswer: MultiAnswer) => {
+        values.push(
+            <ButtonGroup
+                key={`answer-button-${multiAnswer.id}`}
+                orientation="vertical"
+                color="primary"
+                variant="contained"
+            >
+                <Button
+                    className="wwr-player-select"
+                    type="submit"
+                    onClick={() => {
+                        GameManager.setAnswer(multiAnswer.id.toString(10)).catch(console.error);
+                        setAnswer(multiAnswer.answer);
+                        setInputLock(true);
+                    }}
+                >
+                    {multiAnswer.answer}
+                </Button>
+            </ButtonGroup>,
+        );
+    });
+
+    return (
         <>
-            Would you Rather?
-            {props.children}
+            <h2>{question}</h2>
+            <p>
+                <FormattedMessage id="gamemodes.wouldyourather.description" />
+            </p>
+            {!inputLock && !answer && values}
+            {answer && (
+                <div>
+                    <FormattedMessage
+                        id="elements.result.youranswer"
+                        values={{
+                            answer,
+                        }}
+                    />
+                </div>
+            )}
         </>
     );
+};

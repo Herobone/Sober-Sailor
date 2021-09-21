@@ -29,7 +29,9 @@ import Util from "sobersailor-common/lib/Util";
  * @param occurrences A map of occurrences of the answer
  * @return [answers: string[], count: number] answers are those that occurred most often and count is how often it occurred
  */
-const getMostPopular = (occurrences: Map<string, number>) => {
+const getMostPopular = (
+  occurrences: Map<string, number>
+): [string[], number] => {
   let mostPoluarAnswers: string[] = [];
   let mostPoluarAnswer: number = 0;
   occurrences.forEach((count: number, answer: string) => {
@@ -66,33 +68,34 @@ export const evaluateGameHandler = async (
     }
     const players = await FirestoreUtil.getAllPlayers(data.gameID);
     const answers: string[] = [];
-    const scoreboard = EvaluationScoreboard.init();
+    const evaluationScoreboard = EvaluationScoreboard.init();
     players.forEach((player: Player) => {
-      if (player.answer) {
-        answers.push(player.answer);
-        scoreboard.addAnswer(player.uid, player.answer);
-      } else {
-        answers.push(player.uid);
-        scoreboard.addAnswer(player.uid, "none");
-      }
+      answers.push(player.answer || "none");
+      evaluationScoreboard.addAnswer(player.uid, player.answer || "none");
     });
     const occur = Util.countOccurrences(answers);
     if (gameData.type === "wouldyourather") {
-      // @ts-ignore
       const [popularAnswers, count] = getMostPopular(occur);
+      players.forEach((player: Player) => {
+        if (popularAnswers.includes(player.answer || "none")) {
+          evaluationScoreboard.addScore(player.uid, count);
+          gameData.scoreboard.updateScore(player.uid, count);
+        }
+      });
     } else {
       occur.forEach((value, uid) => {
-        scoreboard.addScore(uid, value);
+        evaluationScoreboard.addScore(uid, value);
         gameData.scoreboard.updateScore(uid, value);
-      });
-      players.forEach((player) => {
-        if (!scoreboard.board.has(player.uid)) {
-          scoreboard.addScore(player.uid, 0);
-        }
       });
     }
 
-    await scoreboard.board.forEach(async (value, key) => {
+    players.forEach((player) => {
+      if (!evaluationScoreboard.board.has(player.uid)) {
+        evaluationScoreboard.addScore(player.uid, 0);
+      }
+    });
+
+    await evaluationScoreboard.board.forEach(async (value, key) => {
       await FirestoreUtil.getPlayer(data.gameID, key).update({
         sips: admin.firestore.FieldValue.increment(value),
         answer: null,
@@ -100,8 +103,8 @@ export const evaluateGameHandler = async (
     });
 
     await FirestoreUtil.getGame(data.gameID).update({
-      evaluationScoreboard: scoreboard.serializeScore(),
-      evaluationAnswers: scoreboard.serializeAnswers(),
+      evaluationScoreboard: evaluationScoreboard.serializeScore(),
+      evaluationAnswers: evaluationScoreboard.serializeAnswers(),
       scoreboard: gameData.scoreboard.serializeBoard(),
       pollState: false,
       evalState: true,

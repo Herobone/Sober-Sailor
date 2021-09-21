@@ -48,13 +48,14 @@ import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
-import { usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
+import { useAnswers, usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
 import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
 import { useLanguage } from "../../../state/actions/settingActions";
+import { WouldYouRather } from "../../../gamemodes/wouldyourather/WouldYouRather";
 
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
@@ -78,6 +79,7 @@ export default function Mixed(): JSX.Element {
     const [evalState, setEvalState] = useEvalState();
     const [result, setResult] = useResult();
     const setPenalty = usePenalty()[1];
+    const [answers, setAnswers] = useAnswers();
 
     const setScoreboard = useScoreboard()[1];
 
@@ -141,12 +143,18 @@ export default function Mixed(): JSX.Element {
             GameManager.updatePlayerLookupTable(doc);
             console.log("Received data from Firestore!");
 
-            if (nextTask !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
+            if (
+                nextTask !== data.currentTask ||
+                taskType !== data.type ||
+                target !== data.taskTarget ||
+                answers !== data.answers
+            ) {
                 submitAndReset();
                 setNextTask(data.currentTask ? data.currentTask : data.type || undefined);
                 setTaskType(data.type || undefined);
                 setTarget(data.taskTarget || undefined);
                 setPenalty(data.penalty);
+                setAnswers(data.answers || undefined);
             }
 
             setPollState(data.pollState);
@@ -166,7 +174,11 @@ export default function Mixed(): JSX.Element {
                     const answer = data.evaluationScoreboard.answers.get(uid) || "none";
                     let readableAnswer = "Error Answer";
                     if (data.type === "wouldyourather") {
-                        console.warn("Not implemented jet");
+                        answers?.forEach((possibleAnswer) => {
+                            if (possibleAnswer.id === Number.parseInt(answer, 10)) {
+                                readableAnswer = possibleAnswer.answer;
+                            }
+                        });
                     } else {
                         readableAnswer = plt.playerUidMap.get(answer) || "Forgot to Answer";
                     }
@@ -207,6 +219,7 @@ export default function Mixed(): JSX.Element {
         if (type.id === "tictactoe") {
             await updateDoc(GameManager.getGame(), {
                 currentTask: null,
+                answers: null,
                 type: type.id,
                 evalState: false,
                 pollState: false,
@@ -224,6 +237,7 @@ export default function Mixed(): JSX.Element {
             setNextTask(task);
             await updateDoc(GameManager.getGame(), {
                 currentTask: task,
+                answers: null,
                 type: type.id,
                 evalState: false,
                 pollState: false,
@@ -238,9 +252,9 @@ export default function Mixed(): JSX.Element {
             throw new Error("Trying to execute a host method as non Host");
         }
         submitAndReset();
-        const testMode = false;
+        const testMode = true;
         const development = process.env.NODE_ENV === "development" && testMode;
-        const nextTaskType: Task = development ? tasks[2] : Util.selectRandom(tasks);
+        const nextTaskType: Task = development ? tasks[3] : Util.selectRandom(tasks);
 
         if (nextTaskType.multiAnswer) {
             setMultiAnswerTask(nextTaskType).catch(console.error);
@@ -276,6 +290,10 @@ export default function Mixed(): JSX.Element {
             case "tictactoe": {
                 console.log("TicTacToe");
                 taskComponent = <TicTacToe />;
+                break;
+            }
+            case "wouldyourather": {
+                taskComponent = <WouldYouRather />;
                 break;
             }
             default: {

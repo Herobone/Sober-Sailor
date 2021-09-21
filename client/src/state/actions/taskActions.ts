@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { MultiAnswer } from "sobersailor-common/lib/models/Task";
 import { RootState } from "../store";
 import { TaskState } from "../reducers/taskReducer";
 
@@ -53,6 +54,19 @@ export type NumberAction = {
     type: "SET_PENALTY";
     payload: number;
 };
+/**
+ * Set the current Tasks answers
+ * @param answers    The tasks answers
+ */
+export const setAnswers = (answers: MultiAnswer[] | undefined): AnswerAction => ({
+    type: "SET_ANSWERS",
+    payload: answers,
+});
+
+export type AnswerAction = {
+    type: "SET_ANSWERS";
+    payload: MultiAnswer[] | undefined;
+};
 
 export const useTaskType = (): [string | undefined, (content: string | undefined) => void] => {
     const dispatch = useDispatch();
@@ -90,6 +104,16 @@ export const usePenalty = (): [number, (content: number) => void] => {
 
     const set = (content: number): void => {
         dispatch(setPenalty(content));
+    };
+    return [get, set];
+};
+
+export const useAnswers = (): [MultiAnswer[] | undefined, (content: MultiAnswer[] | undefined) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["answers"]>((state) => state.task.answers);
+
+    const set = (content: MultiAnswer[] | undefined): void => {
+        dispatch(setAnswers(content));
     };
     return [get, set];
 };
