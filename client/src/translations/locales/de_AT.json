@@ -1,16 +1,9 @@
 {
-    "account.actions.noname": "",
     "account.descriptors.notsignedin": "",
-    "actions.game.create": "",
     "actions.leave": "",
-    "elements.alerts.warning": "",
     "elements.general.penalty": "",
-    "elements.leaderboard.nickname": "",
     "elements.results": "",
-    "elements.truthordare.drink": "",
     "gamemodes.truthordare": "",
-    "general.answer": "",
     "general.seconds": "",
-    "navigation.myprofile": "",
     "sobersailor.name": "Sober Sailor - Des Online Sauf Spui"
 }
