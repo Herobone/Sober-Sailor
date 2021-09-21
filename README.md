@@ -63,3 +63,10 @@ Before opening a Pull request please make sure that:
 - Builds succeeds
 - Tests pass
 - You can play a game (This checks if the renders work and if any logic is broken)
+
+### Translations
+Please do not change the translation files directly. If you want to help the translation, you can do this on [Weblate](https://weblate.org/).
+[Here](https://hosted.weblate.org/engage/sober-sailor/) you can help us to translate the app
+<a href="https://hosted.weblate.org/engage/sober-sailor/">
+<img src="https://hosted.weblate.org/widgets/sober-sailor/-/general/open-graph.png" alt="Translation status" />
+</a>
