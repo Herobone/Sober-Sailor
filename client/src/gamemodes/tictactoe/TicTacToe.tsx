@@ -20,12 +20,14 @@ import { FormattedMessage } from "react-intl";
 import React, { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
-import { Player } from "sobersailor-common/lib/models/Player";
+import { TicOptions, TicTacToe as TicTacToeData } from "sobersailor-common/lib/models/TicTacToe";
+import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
 import style from "../../css/TicTacToe.module.scss";
-import { TicTacToe as TicTacToeData } from "../../helper/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
 import { firebaseApp } from "../../helper/config";
-import { TicOptions, TicUtils } from "./TicUtils";
+import { useIsHost } from "../../state/actions/gameActions";
+import { EvaluateGame, Serverless } from "../../helper/Serverless";
+import { TicUtils } from "./TicUtils";
 import { Board } from "./Board";
 
 export function TicTacToe(): JSX.Element {
@@ -36,12 +38,14 @@ export function TicTacToe(): JSX.Element {
     const [player, setPlayer] = useState<TicOptions>(null);
     const [winner, setWinner] = useState<TicOptions | "tie">(null);
 
+    const [isHost] = useIsHost();
+
     const handleClick = (i: number): void => {
         if (spectator || !player) {
             return;
         }
 
-        if (TicUtils.calculateWinner(squares) || squares[i]) {
+        if (TicTacToeUtils.calculateWinner(squares) || squares[i]) {
             return;
         }
 
@@ -53,7 +57,7 @@ export function TicTacToe(): JSX.Element {
         if (num < 10 && num > 0) handleClick(TicUtils.numpadToSquare(num));
     };
 
-    const updateData = (data: TicTacToeData): void => {
+    const updateData = async (data: TicTacToeData): Promise<void> => {
         const user = getAuth(firebaseApp).currentUser;
         if (user) {
             if (user.uid === data.playerX) {
@@ -70,21 +74,24 @@ export function TicTacToe(): JSX.Element {
         setSquares(data.squares);
         setStepNumber(data.stepNumber);
         setIsXNext(data.isXNext);
-        setWinner(TicUtils.calculateWinner(data.squares));
-
-        if (winner && !spectator && user && winner !== player) {
-            GameManager.submitPenaltyAndReset([
-                new Player(user.uid, "", winner === "tie" ? 3 : data.stepNumber, null),
-            ]).catch(console.error);
-        }
+        setWinner(TicTacToeUtils.calculateWinner(data.squares));
     };
+
+    useEffect(() => {
+        if (winner && isHost) {
+            const callData: EvaluateGame = {
+                gameID: GameManager.getGameID(),
+            };
+            Serverless.callFunction(Serverless.EVALUATE_GAME)(callData);
+        }
+    }, [winner]);
 
     const updateFromDoc = (doc: DocumentSnapshot<TicTacToeData>): void => {
         const data = doc.data();
         if (!data) {
             throw new Error("No data in Document Snapshot!");
         }
-        updateData(data);
+        updateData(data).catch(console.error);
     };
 
     useEffect(() => {
@@ -127,16 +134,7 @@ export function TicTacToe(): JSX.Element {
                     </div>
                 </>
             )}
-            {winner && (
-                <>
-                    <div>GAME OVER!</div>
-                    <br />
-                    <div>
-                        Player ${winner} won the game!
-                        <br />
-                    </div>
-                </>
-            )}
+            {winner && <h2>Player {winner} won the game!</h2>}
         </div>
     );
 }

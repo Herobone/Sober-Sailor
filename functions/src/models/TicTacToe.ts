@@ -1,6 +1,6 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,22 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
+import { firestore } from "firebase-admin";
 import { ITicTacToe, TicTacToe } from "sobersailor-common/lib/models/TicTacToe";
 
-export const ticTacToeConverter = {
-    toFirestore(game: TicTacToe): DocumentData {
-        return {
-            squares: game.squares,
-            stepNumber: game.stepNumber,
-            isXNext: game.isXNext,
-            playerX: game.playerX,
-            playerO: game.playerO,
-        };
-    },
-    fromFirestore(snapshot: QueryDocumentSnapshot<ITicTacToe>, options: SnapshotOptions): TicTacToe {
-        const data = snapshot.data(options);
-        return new TicTacToe(data.squares, data.stepNumber, data.isXNext, data.playerX, data.playerO);
-    },
+export const ticTacToeConverter: firestore.FirestoreDataConverter<TicTacToe> = {
+  toFirestore(game: TicTacToe): firestore.DocumentData {
+    return {
+      squares: game.squares,
+      stepNumber: game.stepNumber,
+      isXNext: game.isXNext,
+      playerX: game.playerX,
+      playerO: game.playerO,
+    };
+  },
+  fromFirestore(
+    snapshot: firestore.QueryDocumentSnapshot<ITicTacToe>
+  ): TicTacToe {
+    const data = snapshot.data();
+    return new TicTacToe(
+      data.squares,
+      data.stepNumber,
+      data.isXNext,
+      data.playerX,
+      data.playerO
+    );
+  },
 };

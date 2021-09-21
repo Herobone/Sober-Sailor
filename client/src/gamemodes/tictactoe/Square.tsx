@@ -17,8 +17,8 @@
  */
 
 import React from "react";
+import { TicOptions } from "sobersailor-common/lib/models/TicTacToe";
 import style from "../../css/TicTacToe.module.scss";
-import { TicOptions } from "./TicUtils";
 
 interface Props {
     value: TicOptions;

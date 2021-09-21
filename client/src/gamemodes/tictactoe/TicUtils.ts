@@ -17,37 +17,11 @@
  */
 
 import { doc, DocumentReference, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { TicOptions, TicTacToe } from "sobersailor-common/lib/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
-import { TicTacToe, ticTacToeConverter } from "../../helper/models/TicTacToe";
-
-export type TicOptions = "X" | "O" | null;
+import { ticTacToeConverter } from "../../helper/models/TicTacToe";
 
 export const TicUtils = {
-    calculateWinner(squares: TicOptions[]): TicOptions | "tie" {
-        const lines = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ];
-        let winner: TicOptions | "tie" = null;
-        lines.forEach((line: number[]) => {
-            const [a, b, c] = line;
-            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                winner = squares[a];
-            }
-        });
-        if (winner === null && !squares.includes(null)) {
-            // every square is full
-            winner = "tie";
-        }
-        return winner;
-    },
-
     async registerTicTacToe(opponents: string[]): Promise<void> {
         if (opponents.length !== 2) {
             throw new RangeError("More or less than two players specified!");

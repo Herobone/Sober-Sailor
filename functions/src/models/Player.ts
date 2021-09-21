@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as admin from "firebase-admin";
+import { firestore } from "firebase-admin";
 import { IPlayerExternal, Player } from "sobersailor-common/lib/models/Player";
 
-export const playerConverter: admin.firestore.FirestoreDataConverter<Player> = {
-  toFirestore(player: Player): admin.firestore.DocumentData {
+export const playerConverter: firestore.FirestoreDataConverter<Player> = {
+  toFirestore(player: Player): firestore.DocumentData {
     return {
       nickname: player.nickname,
       sips: player.sips,
@@ -28,7 +28,7 @@ export const playerConverter: admin.firestore.FirestoreDataConverter<Player> = {
     };
   },
   fromFirestore(
-    snapshot: admin.firestore.QueryDocumentSnapshot<IPlayerExternal>
+    snapshot: firestore.QueryDocumentSnapshot<IPlayerExternal>
   ): Player {
     const data = snapshot.data();
     return new Player(snapshot.id, data.nickname, data.sips, data.answer);

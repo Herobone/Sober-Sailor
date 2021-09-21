@@ -23,6 +23,9 @@ import { GameIDContent } from "sobersailor-common/lib/HostEvents";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 import { Player } from "sobersailor-common/lib/models/Player";
 import Util from "sobersailor-common/lib/Util";
+import { Game } from "sobersailor-common/lib/models/Game";
+import { ticTacToeConverter } from "../models/TicTacToe";
+import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
 
 /**
  * Here we sort out the most popular Answer. If some have the same amount of votes, all are added to the array;
@@ -43,6 +46,73 @@ const getMostPopular = (
     }
   });
   return [mostPoluarAnswers, mostPoluarAnswer];
+};
+
+const submitChanges = async (
+  gameData: Game,
+  evaluationScoreboard: EvaluationScoreboard
+): Promise<void> => {
+  await evaluationScoreboard.board.forEach(async (value, key) => {
+    await FirestoreUtil.getPlayer(gameData.gameID, key).update({
+      sips: admin.firestore.FieldValue.increment(value),
+      answer: null,
+    });
+  });
+
+  await FirestoreUtil.getGame(gameData.gameID).update({
+    evaluationScoreboard: evaluationScoreboard.serializeScore(),
+    evaluationAnswers: evaluationScoreboard.serializeAnswers(),
+    scoreboard: gameData.scoreboard.serializeBoard(),
+    pollState: false,
+    evalState: true,
+  });
+};
+
+const evaluateTTT = async (gameData: Game): Promise<void> => {
+  const evaluationScoreboard = EvaluationScoreboard.init();
+  const tttGameDoc = await FirestoreUtil.getGame(gameData.gameID)
+    .collection("minigames")
+    .doc("tictactoe")
+    .withConverter(ticTacToeConverter)
+    .get();
+  const tttGameData = tttGameDoc.data();
+  if (!tttGameData) {
+    throw new functions.https.HttpsError(
+      "not-found",
+      "Data in TicTacToe was missing but the evaluation was called!"
+    );
+  }
+  const winner = TicTacToeUtils.calculateWinner(tttGameData.squares);
+  if (winner === "X") {
+    // Set Penalty for the loser
+    evaluationScoreboard.addScore(tttGameData.playerO, gameData.penalty);
+    evaluationScoreboard.addAnswer(tttGameData.playerO, "loser");
+    gameData.scoreboard.updateScore(tttGameData.playerO, gameData.penalty);
+
+    // Show who is the winner
+    evaluationScoreboard.addScore(tttGameData.playerX, 0);
+    evaluationScoreboard.addAnswer(tttGameData.playerX, "winner");
+  } else if (winner === "O") {
+    // Set Penalty for the loser
+    evaluationScoreboard.addScore(tttGameData.playerX, gameData.penalty);
+    evaluationScoreboard.addAnswer(tttGameData.playerX, "loser");
+    gameData.scoreboard.updateScore(tttGameData.playerX, gameData.penalty);
+
+    // Show who is the winner
+    evaluationScoreboard.addScore(tttGameData.playerO, 0);
+    evaluationScoreboard.addAnswer(tttGameData.playerO, "winner");
+  } else {
+    // Divide penalty to both players and set it accordingly
+    const penalty = Math.round(gameData.penalty / 2);
+    evaluationScoreboard.addScore(tttGameData.playerX, penalty);
+    evaluationScoreboard.addAnswer(tttGameData.playerX, "tie");
+    gameData.scoreboard.updateScore(tttGameData.playerX, penalty);
+
+    evaluationScoreboard.addScore(tttGameData.playerO, penalty);
+    evaluationScoreboard.addAnswer(tttGameData.playerO, "tie");
+    gameData.scoreboard.updateScore(tttGameData.playerO, penalty);
+  }
+  await submitChanges(gameData, evaluationScoreboard);
 };
 
 export const evaluateGameHandler = async (
@@ -66,6 +136,11 @@ export const evaluateGameHandler = async (
         "Function must be called by host of game!"
       );
     }
+
+    if (gameData.type === "tictactoe") {
+      return evaluateTTT(gameData);
+    }
+
     const players = await FirestoreUtil.getAllPlayers(data.gameID);
     const answers: string[] = [];
     const evaluationScoreboard = EvaluationScoreboard.init();
@@ -95,19 +170,6 @@ export const evaluateGameHandler = async (
       }
     });
 
-    await evaluationScoreboard.board.forEach(async (value, key) => {
-      await FirestoreUtil.getPlayer(data.gameID, key).update({
-        sips: admin.firestore.FieldValue.increment(value),
-        answer: null,
-      });
-    });
-
-    await FirestoreUtil.getGame(data.gameID).update({
-      evaluationScoreboard: evaluationScoreboard.serializeScore(),
-      evaluationAnswers: evaluationScoreboard.serializeAnswers(),
-      scoreboard: gameData.scoreboard.serializeBoard(),
-      pollState: false,
-      evalState: true,
-    });
+    await submitChanges(gameData, evaluationScoreboard);
   }
 };

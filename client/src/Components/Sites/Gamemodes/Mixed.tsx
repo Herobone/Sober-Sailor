@@ -17,7 +17,7 @@
  */
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { DocumentSnapshot, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -80,6 +80,8 @@ export default function Mixed(): JSX.Element {
     const [result, setResult] = useResult();
     const setPenalty = usePenalty()[1];
     const [answers, setAnswers] = useAnswers();
+
+    const intl = useIntl();
 
     const setScoreboard = useScoreboard()[1];
 
@@ -179,6 +181,18 @@ export default function Mixed(): JSX.Element {
                                 readableAnswer = possibleAnswer.answer;
                             }
                         });
+                    } else if (data.type === "tictactoe") {
+                        switch (answer) {
+                            case "winner":
+                                readableAnswer = intl.formatMessage({ id: "general.winner" });
+                                break;
+                            case "loser":
+                                readableAnswer = intl.formatMessage({ id: "general.loser" });
+                                break;
+                            default:
+                                readableAnswer = intl.formatMessage({ id: "general.tie" });
+                                break;
+                        }
                     } else {
                         readableAnswer = plt.playerUidMap.get(answer) || "Forgot to Answer";
                     }
@@ -252,7 +266,7 @@ export default function Mixed(): JSX.Element {
             throw new Error("Trying to execute a host method as non Host");
         }
         submitAndReset();
-        const testMode = true;
+        const testMode = false;
         const development = process.env.NODE_ENV === "development" && testMode;
         const nextTaskType: Task = development ? tasks[3] : Util.selectRandom(tasks);
 
