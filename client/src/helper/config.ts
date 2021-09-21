@@ -35,5 +35,5 @@ const productionConfig = {
     appId: "1:922767796924:web:c224574e42c431d1bd7eb9",
     measurementId: "G-1G0EXE06XV",
 };
-export const config = process.env.REACT_APP_BETA_CHANNEL ? betaConfig : productionConfig;
+export const config = process.env.REACT_APP_BETA_CHANNEL === "true" ? betaConfig : productionConfig;
 export const firebaseApp = initializeApp(config);
