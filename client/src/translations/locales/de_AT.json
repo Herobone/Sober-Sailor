@@ -1,21 +1,12 @@
 {
     "sobersailor.name": "Sober Sailor - Des Online Sauf Spui",
     "account.actions.login": "O'meidn",
-    "account.actions.logout": "",
     "gamemodes.start": "",
-    "gamemodes.saufpoly": "",
     "general.winner": "",
-    "elements.dropdown.select": "",
     "settings.options.theme.calm": "",
-    "general.sips": "",
     "general.welcome": "",
-    "actions.host.nextquestion": "",
     "actions.host.kick": "",
-    "navigation.myprofile": "",
     "gamemodes.whowouldrather.description": "",
-    "elements.leaderboard.score": "",
     "elements.general.youare": "",
-    "elements.alerts.error": "",
-    "account.descriptors.signinneeded": "",
-    "account.descriptions.signout.success": ""
+    "account.descriptors.signinneeded": ""
 }
