@@ -27,7 +27,7 @@ jobs:
           GENERATE_SOURCEMAP: "false"
       - run: npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN" --project sober-sailor
         env:
-          FIREBASE_TOKEN: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR }}'
+          FIREBASE_TOKEN: '${{ secrets.FIREBASE_TOKEN }}'
   deploy_except_hosting:
     runs-on: ubuntu-latest
     permissions:
@@ -45,5 +45,5 @@ jobs:
       - run: npm run install-all
       - run: npx firebase-tools deploy --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor
         env:
-          FIREBASE_TOKEN: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOBER_SAILOR }}'
+          FIREBASE_TOKEN: '${{ secrets.FIREBASE_TOKEN }}'
 
