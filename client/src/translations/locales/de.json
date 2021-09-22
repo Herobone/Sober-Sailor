@@ -40,7 +40,6 @@
     "elements.truthordare.drink": "Ich trink lieber...",
     "gamemodes.describeinoneword": "Beschreib's in einem Wort",
     "gamemodes.mixed": "Gemischt",
-    "gamemodes.saufpoly": "Saufpoly",
     "gamemodes.start": "Stich in See!",
     "gamemodes.truthordare": "Wahrheit oder Pflicht",
     "gamemodes.whowouldrather": "Wer würde eher",
@@ -69,6 +68,5 @@
     "settings.options.theme.light": "Hell",
     "settings.options.theme.calm": "Freundlich",
     "settings.options.theme.dark": "Dunkel",
-    "sobersailor.name": "Sober Sailor",
-    "1": "Spiel"
+    "sobersailor.name": "Sober Sailor"
 }

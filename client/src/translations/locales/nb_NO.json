@@ -1,5 +1,4 @@
 {
-    "gamemodes.saufpoly": "Saufpoly",
     "gamemodes.truthordare": "Nødt eller sannhet",
     "general.shouldnothappen": "Ukjent feil. Dette skal ikke skje.",
     "gamemodes.wouldyourather.description": "Velg hva du heller ville gjort",
@@ -13,10 +12,6 @@
     "elements.tictactoe.spectator": "tilskuer",
     "elements.tasks.notloaded": "Oida, det ser at ingen oppgave er innlastet enda. Gjør det for å begynne spillet.",
     "elements.general.penalty": "Ta {penalty} slurker, hvis du ikke vil svare eller utføre oppgaven",
-    "": "Logg inn",
-    "1": "Spill",
-    "2": "Spiller",
-    "3": "Vert",
     "sobersailor.name": "Edru matros",
     "settings.options.theme.dark": "Mørk",
     "settings.options.theme.calm": "Rolig",
