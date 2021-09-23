@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - beta
+
+    paths:
+      - functions/**
+      - client/**
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
