@@ -17,11 +17,11 @@
  */
 
 import React, { ReactElement, useEffect } from "react";
-import { FormattedMessage } from "react-intl";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { GameManager } from "../../helper/gameManager";
 import { useLeaderboardStyles } from "../../style/LeaderboardStyle";
 import { useScoreboard } from "../../state/actions/scoreboardAction";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 
 type leaderboard = Map<string, number>;
 
@@ -73,19 +73,19 @@ export const Leaderboard = (): JSX.Element => {
     return (
         <TableContainer className={classes.sideArea} component={Paper}>
             <h1 className={classes.sideHeading}>
-                <FormattedMessage id="elements.leaderboard" />
+                <TranslatedMessage id="elements.leaderboard" />
             </h1>
             <Table className="leaderboard">
                 <TableHead>
                     <TableRow>
                         <TableCell className="leaderboard-header-rank" align="center">
-                            <FormattedMessage id="elements.general.rank" />
+                            <TranslatedMessage id="elements.general.rank" />
                         </TableCell>
                         <TableCell className="leaderboard-header-nickname">
-                            <FormattedMessage id="general.nickname" />
+                            <TranslatedMessage id="general.nickname" />
                         </TableCell>
                         <TableCell className="leaderboard-header-score" align="center">
-                            <FormattedMessage id="general.sips" />
+                            <TranslatedMessage id="general.sips" />
                         </TableCell>
                     </TableRow>
                 </TableHead>

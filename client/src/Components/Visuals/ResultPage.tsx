@@ -18,12 +18,12 @@
 
 import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper } from "@mui/material";
 import React, { ReactElement, useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
 import { Player } from "sobersailor-common/lib/models/Player";
 import { getAuth } from "firebase/auth";
 import { useDefaultStyles } from "../../style/Style";
 import { firebaseApp } from "../../helper/config";
 import { useResult } from "../../state/actions/resultActions";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { PenaltyScreen } from "./PenaltyScreen";
 
 export function ResultPage(): JSX.Element {
@@ -77,22 +77,22 @@ export function ResultPage(): JSX.Element {
             <div className={classes.resultTable}>
                 <TableContainer component={Paper} elevation={5}>
                     <h2 className={classes.sideHeading}>
-                        <FormattedMessage id="elements.results" />
+                        <TranslatedMessage id="elements.results" />
                     </h2>
                     <Table className="result-table">
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center" className="result-header-rank">
-                                    <FormattedMessage id="elements.general.rank" />
+                                    <TranslatedMessage id="elements.general.rank" />
                                 </TableCell>
                                 <TableCell className="result-header-nickname">
-                                    <FormattedMessage id="general.nickname" />
+                                    <TranslatedMessage id="general.nickname" />
                                 </TableCell>
                                 <TableCell className="result-header-their-answer">
-                                    <FormattedMessage id="general.answer" />
+                                    <TranslatedMessage id="general.answer" />
                                 </TableCell>
                                 <TableCell align="center" className="result-header-sips">
-                                    <FormattedMessage id="general.sips" />
+                                    <TranslatedMessage id="general.sips" />
                                 </TableCell>
                             </TableRow>
                         </TableHead>

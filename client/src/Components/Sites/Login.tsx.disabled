@@ -67,12 +67,12 @@ export function Login(): JSX.Element {
         <div className="login-page">
             <div>
                 <h1 className="w3-center">
-                    <FormattedMessage id="general.welcome" />
+                    <TranslatedMessage id="general.welcome" />
                     !
                     <br />
                 </h1>
                 <h3 className="w3-center">
-                    <FormattedMessage id="account.descriptors.signinneeded" />
+                    <TranslatedMessage id="account.descriptors.signinneeded" />
                 </h3>
                 <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
             </div>

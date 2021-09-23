@@ -17,7 +17,6 @@
  */
 
 import React from "react";
-import { FormattedMessage, useIntl } from "react-intl";
 import FormControl from "@mui/material/FormControl";
 import { Container, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
@@ -26,6 +25,8 @@ import Cookies from "universal-cookie";
 import { useDefaultStyles } from "../../style/Style";
 import { useLanguage, useThemeSetting } from "../../state/actions/settingActions";
 import { AvailableThemes } from "../../style/Theme";
+import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 
 type LanguageSetting = { code: string; name: string };
 type ThemeSetting = { code: AvailableThemes; name: string };
@@ -33,12 +34,13 @@ type ThemeSetting = { code: AvailableThemes; name: string };
 export function Settings(): JSX.Element {
     const classes = useDefaultStyles();
     const cookies: Cookies = new Cookies();
-    const intl = useIntl();
+    const intl = useDefaultTranslation();
     const [language, setLanguage] = useLanguage();
     const [theme, setTheme] = useThemeSetting();
     const options: LanguageSetting[] = [
         { code: "de", name: "Deutsch" },
         { code: "en", name: "English" },
+        { code: "no", name: "Norwegian Bokmål" },
     ];
 
     const themeOptions: ThemeSetting[] = [
@@ -50,18 +52,18 @@ export function Settings(): JSX.Element {
     return (
         <Container>
             <h1>
-                <FormattedMessage id="account.navigation.settings" />
+                <TranslatedMessage id="account.navigation.settings" />
             </h1>
             <hr />
             <br />
             <FormControl variant="outlined" className={classes.langSelect}>
                 <InputLabel htmlFor="outlined-age-native-simple">
-                    <FormattedMessage id="settings.labels.selectlanguage" />
+                    <TranslatedMessage id="settings.labels.selectlanguage" />
                 </InputLabel>
                 <br />
                 <Select
                     value={language}
-                    label={<FormattedMessage id="settings.labels.selectlanguage" />}
+                    label={<TranslatedMessage id="settings.labels.selectlanguage" />}
                     onChange={(event: SelectChangeEvent) => {
                         const val = event.target.value;
                         setLanguage(val);
@@ -77,12 +79,12 @@ export function Settings(): JSX.Element {
             <br />
             <FormControl variant="outlined" className={classes.langSelect}>
                 <InputLabel htmlFor="outlined-age-native-simple">
-                    <FormattedMessage id="settings.labels.selecttheme" />
+                    <TranslatedMessage id="settings.labels.selecttheme" />
                 </InputLabel>
                 <br />
                 <Select
                     value={theme}
-                    label={<FormattedMessage id="settings.labels.selecttheme" />}
+                    label={<TranslatedMessage id="settings.labels.selecttheme" />}
                     onChange={(event: SelectChangeEvent) => {
                         const val = event.target.value as AvailableThemes;
                         setTheme(val);
