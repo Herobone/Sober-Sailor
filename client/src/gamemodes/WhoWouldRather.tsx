@@ -17,13 +17,13 @@
  */
 
 import React, { ReactElement, useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
 import { Button, ButtonGroup } from "@mui/material";
 import { GameManager } from "../helper/gameManager";
 import { useAlert } from "../Components/Functional/AlertProvider";
 import { Alerts } from "../helper/AlertTypes";
 import { useTask } from "../state/actions/taskActions";
 import { usePollState } from "../state/actions/displayStateActions";
+import { TranslatedMessage } from "../translations/TranslatedMessage";
 
 export function WhoWouldRather(): JSX.Element {
     const [inputLock, setInputLock] = useState(true);
@@ -75,15 +75,15 @@ export function WhoWouldRather(): JSX.Element {
     return (
         <>
             <h2>
-                <FormattedMessage id="gamemodes.whowouldrather" /> {question}
+                <TranslatedMessage id="gamemodes.whowouldrather" /> {question}
             </h2>
             <p>
-                <FormattedMessage id="gamemodes.whowouldrather.description" />
+                <TranslatedMessage id="gamemodes.whowouldrather.description" />
             </p>
             {!inputLock && !answer && values}
             {answer && (
                 <div>
-                    <FormattedMessage
+                    <TranslatedMessage
                         id="elements.result.youranswer"
                         values={{
                             answer,

@@ -1,13 +1,3 @@
-import { Button, IconButton, TextField } from "@mui/material";
-import { FormattedMessage } from "react-intl";
-import InputAdornment from "@mui/material/InputAdornment";
-import { ArrowForwardIos } from "@mui/icons-material";
-import React from "react";
-import { useGameProviderStyle } from "../../style/GameProvider";
-import { GameManager } from "../../helper/gameManager";
-import { Alerts } from "../../helper/AlertTypes";
-import { useAlert } from "./AlertProvider";
-
 /** ***************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2021.
@@ -25,6 +15,15 @@ import { useAlert } from "./AlertProvider";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { Button, IconButton, TextField } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import { ArrowForwardIos } from "@mui/icons-material";
+import React from "react";
+import { useGameProviderStyle } from "../../style/GameProvider";
+import { GameManager } from "../../helper/gameManager";
+import { Alerts } from "../../helper/AlertTypes";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { useAlert } from "./AlertProvider";
 
 export function GameCreator(): JSX.Element {
     const { createAlert } = useAlert();
@@ -42,7 +41,7 @@ export function GameCreator(): JSX.Element {
     return (
         <>
             <h1 className={classes.h1}>
-                <FormattedMessage id="sobersailor.name" />
+                <TranslatedMessage id="sobersailor.name" />
             </h1>
             <Button
                 variant="contained"
@@ -51,7 +50,7 @@ export function GameCreator(): JSX.Element {
                 onClick={createGame}
                 size="large"
             >
-                <FormattedMessage id="actions.game.create" />
+                <TranslatedMessage id="actions.game.create" />
             </Button>
 
             <div className={classes.centeraligned}>

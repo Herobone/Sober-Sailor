@@ -17,7 +17,6 @@
  */
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
 import { DocumentSnapshot, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -59,6 +58,8 @@ import { useLanguage } from "../../../state/actions/settingActions";
 import { WouldYouRather } from "../../../gamemodes/wouldyourather/WouldYouRather";
 import { useAlert } from "../../Functional/AlertProvider";
 import { Alerts } from "../../../helper/AlertTypes";
+import { useDefaultTranslation } from "../../../translations/DefaultTranslationProvider";
+import { TranslatedMessage } from "../../../translations/TranslatedMessage";
 
 type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
@@ -86,7 +87,7 @@ export default function Mixed(): JSX.Element {
     const setPenalty = usePenalty()[1];
     const [answers, setAnswers] = useAnswers();
 
-    const intl = useIntl();
+    const intl = useDefaultTranslation();
 
     const setScoreboard = useScoreboard()[1];
 
@@ -308,7 +309,7 @@ export default function Mixed(): JSX.Element {
         }
     };
 
-    let taskComponent: ReactElement = <FormattedMessage id="elements.tasks.notloaded" />;
+    let taskComponent: ReactElement = <TranslatedMessage id="elements.tasks.notloaded" />;
 
     if (nextTask && taskType) {
         switch (taskType) {
@@ -342,12 +343,12 @@ export default function Mixed(): JSX.Element {
             <Grid container spacing={3} className={classes.mainGrid}>
                 <Grid item xs={10} md={6}>
                     <div className={classes.mainHeadingName}>
-                        <FormattedMessage id="sobersailor.name" />
+                        <TranslatedMessage id="sobersailor.name" />
                     </div>
                 </Grid>
                 {timer !== 0 && (
                     <Grid item xs={12}>
-                        <span className="countdown-inner">{timer}</span> <FormattedMessage id="general.seconds" />
+                        <span className="countdown-inner">{timer}</span> <TranslatedMessage id="general.seconds" />
                         <LinearProgress variant="determinate" value={(timer / maxTime) * 100} />
                     </Grid>
                 )}
@@ -367,13 +368,13 @@ export default function Mixed(): JSX.Element {
                             <Grid container spacing={1}>
                                 <Grid item xs={12}>
                                     <h2 className={classes.sideHeading}>
-                                        <FormattedMessage id="elements.admin.control" />
+                                        <TranslatedMessage id="elements.admin.control" />
                                     </h2>
                                 </Grid>
                                 {!pollState && (
                                     <Grid item xs className={classes.controlButton}>
                                         <Tooltip
-                                            title={<FormattedMessage id="actions.host.nextquestion" />}
+                                            title={<TranslatedMessage id="actions.host.nextquestion" />}
                                             TransitionComponent={Zoom}
                                             placement="bottom"
                                             arrow
@@ -391,7 +392,7 @@ export default function Mixed(): JSX.Element {
                                 )}
                                 <Grid item xs className={classes.controlButton}>
                                     <Tooltip
-                                        title={<FormattedMessage id="actions.host.transfer" />}
+                                        title={<TranslatedMessage id="actions.host.transfer" />}
                                         TransitionComponent={Zoom}
                                         placement="bottom"
                                         arrow
@@ -411,7 +412,7 @@ export default function Mixed(): JSX.Element {
                                 {!pollState && (
                                     <Grid item xs className={classes.controlButton}>
                                         <Tooltip
-                                            title={<FormattedMessage id="actions.host.startpoll" />}
+                                            title={<TranslatedMessage id="actions.host.startpoll" />}
                                             TransitionComponent={Zoom}
                                             placement="bottom"
                                             arrow
@@ -431,7 +432,7 @@ export default function Mixed(): JSX.Element {
                                 )}
                                 <Grid item xs className={classes.controlButton}>
                                     <Tooltip
-                                        title={<FormattedMessage id="actions.host.kick" />}
+                                        title={<TranslatedMessage id="actions.host.kick" />}
                                         TransitionComponent={Zoom}
                                         placement="bottom"
                                         arrow

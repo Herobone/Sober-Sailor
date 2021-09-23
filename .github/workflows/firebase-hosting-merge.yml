@@ -31,6 +31,7 @@ jobs:
       - run: npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN" --project sober-sailor
         env:
           FIREBASE_TOKEN: '${{ secrets.FIREBASE_TOKEN }}'
+
   deploy_except_hosting:
     runs-on: ubuntu-latest
     permissions:

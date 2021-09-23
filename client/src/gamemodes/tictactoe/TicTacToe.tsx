@@ -16,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { FormattedMessage } from "react-intl";
 import React, { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
@@ -27,6 +26,7 @@ import { GameManager } from "../../helper/gameManager";
 import { firebaseApp } from "../../helper/config";
 import { useIsHost } from "../../state/actions/gameActions";
 import { EvaluateGame, Serverless } from "../../helper/Serverless";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { TicUtils } from "./TicUtils";
 import { Board } from "./Board";
 
@@ -114,8 +114,8 @@ export function TicTacToe(): JSX.Element {
             {spectator && (
                 <div className="spectator-area">
                     <h2>
-                        <FormattedMessage id="elements.general.youare" />{" "}
-                        <FormattedMessage id="elements.tictactoe.spectator" />
+                        <TranslatedMessage id="elements.general.youare" />{" "}
+                        <TranslatedMessage id="elements.tictactoe.spectator" />
                     </h2>
                     <br />
                 </div>
@@ -123,7 +123,7 @@ export function TicTacToe(): JSX.Element {
             {!spectator && (
                 <div className="player-area">
                     <h2>
-                        <FormattedMessage id="elements.general.youare" /> {player}
+                        <TranslatedMessage id="elements.general.youare" /> {player}
                     </h2>
                     <br />
                 </div>

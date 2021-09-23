@@ -19,7 +19,7 @@ import { Paper, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useEffect, useRef, useState } from "react";
 import Util from "sobersailor-common/lib/Util";
-import { useIntl } from "react-intl";
+import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
 
 interface Props {
     penalty: number;
@@ -41,7 +41,7 @@ const useStyle = makeStyles((theme: Theme) => ({
 
 export function PenaltyScreen(props: Props): JSX.Element {
     const classes = useStyle();
-    const intl = useIntl();
+    const intl = useDefaultTranslation();
     const arc = 130;
     const drinkText = intl.formatMessage({ id: "elements.results.youdrink" });
     const drinkChars = drinkText.split("");
