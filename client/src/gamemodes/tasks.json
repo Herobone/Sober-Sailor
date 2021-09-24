@@ -2,7 +2,8 @@
   {
     "id": "whowouldrather",
     "lang": [
-      "de"
+      "de",
+      "en"
     ],
     "singleTarget": false,
     "multiAnswer": false
@@ -10,7 +11,8 @@
   {
     "id": "truthordare",
     "lang": [
-      "de"
+      "de",
+      "en"
     ],
     "singleTarget": true,
     "multiAnswer": false
@@ -26,7 +28,8 @@
   {
     "id": "wouldyourather",
     "lang": [
-      "de"
+      "de",
+      "en"
     ],
     "singleTarget": false,
     "multiAnswer": true
