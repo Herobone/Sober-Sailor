@@ -1,0 +1,25 @@
+name: Deploy functions to Beta channel on push
+on:
+  push:
+    branches:
+      - beta
+
+    paths:
+      - functions/**
+jobs:
+  deploy_except_hosting:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm run install-all
+      - run: npx firebase-tools deploy --only functions,firestore --token "$FIREBASE_TOKEN" --project sober-sailor-beta
+        env:
+          BETA_CHANNEL: "true"
+          FIREBASE_TOKEN: '${{ secrets.FIREBASE_TOKEN }}'

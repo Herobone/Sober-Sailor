@@ -18,10 +18,10 @@
 import React, { FunctionComponent, ReactElement, useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@mui/material";
 import { MultiAnswer } from "sobersailor-common/lib/models/Task";
-import { FormattedMessage } from "react-intl";
 import { useAnswers, useTask } from "../../state/actions/taskActions";
 import { GameManager } from "../../helper/gameManager";
 import { usePollState } from "../../state/actions/displayStateActions";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 
 export const WouldYouRather: FunctionComponent = () => {
     const [inputLock, setInputLock] = useState(true);
@@ -75,12 +75,12 @@ export const WouldYouRather: FunctionComponent = () => {
         <>
             <h2>{question}</h2>
             <p>
-                <FormattedMessage id="gamemodes.wouldyourather.description" />
+                <TranslatedMessage id="gamemodes.wouldyourather.description" />
             </p>
             {!inputLock && !answer && values}
             {answer && (
                 <div>
-                    <FormattedMessage
+                    <TranslatedMessage
                         id="elements.result.youranswer"
                         values={{
                             answer,

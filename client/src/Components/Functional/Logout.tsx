@@ -18,11 +18,11 @@
 
 import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router";
-import { FormattedMessage } from "react-intl";
 import Cookies from "universal-cookie";
 import { getAuth, signOut } from "firebase/auth";
 import { Alerts } from "../../helper/AlertTypes";
 import { firebaseApp } from "../../helper/config";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { useAlert } from "./AlertProvider";
 
 export function Logout(): JSX.Element {
@@ -31,7 +31,7 @@ export function Logout(): JSX.Element {
     useEffect((): void => {
         signOut(getAuth(firebaseApp))
             .then(() => {
-                createAlert(Alerts.SUCCESS, <FormattedMessage id="account.descriptions.signout.success" />);
+                createAlert(Alerts.SUCCESS, <TranslatedMessage id="account.descriptions.signout.success" />);
                 // Delete cookie that saves the global account.
                 const cookies = new Cookies();
                 cookies.remove("globalAccount");
@@ -39,7 +39,7 @@ export function Logout(): JSX.Element {
                 return Promise.resolve();
             })
             .catch(() => {
-                createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+                createAlert(Alerts.ERROR, <TranslatedMessage id="general.shouldnothappen" />);
             });
     });
 

@@ -22,11 +22,13 @@ import firebase from "firebase/compat/app";
 import { act as domAct } from "react-dom/test-utils";
 import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material";
 import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
+import { Provider } from "react-redux";
 import { LanguageContainer } from "../translations/LanguageContainer";
 import { config, firebaseApp } from "../helper/config";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
 import { CalmTheme } from "../style/Theme";
+import { store } from "../state/store";
 
 firebase.initializeApp(config);
 
@@ -51,14 +53,16 @@ test("Renders the Router and looks for Alerts", () => {
         render(
             <React.StrictMode>
                 <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={CalmTheme}>
-                        <CssBaseline />
-                        <AlertContext.Provider value={{ createAlert: alertFN }}>
-                            <LanguageContainer>
-                                <Routed />
-                            </LanguageContainer>
-                        </AlertContext.Provider>
-                    </ThemeProvider>
+                    <Provider store={store}>
+                        <ThemeProvider theme={CalmTheme}>
+                            <CssBaseline />
+                            <AlertContext.Provider value={{ createAlert: alertFN }}>
+                                <LanguageContainer>
+                                    <Routed />
+                                </LanguageContainer>
+                            </AlertContext.Provider>
+                        </ThemeProvider>
+                    </Provider>
                 </StyledEngineProvider>
             </React.StrictMode>,
         );
