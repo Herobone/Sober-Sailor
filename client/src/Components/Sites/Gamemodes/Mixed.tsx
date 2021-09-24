@@ -307,7 +307,7 @@ export default function Mixed(): JSX.Element {
             throw new Error("Trying to execute a host method as non Host");
         }
         submitAndReset();
-        const testMode = true;
+        const testMode = false;
         const development = process.env.NODE_ENV === "development" && testMode;
         const nextTaskType = development ? tasks[0] : Util.selectRandom(tasks);
 
