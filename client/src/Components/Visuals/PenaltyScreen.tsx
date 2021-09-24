@@ -44,11 +44,11 @@ export function PenaltyScreen(props: Props): JSX.Element {
     const intl = useDefaultTranslation();
     const arc = 130;
     const drinkText = intl.formatMessage({ id: "elements.results.youdrink" });
-    const drinkChars = drinkText.split("");
+    const drinkChars = [...drinkText];
     const drinkDegree = arc / drinkChars.length;
 
     const sipText = intl.formatMessage({ id: "general.sips" });
-    const sipChars = sipText.split("");
+    const sipChars = [...sipText];
 
     const rootRef = useRef<HTMLDivElement>(null);
 
