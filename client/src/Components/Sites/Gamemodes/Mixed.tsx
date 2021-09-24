@@ -17,7 +17,7 @@
  */
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentSnapshot, updateDoc } from "firebase/firestore";
+import { DocumentSnapshot, updateDoc, FirestoreError, Unsubscribe } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 import { Tooltip } from "@mui/material";
@@ -150,7 +150,7 @@ export default function Mixed(): JSX.Element {
     const gameEvent = (doc: DocumentSnapshot<Game>): void => {
         const data = doc.data();
         if (data) {
-            GameManager.updatePlayerLookupTable(doc);
+            GameManager.updatePlayerLookupTable(data);
             console.log("Received data from Firestore!");
 
             if (taskID !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
@@ -175,9 +175,25 @@ export default function Mixed(): JSX.Element {
         }
     };
 
+    const onSnapshotError = (error: FirestoreError): void => {
+        createAlert(Alerts.ERROR, "Problems updating from Firestore Database! Error code: " + error.code);
+    };
+
+    let unsubscribeFirestore: Unsubscribe;
+
     /// This code will get executed on loading of the page
-    useEffect((): void => {
-        GameManager.joinGame(gameEvent).then(GameManager.amIHost).then(setHost).catch(console.error);
+    useEffect(() => {
+        GameManager.joinGame(gameEvent, onSnapshotError)
+            .then((unsub) => {
+                unsubscribeFirestore = unsub;
+                return null;
+            })
+            .catch(console.error);
+
+        return function cleanup(): void {
+            if (unsubscribeFirestore) unsubscribeFirestore();
+            console.log("Unsubscribed!");
+        };
     }, []);
 
     useEffect(() => {
@@ -200,7 +216,7 @@ export default function Mixed(): JSX.Element {
             if (taskType === "wouldyourather") {
                 if (answers) {
                     answers.forEach((possibleAnswer) => {
-                        if (possibleAnswer.id === Number.parseInt(answer, 10)) {
+                        if (possibleAnswer.id === Number(answer)) {
                             readableAnswer = possibleAnswer.answer;
                         }
                     });
