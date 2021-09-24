@@ -37,10 +37,12 @@ import { Game } from "sobersailor-common/lib/models/Game";
 import { Player } from "sobersailor-common/lib/models/Player";
 import Util from "sobersailor-common/lib/Util";
 import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
+import { tasks } from "../gamemodes/tasks";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";
 import { Serverless } from "./Serverless";
 import { firebaseApp } from "./config";
+import { TaskUtils } from "./TaskUtils";
 
 export class GameManager {
     static getPlayerLookupTable(): Register | null {
@@ -163,6 +165,14 @@ export class GameManager {
         } catch (error) {
             console.warn("Problem writing to Database! Either offline or missing permissions!");
             console.error(error);
+        }
+
+        // Preload tasks in English
+        for (const task of tasks) {
+            if (task.id === "tictactoe") continue;
+            await (task.multiAnswer
+                ? TaskUtils.storeLocalFromGitMultiAnswer(task.id, "en")
+                : TaskUtils.storeToLocalFromGit(task.id, "en"));
         }
 
         onSnapshot(gameRef, gameEvent);
