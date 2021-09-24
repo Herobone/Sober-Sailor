@@ -21,10 +21,14 @@ import { IntlProvider } from "react-intl";
 import Cookies from "universal-cookie";
 import Util from "sobersailor-common/lib/Util";
 import { useLanguage } from "../state/actions/settingActions";
+import { DefaultTranslationProvider } from "./DefaultTranslationProvider";
 
 const messageLoader = {
     en: () => import("./locales/en.json"),
     de: () => import("./locales/de.json"),
+    no: () => import("./locales/nb_NO.json"),
+    fr: () => import("./locales/fr.json"),
+    it: () => import("./locales/it.json"),
     // de_AT: () => import("./locales/de_AT.json"),
 };
 
@@ -34,6 +38,7 @@ export function LanguageContainer(props: React.PropsWithChildren<unknown>): JSX.
     const [msg, setMsg] = useState<{ [key: string]: string }>();
     const [currentLanguage, setCurrentLanguage] = useState<string>();
     const [language, setGlobalLanguage] = useLanguage();
+    const [defaultMsg, setDefaultMsg] = useState<{ [key: string]: string }>();
 
     useEffect(() => {
         // Get language selection from cookie
@@ -50,6 +55,12 @@ export function LanguageContainer(props: React.PropsWithChildren<unknown>): JSX.
         }
 
         setGlobalLanguage(lang);
+        messageLoader
+            .en()
+            .then((messages: { default: { [key: string]: string } }) => {
+                return setDefaultMsg(messages.default);
+            })
+            .catch(console.error);
     }, []);
 
     // If language changed
@@ -78,9 +89,9 @@ export function LanguageContainer(props: React.PropsWithChildren<unknown>): JSX.
 
     return (
         <>
-            {msg && currentLanguage && (
+            {msg && currentLanguage && defaultMsg && (
                 <IntlProvider locale={language} messages={msg}>
-                    {props.children}
+                    <DefaultTranslationProvider messages={defaultMsg}>{props.children}</DefaultTranslationProvider>
                 </IntlProvider>
             )}
         </>

@@ -17,18 +17,18 @@
  */
 
 import React from "react";
-import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import { Button, Container } from "@mui/material";
 import RowingOutlined from "@mui/icons-material/RowingOutlined";
 import { useDefaultStyles } from "../../style/Style";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 
 export function Home(): JSX.Element {
     const classes = useDefaultStyles();
     return (
         <Container maxWidth="sm" className={classes.startPage}>
             <h1 className={classes.h1}>
-                <FormattedMessage id="sobersailor.name" />
+                <TranslatedMessage id="sobersailor.name" />
             </h1>
 
             <Button
@@ -41,7 +41,7 @@ export function Home(): JSX.Element {
                 fullWidth
             >
                 <RowingOutlined className={classes.gameSelectIcon} />
-                <FormattedMessage id="gamemodes.start" />
+                <TranslatedMessage id="gamemodes.start" />
             </Button>
         </Container>
     );

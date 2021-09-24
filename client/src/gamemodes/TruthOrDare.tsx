@@ -18,7 +18,6 @@
 
 import { ButtonGroup } from "@mui/material";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { FormattedMessage } from "react-intl";
 import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import { getAuth } from "firebase/auth";
@@ -30,6 +29,7 @@ import { useTruthOrDareStyles } from "../style/TruthOrDareStyle";
 import { RootState } from "../state/store";
 import { TaskState } from "../state/reducers/taskReducer";
 import { firebaseApp } from "../helper/config";
+import { TranslatedMessage } from "../translations/TranslatedMessage";
 
 type TruthOrDareHandles = {
     reset: () => void;
@@ -79,11 +79,11 @@ const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): 
         <div>
             <h2>{targetName}:</h2>
             <h2>
-                <FormattedMessage id="gamemodes.truthordare" />
+                <TranslatedMessage id="gamemodes.truthordare" />
             </h2>
             {question}
             <br />
-            <FormattedMessage
+            <TranslatedMessage
                 id="elements.general.penalty"
                 values={{
                     penalty,
@@ -93,17 +93,17 @@ const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): 
             {target === user.uid && answer === null && (
                 <ButtonGroup variant="contained" color="primary" className={classes.buttonGroup}>
                     <Button type="submit" onClick={() => submitAnswer(true)}>
-                        <FormattedMessage id="elements.truthordare.dare" />
+                        <TranslatedMessage id="elements.truthordare.dare" />
                     </Button>
                     <Button type="submit" onClick={() => submitAnswer(false)}>
-                        <FormattedMessage id="elements.truthordare.drink" />
+                        <TranslatedMessage id="elements.truthordare.drink" />
                     </Button>
                 </ButtonGroup>
             )}
             {answer !== null && (
                 <h2 className={classes.textAtTheBottom}>
-                    {!answer && <FormattedMessage id="elements.truthordare.drink" />}
-                    {answer && <FormattedMessage id="elements.truthordare.dare" />}
+                    {!answer && <TranslatedMessage id="elements.truthordare.drink" />}
+                    {answer && <TranslatedMessage id="elements.truthordare.dare" />}
                 </h2>
             )}
         </div>

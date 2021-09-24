@@ -5,14 +5,10 @@ name: Build and Lint functions
 
 on:
   push:
-    branches:
-      - main
     paths:
       - functions/**
       
   pull_request:
-    branches:
-      - main
     paths:
       - functions/**
 

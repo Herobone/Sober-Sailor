@@ -17,7 +17,6 @@
  */
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
 import { CircularProgress, Fab, IconButton, TextField } from "@mui/material";
 import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
 import Cookies from "universal-cookie";
@@ -26,6 +25,7 @@ import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useGameProviderStyle } from "../../style/GameProvider";
 import { firebaseApp } from "../../helper/config";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
 
@@ -84,12 +84,12 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
         const { currentUser } = auth;
 
         if (!currentUser) {
-            createAlert(Alerts.ERROR, <FormattedMessage id="general.shouldnothappen" />);
+            createAlert(Alerts.ERROR, <TranslatedMessage id="general.shouldnothappen" />);
             return;
         }
 
         if (name.length < 2) {
-            createAlert(Alerts.WARNING, <FormattedMessage id="account.actions.noname" />);
+            createAlert(Alerts.WARNING, <TranslatedMessage id="account.actions.noname" />);
             return;
         }
 
@@ -113,7 +113,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 className={classes.leaveGameFab}
             >
                 <ExitToAppRounded />
-                <FormattedMessage id="actions.leave" />
+                <TranslatedMessage id="actions.leave" />
             </Fab>
         </>
     );
@@ -121,7 +121,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     const prepareNameSetter = (): JSX.Element => (
         <>
             <h1 className={classes.h1_long}>
-                <FormattedMessage id="account.descriptors.finishsignup" />
+                <TranslatedMessage id="account.descriptors.finishsignup" />
             </h1>
             <br />
             <TextField

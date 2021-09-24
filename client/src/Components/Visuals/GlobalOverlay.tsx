@@ -6,9 +6,10 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CopyrightIcon from "@mui/icons-material/Copyright";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import React, { useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
 import { Settings } from "../Sites/Settings";
 import { useDefaultStyles } from "../../style/Style";
+import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
+import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { CookieNotice } from "./CookieNotice";
 
 /** ***************************
@@ -34,7 +35,7 @@ export function GlobalOverlay(): JSX.Element {
     const [settingsShown, setSettingsShown] = useState(false);
     const [speedDialShown, setSpeedDialShown] = useState(false);
     const [cookiesOpen, setCookiesOpen] = useState(false);
-    const intl = useIntl();
+    const intl = useDefaultTranslation();
 
     const openSettings = (): void => {
         setSettingsShown(true);
@@ -72,7 +73,7 @@ export function GlobalOverlay(): JSX.Element {
                 <SpeedDialAction
                     key="settings_speeddial"
                     icon={<SettingsRounded />}
-                    tooltipTitle={<FormattedMessage id="account.navigation.settings" />}
+                    tooltipTitle={<TranslatedMessage id="account.navigation.settings" />}
                     title={intl.formatMessage({ id: "account.navigation.settings" })}
                     tooltipOpen
                     onClick={openSettings}
@@ -80,7 +81,7 @@ export function GlobalOverlay(): JSX.Element {
                 <SpeedDialAction
                     key="info_speeddial"
                     icon={<InfoOutlinedIcon />}
-                    tooltipTitle={<FormattedMessage id="navigation.information" />}
+                    tooltipTitle={<TranslatedMessage id="navigation.information" />}
                     title={intl.formatMessage({ id: "navigation.information" })}
                     tooltipOpen
                     onClick={() => {
@@ -91,7 +92,7 @@ export function GlobalOverlay(): JSX.Element {
                 <SpeedDialAction
                     key="credits_speeddial"
                     icon={<CopyrightIcon />}
-                    tooltipTitle={<FormattedMessage id="navigation.credits" />}
+                    tooltipTitle={<TranslatedMessage id="navigation.credits" />}
                     title={intl.formatMessage({ id: "navigation.credits" })}
                     tooltipOpen
                     onClick={() => {
@@ -102,7 +103,7 @@ export function GlobalOverlay(): JSX.Element {
                 <SpeedDialAction
                     key="cookies_speeddial"
                     icon={<FastfoodIcon />}
-                    tooltipTitle={<FormattedMessage id="navigation.cookies" />}
+                    tooltipTitle={<TranslatedMessage id="navigation.cookies" />}
                     title={intl.formatMessage({ id: "navigation.cookies" })}
                     tooltipOpen
                     onClick={() => {
