@@ -15,8 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { IMultiAnswerQuestion, Question } from "sobersailor-common/lib/models/Task";
+import {
+    IMultiAnswerQuestion,
+    MultiAnswerTask,
+    MultiAnswerTaskExternal,
+    Question,
+    SingleAnswerTasksExternal,
+} from "sobersailor-common/lib/models/Task";
 import Util from "sobersailor-common/lib/Util";
+import { SingleAnswerTasks } from "../../../sobersailor-common/src/models/Task";
 
 export class TaskUtils {
     private static whereFrom =
@@ -34,33 +41,19 @@ export class TaskUtils {
      * @param lang  Language of the task
      * @returns Promise that contains all the Questions in the document
      */
-    private static storeToLocalFromGit(task: string, lang: string): Promise<Question[]> {
-        const whereFrom =
-            process.env.REACT_APP_BETA_CHANNEL || process.env.NODE_ENV === "development"
-                ? process.env.NODE_ENV === "development"
-                    ? (process.env.REACT_APP_CURRENT_BRANCH as string)
-                    : "beta"
-                : "main";
-        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${whereFrom}/tasks/${task}/${lang}.json`;
-        return new Promise<string[]>((resolve, reject) => {
-            fetch(url)
-                .then((response) => {
-                    if (response.status === 200) {
-                        return response.text();
-                    } else {
-                        throw new Error("Error during download");
-                    }
-                })
-                .then((json) => {
-                    localStorage.setItem(`${task}_${lang}`, json);
-                    resolve(JSON.parse(json));
-                    return Promise.resolve();
-                })
-                .catch((error) => {
-                    console.error("Error while downloading JSON from GitHub!", error);
-                    reject(error);
-                });
-        });
+    public static async storeToLocalFromGit(task: string, lang = "en"): Promise<SingleAnswerTasks> {
+        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
+
+        const response = await fetch(url);
+
+        if (response.status === 200) {
+            const json = await response.text();
+            localStorage.setItem(`${task}_${lang}`, json);
+            const parsed: SingleAnswerTasksExternal = JSON.parse(json);
+            return Util.indexedObjectToMap(parsed);
+        } else {
+            throw new Error("Error during download");
+        }
     }
 
     /**
@@ -70,10 +63,11 @@ export class TaskUtils {
      * @param task  Type of the task
      * @param lang  Language of the task
      */
-    public static getTasks(task: string, lang: string): Promise<Question[]> {
+    public static async getTasks(task: string, lang = "en"): Promise<SingleAnswerTasks> {
         const stored = localStorage.getItem(`${task}_${lang}`);
         if (stored) {
-            return JSON.parse(stored);
+            const parsed: SingleAnswerTasksExternal = JSON.parse(stored);
+            return Util.indexedObjectToMap(parsed);
         }
         return this.storeToLocalFromGit(task, lang);
     }
@@ -86,12 +80,17 @@ export class TaskUtils {
      * @param lang  Language of the task
      * @returns Promise that contains all the Questions in the document
      */
-    private static async storeLocalFromGitMultiAnswer(task: string, lang: string): Promise<IMultiAnswerQuestion[]> {
+    public static async storeLocalFromGitMultiAnswer(task: string, lang = "en"): Promise<MultiAnswerTask> {
         const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
-        const data = await response.text();
-        localStorage.setItem(`${task}_${lang}`, data);
-        return JSON.parse(data);
+        if (response.status === 200) {
+            const json = await response.text();
+            localStorage.setItem(`${task}_${lang}`, json);
+            const parsed: MultiAnswerTaskExternal = JSON.parse(json);
+            return Util.indexedObjectToMap(parsed);
+        } else {
+            throw new Error("Error during download");
+        }
     }
 
     /**
@@ -101,21 +100,68 @@ export class TaskUtils {
      * @param task  Type of the task
      * @param lang  Language of the task
      */
-    public static getTasksMultiAnswer(task: string, lang: string): Promise<IMultiAnswerQuestion[]> {
+    public static async getTasksMultiAnswer(task: string, lang = "en"): Promise<MultiAnswerTask> {
         const stored = localStorage.getItem(`${task}_${lang}`);
         if (stored) {
-            return JSON.parse(stored);
+            const parsed: MultiAnswerTaskExternal = JSON.parse(stored);
+            return Util.indexedObjectToMap(parsed);
         }
         return this.storeLocalFromGitMultiAnswer(task, lang);
     }
 
-    public static async getRandomTask(task: string, lang: string): Promise<Question> {
-        const tasks = await this.getTasks(task, lang);
-        return Util.selectRandom(tasks);
+    public static async getRandomTask(
+        task: string,
+        lang: string,
+    ): Promise<{ id: number; question: Question | undefined }> {
+        let tasks: SingleAnswerTasks;
+        try {
+            tasks = await this.getTasks(task, lang);
+        } catch {
+            tasks = await this.getTasks(task);
+        }
+        const id = Util.random(0, tasks.size);
+        return { id, question: tasks.get(id) };
     }
 
-    public static async getRandomMultiAnswerTask(task: string, lang: string): Promise<IMultiAnswerQuestion> {
-        const tasks = await this.getTasksMultiAnswer(task, lang);
-        return Util.selectRandom(tasks);
+    public static async getSpecificSingleAnswerTask(
+        type: string,
+        id: number,
+        lang: string,
+    ): Promise<Question | undefined> {
+        let tasks: SingleAnswerTasks;
+        try {
+            tasks = await this.getTasks(type, lang);
+        } catch {
+            tasks = await this.getTasks(type);
+        }
+        return tasks.get(id);
+    }
+
+    public static async getRandomMultiAnswerTask(
+        task: string,
+        lang: string,
+    ): Promise<{ id: number; question: IMultiAnswerQuestion | undefined }> {
+        let tasks: MultiAnswerTask;
+        try {
+            tasks = await this.getTasksMultiAnswer(task, lang);
+        } catch {
+            tasks = await this.getTasksMultiAnswer(task);
+        }
+        const id = Util.random(0, tasks.size);
+        return { id, question: tasks.get(id) };
+    }
+
+    public static async getSpecificMultiAnswerTask(
+        type: string,
+        id: number,
+        lang: string,
+    ): Promise<IMultiAnswerQuestion | undefined> {
+        let tasks: MultiAnswerTask;
+        try {
+            tasks = await this.getTasksMultiAnswer(type, lang);
+        } catch {
+            tasks = await this.getTasksMultiAnswer(type);
+        }
+        return tasks.get(id);
     }
 }

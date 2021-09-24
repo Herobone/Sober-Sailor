@@ -41,7 +41,7 @@ import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Leaderboard } from "../../Visuals/Leaderboard";
 import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
-import tasks from "../../../gamemodes/tasks.json";
+import { tasks } from "../../../gamemodes/tasks";
 import { TaskUtils } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
 import { ResultPage } from "../../Visuals/ResultPage";
@@ -49,7 +49,7 @@ import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
-import { useAnswers, usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
+import { useAnswers, usePenalty, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
 import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
@@ -78,7 +78,8 @@ export default function Mixed(): JSX.Element {
 
     const [taskType, setTaskType] = useTaskType();
     const [target, setTarget] = useTarget();
-    const [nextTask, setNextTask] = useTask();
+    const [taskQuestion, setTaskQuestion] = useTask();
+    const [taskID, setTaskID] = useTaskID();
     const [isHost, setHost] = useIsHost();
     const [pollState, setPollState] = usePollState();
     const [evalState, setEvalState] = useEvalState();
@@ -151,18 +152,12 @@ export default function Mixed(): JSX.Element {
             GameManager.updatePlayerLookupTable(doc);
             console.log("Received data from Firestore!");
 
-            if (
-                nextTask !== data.currentTask ||
-                taskType !== data.type ||
-                target !== data.taskTarget ||
-                answers !== data.answers
-            ) {
+            if (taskID !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
                 submitAndReset();
-                setNextTask(data.currentTask ? data.currentTask : data.type || undefined);
+                setTaskID(data.currentTask || undefined);
                 setTaskType(data.type || undefined);
                 setTarget(data.taskTarget || undefined);
                 setPenalty(data.penalty);
-                setAnswers(data.answers || undefined);
             }
 
             setPollState(data.pollState);
@@ -235,12 +230,39 @@ export default function Mixed(): JSX.Element {
         setResult(resultData);
     }, [evalState, evaluationScoreboard]);
 
+    const processNewMultiAnswerTask = async (): Promise<void> => {
+        if (!taskID || !taskType) return;
+        const task = await TaskUtils.getSpecificMultiAnswerTask(taskType, taskID, lang);
+        setTaskQuestion(task?.question);
+        setAnswers(task?.answers);
+    };
+
+    const processNewTask = async (): Promise<void> => {
+        if (!taskID || !taskType) return;
+        switch (taskType) {
+            case "whowouldrather":
+            case "truthordare":
+                setTaskQuestion(await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang));
+                break;
+            case "tictactoe":
+                break;
+            case "wouldyourather":
+                await processNewMultiAnswerTask();
+                break;
+            default:
+                createAlert(Alerts.ERROR, "Unknown Task type " + taskType);
+                break;
+        }
+    };
+
+    useEffect(() => {
+        processNewTask().catch(console.error);
+    }, [taskID, taskType]);
+
     const setMultiAnswerTask = async (type: Task): Promise<void> => {
-        const taskLang = lang in type.lang ? lang : type.lang[0];
-        const task = await TaskUtils.getRandomMultiAnswerTask(type.id, taskLang);
+        const task = await TaskUtils.getRandomMultiAnswerTask(type.id, lang);
         await updateDoc(GameManager.getGame(), {
-            currentTask: task.question,
-            answers: task.answers,
+            currentTask: task.id,
             type: type.id,
             evalState: false,
             pollState: false,
@@ -254,7 +276,6 @@ export default function Mixed(): JSX.Element {
         if (type.id === "tictactoe") {
             await updateDoc(GameManager.getGame(), {
                 currentTask: null,
-                answers: null,
                 type: type.id,
                 evalState: false,
                 pollState: false,
@@ -265,14 +286,12 @@ export default function Mixed(): JSX.Element {
                 TicUtils.registerTicTacToe(newTarget).catch(console.error);
             }
         } else {
-            const taskLang = lang in type.lang ? lang : type.lang[0];
             const localTarget = newTarget ? newTarget[0] : null;
 
-            const task = await TaskUtils.getRandomTask(type.id, taskLang);
-            setNextTask(task);
+            const task = await TaskUtils.getRandomTask(type.id, lang);
+            setTaskQuestion(task.question);
             await updateDoc(GameManager.getGame(), {
-                currentTask: task,
-                answers: null,
+                currentTask: task.id,
                 type: type.id,
                 evalState: false,
                 pollState: false,
@@ -289,7 +308,7 @@ export default function Mixed(): JSX.Element {
         submitAndReset();
         const testMode = true;
         const development = process.env.NODE_ENV === "development" && testMode;
-        const nextTaskType: Task = development ? tasks[0] : Util.selectRandom(tasks);
+        const nextTaskType = development ? tasks[0] : Util.selectRandom(tasks);
 
         if (nextTaskType.multiAnswer) {
             setMultiAnswerTask(nextTaskType).catch(console.error);
@@ -310,7 +329,7 @@ export default function Mixed(): JSX.Element {
 
     let taskComponent: ReactElement = <FormattedMessage id="elements.tasks.notloaded" />;
 
-    if (nextTask && taskType) {
+    if (taskQuestion && taskType) {
         switch (taskType) {
             case "whowouldrather": {
                 taskComponent = <WhoWouldRather />;

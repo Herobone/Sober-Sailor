@@ -50,10 +50,22 @@ export const setTarget = (target: string | undefined): StringAction => ({ type: 
  */
 export const setPenalty = (penalty: number): NumberAction => ({ type: "SET_PENALTY", payload: penalty });
 
+/**
+ * Set the current task id
+ * @param id  The task id to set
+ */
+export const setTaskID = (id: number | undefined): UncertainNumberAction => ({ type: "SET_TASK_ID", payload: id });
+
 export type NumberAction = {
     type: "SET_PENALTY";
     payload: number;
 };
+
+export type UncertainNumberAction = {
+    type: "SET_TASK_ID";
+    payload: number | undefined;
+};
+
 /**
  * Set the current Tasks answers
  * @param answers    The tasks answers
@@ -104,6 +116,16 @@ export const usePenalty = (): [number, (content: number) => void] => {
 
     const set = (content: number): void => {
         dispatch(setPenalty(content));
+    };
+    return [get, set];
+};
+
+export const useTaskID = (): [number | undefined, (content: number | undefined) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["taskID"]>((state) => state.task.taskID);
+
+    const set = (content: number | undefined): void => {
+        dispatch(setTaskID(content));
     };
     return [get, set];
 };

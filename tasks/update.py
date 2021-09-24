@@ -2,7 +2,7 @@ import json
 
 tasks = {}
 
-file = "./whowouldrather/de.json"
+file = "./wouldyourather/en.json"
 
 with open(file) as json_file:
     data = json.load(json_file)

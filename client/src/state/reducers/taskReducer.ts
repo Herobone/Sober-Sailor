@@ -17,10 +17,11 @@
  */
 
 import { MultiAnswer } from "sobersailor-common/lib/models/Task";
-import { AnswerAction, NumberAction, StringAction } from "../actions/taskActions";
+import { AnswerAction, NumberAction, StringAction, UncertainNumberAction } from "../actions/taskActions";
 
 export interface TaskState {
     task: string | undefined;
+    taskID: number | undefined;
     type: string | undefined;
     target: string | undefined;
     penalty: number;
@@ -29,6 +30,7 @@ export interface TaskState {
 
 const initialState: TaskState = {
     task: undefined,
+    taskID: undefined,
     type: undefined,
     target: undefined,
     penalty: 0,
@@ -37,7 +39,7 @@ const initialState: TaskState = {
 
 export const taskReducer = (
     state: TaskState = initialState,
-    action: StringAction | NumberAction | AnswerAction,
+    action: StringAction | NumberAction | AnswerAction | UncertainNumberAction,
 ): TaskState => {
     switch (action.type) {
         case "SET_TASK":
@@ -50,6 +52,8 @@ export const taskReducer = (
             return { ...state, penalty: action.payload };
         case "SET_ANSWERS":
             return { ...state, answers: action.payload };
+        case "SET_TASK_ID":
+            return { ...state, taskID: action.payload };
         default:
             return state;
     }
