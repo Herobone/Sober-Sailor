@@ -25,7 +25,6 @@ export const gameConverter = {
   toFirestore(game: Game): admin.firestore.DocumentData {
     return {
       currentTask: game.currentTask,
-      answers: game.answers,
       type: game.type,
       taskTarget: game.taskTarget,
       penalty: game.penalty,
@@ -49,7 +48,6 @@ export const gameConverter = {
     return new Game(
       snapshot.id,
       data.currentTask,
-      data.answers,
       data.type,
       data.taskTarget,
       data.penalty,

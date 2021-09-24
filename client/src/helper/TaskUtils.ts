@@ -20,10 +20,10 @@ import {
     MultiAnswerTask,
     MultiAnswerTaskExternal,
     Question,
+    SingleAnswerTasks,
     SingleAnswerTasksExternal,
 } from "sobersailor-common/lib/models/Task";
 import Util from "sobersailor-common/lib/Util";
-import { SingleAnswerTasks } from "../../../sobersailor-common/src/models/Task";
 
 export class TaskUtils {
     private static whereFrom =
