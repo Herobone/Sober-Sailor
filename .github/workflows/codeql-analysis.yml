@@ -15,6 +15,10 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
 
+    if: github.actor!= 'depbot' &&
+      github.actor != 'dependabot[bot]' &&
+      github.actor != 'weblate'
+
     strategy:
       fail-fast: false
       matrix:
