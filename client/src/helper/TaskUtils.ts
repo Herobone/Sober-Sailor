@@ -19,6 +19,13 @@ import { IMultiAnswerQuestion, Question } from "sobersailor-common/lib/models/Ta
 import Util from "sobersailor-common/lib/Util";
 
 export class TaskUtils {
+    private static whereFrom =
+        process.env.REACT_APP_BETA_CHANNEL || process.env.NODE_ENV === "development"
+            ? process.env.NODE_ENV === "development"
+                ? (process.env.REACT_APP_CURRENT_BRANCH as string)
+                : "beta"
+            : "main";
+
     /**
      * Fetches the JSON from GitHub and stores it in the browser in localStorage.
      *
@@ -28,12 +35,22 @@ export class TaskUtils {
      * @returns Promise that contains all the Questions in the document
      */
     private static storeToLocalFromGit(task: string, lang: string): Promise<Question[]> {
-        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
-            process.env.REACT_APP_BETA_CHANNEL ? "beta" : "main"
-        }/tasks/${task}/${lang}.json`;
+        const whereFrom =
+            process.env.REACT_APP_BETA_CHANNEL || process.env.NODE_ENV === "development"
+                ? process.env.NODE_ENV === "development"
+                    ? (process.env.REACT_APP_CURRENT_BRANCH as string)
+                    : "beta"
+                : "main";
+        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${whereFrom}/tasks/${task}/${lang}.json`;
         return new Promise<string[]>((resolve, reject) => {
             fetch(url)
-                .then((response) => response.text())
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.text();
+                    } else {
+                        throw new Error("Error during download");
+                    }
+                })
                 .then((json) => {
                     localStorage.setItem(`${task}_${lang}`, json);
                     resolve(JSON.parse(json));
@@ -70,9 +87,7 @@ export class TaskUtils {
      * @returns Promise that contains all the Questions in the document
      */
     private static async storeLocalFromGitMultiAnswer(task: string, lang: string): Promise<IMultiAnswerQuestion[]> {
-        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${
-            process.env.REACT_APP_BETA_CHANNEL || process.env.NODE_ENV === "development" ? "beta" : "main"
-        }/tasks/${task}/${lang}.json`;
+        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
         const data = await response.text();
         localStorage.setItem(`${task}_${lang}`, data);

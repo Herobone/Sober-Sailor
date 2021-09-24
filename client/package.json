@@ -45,7 +45,7 @@
     "universal-cookie": "^4.0.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "export REACT_APP_CURRENT_BRANCH=$(git branch --show-current) && react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-scripts test",
     "lint": "eslint '*/**/*.{js,ts,tsx}'",
