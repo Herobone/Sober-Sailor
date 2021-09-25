@@ -18,7 +18,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import { DocumentSnapshot, onSnapshot, Unsubscribe } from "firebase/firestore";
+import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
 import { TicOptions, TicTacToe as TicTacToeData } from "sobersailor-common/lib/models/TicTacToe";
 import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
 import Grid from "@mui/material/Grid";
@@ -137,7 +137,7 @@ export function TicTacToe(): JSX.Element {
                         <br />
                     </Grid>
                 )}
-                <Grid item xs={12} className={style.game}>
+                <Grid item xs={12} sm={9} className={style.game}>
                     {!winner && (
                         <div className={style.boardRow}>
                             <Board squares={squares} onClick={(i: number) => handleClick(i)} />
@@ -145,7 +145,7 @@ export function TicTacToe(): JSX.Element {
                     )}
                 </Grid>
 
-                <Grid item xs={12} className={style.gameInfo}>
+                <Grid item xs={3} className={style.gameInfo}>
                     <div>Next player: {isXNext ? "X" : "O"}</div>
                     <div>Step: {stepNumber}</div>
                 </Grid>

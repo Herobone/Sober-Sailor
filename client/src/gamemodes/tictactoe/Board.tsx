@@ -1,4 +1,4 @@
-/** ***************************
+/*****************************
  * Sober Sailor - The online Party Game
  * Copyright (c) 2020.
  *
@@ -34,21 +34,21 @@ export function Board(props: Props): JSX.Element {
 
     return (
         <Grid container>
-            <Grid container item>
+            <div className={style.boardRow}>
                 {renderSquare(0)}
                 {renderSquare(1)}
                 {renderSquare(2)}
-            </Grid>
-            <Grid container item xs={12}>
+            </div>
+            <div className={style.boardRow}>
                 {renderSquare(3)}
                 {renderSquare(4)}
                 {renderSquare(5)}
-            </Grid>
-            <Grid container item>
+            </div>
+            <div className={style.boardRow}>
                 {renderSquare(6)}
                 {renderSquare(7)}
                 {renderSquare(8)}
-            </Grid>
+            </div>
         </Grid>
     );
 }
