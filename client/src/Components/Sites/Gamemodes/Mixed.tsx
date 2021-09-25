@@ -155,11 +155,12 @@ export default function Mixed(): JSX.Element {
 
             if (taskID !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
                 submitAndReset();
-                setTaskID(data.currentTask || undefined);
-                setTaskType(data.type || undefined);
-                setTarget(data.taskTarget || undefined);
-                setPenalty(data.penalty);
             }
+
+            setTaskID(data.currentTask || undefined);
+            setTaskType(data.type || undefined);
+            setTarget(data.taskTarget || undefined);
+            setPenalty(data.penalty);
 
             setPollState(data.pollState);
 

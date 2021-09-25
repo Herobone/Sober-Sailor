@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Button, Grid } from "@mui/material";
 import React from "react";
 import { TicOptions } from "sobersailor-common/lib/models/TicTacToe";
 import style from "../../css/TicTacToe.module.scss";
@@ -27,8 +28,10 @@ interface Props {
 
 export function Square(props: Props): JSX.Element {
     return (
-        <button className={style.square} onClick={props.onClick} type="button">
-            {props.value}
-        </button>
+        <Grid item xs={3} height="5vh" width="5vh">
+            <button className={style.square} onClick={props.onClick}>
+                {props.value}
+            </button>
+        </Grid>
     );
 }

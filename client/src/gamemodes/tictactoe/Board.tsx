@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Grid } from "@mui/material";
 import React, { ReactElement } from "react";
 import { TicOptions } from "sobersailor-common/lib/models/TicTacToe";
 import style from "../../css/TicTacToe.module.scss";
@@ -32,22 +33,22 @@ export function Board(props: Props): JSX.Element {
     };
 
     return (
-        <div>
-            <div className={style.boardRow}>
+        <Grid container>
+            <Grid container item>
                 {renderSquare(0)}
                 {renderSquare(1)}
                 {renderSquare(2)}
-            </div>
-            <div className={style.boardRow}>
+            </Grid>
+            <Grid container item xs={12}>
                 {renderSquare(3)}
                 {renderSquare(4)}
                 {renderSquare(5)}
-            </div>
-            <div className={style.boardRow}>
+            </Grid>
+            <Grid container item>
                 {renderSquare(6)}
                 {renderSquare(7)}
                 {renderSquare(8)}
-            </div>
-        </div>
+            </Grid>
+        </Grid>
     );
 }

@@ -70,11 +70,11 @@ const submitChanges = async (
 
 const evaluateTTT = async (gameData: Game): Promise<void> => {
   const evaluationScoreboard = EvaluationScoreboard.init();
-  const tttGameDoc = await FirestoreUtil.getGame(gameData.gameID)
+  const tttGameRef = FirestoreUtil.getGame(gameData.gameID)
     .collection("minigames")
     .doc("tictactoe")
-    .withConverter(ticTacToeConverter)
-    .get();
+    .withConverter(ticTacToeConverter);
+  const tttGameDoc = await tttGameRef.get();
   const tttGameData = tttGameDoc.data();
   if (!tttGameData) {
     throw new functions.https.HttpsError(
@@ -113,6 +113,15 @@ const evaluateTTT = async (gameData: Game): Promise<void> => {
     gameData.scoreboard.updateScore(tttGameData.playerO, penalty);
   }
   await submitChanges(gameData, evaluationScoreboard);
+  /* await tttGameRef.set(
+    new TicTacToe(
+      Array.from<TicOptions>({ length: 9 }).fill(null),
+      0,
+      true,
+      tttGameData.playerX,
+      tttGameData.playerO
+    )
+  ); */
 };
 
 export const evaluateGameHandler = async (
