@@ -79,7 +79,7 @@ export default function Mixed(): JSX.Element {
 
     const [taskType, setTaskType] = useTaskType();
     const [target, setTarget] = useTarget();
-    const [taskQuestion, setTaskQuestion] = useTask();
+    const setTaskQuestion = useTask()[1];
     const [taskID, setTaskID] = useTaskID();
     const [isHost, setHost] = useIsHost();
     const [pollState, setPollState] = usePollState();
@@ -345,34 +345,37 @@ export default function Mixed(): JSX.Element {
         }
     };
 
-    let taskComponent: ReactElement = <TranslatedMessage id="elements.tasks.notloaded" />;
+    const [taskComponent, setTaskComponent] = useState<ReactElement>(
+        <TranslatedMessage id="elements.tasks.notloaded" />,
+    );
 
-    if (taskQuestion && taskType) {
+    useEffect(() => {
+        if (!taskType) return;
         switch (taskType) {
             case "whowouldrather": {
-                taskComponent = <WhoWouldRather />;
+                setTaskComponent(<WhoWouldRather />);
                 break;
             }
             case "truthordare": {
                 if (target) {
-                    taskComponent = <TruthOrDare ref={truthOrDareRef} />;
+                    setTaskComponent(<TruthOrDare ref={truthOrDareRef} />);
                 }
                 break;
             }
             case "tictactoe": {
                 console.log("TicTacToe");
-                taskComponent = <TicTacToe />;
+                setTaskComponent(<TicTacToe />);
                 break;
             }
             case "wouldyourather": {
-                taskComponent = <WouldYouRather />;
+                setTaskComponent(<WouldYouRather />);
                 break;
             }
             default: {
                 console.error("Unexpected task type!");
             }
         }
-    }
+    }, [taskID, taskType]);
 
     return (
         <>
