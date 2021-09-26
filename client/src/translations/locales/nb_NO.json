@@ -68,5 +68,6 @@
     "account.actions.noname": "Angi et gyldig navn!",
     "account.actions.logout": "Logg ut",
     "account.actions.login.withGoogle": "Logg inn med Google",
-    "account.actions.login": "Logg inn"
+    "account.actions.login": "Logg inn",
+    "general.player": "Spiller"
 }
