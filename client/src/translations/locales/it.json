@@ -68,5 +68,6 @@
     "general.loser": "Perdente",
     "general.winner": "Vincitore",
     "general.answer.forgot": "Ha dimenticato di rispondere",
-    "general.add": "Aggiungi"
+    "general.add": "Aggiungi",
+    "general.player": "Giocatore"
 }
