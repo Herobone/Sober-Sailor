@@ -68,5 +68,6 @@
     "account.descriptions.signout.success": "Déconnexion réussie !",
     "account.actions.logout": "Se déconnecter",
     "account.actions.login.withGoogle": "Se connecter avec Google",
-    "account.actions.login": "Se connecter"
+    "account.actions.login": "Se connecter",
+    "general.player": "Joueur"
 }
