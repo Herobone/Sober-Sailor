@@ -17,7 +17,7 @@
     "@mui/lab": "^5.0.0-alpha.47",
     "@mui/material": "^5.0.0",
     "@mui/styles": "^5.0.0",
-    "@mui/system": "^5.0.0",
+    "@mui/system": "^5.0.1",
     "@mui/types": "^7.0.0",
     "@types/react-redux": "^7.1.18",
     "ast-utils": "^1.0.0",
