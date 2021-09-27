@@ -16,21 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Dough } from "../../helper/Dough";
+import { useCookiesOpen } from "../../state/actions/settingActions";
 
-export function CookieNotice(props: { reopen: boolean }): JSX.Element {
-    const [cookieNotice, setCookieNotice] = useState(false);
+export function CookieNotice(): JSX.Element {
+    const [cookieNotice, setCookieNotice] = useCookiesOpen();
 
     useEffect(() => {
         setCookieNotice(!Dough.isDoughPresent());
     }, []);
 
     useEffect(() => {
-        setCookieNotice(props.reopen);
-    }, [props.reopen]);
+        console.info("Cookies Dialog is now", cookieNotice);
+    }, [cookieNotice]);
 
     return (
         <Dialog

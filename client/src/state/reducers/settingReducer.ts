@@ -15,25 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { SettingAction } from "../actions/settingActions";
+import { BooleanAction, SettingAction } from "../actions/settingActions";
 import { AvailableThemes } from "../../style/Theme";
 
 export interface SettingState {
     language: string;
     theme: AvailableThemes;
+    cookiesOpen: boolean;
 }
 
 const initialState: SettingState = {
     language: "en",
     theme: "calm",
+    cookiesOpen: false,
 };
 
-export const settingReducer = (state: SettingState = initialState, action: SettingAction): SettingState => {
+export const settingReducer = (
+    state: SettingState = initialState,
+    action: SettingAction | BooleanAction,
+): SettingState => {
     switch (action.type) {
         case "SET_LANGUAGE":
             return { ...state, language: action.payload };
         case "SET_THEME":
             return { ...state, theme: action.payload as AvailableThemes };
+        case "SET_COOKIES_OPEN":
+            return { ...state, cookiesOpen: action.payload };
         default:
             return state;
     }

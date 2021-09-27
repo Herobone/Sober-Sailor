@@ -10,6 +10,7 @@ import { Settings } from "../Sites/Settings";
 import { useDefaultStyles } from "../../style/Style";
 import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { useCookiesOpen } from "../../state/actions/settingActions";
 import { CookieNotice } from "./CookieNotice";
 
 /** ***************************
@@ -34,7 +35,7 @@ export function GlobalOverlay(): JSX.Element {
     const classes = useDefaultStyles();
     const [settingsShown, setSettingsShown] = useState(false);
     const [speedDialShown, setSpeedDialShown] = useState(false);
-    const [cookiesOpen, setCookiesOpen] = useState(false);
+    const setCookiesOpen = useCookiesOpen()[1];
     const intl = useDefaultTranslation();
 
     const openSettings = (): void => {
@@ -49,7 +50,7 @@ export function GlobalOverlay(): JSX.Element {
 
     return (
         <>
-            <CookieNotice reopen={cookiesOpen} />
+            <CookieNotice />
             <Modal open={settingsShown} onClose={closeSettings} closeAfterTransition>
                 <Fade in={settingsShown}>
                     <Paper elevation={5} className={classes.settingsModal}>

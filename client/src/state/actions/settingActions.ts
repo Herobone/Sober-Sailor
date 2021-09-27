@@ -26,6 +26,11 @@ export type SettingAction = {
     payload: string;
 };
 
+export type BooleanAction = {
+    type: "SET_COOKIES_OPEN";
+    payload: boolean;
+};
+
 const setTheme = (theme: string): SettingAction => ({ type: "SET_THEME", payload: theme });
 
 export const useThemeSetting = (): [AvailableThemes, (content: AvailableThemes) => void] => {
@@ -34,6 +39,18 @@ export const useThemeSetting = (): [AvailableThemes, (content: AvailableThemes) 
 
     const set = (content: AvailableThemes): void => {
         dispatch(setTheme(content));
+    };
+    return [get, set];
+};
+
+const setCookiesOpen = (open: boolean): BooleanAction => ({ type: "SET_COOKIES_OPEN", payload: open });
+
+export const useCookiesOpen = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, SettingState["cookiesOpen"]>((state) => state.settings.cookiesOpen);
+
+    const set = (content: boolean): void => {
+        dispatch(setCookiesOpen(content));
     };
     return [get, set];
 };
