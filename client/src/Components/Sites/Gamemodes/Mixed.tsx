@@ -92,6 +92,9 @@ export default function Mixed(): JSX.Element {
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
+    const [taskComponent, setTaskComponent] = useState<ReactElement>(
+        <TranslatedMessage id="elements.tasks.notloaded" />,
+    );
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
@@ -135,9 +138,7 @@ export default function Mixed(): JSX.Element {
     }, [pollState]);
 
     useEffect(() => {
-        if (!evalState) {
-            setResult(null);
-        }
+        if (!evalState) setResult(null);
     }, [evalState]);
 
     const gameEvent = (doc: DocumentSnapshot<Game>): void => {
@@ -173,10 +174,9 @@ export default function Mixed(): JSX.Element {
         createAlert(Alerts.ERROR, "Problems updating from Firestore Database! Error code: " + error.code);
     };
 
-    let unsubscribeFirestore: Unsubscribe;
-
     /// This code will get executed on loading of the page
     useEffect(() => {
+        let unsubscribeFirestore: Unsubscribe;
         GameManager.joinGame(gameEvent, onSnapshotError)
             .then((unsub) => {
                 unsubscribeFirestore = unsub;
@@ -191,18 +191,15 @@ export default function Mixed(): JSX.Element {
     }, []);
 
     useEffect(() => {
-        if (!evalState) {
-            return;
-        }
+        if (!evalState) return;
+
         const resultData: Player[] = [];
         const plt = GameManager.getPlayerLookupTable();
         if (!plt) {
             throw new Error("PLT was missing. Why is it missing?");
         }
 
-        if (!evaluationScoreboard) {
-            return;
-        }
+        if (!evaluationScoreboard) return;
 
         evaluationScoreboard.board.forEach((score: number, uid: string) => {
             const answer = evaluationScoreboard.answers.get(uid) || "none";
@@ -249,16 +246,26 @@ export default function Mixed(): JSX.Element {
     };
 
     const processNewTask = async (): Promise<void> => {
-        if (!taskID || !taskType) return;
+        if (!taskType) {
+            console.warn("New task processed but no type");
+            return;
+        }
         switch (taskType) {
             case "whowouldrather":
+                if (taskID) setTaskQuestion(await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang));
+                setTaskComponent(<WhoWouldRather />);
+                break;
             case "truthordare":
-                setTaskQuestion(await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang));
+                if (taskID) setTaskQuestion(await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang));
+                if (target) setTaskComponent(<TruthOrDare />);
                 break;
             case "tictactoe":
+                console.log("TicTacToe");
+                setTaskComponent(<TicTacToe />);
                 break;
             case "wouldyourather":
                 await processNewMultiAnswerTask();
+                setTaskComponent(<WouldYouRather />);
                 break;
             default:
                 createAlert(Alerts.ERROR, "Unknown Task type " + taskType);
@@ -337,38 +344,6 @@ export default function Mixed(): JSX.Element {
             setTask(nextTaskType, null).catch(console.error);
         }
     };
-
-    const [taskComponent, setTaskComponent] = useState<ReactElement>(
-        <TranslatedMessage id="elements.tasks.notloaded" />,
-    );
-
-    useEffect(() => {
-        if (!taskType) return;
-        switch (taskType) {
-            case "whowouldrather": {
-                setTaskComponent(<WhoWouldRather />);
-                break;
-            }
-            case "truthordare": {
-                if (target) {
-                    setTaskComponent(<TruthOrDare ref={truthOrDareRef} />);
-                }
-                break;
-            }
-            case "tictactoe": {
-                console.log("TicTacToe");
-                setTaskComponent(<TicTacToe />);
-                break;
-            }
-            case "wouldyourather": {
-                setTaskComponent(<WouldYouRather />);
-                break;
-            }
-            default: {
-                console.error("Unexpected task type!");
-            }
-        }
-    }, [taskID, taskType]);
 
     return (
         <>
