@@ -41,39 +41,36 @@ export const WouldYouRather: FunctionComponent = () => {
         setInputLock(!pollState);
     }, [pollState]);
 
-    if (!answers) {
-        return <></>;
-    }
-    if (!question) {
-        return <></>;
-    }
+    useEffect(() => {
+        if (!answers) return;
 
-    answers.forEach((multiAnswer: MultiAnswer) => {
-        values.push(
-            <ButtonGroup
-                key={`answer-button-${multiAnswer.id}`}
-                orientation="vertical"
-                color="primary"
-                variant="contained"
-            >
-                <Button
-                    className="wwr-player-select"
-                    type="submit"
-                    onClick={() => {
-                        GameManager.setAnswer(multiAnswer.id.toString(10)).catch(console.error);
-                        setAnswer(multiAnswer.answer);
-                        setInputLock(true);
-                    }}
+        answers.forEach((multiAnswer: MultiAnswer) => {
+            values.push(
+                <ButtonGroup
+                    key={`answer-button-${multiAnswer.id}`}
+                    orientation="vertical"
+                    color="primary"
+                    variant="contained"
                 >
-                    {multiAnswer.answer}
-                </Button>
-            </ButtonGroup>,
-        );
-    });
+                    <Button
+                        className="wwr-player-select"
+                        type="submit"
+                        onClick={() => {
+                            GameManager.setAnswer(multiAnswer.id.toString(10)).catch(console.error);
+                            setAnswer(multiAnswer.answer);
+                            setInputLock(true);
+                        }}
+                    >
+                        {multiAnswer.answer}
+                    </Button>
+                </ButtonGroup>,
+            );
+        });
+    }, [answers]);
 
     return (
         <>
-            <h2>{question}</h2>
+            <h2>{question || <TranslatedMessage id="general.shouldnothappen" />}</h2>
             <p>
                 <TranslatedMessage id="gamemodes.wouldyourather.description" />
             </p>
