@@ -29,7 +29,7 @@ export const WouldYouRather: FunctionComponent = () => {
     const [question] = useTask();
     const [pollState] = usePollState();
     const [answers] = useAnswers();
-    const values: ReactElement[] = [];
+    const [values, setValues] = useState<ReactElement[]>([]);
 
     useEffect(() => {
         setInputLock(true);
@@ -66,6 +66,7 @@ export const WouldYouRather: FunctionComponent = () => {
                 </ButtonGroup>,
             );
         });
+        setValues(values);
     }, [answers]);
 
     return (

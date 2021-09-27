@@ -38,7 +38,7 @@ const TruthOrDareIntern = (): JSX.Element => {
     const [penalty] = usePenalty();
 
     if (!target || !question) {
-        return <></>;
+        return <>Target or Question Missing</>;
     }
 
     const submitAnswer = (answerToSet: boolean): void => {

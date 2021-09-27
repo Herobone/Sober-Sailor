@@ -48,7 +48,7 @@ import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
-import { useAnswers, usePenalty, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
+import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
 import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
@@ -74,16 +74,17 @@ export default function Mixed(): JSX.Element {
 
     const classes = useDefaultStyles();
 
-    const [taskType, setTaskType] = useTaskType();
-    const [target, setTarget] = useTarget();
+    const [taskType] = useTaskType();
+    const [target] = useTarget();
     const setTaskQuestion = useTask()[1];
-    const [taskID, setTaskID] = useTaskID();
+    const [taskID] = useTaskID();
     const [isHost, setHost] = useIsHost();
     const [pollState, setPollState] = usePollState();
     const [evalState, setEvalState] = useEvalState();
     const [result, setResult] = useResult();
-    const setPenalty = usePenalty()[1];
     const [answers, setAnswers] = useAnswers();
+
+    const setCombined = useAll();
 
     const intl = useDefaultTranslation();
 
@@ -151,10 +152,12 @@ export default function Mixed(): JSX.Element {
                 submitAndReset();
             }
 
-            setTaskID(data.currentTask || undefined);
-            setTaskType(data.type || undefined);
-            setTarget(data.taskTarget || undefined);
-            setPenalty(data.penalty);
+            setCombined(
+                data.type || undefined,
+                data.penalty,
+                data.currentTask || undefined,
+                data.taskTarget || undefined,
+            );
 
             setPollState(data.pollState);
 
@@ -236,28 +239,42 @@ export default function Mixed(): JSX.Element {
         });
 
         setResult(resultData);
-    }, [evalState, evaluationScoreboard]);
+    }, [evalState, evaluationScoreboard, taskType]);
+
+    const unknownTypeAlert = (): void => createAlert(Alerts.ERROR, "Unknown Task type " + taskType);
 
     const processNewMultiAnswerTask = async (): Promise<void> => {
         if (!taskID || !taskType) return;
         const task = await TaskUtils.getSpecificMultiAnswerTask(taskType, taskID, lang);
         setTaskQuestion(task?.question);
         setAnswers(task?.answers);
+        setTaskComponent(<WouldYouRather />);
     };
 
-    const processNewTask = async (): Promise<void> => {
-        if (!taskType) {
-            console.warn("New task processed but no type");
-            return;
+    const processNewSingleAnswerTask = async (): Promise<void> => {
+        if (taskID && taskType) {
+            const question = await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang);
+            setTaskQuestion(question);
         }
+
         switch (taskType) {
             case "whowouldrather":
-                if (taskID) setTaskQuestion(await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang));
                 setTaskComponent(<WhoWouldRather />);
                 break;
             case "truthordare":
-                if (taskID) setTaskQuestion(await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang));
-                if (target) setTaskComponent(<TruthOrDare />);
+                setTaskComponent(<TruthOrDare />);
+                break;
+            default:
+                unknownTypeAlert();
+                break;
+        }
+    };
+
+    const processNewTask = async (): Promise<void> => {
+        switch (taskType) {
+            case "whowouldrather":
+            case "truthordare":
+                await processNewSingleAnswerTask();
                 break;
             case "tictactoe":
                 console.log("TicTacToe");
@@ -265,17 +282,16 @@ export default function Mixed(): JSX.Element {
                 break;
             case "wouldyourather":
                 await processNewMultiAnswerTask();
-                setTaskComponent(<WouldYouRather />);
                 break;
             default:
-                createAlert(Alerts.ERROR, "Unknown Task type " + taskType);
+                unknownTypeAlert();
                 break;
         }
     };
 
     useEffect(() => {
         processNewTask().catch(console.error);
-    }, [taskID, taskType]);
+    }, [taskID, taskType, target]);
 
     const setMultiAnswerTask = async (type: Task): Promise<void> => {
         const task = await TaskUtils.getRandomMultiAnswerTask(type.id, lang);

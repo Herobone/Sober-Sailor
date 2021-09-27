@@ -17,7 +17,13 @@
  */
 
 import { MultiAnswer } from "sobersailor-common/lib/models/Task";
-import { AnswerAction, NumberAction, StringAction, UncertainNumberAction } from "../actions/taskActions";
+import {
+    AnswerAction,
+    CombinedTaskAction,
+    NumberAction,
+    StringAction,
+    UncertainNumberAction,
+} from "../actions/taskActions";
 
 export interface TaskState {
     task: string | undefined;
@@ -39,7 +45,7 @@ const initialState: TaskState = {
 
 export const taskReducer = (
     state: TaskState = initialState,
-    action: StringAction | NumberAction | AnswerAction | UncertainNumberAction,
+    action: StringAction | NumberAction | AnswerAction | UncertainNumberAction | CombinedTaskAction,
 ): TaskState => {
     switch (action.type) {
         case "SET_TASK":
@@ -54,6 +60,8 @@ export const taskReducer = (
             return { ...state, answers: action.payload };
         case "SET_TASK_ID":
             return { ...state, taskID: action.payload };
+        case "SET_TASK_COMBINED":
+            return { ...state, ...action.payload };
         default:
             return state;
     }
