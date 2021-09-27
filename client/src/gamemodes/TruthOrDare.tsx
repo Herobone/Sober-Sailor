@@ -17,31 +17,25 @@
  */
 
 import { ButtonGroup } from "@mui/material";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
-import { useSelector } from "react-redux";
 import { getAuth } from "firebase/auth";
 import { SingleTargetRequest } from "sobersailor-common/lib/SingleTarget";
 import { Register } from "sobersailor-common/lib/models/Register";
 import { GameManager } from "../helper/gameManager";
 import { Serverless } from "../helper/Serverless";
 import { useTruthOrDareStyles } from "../style/TruthOrDareStyle";
-import { RootState } from "../state/store";
-import { TaskState } from "../state/reducers/taskReducer";
 import { firebaseApp } from "../helper/config";
 import { TranslatedMessage } from "../translations/TranslatedMessage";
+import { usePenalty, useTarget, useTask } from "../state/actions/taskActions";
 
-type TruthOrDareHandles = {
-    reset: () => void;
-};
-
-const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): JSX.Element => {
+const TruthOrDareIntern = (): JSX.Element => {
     const [answer, setAnswer] = useState<boolean | null>(null);
     const classes = useTruthOrDareStyles();
 
-    const question = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
-    const target = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
-    const penalty = useSelector<RootState, TaskState["penalty"]>((state) => state.task.penalty);
+    const [question] = useTask();
+    const [target] = useTarget();
+    const [penalty] = usePenalty();
 
     if (!target || !question) {
         return <></>;
@@ -53,14 +47,6 @@ const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): 
 
         Serverless.callFunction(Serverless.SINGLE_TARGET)(callData).catch(console.error);
     };
-
-    const reset = (): void => {
-        setAnswer(null);
-    };
-
-    useImperativeHandle(ref, () => ({
-        reset,
-    }));
 
     const pltRaw = localStorage.getItem("playerLookupTable");
 
@@ -108,7 +94,7 @@ const TruthOrDareIntern = forwardRef<TruthOrDareHandles>((props: unknown, ref): 
             )}
         </div>
     );
-});
+};
 
 TruthOrDareIntern.displayName = "Truth or Dare";
 

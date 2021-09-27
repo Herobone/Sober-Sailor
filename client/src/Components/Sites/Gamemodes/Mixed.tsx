@@ -61,14 +61,11 @@ import { Alerts } from "../../../helper/AlertTypes";
 import { useDefaultTranslation } from "../../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../../translations/TranslatedMessage";
 
-type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
 
 // Default export needed here for being able to lazy load it
 // eslint-disable-next-line import/no-default-export
 export default function Mixed(): JSX.Element {
-    const truthOrDareRef = useRef<TruthOrDareHandle>(null);
-
     const kickListRef = useRef<KickListHandle>(null);
 
     const [lang] = useLanguage();
@@ -99,10 +96,6 @@ export default function Mixed(): JSX.Element {
     const submitAndReset = (): void => {
         console.log("Results are", result);
         setResult(null);
-        const tud = truthOrDareRef.current;
-        if (tud) {
-            tud.reset();
-        }
     };
 
     const startTimer = (duration: number): void => {
