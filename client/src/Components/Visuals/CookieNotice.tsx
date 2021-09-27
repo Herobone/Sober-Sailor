@@ -29,10 +29,6 @@ export function CookieNotice(): JSX.Element {
         setCookieNotice(!Dough.isDoughPresent());
     }, []);
 
-    useEffect(() => {
-        console.info("Cookies Dialog is now", cookieNotice);
-    }, [cookieNotice]);
-
     return (
         <Dialog
             open={cookieNotice}
