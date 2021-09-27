@@ -18,19 +18,16 @@
 
 import React from "react";
 import { render } from "@testing-library/react";
-import firebase from "firebase/compat/app";
 import { act as domAct } from "react-dom/test-utils";
 import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material";
 import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
 import { Provider } from "react-redux";
 import { LanguageContainer } from "../translations/LanguageContainer";
-import { config, firebaseApp } from "../helper/config";
+import { firebaseApp } from "../helper/config";
 import { Alert, AlertContextType, Error, Warning } from "../helper/AlertTypes";
 import { Routed } from "../Components/Functional/Routed";
 import { CalmTheme } from "../style/Theme";
 import { store } from "../state/store";
-
-firebase.initializeApp(config);
 
 const auth = getAuth(firebaseApp);
 setPersistence(auth, browserLocalPersistence).catch(console.error);
