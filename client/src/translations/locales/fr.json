@@ -69,5 +69,8 @@
     "account.actions.logout": "Se déconnecter",
     "account.actions.login.withGoogle": "Se connecter avec Google",
     "account.actions.login": "Se connecter",
-    "general.player": "Joueur"
+    "general.player": "Joueur",
+    "settings.options.filler.memes": "Mèmes",
+    "settings.options.filler.dogs": "Chiens",
+    "settings.options.filler.cats": "Chats"
 }
