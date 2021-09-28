@@ -30,7 +30,7 @@
     "navigation.cookies": "Cookies",
     "general.welcome": "Bienvenue",
     "general.sips": "Gorgées",
-    "general.shouldnothappen": "Erreur inconnue ! Cela n’aurait pas dû se produire !",
+    "general.shouldnothappen": "Erreur inconnue ! Ceci n’aurait pas dû se produire !",
     "general.seconds": "secondes",
     "general.placeholder": "Espace réservé (FR)",
     "general.nickname": "Surnom",
@@ -68,5 +68,9 @@
     "account.descriptions.signout.success": "Déconnexion réussie !",
     "account.actions.logout": "Se déconnecter",
     "account.actions.login.withGoogle": "Se connecter avec Google",
-    "account.actions.login": "Se connecter"
+    "account.actions.login": "Se connecter",
+    "general.player": "Joueur",
+    "settings.options.filler.memes": "Mèmes",
+    "settings.options.filler.dogs": "Chiens",
+    "settings.options.filler.cats": "Chats"
 }
