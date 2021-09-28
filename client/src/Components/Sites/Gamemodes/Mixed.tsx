@@ -60,6 +60,7 @@ import { useAlert } from "../../Functional/AlertProvider";
 import { Alerts } from "../../../helper/AlertTypes";
 import { useDefaultTranslation } from "../../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../../translations/TranslatedMessage";
+import { CatPontent } from "../../Visuals/CatPontent";
 
 type KickListHandle = ElementRef<typeof KickList>;
 
@@ -93,9 +94,7 @@ export default function Mixed(): JSX.Element {
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
-    const [taskComponent, setTaskComponent] = useState<ReactElement>(
-        <TranslatedMessage id="elements.tasks.notloaded" />,
-    );
+    const [taskComponent, setTaskComponent] = useState<ReactElement>(<CatPontent />);
 
     const submitAndReset = (): void => {
         console.log("Results are", result);

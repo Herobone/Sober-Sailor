@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { SettingState } from "../reducers/settingReducer";
+import { Filler, SettingState } from "../reducers/settingReducer";
 import { AvailableThemes } from "../../style/Theme";
 
 /** ***************************
@@ -22,7 +22,7 @@ import { AvailableThemes } from "../../style/Theme";
  */
 
 export type SettingAction = {
-    type: "SET_LANGUAGE" | "SET_THEME";
+    type: "SET_LANGUAGE" | "SET_THEME" | "SET_FILLER";
     payload: string;
 };
 
@@ -67,6 +67,18 @@ export const useLanguage = (): [string, (content: string) => void] => {
 
     const set = (content: string): void => {
         dispatch(setLanguage(content));
+    };
+    return [get, set];
+};
+
+const setFiller = (fill: Filler): SettingAction => ({ type: "SET_LANGUAGE", payload: fill });
+
+export const useFiller = (): [Filler, (content: Filler) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, SettingState["filler"]>((state) => state.settings.filler);
+
+    const set = (content: Filler): void => {
+        dispatch(setFiller(content));
     };
     return [get, set];
 };

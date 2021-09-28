@@ -18,16 +18,20 @@
 import { BooleanAction, SettingAction } from "../actions/settingActions";
 import { AvailableThemes } from "../../style/Theme";
 
+export type Filler = "cats" | "dogs" | "memes";
+
 export interface SettingState {
     language: string;
     theme: AvailableThemes;
     cookiesOpen: boolean;
+    filler: Filler;
 }
 
 const initialState: SettingState = {
     language: "en",
     theme: "calm",
     cookiesOpen: false,
+    filler: "cats",
 };
 
 export const settingReducer = (

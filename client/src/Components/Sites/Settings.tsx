@@ -23,13 +23,15 @@ import { Container, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui
 import Util from "sobersailor-common/lib/Util";
 import Cookies from "universal-cookie";
 import { useDefaultStyles } from "../../style/Style";
-import { useLanguage, useThemeSetting } from "../../state/actions/settingActions";
+import { useFiller, useLanguage, useThemeSetting } from "../../state/actions/settingActions";
 import { AvailableThemes } from "../../style/Theme";
 import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { Filler } from "../../state/reducers/settingReducer";
 
 type LanguageSetting = { code: string; name: string };
 type ThemeSetting = { code: AvailableThemes; name: string };
+type FillerSetting = { code: Filler; name: string };
 
 export function Settings(): JSX.Element {
     const classes = useDefaultStyles();
@@ -37,6 +39,7 @@ export function Settings(): JSX.Element {
     const intl = useDefaultTranslation();
     const [language, setLanguage] = useLanguage();
     const [theme, setTheme] = useThemeSetting();
+    const [filler, setFiller] = useFiller();
     const options: LanguageSetting[] = [
         { code: "de", name: "Deutsch" },
         { code: "en", name: "English" },
@@ -49,6 +52,12 @@ export function Settings(): JSX.Element {
         { code: "light", name: intl.formatMessage({ id: "settings.options.theme.light" }) },
         { code: "calm", name: intl.formatMessage({ id: "settings.options.theme.calm" }) },
         { code: "dark", name: intl.formatMessage({ id: "settings.options.theme.dark" }) },
+    ];
+
+    const fillerOption: FillerSetting[] = [
+        { code: "cats", name: intl.formatMessage({ id: "settings.options.filler.cats" }) },
+        { code: "dogs", name: intl.formatMessage({ id: "settings.options.filler.dogs" }) },
+        { code: "memes", name: intl.formatMessage({ id: "settings.options.filler.memes" }) },
     ];
 
     return (
@@ -95,6 +104,27 @@ export function Settings(): JSX.Element {
                 >
                     {themeOptions.map((value: ThemeSetting) => (
                         <MenuItem value={value.code} key={`theme_${value.code}_option`}>
+                            {value.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <FormControl variant="outlined" className={classes.langSelect}>
+                <InputLabel htmlFor="outlined-age-native-simple">
+                    <TranslatedMessage id="settings.labels.select.filler" />
+                </InputLabel>
+                <br />
+                <Select
+                    value={filler}
+                    label={<TranslatedMessage id="settings.labels.select.filler" />}
+                    onChange={(event: SelectChangeEvent) => {
+                        const val = event.target.value as Filler;
+                        setFiller(val);
+                        cookies.set("filler", val, { expires: Util.getDateIn(10), sameSite: true });
+                    }}
+                >
+                    {fillerOption.map((value: FillerSetting) => (
+                        <MenuItem value={value.code} key={`filler_${value.code}_option`}>
                             {value.name}
                         </MenuItem>
                     ))}
