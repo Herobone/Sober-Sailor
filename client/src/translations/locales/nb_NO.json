@@ -69,5 +69,8 @@
     "account.actions.logout": "Logg ut",
     "account.actions.login.withGoogle": "Logg inn med Google",
     "account.actions.login": "Logg inn",
-    "general.player": "Spiller"
+    "general.player": "Spiller",
+    "settings.options.filler.memes": "Memes",
+    "settings.options.filler.dogs": "Hunder",
+    "settings.options.filler.cats": "Katter"
 }
