@@ -68,5 +68,9 @@
     "settings.options.theme.light": "Hell",
     "settings.options.theme.calm": "Freundlich",
     "settings.options.theme.dark": "Dunkel",
-    "sobersailor.name": "Sober Sailor"
+    "sobersailor.name": "Sober Sailor",
+    "general.player": "Spieler",
+    "settings.options.filler.memes": "Memes",
+    "settings.options.filler.dogs": "Hunde",
+    "settings.options.filler.cats": "Katzen"
 }
