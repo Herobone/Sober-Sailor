@@ -17,7 +17,7 @@
  */
 import { createTheme, responsiveFontSizes } from "@mui/material";
 
-export type AvailableThemes = "light" | "calm" | "dark";
+export type AvailableThemes = "light" | "calm" | "dark" | "highcontrast" | "hacker" | "minimalist";
 
 export const StandardTheme = responsiveFontSizes(
     createTheme({
@@ -62,6 +62,7 @@ export const DarkTheme = responsiveFontSizes(
 );
 
 export const CalmTheme = responsiveFontSizes(
+    // wer hat sich das ausgedacht???
     createTheme({
         palette: {
             mode: "light",
@@ -74,6 +75,71 @@ export const CalmTheme = responsiveFontSizes(
             secondary: {
                 main: "#4abdac",
                 contrastText: "#6e7376",
+            },
+        },
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
+        },
+    }),
+);
+
+export const HighContrastTheme = responsiveFontSizes(
+    createTheme({
+        palette: {
+            mode: "light",
+            background: {
+                default: "#14213d",
+            },
+            primary: {
+                main: "#fca311",
+            },
+            secondary: {
+                main: "#e5e5e5",
+                contrastText: "#ffffff",
+            },
+        },
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
+        },
+    }),
+);
+
+export const HackerTheme = responsiveFontSizes(
+    //green on black
+    createTheme({
+        palette: {
+            mode: "dark",
+            background: {
+                default: "#000000",
+            },
+            primary: {
+                main: "#2bc016",
+            },
+            secondary: {
+                main: "#ffffff",
+                contrastText: "#2bc016",
+            },
+        },
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
+        },
+    }),
+);
+
+export const MinimalistTheme = responsiveFontSizes(
+    // gray and white
+    createTheme({
+        palette: {
+            mode: "light",
+            background: {
+                default: "#adb5bd",
+            },
+            primary: {
+                main: "#495057",
+            },
+            secondary: {
+                main: "#e9ecef",
+                contrastText: "#343a40",
             },
         },
         typography: {

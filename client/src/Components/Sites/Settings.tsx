@@ -49,6 +49,9 @@ export function Settings(): JSX.Element {
         { code: "light", name: intl.formatMessage({ id: "settings.options.theme.light" }) },
         { code: "calm", name: intl.formatMessage({ id: "settings.options.theme.calm" }) },
         { code: "dark", name: intl.formatMessage({ id: "settings.options.theme.dark" }) },
+        { code: "highcontrast", name: intl.formatMessage({ id: "settings.options.theme.highcontrast" }) },
+        { code: "hacker", name: intl.formatMessage({ id: "settings.options.theme.hacker" }) },
+        { code: "minimalist", name: intl.formatMessage({ id: "settings.options.theme.minimalist" }) },
     ];
 
     return (

@@ -45,7 +45,7 @@ export function GameCreator(): JSX.Element {
             </h1>
             <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 className={classes.createGameButton}
                 onClick={createGame}
                 size="large"

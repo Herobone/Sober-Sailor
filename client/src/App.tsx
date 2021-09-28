@@ -25,7 +25,15 @@ import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
 import { Routed } from "./Components/Functional/Routed";
-import { AvailableThemes, CalmTheme, DarkTheme, StandardTheme } from "./style/Theme";
+import {
+    AvailableThemes,
+    CalmTheme,
+    DarkTheme,
+    HackerTheme,
+    HighContrastTheme,
+    MinimalistTheme,
+    StandardTheme,
+} from "./style/Theme";
 import { store } from "./state/store";
 import { useThemeSetting } from "./state/actions/settingActions";
 
@@ -61,6 +69,15 @@ function AppWithStore(): JSX.Element {
                 break;
             case "light":
                 setMuiTheme(StandardTheme);
+                break;
+            case "highcontrast":
+                setMuiTheme(HighContrastTheme);
+                break;
+            case "hacker":
+                setMuiTheme(HackerTheme);
+                break;
+            case "minimalist":
+                setMuiTheme(MinimalistTheme);
                 break;
             default:
                 setMuiTheme(CalmTheme);
