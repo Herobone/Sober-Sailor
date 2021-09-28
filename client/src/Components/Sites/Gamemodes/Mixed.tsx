@@ -201,7 +201,7 @@ export default function Mixed(): JSX.Element {
             throw new Error("PLT was missing. Why is it missing?");
         }
 
-        if (!evaluationScoreboard) return;
+        if (!evaluationScoreboard || evaluationScoreboard.board.size <= 0) return;
 
         evaluationScoreboard.board.forEach((score: number, uid: string) => {
             const answer = evaluationScoreboard.answers.get(uid) || "none";

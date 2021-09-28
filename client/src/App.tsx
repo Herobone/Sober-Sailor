@@ -27,7 +27,8 @@ import { LanguageContainer } from "./translations/LanguageContainer";
 import { Routed } from "./Components/Functional/Routed";
 import { AvailableThemes, CalmTheme, DarkTheme, StandardTheme } from "./style/Theme";
 import { store } from "./state/store";
-import { useThemeSetting } from "./state/actions/settingActions";
+import { useFiller, useThemeSetting } from "./state/actions/settingActions";
+import { Filler } from "./state/reducers/settingReducer";
 
 export function App(): JSX.Element {
     return (
@@ -44,11 +45,14 @@ function AppWithStore(): JSX.Element {
     const [theme, setTheme] = useThemeSetting();
     const [muiTheme, setMuiTheme] = useState(CalmTheme);
 
+    const setFiller = useFiller()[1];
+
     useEffect(() => {
         const themeFromCookie: AvailableThemes | undefined = cookies.get("theme");
-        if (themeFromCookie) {
-            setTheme(themeFromCookie);
-        }
+        if (themeFromCookie) setTheme(themeFromCookie);
+
+        const fillerFromCookie: Filler | undefined = cookies.get("filler");
+        if (fillerFromCookie) setFiller(fillerFromCookie);
     }, []);
 
     useEffect(() => {

@@ -22,6 +22,7 @@ import { useAnswers, useTask } from "../../state/actions/taskActions";
 import { GameManager } from "../../helper/gameManager";
 import { usePollState } from "../../state/actions/displayStateActions";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { CatPontent } from "../../Components/Visuals/CatPontent";
 
 export const WouldYouRather: FunctionComponent = () => {
     const [inputLock, setInputLock] = useState(true);
@@ -84,6 +85,8 @@ export const WouldYouRather: FunctionComponent = () => {
                             answer,
                         }}
                     />
+                    <br />
+                    <CatPontent />
                 </div>
             )}
         </>

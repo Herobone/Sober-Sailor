@@ -24,6 +24,7 @@ import { Alerts } from "../helper/AlertTypes";
 import { useTask } from "../state/actions/taskActions";
 import { usePollState } from "../state/actions/displayStateActions";
 import { TranslatedMessage } from "../translations/TranslatedMessage";
+import { CatPontent } from "../Components/Visuals/CatPontent";
 
 export function WhoWouldRather(): JSX.Element {
     const [inputLock, setInputLock] = useState(true);
@@ -82,14 +83,16 @@ export function WhoWouldRather(): JSX.Element {
             </p>
             {!inputLock && !answer && values}
             {answer && (
-                <div>
+                <>
                     <TranslatedMessage
                         id="elements.result.youranswer"
                         values={{
                             answer,
                         }}
                     />
-                </div>
+                    <br />
+                    <CatPontent />
+                </>
             )}
         </>
     );

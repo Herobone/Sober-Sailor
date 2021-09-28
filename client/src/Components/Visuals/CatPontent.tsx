@@ -22,7 +22,7 @@ import { useAlert } from "../Functional/AlertProvider";
 import { Alerts } from "../../helper/AlertTypes";
 
 export const CatPontent = (): JSX.Element => {
-    const [imageURL, setImageURL] = useState("");
+    const [imageURL, setImageURL] = useState<string>();
     const [endpointURL, setEndpointURL] = useState("");
 
     const [filler] = useFiller();
@@ -77,14 +77,16 @@ export const CatPontent = (): JSX.Element => {
 
     return (
         <>
-            <img
-                src={imageURL}
-                alt="Waiting..."
-                style={{
-                    maxWidth: "100%",
-                    maxHeight: "85vh",
-                }}
-            />
+            {imageURL && (
+                <img
+                    src={imageURL}
+                    alt="Waiting..."
+                    style={{
+                        maxWidth: "100%",
+                        maxHeight: "85vh",
+                    }}
+                />
+            )}
         </>
     );
 };

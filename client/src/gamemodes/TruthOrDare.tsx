@@ -28,6 +28,7 @@ import { useTruthOrDareStyles } from "../style/TruthOrDareStyle";
 import { firebaseApp } from "../helper/config";
 import { TranslatedMessage } from "../translations/TranslatedMessage";
 import { usePenalty, useTarget, useTask } from "../state/actions/taskActions";
+import { CatPontent } from "../Components/Visuals/CatPontent";
 
 const TruthOrDareIntern = (): JSX.Element => {
     const [answer, setAnswer] = useState<boolean | null>(null);
@@ -86,11 +87,16 @@ const TruthOrDareIntern = (): JSX.Element => {
                     </Button>
                 </ButtonGroup>
             )}
+            {target !== user.uid && <CatPontent />}
             {answer !== null && (
-                <h2 className={classes.textAtTheBottom}>
-                    {!answer && <TranslatedMessage id="elements.truthordare.drink" />}
-                    {answer && <TranslatedMessage id="elements.truthordare.dare" />}
-                </h2>
+                <>
+                    <h2 className={classes.textAtTheBottom}>
+                        {!answer && <TranslatedMessage id="elements.truthordare.drink" />}
+                        {answer && <TranslatedMessage id="elements.truthordare.dare" />}
+                    </h2>
+                    <br />
+                    <CatPontent />
+                </>
             )}
         </div>
     );
