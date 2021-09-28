@@ -18,7 +18,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, Container } from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
 import RowingOutlined from "@mui/icons-material/RowingOutlined";
 import { useDefaultStyles } from "../../style/Style";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
@@ -27,9 +27,9 @@ export function Home(): JSX.Element {
     const classes = useDefaultStyles();
     return (
         <Container maxWidth="sm" className={classes.startPage}>
-            <h1 className={classes.h1}>
+            <Typography variant="h1" className={classes.h1} sx={{ m: 5 }}>
                 <TranslatedMessage id="sobersailor.name" />
-            </h1>
+            </Typography>
 
             <Button
                 variant="outlined"

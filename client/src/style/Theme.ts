@@ -19,6 +19,24 @@ import { createTheme, responsiveFontSizes } from "@mui/material";
 
 export type AvailableThemes = "light" | "calm" | "dark" | "highcontrast" | "hacker" | "minimalist";
 
+declare module "@mui/material/styles" {
+    interface TypographyVariants {
+        poster: React.CSSProperties;
+    }
+
+    // allow configuration using `createTheme`
+    interface TypographyVariantsOptions {
+        poster?: React.CSSProperties;
+    }
+}
+
+// Update the Typography's variant prop options
+declare module "@mui/material/Typography" {
+    interface TypographyPropsVariantOverrides {
+        poster: true;
+    }
+}
+
 export const StandardTheme = responsiveFontSizes(
     createTheme({
         palette: {
@@ -86,7 +104,7 @@ export const CalmTheme = responsiveFontSizes(
 export const HighContrastTheme = responsiveFontSizes(
     createTheme({
         palette: {
-            mode: "light",
+            mode: "dark",
             background: {
                 default: "#14213d",
             },
@@ -116,11 +134,14 @@ export const HackerTheme = responsiveFontSizes(
                 main: "#2bc016",
             },
             secondary: {
-                main: "#ffffff",
+                main: "#2bc016",
                 contrastText: "#2bc016",
             },
         },
         typography: {
+            h1: {
+                color: "#2bc016",
+            },
             fontFamily: ["Ubuntu"].join(","),
         },
     }),

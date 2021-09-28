@@ -92,11 +92,7 @@ export const useDefaultStyles = makeStyles((theme: Theme) => ({
         fontSize: 70,
     },
 
-    mainGrid: {
-        flexGrow: 1,
-        width: "100%",
-        margin: 0,
-    },
+    mainGrid: {},
 
     mainHeadingName: {
         position: "relative",

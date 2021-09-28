@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, IconButton, TextField, Typography } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ArrowForwardIos } from "@mui/icons-material";
 import React from "react";
@@ -40,9 +40,9 @@ export function GameCreator(): JSX.Element {
 
     return (
         <>
-            <h1 className={classes.h1}>
+            <Typography variant="h1" className={classes.h1} sx={{ m: 10 }}>
                 <TranslatedMessage id="sobersailor.name" />
-            </h1>
+            </Typography>
             <Button
                 variant="contained"
                 color="primary"
