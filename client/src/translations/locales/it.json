@@ -69,5 +69,8 @@
     "general.winner": "Vincitore",
     "general.answer.forgot": "Ha dimenticato di rispondere",
     "general.add": "Aggiungi",
-    "general.player": "Giocatore"
+    "general.player": "Giocatore",
+    "settings.options.filler.memes": "Memi",
+    "settings.options.filler.dogs": "Cani",
+    "settings.options.filler.cats": "Gatti"
 }
