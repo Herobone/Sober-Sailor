@@ -45,6 +45,8 @@ export const settingReducer = (
             return { ...state, theme: action.payload as AvailableThemes };
         case "SET_COOKIES_OPEN":
             return { ...state, cookiesOpen: action.payload };
+        case "SET_FILLER":
+            return { ...state, filler: action.payload as Filler };
         default:
             return state;
     }

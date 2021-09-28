@@ -72,5 +72,6 @@
     "general.player": "Player",
     "settings.options.filler.memes": "Memes",
     "settings.options.filler.dogs": "Dogs",
-    "settings.options.filler.cats": "Cats"
+    "settings.options.filler.cats": "Cats",
+    "settings.labels.select.filler": "Filler between Tasks"
 }
