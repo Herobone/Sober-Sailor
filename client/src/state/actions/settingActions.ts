@@ -71,7 +71,7 @@ export const useLanguage = (): [string, (content: string) => void] => {
     return [get, set];
 };
 
-const setFiller = (fill: Filler): SettingAction => ({ type: "SET_LANGUAGE", payload: fill });
+const setFiller = (fill: Filler): SettingAction => ({ type: "SET_FILLER", payload: fill });
 
 export const useFiller = (): [Filler, (content: Filler) => void] => {
     const dispatch = useDispatch();

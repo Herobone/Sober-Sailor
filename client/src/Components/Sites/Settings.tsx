@@ -40,6 +40,7 @@ export function Settings(): JSX.Element {
     const [language, setLanguage] = useLanguage();
     const [theme, setTheme] = useThemeSetting();
     const [filler, setFiller] = useFiller();
+
     const options: LanguageSetting[] = [
         { code: "de", name: "Deutsch" },
         { code: "en", name: "English" },
@@ -109,6 +110,7 @@ export function Settings(): JSX.Element {
                     ))}
                 </Select>
             </FormControl>
+            <br />
             <FormControl variant="outlined" className={classes.langSelect}>
                 <InputLabel htmlFor="outlined-age-native-simple">
                     <TranslatedMessage id="settings.labels.select.filler" />
