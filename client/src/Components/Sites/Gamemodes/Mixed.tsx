@@ -91,10 +91,17 @@ export default function Mixed(): JSX.Element {
 
     const setScoreboard = useScoreboard()[1];
 
+    const notLoaded = (
+        <>
+            <TranslatedMessage id="elements.tasks.notloaded" />
+            <CatPontent />
+        </>
+    );
+
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
-    const [taskComponent, setTaskComponent] = useState<ReactElement>(<CatPontent />);
+    const [taskComponent, setTaskComponent] = useState<ReactElement>(notLoaded);
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
