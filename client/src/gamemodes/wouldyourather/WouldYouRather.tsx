@@ -45,8 +45,10 @@ export const WouldYouRather: FunctionComponent = () => {
     useEffect(() => {
         if (!answers) return;
 
+        const internalValues: ReactElement[] = [];
+
         answers.forEach((multiAnswer: MultiAnswer) => {
-            values.push(
+            internalValues.push(
                 <ButtonGroup
                     key={`answer-button-${multiAnswer.id}`}
                     orientation="vertical"
@@ -67,7 +69,7 @@ export const WouldYouRather: FunctionComponent = () => {
                 </ButtonGroup>,
             );
         });
-        setValues(values);
+        setValues(internalValues);
     }, [answers]);
 
     return (
