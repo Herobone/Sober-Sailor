@@ -294,6 +294,9 @@ export default function Mixed(): JSX.Element {
             case "wouldyourather":
                 await processNewMultiAnswerTask();
                 break;
+            case undefined:
+                setTaskComponent(notLoaded);
+                break;
             default:
                 unknownTypeAlert();
                 break;

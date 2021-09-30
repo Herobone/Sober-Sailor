@@ -48,7 +48,8 @@ export const CatPontent = (): JSX.Element => {
     };
 
     useEffect(() => {
-        const interval = setInterval(newImage, 10_000);
+        newImage().catch(console.warn);
+        const interval = setInterval(() => newImage().catch(console.warn), 10_000);
 
         return function cleanup() {
             clearInterval(interval);
