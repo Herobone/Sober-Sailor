@@ -75,5 +75,6 @@
     "settings.options.filler.cats": "Chats",
     "settings.options.theme.hacker": "Hackeur",
     "settings.options.theme.minimalist": "Minimaliste",
-    "settings.options.theme.highcontrast": "Contraste élevé"
+    "settings.options.theme.highcontrast": "Contraste élevé",
+    "settings.labels.select.filler": "Remplissage entre les tâches"
 }
