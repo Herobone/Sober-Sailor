@@ -74,7 +74,6 @@ module.exports = {
         ],
         "no-plusplus": "off",
         "unicorn/no-null": "off",
-        "import/no-cycle": "off",
         "import/order": "warn",
         "react/static-property-placement": "off",
         "react/require-default-props": "off",

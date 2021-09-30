@@ -24,17 +24,16 @@ import { Alerts } from "../helper/AlertTypes";
 import { useTask } from "../state/actions/taskActions";
 import { usePollState } from "../state/actions/displayStateActions";
 import { TranslatedMessage } from "../translations/TranslatedMessage";
+import { CatPontent } from "../Components/Visuals/CatPontent";
 
 export function WhoWouldRather(): JSX.Element {
     const [inputLock, setInputLock] = useState(true);
     const [answer, setAnswer] = useState<string | null>(null);
+    const [values, setValues] = useState<ReactElement[]>([]);
     const { createAlert } = useAlert();
 
-    const question = useTask()[0];
-    const pollState = usePollState()[0];
-    if (!question) {
-        return <></>;
-    }
+    const [question] = useTask();
+    const [pollState] = usePollState();
 
     useEffect(() => {
         setInputLock(true);
@@ -52,25 +51,27 @@ export function WhoWouldRather(): JSX.Element {
         return <div>ERROR</div>;
     }
 
-    const values: ReactElement[] = [];
-    plt.playerUidMap.forEach((nickname: string, uid: string) => {
-        values.push(
-            // eslint-disable-next-line react/no-array-index-key
-            <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
-                <Button
-                    className="wwr-player-select"
-                    type="submit"
-                    onClick={() => {
-                        GameManager.setAnswer(uid).catch(console.error);
-                        setAnswer(nickname);
-                        setInputLock(true);
-                    }}
-                >
-                    {nickname}
-                </Button>
-            </ButtonGroup>,
-        );
-    });
+    useEffect(() => {
+        plt.playerUidMap.forEach((nickname: string, uid: string) => {
+            values.push(
+                // eslint-disable-next-line react/no-array-index-key
+                <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
+                    <Button
+                        className="wwr-player-select"
+                        type="submit"
+                        onClick={() => {
+                            GameManager.setAnswer(uid).catch(console.error);
+                            setAnswer(nickname);
+                            setInputLock(true);
+                        }}
+                    >
+                        {nickname}
+                    </Button>
+                </ButtonGroup>,
+            );
+        });
+        setValues(values);
+    }, []);
 
     return (
         <>
@@ -82,14 +83,16 @@ export function WhoWouldRather(): JSX.Element {
             </p>
             {!inputLock && !answer && values}
             {answer && (
-                <div>
+                <>
                     <TranslatedMessage
                         id="elements.result.youranswer"
                         values={{
                             answer,
                         }}
                     />
-                </div>
+                    <br />
+                    <CatPontent />
+                </>
             )}
         </>
     );

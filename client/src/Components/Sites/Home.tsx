@@ -26,19 +26,24 @@ import { TranslatedMessage } from "../../translations/TranslatedMessage";
 export function Home(): JSX.Element {
     const classes = useDefaultStyles();
     return (
-        <Container maxWidth="sm" className={classes.startPage}>
-            <h1 className={classes.h1}>
-                <TranslatedMessage id="sobersailor.name" />
-            </h1>
-
+        <Container
+            maxWidth="sm"
+            className={classes.startPage}
+            sx={{
+                pt: 30,
+            }}
+        >
             <Button
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 component={Link}
                 to="/play"
                 className={classes.gameSelectButton}
                 size="large"
                 fullWidth
+                sx={{
+                    p: 1,
+                }}
             >
                 <RowingOutlined className={classes.gameSelectIcon} />
                 <TranslatedMessage id="gamemodes.start" />

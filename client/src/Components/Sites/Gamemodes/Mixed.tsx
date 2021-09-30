@@ -17,7 +17,7 @@
  */
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentSnapshot, updateDoc } from "firebase/firestore";
+import { DocumentSnapshot, updateDoc, FirestoreError, Unsubscribe } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 import { Tooltip } from "@mui/material";
@@ -40,7 +40,7 @@ import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Leaderboard } from "../../Visuals/Leaderboard";
 import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
-import tasks from "../../../gamemodes/tasks.json";
+import { tasks } from "../../../gamemodes/tasks";
 import { TaskUtils } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
 import { ResultPage } from "../../Visuals/ResultPage";
@@ -48,10 +48,10 @@ import { KickList } from "../../Visuals/KickList";
 import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
-import { useAnswers, usePenalty, useTarget, useTask, useTaskType } from "../../../state/actions/taskActions";
+import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
-import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
+import { useBackgroundState, useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
 import { useLanguage } from "../../../state/actions/settingActions";
@@ -60,15 +60,13 @@ import { useAlert } from "../../Functional/AlertProvider";
 import { Alerts } from "../../../helper/AlertTypes";
 import { useDefaultTranslation } from "../../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../../translations/TranslatedMessage";
+import { CatPontent } from "../../Visuals/CatPontent";
 
-type TruthOrDareHandle = ElementRef<typeof TruthOrDare>;
 type KickListHandle = ElementRef<typeof KickList>;
 
 // Default export needed here for being able to lazy load it
 // eslint-disable-next-line import/no-default-export
 export default function Mixed(): JSX.Element {
-    const truthOrDareRef = useRef<TruthOrDareHandle>(null);
-
     const kickListRef = useRef<KickListHandle>(null);
 
     const [lang] = useLanguage();
@@ -77,31 +75,41 @@ export default function Mixed(): JSX.Element {
 
     const classes = useDefaultStyles();
 
-    const [taskType, setTaskType] = useTaskType();
-    const [target, setTarget] = useTarget();
-    const [nextTask, setNextTask] = useTask();
+    const [taskType] = useTaskType();
+    const [target] = useTarget();
+    const setTaskQuestion = useTask()[1];
+    const [taskID] = useTaskID();
     const [isHost, setHost] = useIsHost();
     const [pollState, setPollState] = usePollState();
     const [evalState, setEvalState] = useEvalState();
     const [result, setResult] = useResult();
-    const setPenalty = usePenalty()[1];
     const [answers, setAnswers] = useAnswers();
+
+    const setBackgroundState = useBackgroundState()[1];
+
+    const setCombined = useAll();
 
     const intl = useDefaultTranslation();
 
     const setScoreboard = useScoreboard()[1];
 
+    const notLoaded = (
+        <>
+            <TranslatedMessage id="elements.tasks.notloaded" />
+            <br />
+            <CatPontent />
+        </>
+    );
+
     const [timer, setTimer] = useState(0);
     const [maxTime, setMaxTime] = useState(0);
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
+    const [taskComponent, setTaskComponent] = useState<ReactElement>(notLoaded);
+    const [votable, setVotable] = useState(false);
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
         setResult(null);
-        const tud = truthOrDareRef.current;
-        if (tud) {
-            tud.reset();
-        }
     };
 
     const startTimer = (duration: number): void => {
@@ -141,30 +149,25 @@ export default function Mixed(): JSX.Element {
     }, [pollState]);
 
     useEffect(() => {
-        if (!evalState) {
-            setResult(null);
-        }
+        if (!evalState) setResult(null);
     }, [evalState]);
 
     const gameEvent = (doc: DocumentSnapshot<Game>): void => {
         const data = doc.data();
         if (data) {
-            GameManager.updatePlayerLookupTable(doc);
+            GameManager.updatePlayerLookupTable(data);
             console.log("Received data from Firestore!");
 
-            if (
-                nextTask !== data.currentTask ||
-                taskType !== data.type ||
-                target !== data.taskTarget ||
-                answers !== data.answers
-            ) {
+            if (taskID !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
                 submitAndReset();
-                setNextTask(data.currentTask ? data.currentTask : data.type || undefined);
-                setTaskType(data.type || undefined);
-                setTarget(data.taskTarget || undefined);
-                setPenalty(data.penalty);
-                setAnswers(data.answers || undefined);
             }
+
+            setCombined(
+                data.type || undefined,
+                data.penalty,
+                data.currentTask || undefined,
+                data.taskTarget || undefined,
+            );
 
             setPollState(data.pollState);
 
@@ -180,24 +183,38 @@ export default function Mixed(): JSX.Element {
         }
     };
 
+    const onSnapshotError = (error: FirestoreError): void => {
+        createAlert(Alerts.ERROR, "Problems updating from Firestore Database! Error code: " + error.code);
+    };
+
     /// This code will get executed on loading of the page
-    useEffect((): void => {
-        GameManager.joinGame(gameEvent).then(GameManager.amIHost).then(setHost).catch(console.error);
+    useEffect(() => {
+        let unsubscribeFirestore: Unsubscribe;
+        GameManager.joinGame(gameEvent, onSnapshotError)
+            .then((unsub) => {
+                unsubscribeFirestore = unsub;
+                return null;
+            })
+            .catch(console.error);
+        setBackgroundState(true);
+
+        return function cleanup(): void {
+            if (unsubscribeFirestore) unsubscribeFirestore();
+            console.log("Unsubscribed!");
+            setBackgroundState(false);
+        };
     }, []);
 
     useEffect(() => {
-        if (!evalState) {
-            return;
-        }
+        if (!evalState) return;
+
         const resultData: Player[] = [];
         const plt = GameManager.getPlayerLookupTable();
         if (!plt) {
             throw new Error("PLT was missing. Why is it missing?");
         }
 
-        if (!evaluationScoreboard) {
-            return;
-        }
+        if (!evaluationScoreboard || evaluationScoreboard.board.size <= 0) return;
 
         evaluationScoreboard.board.forEach((score: number, uid: string) => {
             const answer = evaluationScoreboard.answers.get(uid) || "none";
@@ -205,7 +222,7 @@ export default function Mixed(): JSX.Element {
             if (taskType === "wouldyourather") {
                 if (answers) {
                     answers.forEach((possibleAnswer) => {
-                        if (possibleAnswer.id === Number.parseInt(answer, 10)) {
+                        if (possibleAnswer.id === Number(answer)) {
                             readableAnswer = possibleAnswer.answer;
                         }
                     });
@@ -234,14 +251,73 @@ export default function Mixed(): JSX.Element {
         });
 
         setResult(resultData);
-    }, [evalState, evaluationScoreboard]);
+    }, [evalState, evaluationScoreboard, taskType]);
+
+    const unknownTypeAlert = (): void => createAlert(Alerts.ERROR, "Unknown Task type " + taskType);
+
+    const processNewMultiAnswerTask = async (): Promise<void> => {
+        if (!taskID || !taskType) return;
+        const task = await TaskUtils.getSpecificMultiAnswerTask(taskType, taskID, lang);
+        setTaskQuestion(task?.question);
+        setAnswers(task?.answers);
+        setTaskComponent(<WouldYouRather />);
+    };
+
+    const processNewSingleAnswerTask = async (): Promise<void> => {
+        if (taskID && taskType) {
+            const question = await TaskUtils.getSpecificSingleAnswerTask(taskType, taskID, lang);
+            setTaskQuestion(question);
+        }
+
+        switch (taskType) {
+            case "whowouldrather":
+                setTaskComponent(<WhoWouldRather />);
+                setVotable(true);
+                break;
+            case "truthordare":
+                setTaskComponent(<TruthOrDare />);
+                setVotable(false);
+                break;
+            default:
+                unknownTypeAlert();
+                break;
+        }
+    };
+
+    const processNewTask = async (): Promise<void> => {
+        switch (taskType) {
+            case "whowouldrather":
+            case "truthordare":
+                await processNewSingleAnswerTask();
+                break;
+            case "tictactoe":
+                console.log("TicTacToe");
+                setTaskComponent(<TicTacToe />);
+                setVotable(false);
+                break;
+            case "wouldyourather":
+                await processNewMultiAnswerTask();
+                setVotable(true);
+                break;
+            case undefined:
+                setTaskComponent(notLoaded);
+                setVotable(false);
+                break;
+            default:
+                unknownTypeAlert();
+                setVotable(false);
+                break;
+        }
+    };
+
+    useEffect(() => {
+        processNewTask().catch(console.error);
+    }, [taskID, taskType, target]);
 
     const setMultiAnswerTask = async (type: Task): Promise<void> => {
-        const taskLang = lang in type.lang ? lang : type.lang[0];
-        const task = await TaskUtils.getRandomMultiAnswerTask(type.id, taskLang);
+        const task = await TaskUtils.getRandomMultiAnswerTask(type.id, lang);
         await updateDoc(GameManager.getGame(), {
-            currentTask: task.question,
-            answers: task.answers,
+            currentTask: task.id,
             type: type.id,
             evalState: false,
             pollState: false,
@@ -255,7 +331,6 @@ export default function Mixed(): JSX.Element {
         if (type.id === "tictactoe") {
             await updateDoc(GameManager.getGame(), {
                 currentTask: null,
-                answers: null,
                 type: type.id,
                 evalState: false,
                 pollState: false,
@@ -266,14 +341,12 @@ export default function Mixed(): JSX.Element {
                 TicUtils.registerTicTacToe(newTarget).catch(console.error);
             }
         } else {
-            const taskLang = lang in type.lang ? lang : type.lang[0];
             const localTarget = newTarget ? newTarget[0] : null;
 
-            const task = await TaskUtils.getRandomTask(type.id, taskLang);
-            setNextTask(task);
+            const task = await TaskUtils.getRandomTask(type.id, lang);
+            setTaskQuestion(task.question);
             await updateDoc(GameManager.getGame(), {
-                currentTask: task,
-                answers: null,
+                currentTask: task.id,
                 type: type.id,
                 evalState: false,
                 pollState: false,
@@ -290,7 +363,7 @@ export default function Mixed(): JSX.Element {
         submitAndReset();
         const testMode = false;
         const development = process.env.NODE_ENV === "development" && testMode;
-        const nextTaskType: Task = development ? tasks[3] : Util.selectRandom(tasks);
+        const nextTaskType = development ? tasks[0] : Util.selectRandom(tasks);
 
         if (nextTaskType.multiAnswer) {
             setMultiAnswerTask(nextTaskType).catch(console.error);
@@ -309,38 +382,9 @@ export default function Mixed(): JSX.Element {
         }
     };
 
-    let taskComponent: ReactElement = <TranslatedMessage id="elements.tasks.notloaded" />;
-
-    if (nextTask && taskType) {
-        switch (taskType) {
-            case "whowouldrather": {
-                taskComponent = <WhoWouldRather />;
-                break;
-            }
-            case "truthordare": {
-                if (target) {
-                    taskComponent = <TruthOrDare ref={truthOrDareRef} />;
-                }
-                break;
-            }
-            case "tictactoe": {
-                console.log("TicTacToe");
-                taskComponent = <TicTacToe />;
-                break;
-            }
-            case "wouldyourather": {
-                taskComponent = <WouldYouRather />;
-                break;
-            }
-            default: {
-                console.error("Unexpected task type!");
-            }
-        }
-    }
-
     return (
         <>
-            <Grid container spacing={3} className={classes.mainGrid}>
+            <Grid container spacing={3} sx={{ pl: -3 }} className={classes.mainGrid}>
                 <Grid item xs={10} md={6}>
                     <div className={classes.mainHeadingName}>
                         <TranslatedMessage id="sobersailor.name" />
@@ -409,7 +453,7 @@ export default function Mixed(): JSX.Element {
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
-                                {!pollState && (
+                                {!pollState && votable && !evalState && (
                                     <Grid item xs className={classes.controlButton}>
                                         <Tooltip
                                             title={<TranslatedMessage id="actions.host.startpoll" />}

@@ -1,6 +1,6 @@
 /*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,47 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
+import { Container } from "@mui/material";
+import logo from "../../media/CompassAnimated.svg";
 
-.status {
-  margin-bottom: 10px;
-}
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-
-  font-weight: bold;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-}
-
-.square:focus {
-  outline: none;
-  background-color: #f0f000;
-}
-
-.square:hover {
-  outline: none;
-  background-color: #ffff00;
-}
-
-.kbd-navigation .square:focus {
-  background: #ddd;
-}
-
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
-}
+export const LoadingIcon = (): JSX.Element => {
+    return (
+        <Container sx={{ pt: "20vh" }}>
+            <img src={logo} style={{ maxHeight: "50vh" }} alt="Loading..." />
+        </Container>
+    );
+};

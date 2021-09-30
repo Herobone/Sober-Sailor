@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { SettingState } from "../reducers/settingReducer";
+import { Filler, SettingState } from "../reducers/settingReducer";
 import { AvailableThemes } from "../../style/Theme";
 
 /** ***************************
@@ -22,8 +22,13 @@ import { AvailableThemes } from "../../style/Theme";
  */
 
 export type SettingAction = {
-    type: "SET_LANGUAGE" | "SET_THEME";
+    type: "SET_LANGUAGE" | "SET_THEME" | "SET_FILLER";
     payload: string;
+};
+
+export type BooleanAction = {
+    type: "SET_COOKIES_OPEN";
+    payload: boolean;
 };
 
 const setTheme = (theme: string): SettingAction => ({ type: "SET_THEME", payload: theme });
@@ -34,6 +39,18 @@ export const useThemeSetting = (): [AvailableThemes, (content: AvailableThemes) 
 
     const set = (content: AvailableThemes): void => {
         dispatch(setTheme(content));
+    };
+    return [get, set];
+};
+
+const setCookiesOpen = (open: boolean): BooleanAction => ({ type: "SET_COOKIES_OPEN", payload: open });
+
+export const useCookiesOpen = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, SettingState["cookiesOpen"]>((state) => state.settings.cookiesOpen);
+
+    const set = (content: boolean): void => {
+        dispatch(setCookiesOpen(content));
     };
     return [get, set];
 };
@@ -50,6 +67,18 @@ export const useLanguage = (): [string, (content: string) => void] => {
 
     const set = (content: string): void => {
         dispatch(setLanguage(content));
+    };
+    return [get, set];
+};
+
+const setFiller = (fill: Filler): SettingAction => ({ type: "SET_FILLER", payload: fill });
+
+export const useFiller = (): [Filler, (content: Filler) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, SettingState["filler"]>((state) => state.settings.filler);
+
+    const set = (content: Filler): void => {
+        dispatch(setFiller(content));
     };
     return [get, set];
 };

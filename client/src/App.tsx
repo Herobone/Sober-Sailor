@@ -25,9 +25,21 @@ import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
 import { Routed } from "./Components/Functional/Routed";
-import { AvailableThemes, CalmTheme, DarkTheme, StandardTheme } from "./style/Theme";
+import {
+    AvailableThemes,
+    CalmTheme,
+    DarkTheme,
+    HackerTheme,
+    HighContrastTheme,
+    MinimalistTheme,
+    StandardTheme,
+} from "./style/Theme";
 import { store } from "./state/store";
-import { useThemeSetting } from "./state/actions/settingActions";
+import { useFiller, useThemeSetting } from "./state/actions/settingActions";
+import { Filler } from "./state/reducers/settingReducer";
+import backgroundName from "./media/BackgroundWithName.png";
+import background from "./media/Background.png";
+import { useBackgroundState } from "./state/actions/displayStateActions";
 
 export function App(): JSX.Element {
     return (
@@ -44,11 +56,16 @@ function AppWithStore(): JSX.Element {
     const [theme, setTheme] = useThemeSetting();
     const [muiTheme, setMuiTheme] = useState(CalmTheme);
 
+    const [backgroundState] = useBackgroundState();
+
+    const setFiller = useFiller()[1];
+
     useEffect(() => {
         const themeFromCookie: AvailableThemes | undefined = cookies.get("theme");
-        if (themeFromCookie) {
-            setTheme(themeFromCookie);
-        }
+        if (themeFromCookie) setTheme(themeFromCookie);
+
+        const fillerFromCookie: Filler | undefined = cookies.get("filler");
+        if (fillerFromCookie) setFiller(fillerFromCookie);
     }, []);
 
     useEffect(() => {
@@ -62,6 +79,15 @@ function AppWithStore(): JSX.Element {
             case "light":
                 setMuiTheme(StandardTheme);
                 break;
+            case "highcontrast":
+                setMuiTheme(HighContrastTheme);
+                break;
+            case "hacker":
+                setMuiTheme(HackerTheme);
+                break;
+            case "minimalist":
+                setMuiTheme(MinimalistTheme);
+                break;
             default:
                 setMuiTheme(CalmTheme);
                 break;
@@ -71,7 +97,21 @@ function AppWithStore(): JSX.Element {
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={muiTheme}>
+                <div
+                    style={{
+                        zIndex: -1,
+                        filter: backgroundState ? "blur(4px)" : "none",
+                        position: "absolute",
+                        backgroundImage: `url(${backgroundState ? background : backgroundName})`,
+                        backgroundPosition: "center",
+                        backgroundAttachment: "fixed",
+                        backgroundSize: "cover",
+                        width: "100vw",
+                        height: "100vh",
+                    }}
+                />
                 <CssBaseline />
+
                 <LanguageContainer>
                     <SnackbarProvider maxSnack={4}>
                         <AlertProvider>

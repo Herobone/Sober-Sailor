@@ -34,8 +34,12 @@ export const onPlayerLeaveHandler = async (
     throw new Error("Data was missing");
   }
   gameData.register.removePlayer(context.params.playerID);
+  gameData.scoreboard.board.delete(context.params.playerID);
 
-  await FirestoreUtil.updateRegister(context.params.gameID, gameData);
+  await FirestoreUtil.getGame(gameData.gameID).update({
+    playerUidMap: gameData.register.serialize(),
+    scoreboard: gameData.scoreboard.serializeBoard(),
+  });
 
   return null;
 };

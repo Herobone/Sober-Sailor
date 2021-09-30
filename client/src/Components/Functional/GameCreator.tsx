@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, Container, IconButton, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ArrowForwardIos } from "@mui/icons-material";
 import React from "react";
@@ -23,6 +23,7 @@ import { useGameProviderStyle } from "../../style/GameProvider";
 import { GameManager } from "../../helper/gameManager";
 import { Alerts } from "../../helper/AlertTypes";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { VisibilityContainer } from "../Visuals/VisibilityContainer";
 import { useAlert } from "./AlertProvider";
 
 export function GameCreator(): JSX.Element {
@@ -39,13 +40,10 @@ export function GameCreator(): JSX.Element {
     };
 
     return (
-        <>
-            <h1 className={classes.h1}>
-                <TranslatedMessage id="sobersailor.name" />
-            </h1>
+        <VisibilityContainer>
             <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 className={classes.createGameButton}
                 onClick={createGame}
                 size="large"
@@ -53,12 +51,15 @@ export function GameCreator(): JSX.Element {
                 <TranslatedMessage id="actions.game.create" />
             </Button>
 
-            <div className={classes.centeraligned}>
+            <Container
+                sx={{
+                    pt: 10,
+                }}
+            >
                 <TextField
                     label="GameID"
                     color="primary"
                     id="outlined-start-adornment"
-                    className={classes.inputGameIDField}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">{window.location.host}</InputAdornment>,
                     }}
@@ -73,7 +74,7 @@ export function GameCreator(): JSX.Element {
                 >
                     <ArrowForwardIos />
                 </IconButton>
-            </div>
-        </>
+            </Container>
+        </VisibilityContainer>
     );
 }

@@ -20,55 +20,104 @@ import { TaskState } from "../reducers/taskReducer";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+type StringActionType = string | undefined;
+type UncertainNumberType = number | undefined;
+type AnswerActionType = MultiAnswer[] | undefined;
 
 export type StringAction = {
     type: "SET_TASK" | "SET_TYPE" | "SET_TARGET";
-    payload: string | undefined;
+    payload: StringActionType;
 };
 
-/**
- * Set the current task
- * @param task  The task to set
- */
-export const setTask = (task: string | undefined): StringAction => ({ type: "SET_TASK", payload: task });
+type CombinedPayload = {
+    type: StringActionType;
+    penalty: number;
+    taskID: UncertainNumberType;
+    target: StringActionType;
+};
 
-/**
- * Set the current Tasks type
- * @param type  The tasks type
- */
-export const setType = (type: string | undefined): StringAction => ({ type: "SET_TYPE", payload: type });
+export type CombinedTaskAction = {
+    type: "SET_TASK_COMBINED";
+    payload: CombinedPayload;
+};
 
-/**
- * Set the current Tasks target
- * @param target    The tasks target
- */
-export const setTarget = (target: string | undefined): StringAction => ({ type: "SET_TARGET", payload: target });
-
-/**
- * Set the current Tasks penalty
- * @param penalty    The tasks penalty
- */
-export const setPenalty = (penalty: number): NumberAction => ({ type: "SET_PENALTY", payload: penalty });
+export type AnswerAction = {
+    type: "SET_ANSWERS";
+    payload: AnswerActionType;
+};
 
 export type NumberAction = {
     type: "SET_PENALTY";
     payload: number;
 };
+
+export type UncertainNumberAction = {
+    type: "SET_TASK_ID";
+    payload: UncertainNumberType;
+};
+
+type setAllFunction = (
+    type: StringActionType,
+    penalty: number,
+    taskID?: UncertainNumberType,
+    target?: StringActionType,
+) => void;
+
+/**
+ * Set the current task
+ * @param task  The task to set
+ */
+const setTask = (task: StringActionType): StringAction => ({ type: "SET_TASK", payload: task });
+
+/**
+ * Set the current Tasks type
+ * @param type  The tasks type
+ */
+const setType = (type: StringActionType): StringAction => ({ type: "SET_TYPE", payload: type });
+
+/**
+ * Set the current Tasks target
+ * @param target    The tasks target
+ */
+const setTarget = (target: StringActionType): StringAction => ({ type: "SET_TARGET", payload: target });
+
+/**
+ * Set the current Tasks penalty
+ * @param penalty    The tasks penalty
+ */
+const setPenalty = (penalty: number): NumberAction => ({ type: "SET_PENALTY", payload: penalty });
+
+/**
+ * Set the current task id
+ * @param id  The task id to set
+ */
+const setTaskID = (id: UncertainNumberType): UncertainNumberAction => ({ type: "SET_TASK_ID", payload: id });
+
+const setCombined = (
+    type: StringActionType,
+    penalty: number,
+    taskID?: UncertainNumberType,
+    target?: StringActionType,
+): CombinedTaskAction => ({
+    type: "SET_TASK_COMBINED",
+    payload: {
+        taskID,
+        type,
+        target,
+        penalty,
+    },
+});
+
 /**
  * Set the current Tasks answers
  * @param answers    The tasks answers
  */
-export const setAnswers = (answers: MultiAnswer[] | undefined): AnswerAction => ({
+export const setAnswers = (answers: AnswerActionType): AnswerAction => ({
     type: "SET_ANSWERS",
     payload: answers,
 });
 
-export type AnswerAction = {
-    type: "SET_ANSWERS";
-    payload: MultiAnswer[] | undefined;
-};
-
-export const useTaskType = (): [string | undefined, (content: string | undefined) => void] => {
+export const useTaskType = (): [StringActionType, (content: StringActionType) => void] => {
     const dispatch = useDispatch();
     const get = useSelector<RootState, TaskState["type"]>((state) => state.task.type);
 
@@ -78,21 +127,21 @@ export const useTaskType = (): [string | undefined, (content: string | undefined
     return [get, set];
 };
 
-export const useTask = (): [string | undefined, (content: string | undefined) => void] => {
+export const useTask = (): [StringActionType, (content: StringActionType) => void] => {
     const dispatch = useDispatch();
     const get = useSelector<RootState, TaskState["task"]>((state) => state.task.task);
 
-    const set = (content: string | undefined): void => {
+    const set = (content: StringActionType): void => {
         dispatch(setTask(content));
     };
     return [get, set];
 };
 
-export const useTarget = (): [string | undefined, (content: string | undefined) => void] => {
+export const useTarget = (): [StringActionType, (content: StringActionType) => void] => {
     const dispatch = useDispatch();
     const get = useSelector<RootState, TaskState["target"]>((state) => state.task.target);
 
-    const set = (content: string | undefined): void => {
+    const set = (content: StringActionType): void => {
         dispatch(setTarget(content));
     };
     return [get, set];
@@ -108,12 +157,29 @@ export const usePenalty = (): [number, (content: number) => void] => {
     return [get, set];
 };
 
-export const useAnswers = (): [MultiAnswer[] | undefined, (content: MultiAnswer[] | undefined) => void] => {
+export const useTaskID = (): [UncertainNumberType, (content: UncertainNumberType) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, TaskState["taskID"]>((state) => state.task.taskID);
+
+    const set = (content: UncertainNumberType): void => {
+        dispatch(setTaskID(content));
+    };
+    return [get, set];
+};
+
+export const useAnswers = (): [AnswerActionType, (content: AnswerActionType) => void] => {
     const dispatch = useDispatch();
     const get = useSelector<RootState, TaskState["answers"]>((state) => state.task.answers);
 
-    const set = (content: MultiAnswer[] | undefined): void => {
+    const set = (content: AnswerActionType): void => {
         dispatch(setAnswers(content));
     };
     return [get, set];
+};
+
+export const useAll = (): setAllFunction => {
+    const dispatch = useDispatch();
+    return function (type: StringActionType, penalty: number, taskID: UncertainNumberType, target: StringActionType) {
+        dispatch(setCombined(type, penalty, taskID, target));
+    };
 };

@@ -21,6 +21,7 @@ import { getAuth } from "firebase/auth";
 import { DocumentSnapshot, onSnapshot } from "firebase/firestore";
 import { TicOptions, TicTacToe as TicTacToeData } from "sobersailor-common/lib/models/TicTacToe";
 import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
+import Grid from "@mui/material/Grid";
 import style from "../../css/TicTacToe.module.scss";
 import { GameManager } from "../../helper/gameManager";
 import { firebaseApp } from "../../helper/config";
@@ -101,45 +102,56 @@ export function TicTacToe(): JSX.Element {
 
     useEffect(() => {
         document.addEventListener("keydown", keyEvent, false);
-        const unsubscribe = onSnapshot(TicUtils.getTTTGame(), updateFromDoc);
+        const unsub = onSnapshot(TicUtils.getTTTGame(), updateFromDoc);
 
         return function cleanup() {
-            unsubscribe();
+            unsub();
             document.removeEventListener("keydown", keyEvent, false);
         };
     }, []);
 
     return (
-        <div className={style.game}>
-            {spectator && (
-                <div className="spectator-area">
-                    <h2>
-                        <TranslatedMessage id="elements.general.youare" />{" "}
-                        <TranslatedMessage id="elements.tictactoe.spectator" />
-                    </h2>
-                    <br />
-                </div>
-            )}
-            {!spectator && (
-                <div className="player-area">
-                    <h2>
-                        <TranslatedMessage id="elements.general.youare" /> {player}
-                    </h2>
-                    <br />
-                </div>
-            )}
-            {!winner && (
-                <>
-                    <div className={style.boardRow}>
-                        <Board squares={squares} onClick={(i: number) => handleClick(i)} />
-                    </div>
-                    <div className={style.gameInfo}>
-                        <div>Next player: ${isXNext ? "X" : "O"}</div>
-                        <div>Step: {stepNumber}</div>
-                    </div>
-                </>
-            )}
-            {winner && <h2>Player {winner} won the game!</h2>}
-        </div>
+        <>
+            <Grid
+                container
+                spacing={3}
+                sx={{
+                    width: 1,
+                    margin: 0,
+                }}
+            >
+                {spectator && (
+                    <Grid item xs={12}>
+                        <h2>
+                            <TranslatedMessage id="elements.general.youare" />{" "}
+                            <TranslatedMessage id="elements.tictactoe.spectator" />
+                        </h2>
+                        <br />
+                    </Grid>
+                )}
+                {!spectator && (
+                    <Grid item xs={12}>
+                        <h2>
+                            <TranslatedMessage id="elements.general.youare" /> {player}
+                        </h2>
+                        <br />
+                    </Grid>
+                )}
+                <Grid item xs={12} sm={9} className={style.game}>
+                    {!winner && (
+                        <div className={style.boardRow}>
+                            <Board squares={squares} onClick={(i: number) => handleClick(i)} />
+                        </div>
+                    )}
+                </Grid>
+
+                <Grid item xs={3} className={style.gameInfo}>
+                    <div>Next player: {isXNext ? "X" : "O"}</div>
+                    <div>Step: {stepNumber}</div>
+                </Grid>
+
+                {winner && <h2>Player {winner} won the game!</h2>}
+            </Grid>
+        </>
     );
 }

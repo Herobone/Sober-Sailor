@@ -18,18 +18,16 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import firebase from "firebase/compat/app";
 import { getAuth, setPersistence, browserLocalPersistence, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import * as serviceWorker from "./serviceWorker";
-import { config, firebaseApp } from "./helper/config";
+import { firebaseApp } from "./helper/config";
 import { App } from "./App";
 import { Dough } from "./helper/Dough";
 
 // Initialize Firebase with the config
 // Configure in helper/config.ts
-firebase.initializeApp(config);
 const auth = getAuth(firebaseApp);
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 

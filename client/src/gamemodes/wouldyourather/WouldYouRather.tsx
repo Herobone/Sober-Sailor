@@ -22,6 +22,7 @@ import { useAnswers, useTask } from "../../state/actions/taskActions";
 import { GameManager } from "../../helper/gameManager";
 import { usePollState } from "../../state/actions/displayStateActions";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { CatPontent } from "../../Components/Visuals/CatPontent";
 
 export const WouldYouRather: FunctionComponent = () => {
     const [inputLock, setInputLock] = useState(true);
@@ -29,7 +30,7 @@ export const WouldYouRather: FunctionComponent = () => {
     const [question] = useTask();
     const [pollState] = usePollState();
     const [answers] = useAnswers();
-    const values: ReactElement[] = [];
+    const [values, setValues] = useState<ReactElement[]>([]);
 
     useEffect(() => {
         setInputLock(true);
@@ -41,39 +42,39 @@ export const WouldYouRather: FunctionComponent = () => {
         setInputLock(!pollState);
     }, [pollState]);
 
-    if (!answers) {
-        return <></>;
-    }
-    if (!question) {
-        return <></>;
-    }
+    useEffect(() => {
+        if (!answers) return;
 
-    answers.forEach((multiAnswer: MultiAnswer) => {
-        values.push(
-            <ButtonGroup
-                key={`answer-button-${multiAnswer.id}`}
-                orientation="vertical"
-                color="primary"
-                variant="contained"
-            >
-                <Button
-                    className="wwr-player-select"
-                    type="submit"
-                    onClick={() => {
-                        GameManager.setAnswer(multiAnswer.id.toString(10)).catch(console.error);
-                        setAnswer(multiAnswer.answer);
-                        setInputLock(true);
-                    }}
+        const internalValues: ReactElement[] = [];
+
+        answers.forEach((multiAnswer: MultiAnswer) => {
+            internalValues.push(
+                <ButtonGroup
+                    key={`answer-button-${multiAnswer.id}`}
+                    orientation="vertical"
+                    color="primary"
+                    variant="contained"
                 >
-                    {multiAnswer.answer}
-                </Button>
-            </ButtonGroup>,
-        );
-    });
+                    <Button
+                        className="wwr-player-select"
+                        type="submit"
+                        onClick={() => {
+                            GameManager.setAnswer(multiAnswer.id.toString(10)).catch(console.error);
+                            setAnswer(multiAnswer.answer);
+                            setInputLock(true);
+                        }}
+                    >
+                        {multiAnswer.answer}
+                    </Button>
+                </ButtonGroup>,
+            );
+        });
+        setValues(internalValues);
+    }, [answers]);
 
     return (
         <>
-            <h2>{question}</h2>
+            <h2>{question || <TranslatedMessage id="general.shouldnothappen" />}</h2>
             <p>
                 <TranslatedMessage id="gamemodes.wouldyourather.description" />
             </p>
@@ -86,6 +87,8 @@ export const WouldYouRather: FunctionComponent = () => {
                             answer,
                         }}
                     />
+                    <br />
+                    <CatPontent />
                 </div>
             )}
         </>

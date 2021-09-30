@@ -14,7 +14,8 @@ service cloud.firestore {
         return playerExists() && request.auth.uid == get(/databases/$(database)/documents/games/$(game)).data.host;
       }
 
-      allow read: if playerExists();
+      allow get: if playerExists();
+      allow list: if isAuthenticated();
       allow create: if isAuthenticated();
       allow update: if isHost();
       allow delete: if isHost();

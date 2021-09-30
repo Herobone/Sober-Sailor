@@ -20,7 +20,7 @@ import { DisplayState } from "../reducers/displayStateReducer";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export type DisplayStateAction = { type: "SET_POLL" | "SET_EVAL"; payload: boolean };
+export type DisplayStateAction = { type: "SET_POLL" | "SET_EVAL" | "SET_BACKGROUND"; payload: boolean };
 
 /**
  * Set the Poll state (Whether a poll is currently running)
@@ -35,6 +35,8 @@ export const setPollState = (state: boolean): DisplayStateAction => ({ type: "SE
  * @param state     The state of evaluation
  */
 export const setEvalState = (state: boolean): DisplayStateAction => ({ type: "SET_EVAL", payload: state });
+
+export const setBackgroundState = (state: boolean): DisplayStateAction => ({ type: "SET_BACKGROUND", payload: state });
 
 export const useEvalState = (): [boolean, (content: boolean) => void] => {
     const dispatch = useDispatch();
@@ -52,6 +54,16 @@ export const usePollState = (): [boolean, (content: boolean) => void] => {
 
     const set = (content: boolean): void => {
         dispatch(setPollState(content));
+    };
+    return [get, set];
+};
+
+export const useBackgroundState = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, DisplayState["backgroundState"]>((state) => state.displayState.backgroundState);
+
+    const set = (content: boolean): void => {
+        dispatch(setBackgroundState(content));
     };
     return [get, set];
 };

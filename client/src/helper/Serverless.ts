@@ -16,8 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import firebase from "firebase/compat/app";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { getFunctions, httpsCallable, HttpsCallable } from "firebase/functions";
 import { firebaseApp } from "./config";
 
 export interface EvaluateGame {
@@ -35,7 +34,7 @@ export class Serverless {
 
     public static UPDATE_SCOREBOARD = "updateScoreboard";
 
-    public static callFunction = (name: string): firebase.functions.HttpsCallable => {
+    public static callFunction = (name: string): HttpsCallable => {
         const functions = getFunctions(firebaseApp, "europe-west1");
         return httpsCallable(functions, name);
     };

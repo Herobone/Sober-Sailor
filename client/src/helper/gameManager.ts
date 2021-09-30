@@ -17,7 +17,6 @@
  */
 
 import {
-    DocumentSnapshot,
     getFirestore,
     doc,
     getDoc,
@@ -25,11 +24,14 @@ import {
     setDoc,
     collection,
     CollectionReference,
-    onSnapshot,
     deleteDoc,
     getDocs,
     updateDoc,
     increment,
+    DocumentSnapshot,
+    Unsubscribe,
+    onSnapshot,
+    FirestoreError,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { Register } from "sobersailor-common/lib/models/Register";
@@ -37,10 +39,12 @@ import { Game } from "sobersailor-common/lib/models/Game";
 import { Player } from "sobersailor-common/lib/models/Player";
 import Util from "sobersailor-common/lib/Util";
 import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
+import { tasks } from "../gamemodes/tasks";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";
 import { Serverless } from "./Serverless";
 import { firebaseApp } from "./config";
+import { TaskUtils } from "./TaskUtils";
 
 export class GameManager {
     static getPlayerLookupTable(): Register | null {
@@ -50,8 +54,6 @@ export class GameManager {
         }
 
         console.warn("LocalStorage has no PLT stored! Try again!");
-        getDoc(GameManager.getGame()).then(GameManager.updatePlayerLookupTable).catch(console.error);
-
         return null;
     }
 
@@ -78,11 +80,8 @@ export class GameManager {
         return players;
     }
 
-    static updatePlayerLookupTable(docIn: DocumentSnapshot<Game>): void {
-        const data = docIn.data();
-        if (data) {
-            localStorage.setItem("playerLookupTable", data.register.stringify());
-        }
+    static updatePlayerLookupTable(data: Game): void {
+        localStorage.setItem("playerLookupTable", data.register.stringify());
     }
 
     static getGameID(): string {
@@ -137,8 +136,12 @@ export class GameManager {
      * This function will handle the join event. It will create a new Player object in the __players__ collection. It
      * also attaches a event handler to the main game Document that is used to update the state
      * @param gameEvent The Event Handler
+     * @param onSnapshotError The Error Handler
      */
-    static async joinGame(gameEvent: (doc: DocumentSnapshot<Game>) => void): Promise<void> {
+    static async joinGame(
+        gameEvent: (doc: DocumentSnapshot<Game>) => void,
+        onSnapshotError: (error: FirestoreError) => void,
+    ): Promise<Unsubscribe> {
         const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
 
@@ -153,10 +156,9 @@ export class GameManager {
             throw new Error("User tried to join without name!");
         }
 
-        const gameRef = GameManager.getGame();
-        const userRef = GameManager.getPlayer(uid);
-        const userDoc = await getDoc(userRef);
         try {
+            const userRef = GameManager.getPlayer(uid);
+            const userDoc = await getDoc(userRef);
             if (!userDoc.exists()) {
                 await setDoc(userRef, new Player(uid, nickname, 0, null));
             }
@@ -165,7 +167,20 @@ export class GameManager {
             console.error(error);
         }
 
-        onSnapshot(gameRef, gameEvent);
+        // Preload tasks in English
+        for (const task of tasks) {
+            if (task.id === "tictactoe") continue;
+            await (task.multiAnswer
+                ? TaskUtils.storeLocalFromGitMultiAnswer(task.id, "en")
+                : TaskUtils.storeToLocalFromGit(task.id, "en"));
+        }
+
+        const gameRef = GameManager.getGame();
+        const unsubscribe = onSnapshot(gameRef, gameEvent, onSnapshotError);
+        console.log("Snapshot listener added");
+        const data = await getDoc(gameRef);
+        gameEvent(data);
+        return unsubscribe;
     }
 
     public static removeLocalData(): void {
@@ -313,14 +328,19 @@ export class GameManager {
         if (!user) {
             throw new Error("Unauthenticated");
         }
-
-        const { uid } = user;
-        const playerRef = GameManager.getPlayer(uid);
-        const docIn = await getDoc(playerRef.withConverter(playerConverter));
-        const data = docIn.data();
-        if (data) {
-            return data;
+        try {
+            const { uid } = user;
+            const playerRef = GameManager.getPlayer(uid);
+            const docIn = await getDoc(playerRef.withConverter(playerConverter));
+            const data = docIn.data();
+            if (data) {
+                return data;
+            }
+        } catch (error) {
+            console.error("An error occurred while fetching player data!");
+            console.error(error);
         }
+
         throw new Error("Player not found");
     }
 

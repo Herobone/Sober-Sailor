@@ -17,7 +17,7 @@
  */
 
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { CircularProgress, Fab, IconButton, TextField } from "@mui/material";
+import { Fab, IconButton, TextField, Typography } from "@mui/material";
 import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
 import Cookies from "universal-cookie";
 import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
@@ -26,6 +26,8 @@ import { GameManager } from "../../helper/gameManager";
 import { useGameProviderStyle } from "../../style/GameProvider";
 import { firebaseApp } from "../../helper/config";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { VisibilityContainer } from "../Visuals/VisibilityContainer";
+import { LoadingIcon } from "../Visuals/LoadingIcon";
 import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
 
@@ -119,10 +121,10 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     );
 
     const prepareNameSetter = (): JSX.Element => (
-        <>
-            <h1 className={classes.h1_long}>
+        <VisibilityContainer>
+            <Typography variant="h2" className={classes.h1_long}>
                 <TranslatedMessage id="account.descriptors.finishsignup" />
-            </h1>
+            </Typography>
             <br />
             <TextField
                 required
@@ -146,7 +148,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
             >
                 <ArrowForwardIos />
             </IconButton>
-        </>
+        </VisibilityContainer>
     );
 
     if (user && !userReady) {
@@ -161,9 +163,5 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
         return prepareRunningGame();
     }
 
-    return (
-        <>
-            <CircularProgress />
-        </>
-    );
+    return <LoadingIcon />;
 }

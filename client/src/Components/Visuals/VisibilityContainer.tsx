@@ -1,6 +1,6 @@
 /*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2020.
+ * Copyright (c) 2021.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,48 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import { PropsWithChildren } from "react";
+import { Container } from "@mui/material";
 
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
+interface Props {}
 
-.status {
-  margin-bottom: 10px;
-}
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-
-  font-weight: bold;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-}
-
-.square:focus {
-  outline: none;
-  background-color: #f0f000;
-}
-
-.square:hover {
-  outline: none;
-  background-color: #ffff00;
-}
-
-.kbd-navigation .square:focus {
-  background: #ddd;
-}
-
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
-}
+export const VisibilityContainer = (props: PropsWithChildren<Props>): JSX.Element => {
+    return (
+        <Container sx={{ pt: "200px" }}>
+            <Container
+                sx={{
+                    p: 5,
+                    backgroundColor: "rgba(100, 100, 100, 0.5)",
+                    backdropFilter: "blur(40%)",
+                    borderRadius: 20,
+                }}
+            >
+                {props.children}
+            </Container>
+        </Container>
+    );
+};
