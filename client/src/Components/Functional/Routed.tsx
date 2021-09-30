@@ -18,7 +18,6 @@
 
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
-import { Container } from "@mui/material";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
@@ -50,12 +49,6 @@ export function Routed(): JSX.Element {
                         {/*<Route path="/login">
                             <Login />
                         </Route>*/}
-
-                        <Route path="/test">
-                            <Container sx={{ alignContent: "center", alignItems: "center" }}>
-                                <LoadingIcon />
-                            </Container>
-                        </Route>
 
                         <Route path="/logout">
                             <Logout />
