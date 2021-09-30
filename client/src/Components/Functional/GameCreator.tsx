@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { Button, Container, IconButton, TextField, Typography } from "@mui/material";
+import { Button, Container, IconButton, TextField } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ArrowForwardIos } from "@mui/icons-material";
 import React from "react";
