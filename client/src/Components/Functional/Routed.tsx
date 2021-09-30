@@ -22,6 +22,7 @@ import { CircularProgress } from "@mui/material";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
+import { LoadingIcon } from "../Visuals/LoadingIcon";
 import { MixedGameProvider } from "./MixedGameProvider";
 import { Logout } from "./Logout";
 
@@ -49,6 +50,10 @@ export function Routed(): JSX.Element {
                         {/*<Route path="/login">
                             <Login />
                         </Route>*/}
+
+                        <Route path="/test">
+                            <LoadingIcon />
+                        </Route>
 
                         <Route path="/logout">
                             <Logout />
