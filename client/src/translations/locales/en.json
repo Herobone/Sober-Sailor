@@ -75,5 +75,6 @@
     "settings.options.filler.cats": "Cats",
     "settings.options.theme.minimalist": "Minimalist",
     "settings.options.theme.hacker": "Hacker",
-    "settings.options.theme.highcontrast": "High Contrast"
+    "settings.options.theme.highcontrast": "High Contrast",
+    "settings.labels.select.filler": "Filler between tasks"
 }
