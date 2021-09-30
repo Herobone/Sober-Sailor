@@ -21,7 +21,7 @@ import logo from "../../media/CompassAnimated.svg";
 
 export const LoadingIcon = (): JSX.Element => {
     return (
-        <Container sx={{ p: "20vh" }}>
+        <Container sx={{ pt: "20vh" }}>
             <img src={logo} style={{ maxHeight: "50vh" }} alt="Loading..." />
         </Container>
     );
