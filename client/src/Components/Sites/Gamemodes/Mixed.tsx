@@ -377,7 +377,7 @@ export default function Mixed(): JSX.Element {
 
     return (
         <>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} sx={{ pl: -3 }} className={classes.mainGrid}>
                 <Grid item xs={10} md={6}>
                     <div className={classes.mainHeadingName}>
                         <TranslatedMessage id="sobersailor.name" />

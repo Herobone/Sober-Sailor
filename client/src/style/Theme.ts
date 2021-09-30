@@ -17,7 +17,25 @@
  */
 import { createTheme, responsiveFontSizes } from "@mui/material";
 
-export type AvailableThemes = "light" | "calm" | "dark";
+export type AvailableThemes = "light" | "calm" | "dark" | "highcontrast" | "hacker" | "minimalist";
+
+declare module "@mui/material/styles" {
+    interface TypographyVariants {
+        poster: React.CSSProperties;
+    }
+
+    // allow configuration using `createTheme`
+    interface TypographyVariantsOptions {
+        poster?: React.CSSProperties;
+    }
+}
+
+// Update the Typography's variant prop options
+declare module "@mui/material/Typography" {
+    interface TypographyPropsVariantOverrides {
+        poster: true;
+    }
+}
 
 export const StandardTheme = responsiveFontSizes(
     createTheme({
@@ -62,6 +80,7 @@ export const DarkTheme = responsiveFontSizes(
 );
 
 export const CalmTheme = responsiveFontSizes(
+    // wer hat sich das ausgedacht???
     createTheme({
         palette: {
             mode: "light",
@@ -74,6 +93,74 @@ export const CalmTheme = responsiveFontSizes(
             secondary: {
                 main: "#4abdac",
                 contrastText: "#6e7376",
+            },
+        },
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
+        },
+    }),
+);
+
+export const HighContrastTheme = responsiveFontSizes(
+    createTheme({
+        palette: {
+            mode: "dark",
+            background: {
+                default: "#14213d",
+            },
+            primary: {
+                main: "#fca311",
+            },
+            secondary: {
+                main: "#e5e5e5",
+                contrastText: "#ffffff",
+            },
+        },
+        typography: {
+            fontFamily: ["Ubuntu"].join(","),
+        },
+    }),
+);
+
+export const HackerTheme = responsiveFontSizes(
+    //green on black
+    createTheme({
+        palette: {
+            mode: "dark",
+            background: {
+                default: "#000000",
+            },
+            primary: {
+                main: "#2bc016",
+            },
+            secondary: {
+                main: "#2bc016",
+                contrastText: "#2bc016",
+            },
+        },
+        typography: {
+            h1: {
+                color: "#2bc016",
+            },
+            fontFamily: ["Ubuntu"].join(","),
+        },
+    }),
+);
+
+export const MinimalistTheme = responsiveFontSizes(
+    // gray and white
+    createTheme({
+        palette: {
+            mode: "light",
+            background: {
+                default: "#adb5bd",
+            },
+            primary: {
+                main: "#495057",
+            },
+            secondary: {
+                main: "#e9ecef",
+                contrastText: "#343a40",
             },
         },
         typography: {

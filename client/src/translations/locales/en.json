@@ -73,5 +73,7 @@
     "settings.options.filler.memes": "Memes",
     "settings.options.filler.dogs": "Dogs",
     "settings.options.filler.cats": "Cats",
-    "settings.labels.select.filler": "Filler between Tasks"
+    "settings.options.theme.minimalist": "Minimalist",
+    "settings.options.theme.hacker": "Hacker",
+    "settings.options.theme.highcontrast": "High Contrast"
 }

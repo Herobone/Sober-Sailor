@@ -88,6 +88,8 @@ export const useDefaultStyles = makeStyles((theme: Theme) => ({
         fontSize: 70,
     },
 
+    mainGrid: {},
+
     mainHeadingName: {
         position: "relative",
         fontSize: 30,
