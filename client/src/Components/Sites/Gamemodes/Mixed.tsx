@@ -297,7 +297,7 @@ export default function Mixed(): JSX.Element {
                 break;
             case "wouldyourather":
                 await processNewMultiAnswerTask();
-                setVotable(false);
+                setVotable(true);
                 break;
             case undefined:
                 setTaskComponent(notLoaded);
