@@ -47,6 +47,7 @@ export function Settings(): JSX.Element {
         { code: "no", name: "Norwegian Bokmål" },
         { code: "fr", name: "French" },
         { code: "it", name: "Italian" },
+        { code: "ru", name: "Russian" },
     ];
 
     const themeOptions: ThemeSetting[] = [

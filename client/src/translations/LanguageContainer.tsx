@@ -29,6 +29,7 @@ const messageLoader = {
     no: () => import("./locales/nb_NO.json"),
     fr: () => import("./locales/fr.json"),
     it: () => import("./locales/it.json"),
+    ru: () => import("./locales/ru.json"),
     // de_AT: () => import("./locales/de_AT.json"),
 };
 
