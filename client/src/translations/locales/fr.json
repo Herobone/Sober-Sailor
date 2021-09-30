@@ -72,5 +72,8 @@
     "general.player": "Joueur",
     "settings.options.filler.memes": "Mèmes",
     "settings.options.filler.dogs": "Chiens",
-    "settings.options.filler.cats": "Chats"
+    "settings.options.filler.cats": "Chats",
+    "settings.options.theme.hacker": "Hackeur",
+    "settings.options.theme.minimalist": "Minimaliste",
+    "settings.options.theme.highcontrast": "Contraste élevé"
 }
