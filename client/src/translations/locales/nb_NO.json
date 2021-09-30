@@ -72,5 +72,8 @@
     "general.player": "Spiller",
     "settings.options.filler.memes": "Memes",
     "settings.options.filler.dogs": "Hunder",
-    "settings.options.filler.cats": "Katter"
+    "settings.options.filler.cats": "Katter",
+    "settings.options.theme.minimalist": "Minimalistisk",
+    "settings.options.theme.hacker": "Datasnok",
+    "settings.options.theme.highcontrast": "Høykontrast"
 }
