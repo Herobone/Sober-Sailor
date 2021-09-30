@@ -105,6 +105,7 @@ export default function Mixed(): JSX.Element {
     const [maxTime, setMaxTime] = useState(0);
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
     const [taskComponent, setTaskComponent] = useState<ReactElement>(notLoaded);
+    const [votable, setVotable] = useState(false);
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
@@ -271,9 +272,11 @@ export default function Mixed(): JSX.Element {
         switch (taskType) {
             case "whowouldrather":
                 setTaskComponent(<WhoWouldRather />);
+                setVotable(true);
                 break;
             case "truthordare":
                 setTaskComponent(<TruthOrDare />);
+                setVotable(false);
                 break;
             default:
                 unknownTypeAlert();
@@ -290,15 +293,19 @@ export default function Mixed(): JSX.Element {
             case "tictactoe":
                 console.log("TicTacToe");
                 setTaskComponent(<TicTacToe />);
+                setVotable(false);
                 break;
             case "wouldyourather":
                 await processNewMultiAnswerTask();
+                setVotable(false);
                 break;
             case undefined:
                 setTaskComponent(notLoaded);
+                setVotable(false);
                 break;
             default:
                 unknownTypeAlert();
+                setVotable(false);
                 break;
         }
     };
@@ -446,7 +453,7 @@ export default function Mixed(): JSX.Element {
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
-                                {!pollState && (
+                                {!pollState && votable && !evalState && (
                                     <Grid item xs className={classes.controlButton}>
                                         <Tooltip
                                             title={<TranslatedMessage id="actions.host.startpoll" />}
