@@ -16,16 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import back from "../../media/CompassNoNeedle.svg";
-import needle from "../../media/Needle.svg";
-import pin from "../../media/CenterPin.svg";
+import { Container } from "@mui/material";
+import logo from "../../media/CompassAnimated.svg";
 
 export const LoadingIcon = (): JSX.Element => {
     return (
-        <>
-            <img style={{ position: "absolute" }} src={back} />
-            <img style={{ position: "absolute", animation: "spin 3s linear infinite" }} src={needle} />
-            <img style={{ position: "absolute" }} src={pin} />
-        </>
+        <Container sx={{ p: "20vh" }}>
+            <img src={logo} style={{ maxHeight: "50vh" }} alt="Loading..." />
+        </Container>
     );
 };

@@ -18,7 +18,7 @@
 
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
+import { Container } from "@mui/material";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
@@ -35,7 +35,7 @@ export function Routed(): JSX.Element {
         <div className={classes.root}>
             <GlobalOverlay />
             <Router>
-                <Suspense fallback={<CircularProgress />}>
+                <Suspense fallback={<LoadingIcon />}>
                     <Switch>
                         <Route
                             path="/play/:gameID"
@@ -52,7 +52,9 @@ export function Routed(): JSX.Element {
                         </Route>*/}
 
                         <Route path="/test">
-                            <LoadingIcon />
+                            <Container sx={{ alignContent: "center", alignItems: "center" }}>
+                                <LoadingIcon />
+                            </Container>
                         </Route>
 
                         <Route path="/logout">

@@ -1,14 +1,11 @@
 <svg width="510" height="510" viewBox="0 0 510 510" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter4_d)">
-        <path d="M302.745 221.63 l-87.268 168.157 L249.999 399.995 L302.745 221.63Z" fill="#CF431F"/>
-        <circle cx="215.477" cy="389.786" r="5" stroke="black" fill="yellow" />
-        <circle cx="249.999" cy="399.995" r="5" stroke="black" fill="yellow" />
-        <circle cx="302.745" cy="221.63" r="5" stroke="black" fill="yellow" />
-        <path d="M197.291 578.359L215.514 389.785L250.037 399.994L197.291 578.359Z" fill="#23AFE0"/>
-        <path d="M302.745 221.63L284.521 410.204L249.999 399.995L302.745 221.63Z" fill="#F84420"/>
-        <path d="M197.291 578.359L284.559 410.203L250.037 399.994L197.291 578.359Z" fill="#2292C0"/>
+        <path d="M307.745 76.63 l-87.26 168.156 l34.522 10.209 l52.746 -178.365Z" fill="#CF431F"/>
+        <path d="M202.291 433.359 l18.223 -188.574 l34.523 10.209 l-52.746 178.365Z" fill="#23AFE0"/>
+        <path d="M307.745 76.63 l-18.224 188.574 l-34.522 -10.209 l52.746 -178.365Z" fill="#F84420"/>
+        <path d="M202.291 433.359 l87.268 -168.156 l-34.522 -10.209 l-52.746 178.365Z" fill="#2292C0"/>
     </g>
-    <filter id="filter4_d" x="162.769" y="210.421" width="184.498" height="385.146" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+    <filter id="filter4_d" x="162.769" y="62.421" width="184.498" height="385.146" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
         <feFlood flood-opacity="0" result="BackgroundImageFix"/>
         <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
         <feOffset dx="6" dy="3"/>
