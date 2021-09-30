@@ -20,11 +20,13 @@ import { DisplayStateAction } from "../actions/displayStateActions";
 export interface DisplayState {
     pollState: boolean;
     evalState: boolean;
+    backgroundState: boolean;
 }
 
 const initialState: DisplayState = {
     pollState: false,
     evalState: false,
+    backgroundState: false,
 };
 
 export const displayStateReducer = (state: DisplayState = initialState, action: DisplayStateAction): DisplayState => {
@@ -33,6 +35,8 @@ export const displayStateReducer = (state: DisplayState = initialState, action: 
             return { ...state, evalState: action.payload };
         case "SET_POLL":
             return { ...state, pollState: action.payload };
+        case "SET_BACKGROUND":
+            return { ...state, backgroundState: action.payload };
         default:
             return state;
     }

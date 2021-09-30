@@ -20,7 +20,6 @@ import { makeStyles } from "@mui/styles";
 
 export const useDefaultStyles = makeStyles((theme: Theme) => ({
     root: {
-        margin: theme.spacing(2),
         textAlign: "center",
         alignItems: "center",
         justifyContent: "center",
@@ -68,8 +67,6 @@ export const useDefaultStyles = makeStyles((theme: Theme) => ({
         width: "100%",
         // fontWeight: "bold",
         fontSize: 30,
-        padding: theme.spacing(1),
-        marginTop: theme.spacing(2),
         border: "4px solid",
         borderRadius: 100,
         minWidth: 200,
@@ -84,18 +81,11 @@ export const useDefaultStyles = makeStyles((theme: Theme) => ({
     },
 
     startPage: {
-        padding: theme.spacing(2),
         maxWidth: 500,
         textAlign: "center",
     },
     h1: {
         fontSize: 70,
-    },
-
-    mainGrid: {
-        flexGrow: 1,
-        width: "100%",
-        margin: 0,
     },
 
     mainHeadingName: {

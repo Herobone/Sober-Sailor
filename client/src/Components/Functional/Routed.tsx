@@ -22,7 +22,6 @@ import { CircularProgress } from "@mui/material";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
-import { useGameProviderStyle } from "../../style/GameProvider";
 import { MixedGameProvider } from "./MixedGameProvider";
 import { Logout } from "./Logout";
 
@@ -30,7 +29,6 @@ const Mixed = lazy(() => import("../Sites/Gamemodes/Mixed"));
 
 export function Routed(): JSX.Element {
     const classes = useDefaultStyles();
-    const providerClasses = useGameProviderStyle();
 
     return (
         <div className={classes.root}>
@@ -41,11 +39,9 @@ export function Routed(): JSX.Element {
                         <Route
                             path="/play/:gameID"
                             render={(routeComponentProps: RouteComponentProps<{ gameID?: string }>) => (
-                                <div className={providerClasses.centeraligned}>
-                                    <MixedGameProvider gameID={routeComponentProps.match.params.gameID}>
-                                        <Mixed />
-                                    </MixedGameProvider>
-                                </div>
+                                <MixedGameProvider gameID={routeComponentProps.match.params.gameID}>
+                                    <Mixed />
+                                </MixedGameProvider>
                             )}
                         />
                         <Route path="/play" render={() => <MixedGameProvider />} />

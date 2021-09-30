@@ -51,7 +51,7 @@ import { useDefaultStyles } from "../../../style/Style";
 import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
 import { useIsHost } from "../../../state/actions/gameActions";
-import { useEvalState, usePollState } from "../../../state/actions/displayStateActions";
+import { useBackgroundState, useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
 import { useLanguage } from "../../../state/actions/settingActions";
@@ -85,6 +85,8 @@ export default function Mixed(): JSX.Element {
     const [result, setResult] = useResult();
     const [answers, setAnswers] = useAnswers();
 
+    const setBackgroundState = useBackgroundState()[1];
+
     const setCombined = useAll();
 
     const intl = useDefaultTranslation();
@@ -94,6 +96,7 @@ export default function Mixed(): JSX.Element {
     const notLoaded = (
         <>
             <TranslatedMessage id="elements.tasks.notloaded" />
+            <br />
             <CatPontent />
         </>
     );
@@ -192,10 +195,12 @@ export default function Mixed(): JSX.Element {
                 return null;
             })
             .catch(console.error);
+        setBackgroundState(true);
 
         return function cleanup(): void {
             if (unsubscribeFirestore) unsubscribeFirestore();
             console.log("Unsubscribed!");
+            setBackgroundState(false);
         };
     }, []);
 
@@ -369,7 +374,7 @@ export default function Mixed(): JSX.Element {
 
     return (
         <>
-            <Grid container spacing={3} className={classes.mainGrid}>
+            <Grid container spacing={3}>
                 <Grid item xs={10} md={6}>
                     <div className={classes.mainHeadingName}>
                         <TranslatedMessage id="sobersailor.name" />

@@ -34,7 +34,6 @@ export const useGameProviderStyle = makeStyles((theme: Theme) => ({
     },
     inputGameIDField: {
         position: "relative",
-        top: theme.spacing(11.5),
         padding: theme.spacing(1),
     },
     inputGameIDButton: {
@@ -61,6 +60,5 @@ export const useGameProviderStyle = makeStyles((theme: Theme) => ({
     h1_long: {
         textAlign: "center",
         fontSize: 40,
-        padding: theme.spacing(1),
     },
 }));

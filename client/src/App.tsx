@@ -29,6 +29,9 @@ import { AvailableThemes, CalmTheme, DarkTheme, StandardTheme } from "./style/Th
 import { store } from "./state/store";
 import { useFiller, useThemeSetting } from "./state/actions/settingActions";
 import { Filler } from "./state/reducers/settingReducer";
+import backgroundName from "./media/BackgroundWithName.png";
+import background from "./media/Background.png";
+import { useBackgroundState } from "./state/actions/displayStateActions";
 
 export function App(): JSX.Element {
     return (
@@ -44,6 +47,8 @@ function AppWithStore(): JSX.Element {
     const cookies: Cookies = new Cookies();
     const [theme, setTheme] = useThemeSetting();
     const [muiTheme, setMuiTheme] = useState(CalmTheme);
+
+    const [backgroundState] = useBackgroundState();
 
     const setFiller = useFiller()[1];
 
@@ -75,7 +80,21 @@ function AppWithStore(): JSX.Element {
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={muiTheme}>
+                <div
+                    style={{
+                        zIndex: -1,
+                        filter: backgroundState ? "blur(4px)" : "none",
+                        position: "absolute",
+                        backgroundImage: `url(${backgroundState ? background : backgroundName})`,
+                        backgroundPosition: "center",
+                        backgroundAttachment: "fixed",
+                        backgroundSize: "cover",
+                        width: "100vw",
+                        height: "100vh",
+                    }}
+                />
                 <CssBaseline />
+
                 <LanguageContainer>
                     <SnackbarProvider maxSnack={4}>
                         <AlertProvider>
