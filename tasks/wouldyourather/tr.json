@@ -1,1 +1,38 @@
-{}
+{
+    "2": {
+        "answers": [
+            {
+                "answer": "telekinezi"
+            },
+            {
+                "answer": "telepati"
+            }
+        ],
+        "question": "Telekineziyi (bir şeyleri zihninle hareket ettirme) mi telepatiyi (zihin okuma) mi tercih edersin"
+    },
+    "1": {
+        "answers": [
+            {
+                "answer": "10 dakika"
+            },
+            {
+                "answer": "150 yıl"
+            }
+        ],
+        "question": "10 dakika sonrasını mı yoksa 150 yıl sonrasını mı görmeyi tercih edersin"
+    },
+    "0": {
+        "answers": [
+            {
+                "answer": "Köpekler"
+            },
+            {
+                "answer": "Kediler"
+            },
+            {
+                "answer": "Atlar"
+            }
+        ],
+        "question": "Ne yemeyi tercih ederdin?"
+    }
+}
