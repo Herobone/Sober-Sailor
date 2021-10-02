@@ -17,7 +17,7 @@
         ]
     },
     "1": {
-        "question": "Würdest du lieber 10 minuten oder 150 Jahre in die Zukunft sehen?",
+        "question": "Würdest du lieber 10 Minuten oder 150 Jahre in die Zukunft sehen?",
         "answers": [
             {
                 "id": 1,
@@ -120,11 +120,11 @@
             },
             {
                 "id": 2,
-                "answer": "Browser Verlauf"
+                "answer": "Browser-Verlauf"
             },
             {
                 "id": 3,
-                "answer": "Taschenrechner Verlauf"
+                "answer": "Taschenrechnerverlauf"
             },
             {
                 "id": 4,
@@ -137,19 +137,19 @@
         "answers": [
             {
                 "id": 1,
-                "answer": "Pool aus Honig"
+                "answer": "Schwimmbad aus Honig"
             },
             {
                 "id": 2,
-                "answer": "Pool aus Sirup"
+                "answer": "Schwimmbad aus Sirup"
             },
             {
                 "id": 3,
-                "answer": "Pool aus Schokocreme"
+                "answer": "Schwimmbad aus Schokocreme"
             },
             {
                 "id": 4,
-                "answer": "Pool aus Erdnussbutter"
+                "answer": "Schwimmbad aus Erdnussbutter"
             }
         ]
     },
@@ -209,7 +209,7 @@
             },
             {
                 "id": 2,
-                "answer": "Baby Elefant"
+                "answer": "Baby-Elefant"
             },
             {
                 "id": 3,

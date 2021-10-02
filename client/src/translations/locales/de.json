@@ -37,7 +37,7 @@
     "elements.tasks.notloaded": "Oh nein, es ist keine Aufgabe geladen! Startet das Spiel und auf geht die wilde Fahrt!",
     "elements.tictactoe.spectator": "Zuschauer",
     "elements.truthordare.dare": "Ich mach's!",
-    "elements.truthordare.drink": "Ich trink lieber...",
+    "elements.truthordare.drink": "Ich trink lieber …",
     "gamemodes.describeinoneword": "Beschreib's in einem Wort",
     "gamemodes.mixed": "Gemischt",
     "gamemodes.start": "Stich in See!",
@@ -72,5 +72,9 @@
     "general.player": "Spieler",
     "settings.options.filler.memes": "Memes",
     "settings.options.filler.dogs": "Hunde",
-    "settings.options.filler.cats": "Katzen"
+    "settings.options.filler.cats": "Katzen",
+    "settings.options.theme.highcontrast": "Hoher Kontrast",
+    "settings.options.theme.hacker": "Hacker",
+    "settings.options.theme.minimalist": "Minimalistisch",
+    "settings.labels.select.filler": "Füller zwischen Aufgaben"
 }

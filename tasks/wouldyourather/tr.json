@@ -1,0 +1,228 @@
+{
+    "2": {
+        "answers": [
+            {
+                "answer": "telekinezi"
+            },
+            {
+                "answer": "telepati"
+            }
+        ],
+        "question": "Telekineziyi (bir şeyleri zihninle hareket ettirme) mi telepatiyi (zihin okuma) mi tercih edersin"
+    },
+    "1": {
+        "answers": [
+            {
+                "answer": "10 dakika"
+            },
+            {
+                "answer": "150 yıl"
+            }
+        ],
+        "question": "10 dakika sonrasını mı yoksa 150 yıl sonrasını mı görmeyi tercih edersin"
+    },
+    "0": {
+        "answers": [
+            {
+                "answer": "Köpek"
+            },
+            {
+                "answer": "Kedi"
+            },
+            {
+                "answer": "At"
+            }
+        ],
+        "question": "Hangisini yemeyi tercih edersin?"
+    },
+    "16": {
+        "answers": [
+            {
+                "answer": "Meme ucu"
+            },
+            {
+                "answer": "Ayak parmağı"
+            },
+            {
+                "answer": "Burun"
+            }
+        ],
+        "question": "Fazladan bir tane sahip olmak istediğin şey ne?"
+    },
+    "15": {
+        "answers": [
+            {
+                "answer": "Tuvaletten içmek"
+            },
+            {
+                "answer": "Çöp kutusuna işemek"
+            },
+            {
+                "answer": "Çiş içmek?!"
+            }
+        ],
+        "question": "Çöp kutusuna işemeyi mi yoksa tuvaletten su içmeyi mi tercih edersin"
+    },
+    "14": {
+        "answers": [
+            {
+                "answer": "Geri sar"
+            },
+            {
+                "answer": "İleri sar"
+            },
+            {
+                "answer": "Duraklat"
+            }
+        ],
+        "question": "'Hayat Uzaktan Kumandan' hangi düğmeye sahip olmalı?"
+    },
+    "13": {
+        "answers": [
+            {
+                "answer": "Timsah"
+            },
+            {
+                "answer": "Bebek Fil"
+            },
+            {
+                "answer": "Dev Salyangoz"
+            },
+            {
+                "answer": "En kötü düşmanın"
+            }
+        ],
+        "question": "Neyi kucaklamayı tercih edersin?"
+    },
+    "12": {
+        "answers": [
+            {
+                "answer": "Ben kahramanımın üzerine"
+            },
+            {
+                "answer": "Kahramanım benim üzerime"
+            }
+        ],
+        "question": "Kahramanının üzerine kusmayı mı yoksa kahramanının senin üzerine kusmasını mı tercih edersin?"
+    },
+    "11": {
+        "answers": [
+            {
+                "answer": "Gündüz"
+            },
+            {
+                "answer": "Gece"
+            },
+            {
+                "answer": "Alacakaranlık ve Şafak"
+            }
+        ],
+        "question": "Yalnızca belirli bir saatte dışarı çıkabilirsin. Hangi zaman olmasını tercih edersin?"
+    },
+    "10": {
+        "answers": [
+            {
+                "answer": "Sapkınlıkların"
+            },
+            {
+                "answer": "Onların kusurları"
+            },
+            {
+                "answer": "Gerçekten çok garip bir gerçek"
+            }
+        ],
+        "question": "Bir yabancıya ilk görüşte ne söylemeyi tercih edersin?"
+    },
+    "9": {
+        "answers": [
+            {
+                "answer": "Bal Havuzu"
+            },
+            {
+                "answer": "Şurup Havuzu"
+            },
+            {
+                "answer": "Çikolatalı Krema Havuzu"
+            },
+            {
+                "answer": "Fıstık Ezmesi Havuzu"
+            }
+        ],
+        "question": "Nerede yüzmeyi tercih edersin?"
+    },
+    "8": {
+        "answers": [
+            {
+                "answer": "Son partnerlerin"
+            },
+            {
+                "answer": "Tarayıcı geçmişin"
+            },
+            {
+                "answer": "Hesap makinesi geçmişin"
+            },
+            {
+                "answer": "Sapkınlıkların"
+            }
+        ],
+        "question": "Kimsenin bilmesini istemediğin şey ne?"
+    },
+    "7": {
+        "answers": [
+            {
+                "answer": "aklını okumak"
+            },
+            {
+                "answer": "tarama geçmişini görmek"
+            }
+        ],
+        "question": "Arkadaşların bunu yapabilmeli mi"
+    },
+    "6": {
+        "answers": [
+            {
+                "answer": "10 yıllık partnerin"
+            },
+            {
+                "answer": "Bir gecelik ünlü aşkın"
+            }
+        ],
+        "question": "Kiminle olmayı tercih edersin?"
+    },
+    "5": {
+        "answers": [
+            {
+                "answer": "5 yıl hapis"
+            },
+            {
+                "answer": "10 yıl koma"
+            }
+        ],
+        "question": "Beş yıl hapiste olmayı mı yoksa 10 yıl komada olmayı mı tercih edersin"
+    },
+    "4": {
+        "answers": [
+            {
+                "answer": "Gerçek Aşk"
+            },
+            {
+                "answer": "Piyango"
+            },
+            {
+                "answer": "Yalnız ve fakir öl"
+            }
+        ],
+        "question": "Bu hafta gerçek aşkı bulmayı mı yoksa gelecek yıl piyangoyu kazanmayı mı tercih edersin?"
+    },
+    "3": {
+        "answers": [
+            {
+                "answer": "Dans etmek"
+            },
+            {
+                "answer": "Şarkı söylemek"
+            }
+        ],
+        "question": "Duyduğun her şarkıda dans etmeye mi şarkı söylemeye mi zorlanmayı mı tercih edersin?"
+    }
+}
