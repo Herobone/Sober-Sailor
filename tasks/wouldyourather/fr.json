@@ -1,1 +1,228 @@
-{}
+{
+    "16": {
+        "answers": [
+            {
+                "answer": "Un téton"
+            },
+            {
+                "answer": "Un orteil"
+            },
+            {
+                "answer": "Un nez"
+            }
+        ],
+        "question": "Que préfèrerais-tuavoir en plus ?"
+    },
+    "15": {
+        "answers": [
+            {
+                "answer": "Boire dans les toilettes"
+            },
+            {
+                "answer": "Faire pipi dans une litière"
+            },
+            {
+                "answer": "Boire du pipi ?!"
+            }
+        ],
+        "question": "Préfèrerais-tu faire pipi dans une litière ou boire dans des toilettes ?"
+    },
+    "14": {
+        "answers": [
+            {
+                "answer": "Retour en arrière"
+            },
+            {
+                "answer": "Avance rapide"
+            },
+            {
+                "answer": "Pause"
+            }
+        ],
+        "question": "Quel bouton devrait avoir ta télécommande de ta vie ?"
+    },
+    "13": {
+        "answers": [
+            {
+                "answer": "Un alligator"
+            },
+            {
+                "answer": "Un éléphanteau"
+            },
+            {
+                "answer": "Un escargot géant"
+            },
+            {
+                "answer": "Ton pire ennemi"
+            }
+        ],
+        "question": "Avec quoi préfèrerais-tu faire des câlins ?"
+    },
+    "12": {
+        "answers": [
+            {
+                "answer": "Moi sur mon héros"
+            },
+            {
+                "answer": "Mon héros sur moi"
+            }
+        ],
+        "question": "Tu préfères vomir sur ton héros ou que ton héros te vomisse dessus ?"
+    },
+    "11": {
+        "answers": [
+            {
+                "answer": "Le jour"
+            },
+            {
+                "answer": "La nuit"
+            },
+            {
+                "answer": "L'aube et le crépuscule"
+            }
+        ],
+        "question": "Vous ne pouvez sortir qu'à un moment précis. Quel moment préfères-tu ?"
+    },
+    "10": {
+        "answers": [
+            {
+                "answer": "Tes fétiches"
+            },
+            {
+                "answer": "Ses imperfections"
+            },
+            {
+                "answer": "Un fait vraiment très bizarre"
+            }
+        ],
+        "question": "Que préfèrerais-tu dire à un étranger au premier abord ?"
+    },
+    "9": {
+        "answers": [
+            {
+                "answer": "Une piscine de miel"
+            },
+            {
+                "answer": "Une piscine de sirop"
+            },
+            {
+                "answer": "Une piscine de crème au chocolat"
+            },
+            {
+                "answer": "Une piscine de beurre de cacahuète"
+            }
+        ],
+        "question": "Dans quoi préfèrerais-tu nager ?"
+    },
+    "8": {
+        "answers": [
+            {
+                "answer": "Tes ex"
+            },
+            {
+                "answer": "Ton historique de navigation"
+            },
+            {
+                "answer": "L'historique de ta calculatrice"
+            },
+            {
+                "answer": "Tes fétiches"
+            }
+        ],
+        "question": "Que préfèrerais-tu que personne ne connaisse ?"
+    },
+    "7": {
+        "answers": [
+            {
+                "answer": "lire tes pensées"
+            },
+            {
+                "answer": "voir ton historique de navigation"
+            }
+        ],
+        "question": "Vos amis devraient-ils plutôt être en mesure de"
+    },
+    "6": {
+        "answers": [
+            {
+                "answer": "Ton amoureux/amoureuse pendant 10 ans"
+            },
+            {
+                "answer": "La célébrité que tu kiffes pendant une nuit"
+            }
+        ],
+        "question": "Avec qui préférerais-tu être ?"
+    },
+    "5": {
+        "answers": [
+            {
+                "answer": "La prison pendant 5 ans"
+            },
+            {
+                "answer": "Le coma pendant 10 ans"
+            }
+        ],
+        "question": "Préfèrerais-tu être en prison pendant 5 ans ou dans le coma pendant 10 ans ?"
+    },
+    "4": {
+        "answers": [
+            {
+                "answer": "Le grand amour"
+            },
+            {
+                "answer": "La loterie"
+            },
+            {
+                "answer": "Mourir seul(e) et pauvre"
+            }
+        ],
+        "question": "Préfèrerais-tu trouver le grand amour cette semaine ou gagner à la loterie l'année prochaine ?"
+    },
+    "3": {
+        "answers": [
+            {
+                "answer": "Danser"
+            },
+            {
+                "answer": "Chanter"
+            }
+        ],
+        "question": "Préfèrerais-tu être obligé(e) de danser ou de chanter chaque chanson que tu entends ?"
+    },
+    "2": {
+        "answers": [
+            {
+                "answer": "télékinésie"
+            },
+            {
+                "answer": "télépathie"
+            }
+        ],
+        "question": "Préfèrerais-tu avoir la télékinésie (déplacer des objets avec ton esprit) ou la télépathie (lire dans les pensées) ?"
+    },
+    "1": {
+        "answers": [
+            {
+                "answer": "10 minutes"
+            },
+            {
+                "answer": "150 ans"
+            }
+        ],
+        "question": "Préfèrerais-tu voir 10 minutes dans le futur ou 150 ans dans le futur ?"
+    },
+    "0": {
+        "answers": [
+            {
+                "answer": "Des chiens"
+            },
+            {
+                "answer": "Des chats"
+            },
+            {
+                "answer": "Des chevaux"
+            }
+        ],
+        "question": "Que préfèrerais-tu manger ?"
+    }
+}
