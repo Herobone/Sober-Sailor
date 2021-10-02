@@ -24,16 +24,16 @@
     "0": {
         "answers": [
             {
-                "answer": "Köpekler"
+                "answer": "Köpek"
             },
             {
-                "answer": "Kediler"
+                "answer": "Kedi"
             },
             {
-                "answer": "Atlar"
+                "answer": "At"
             }
         ],
-        "question": "Ne yemeyi tercih ederdin?"
+        "question": "Hangisini yemeyi tercih edersin?"
     },
     "16": {
         "answers": [
@@ -97,10 +97,10 @@
     "12": {
         "answers": [
             {
-                "answer": "Benim kahramanımın üzerine"
+                "answer": "Ben kahramanımın üzerine"
             },
             {
-                "answer": "Kahramanımın benim üzerime"
+                "answer": "Kahramanım benim üzerime"
             }
         ],
         "question": "Kahramanının üzerine kusmayı mı yoksa kahramanının senin üzerine kusmasını mı tercih edersin?"
@@ -170,10 +170,10 @@
     "7": {
         "answers": [
             {
-                "answer": "aklını oku"
+                "answer": "aklını okumak"
             },
             {
-                "answer": "tarama geçmişinizi gör"
+                "answer": "tarama geçmişini görmek"
             }
         ],
         "question": "Arkadaşların bunu yapabilmeli mi"
