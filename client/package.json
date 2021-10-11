@@ -23,7 +23,7 @@
     "ast-utils": "^1.0.0",
     "browserslist": "^4.17.0",
     "eslint": "^7.32.0",
-    "firebase": "^9.1.0",
+    "firebase": "^9.1.2",
     "firebaseui": "^0.600.0",
     "globalize": "^1.7.0",
     "intl-messageformat": "^9.9.1",
