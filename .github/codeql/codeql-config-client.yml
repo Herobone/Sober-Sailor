@@ -4,7 +4,7 @@ paths:
   - client
 paths-ignore:
   - client/node_modules
-  - '**/*.test.js'
-  - '**/*.test.jsx'
-  - '**/*.test.ts'
-  - '**/*.test.tsx'
+  - '**/*.tests.js'
+  - '**/*.tests.jsx'
+  - '**/*.tests.ts'
+  - '**/*.tests.tsx'
