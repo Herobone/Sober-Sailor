@@ -9,6 +9,9 @@
       <excludeFolder url="file://$MODULE_DIR$/client/build" />
       <excludeFolder url="file://$MODULE_DIR$/functions/lib" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/sobersailor-common/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/sobersailor-common/lib/helpers" />
+      <excludeFolder url="file://$MODULE_DIR$/sobersailor-common/lib/models" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
