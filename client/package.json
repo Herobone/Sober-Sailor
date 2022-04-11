@@ -11,7 +11,7 @@
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.8.1",
     "@formatjs/intl": "^1.14.1",
-    "@mui/core": "^5.0.0-alpha.47",
+    "@mui/core": "^5.0.0-alpha.54",
     "@mui/docs": "^5.0.0",
     "@mui/icons-material": "^5.0.0",
     "@mui/lab": "^5.0.0-alpha.47",
