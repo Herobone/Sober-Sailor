@@ -17,7 +17,7 @@
         ]
     },
     "1": {
-        "question": "Would you rather see 10 minutes into the future or 150 years in the future",
+        "question": "Would you rather see 10 minutes into the future or 150 years in the future?",
         "answers": [
             {
                 "id": 1,
@@ -30,7 +30,7 @@
         ]
     },
     "2": {
-        "question": "Would you rather have telekinesis (moving things with your mind) or telepathy (read minds)",
+        "question": "Would you rather have telekinesis (moving things with your mind) or telepathy (read minds)?",
         "answers": [
             {
                 "id": 1,
@@ -94,7 +94,7 @@
             },
             {
                 "id": 2,
-                "answer": "Your Celebrity crush for one night"
+                "answer": "Your celebrity crush for one night"
             }
         ]
     },
