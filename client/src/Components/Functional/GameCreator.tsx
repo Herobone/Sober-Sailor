@@ -34,7 +34,7 @@ export function GameCreator(): JSX.Element {
         GameManager.createGame()
             .then((newGameID) => {
                 window.location.pathname = `/play/${newGameID}`;
-                return Promise.resolve();
+                return;
             })
             .catch((error: string) => createAlert(Alerts.ERROR, error));
     };

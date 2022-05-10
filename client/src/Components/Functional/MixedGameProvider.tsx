@@ -16,27 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { PropsWithChildren, useEffect, useState } from "react";
-import { Fab, IconButton, TextField, Typography } from "@mui/material";
-import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
+import React, {PropsWithChildren, useEffect, useState} from "react";
+import {Fab, IconButton, TextField, Typography} from "@mui/material";
+import {ArrowForwardIos, ExitToAppRounded} from "@mui/icons-material";
 import Cookies from "universal-cookie";
-import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
-import { Alerts } from "../../helper/AlertTypes";
-import { GameManager } from "../../helper/gameManager";
-import { useGameProviderStyle } from "../../style/GameProvider";
-import { firebaseApp } from "../../helper/config";
-import { TranslatedMessage } from "../../translations/TranslatedMessage";
-import { VisibilityContainer } from "../Visuals/VisibilityContainer";
-import { LoadingIcon } from "../Visuals/LoadingIcon";
-import { useAlert } from "./AlertProvider";
-import { GameCreator } from "./GameCreator";
+import {getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile} from "firebase/auth";
+import {useParams} from "react-router";
+import {Alerts} from "../../helper/AlertTypes";
+import {GameManager} from "../../helper/gameManager";
+import {useGameProviderStyle} from "../../style/GameProvider";
+import {firebaseApp} from "../../helper/config";
+import {TranslatedMessage} from "../../translations/TranslatedMessage";
+import {VisibilityContainer} from "../Visuals/VisibilityContainer";
+import {LoadingIcon} from "../Visuals/LoadingIcon";
+import {useAlert} from "./AlertProvider";
+import {GameCreator} from "./GameCreator";
 
-interface Props {
-    gameID?: string;
-}
-
-export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element {
-    const { createAlert } = useAlert();
+export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Element {
+    const {createAlert} = useAlert();
+    const params = useParams<{
+        gameID?: string;
+    }>();
     const [name, setName] = useState("");
     const [user, setUser] = useState<User>();
 
@@ -47,8 +47,8 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     // const { gameID } = props;
     const classes = useGameProviderStyle();
 
-    if (props.gameID) {
-        localStorage.setItem("gameID", props.gameID);
+    if (params.gameID) {
+        localStorage.setItem("gameID", params.gameID);
     } else {
         GameManager.removeLocalData();
     }
@@ -62,7 +62,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     }, [user]);
 
     useEffect((): void => {
-        const { currentUser } = auth;
+        const {currentUser} = auth;
         const cookies = new Cookies();
         const globalAccount: boolean = cookies.get("globalAccount");
         if (!currentUser && !globalAccount) {
@@ -83,24 +83,24 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     };
 
     const processName = (): void => {
-        const { currentUser } = auth;
+        const {currentUser} = auth;
 
         if (!currentUser) {
-            createAlert(Alerts.ERROR, <TranslatedMessage id="general.shouldnothappen" />);
+            createAlert(Alerts.ERROR, <TranslatedMessage id="general.shouldnothappen"/>);
             return;
         }
 
         if (name.length < 2) {
-            createAlert(Alerts.WARNING, <TranslatedMessage id="account.actions.noname" />);
+            createAlert(Alerts.WARNING, <TranslatedMessage id="account.actions.noname"/>);
             return;
         }
 
-        updateProfile(currentUser, { displayName: name })
+        updateProfile(currentUser, {displayName: name})
             .then(() => {
                 createAlert(Alerts.SUCCESS, "Name set");
                 setUser(currentUser);
                 updateReadyState();
-                return Promise.resolve();
+                return;
             })
             .catch(console.error);
     };
@@ -114,8 +114,8 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 onClick={() => GameManager.leaveGame()}
                 className={classes.leaveGameFab}
             >
-                <ExitToAppRounded />
-                <TranslatedMessage id="actions.leave" />
+                <ExitToAppRounded/>
+                <TranslatedMessage id="actions.leave"/>
             </Fab>
         </>
     );
@@ -123,9 +123,9 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
     const prepareNameSetter = (): JSX.Element => (
         <VisibilityContainer>
             <Typography variant="h2" className={classes.h1_long}>
-                <TranslatedMessage id="account.descriptors.finishsignup" />
+                <TranslatedMessage id="account.descriptors.finishsignup"/>
             </Typography>
-            <br />
+            <br/>
             <TextField
                 required
                 label="Name"
@@ -146,7 +146,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 onClick={processName}
                 size="large"
             >
-                <ArrowForwardIos />
+                <ArrowForwardIos/>
             </IconButton>
         </VisibilityContainer>
     );
@@ -155,13 +155,13 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
         return prepareNameSetter();
     }
 
-    if (userReady && !props.gameID) {
-        return <GameCreator />;
+    if (userReady && !params.gameID) {
+        return <GameCreator/>;
     }
 
     if (userReady) {
         return prepareRunningGame();
     }
 
-    return <LoadingIcon />;
+    return <LoadingIcon/>;
 }

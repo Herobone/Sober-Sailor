@@ -31,7 +31,7 @@ export interface TaskState {
     type: string | undefined;
     target: string | undefined;
     penalty: number;
-    answers: MultiAnswer[] | undefined;
+    answers: MultiAnswer | undefined;
 }
 
 const initialState: TaskState = {
@@ -44,6 +44,7 @@ const initialState: TaskState = {
 };
 
 export const taskReducer = (
+    // eslint-disable-next-line @typescript-eslint/default-param-last
     state: TaskState = initialState,
     action: StringAction | NumberAction | AnswerAction | UncertainNumberAction | CombinedTaskAction,
 ): TaskState => {

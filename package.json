@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/Herobone/Sober-Sailor#readme",
   "dependencies": {
-    "firebase-tools": "^9.18.0"
+    "react-scripts": "5.0.1"
   }
 }

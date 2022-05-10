@@ -17,7 +17,6 @@
  */
 import React, { FunctionComponent, ReactElement, useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@mui/material";
-import { MultiAnswer } from "sobersailor-common/lib/models/Task";
 import { useAnswers, useTask } from "../../state/actions/taskActions";
 import { GameManager } from "../../helper/gameManager";
 import { usePollState } from "../../state/actions/displayStateActions";
@@ -47,24 +46,19 @@ export const WouldYouRather: FunctionComponent = () => {
 
         const internalValues: ReactElement[] = [];
 
-        answers.forEach((multiAnswer: MultiAnswer) => {
+        answers.forEach((internalAnswer, id) => {
             internalValues.push(
-                <ButtonGroup
-                    key={`answer-button-${multiAnswer.id}`}
-                    orientation="vertical"
-                    color="primary"
-                    variant="contained"
-                >
+                <ButtonGroup key={`answer-button-${id}`} orientation="vertical" color="primary" variant="contained">
                     <Button
                         className="wwr-player-select"
                         type="submit"
                         onClick={() => {
-                            GameManager.setAnswer(multiAnswer.id.toString(10)).catch(console.error);
-                            setAnswer(multiAnswer.answer);
+                            GameManager.setAnswer(id.toString(10)).catch(console.error);
+                            setAnswer(internalAnswer);
                             setInputLock(true);
                         }}
                     >
-                        {multiAnswer.answer}
+                        {internalAnswer}
                     </Button>
                 </ButtonGroup>,
             );

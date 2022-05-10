@@ -17,7 +17,7 @@
  */
 
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter as Router, Switch, Route, RouteComponentProps } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
@@ -35,29 +35,26 @@ export function Routed(): JSX.Element {
             <GlobalOverlay />
             <Router>
                 <Suspense fallback={<LoadingIcon />}>
-                    <Switch>
-                        <Route
-                            path="/play/:gameID"
-                            render={(routeComponentProps: RouteComponentProps<{ gameID?: string }>) => (
-                                <MixedGameProvider gameID={routeComponentProps.match.params.gameID}>
-                                    <Mixed />
-                                </MixedGameProvider>
-                            )}
-                        />
-                        <Route path="/play" render={() => <MixedGameProvider />} />
+                    <Routes>
+                        <Route path="play" element={<MixedGameProvider />}>
+                            <Route
+                                path=":gameID"
+                                element={
+                                    <MixedGameProvider>
+                                        <Mixed />
+                                    </MixedGameProvider>
+                                }
+                            />
+                        </Route>
 
                         {/*<Route path="/login">
                             <Login />
                         </Route>*/}
 
-                        <Route path="/logout">
-                            <Logout />
-                        </Route>
+                        <Route path="logout" element={<Logout />} />
 
-                        <Route path="/">
-                            <Home />
-                        </Route>
-                    </Switch>
+                        <Route path="/" element={<Home />} />
+                    </Routes>
                 </Suspense>
             </Router>
         </div>

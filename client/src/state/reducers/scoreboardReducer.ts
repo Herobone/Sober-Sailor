@@ -26,6 +26,7 @@ const initialState: ScoreboardState = {
     scoreboard: Scoreboard.init(),
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 export const scoreboardReducer = (state: ScoreboardState = initialState, action: ScoreboardAction): ScoreboardState => {
     switch (action.type) {
         case "SET_SCOREBOARD":

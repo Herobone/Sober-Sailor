@@ -221,9 +221,9 @@ export default function Mixed(): JSX.Element {
             let readableAnswer = intl.formatMessage({ id: "general.answer.forgot" });
             if (taskType === "wouldyourather") {
                 if (answers) {
-                    answers.forEach((possibleAnswer) => {
-                        if (possibleAnswer.id === Number(answer)) {
-                            readableAnswer = possibleAnswer.answer;
+                    answers.forEach((possibleAnswer, id) => {
+                        if (id === Number(answer)) {
+                            readableAnswer = possibleAnswer;
                         }
                     });
                 } else {

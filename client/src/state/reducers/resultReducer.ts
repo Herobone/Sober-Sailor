@@ -27,6 +27,7 @@ const initialState: ResultState = {
     result: null,
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 export const resultReducer = (state: ResultState = initialState, action: ResultAction): ResultState => {
     switch (action.type) {
         case "SET_RESULT":
