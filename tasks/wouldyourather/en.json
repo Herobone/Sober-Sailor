@@ -1,7 +1,7 @@
 {
     "0": {
         "question": "What would you rather eat?",
-        "anwers": {
+        "answers": {
             "1": "Dogs",
             "2": "Cats",
             "3": "Horses"
@@ -9,28 +9,28 @@
     },
     "1": {
         "question": "Would you rather see 10 minutes into the future or 150 years in the future",
-        "anwers": {
+        "answers": {
             "1": "10 minutes",
             "2": "150 years"
         }
     },
     "2": {
         "question": "Would you rather have telekinesis (moving things with your mind) or telepathy (read minds)",
-        "anwers": {
+        "answers": {
             "1": "telekinesis",
             "2": "telepathy"
         }
     },
     "3": {
         "question": "Would you rather be forced to dance or sing along every song you hear?",
-        "anwers": {
+        "answers": {
             "1": "Dance",
             "2": "Sing"
         }
     },
     "4": {
         "question": "Would you rather find true love this week or win the lottery next year?",
-        "anwers": {
+        "answers": {
             "1": "True Love",
             "2": "Lottery",
             "3": "Die alone and poor"
@@ -38,28 +38,28 @@
     },
     "5": {
         "question": "Would you rather be in jail for five years or be in a coma for 10 years",
-        "anwers": {
+        "answers": {
             "1": "Jail for 5 years",
             "2": "Coma for 10 years"
         }
     },
     "6": {
         "question": "Who would you rather be with?",
-        "anwers": {
+        "answers": {
             "1": "Your partner for 10 years",
             "2": "Your Celebrity crush for one night"
         }
     },
     "7": {
         "question": "Should your friends rather be able to",
-        "anwers": {
+        "answers": {
             "1": "read your mind",
             "2": "see your browsing history"
         }
     },
     "8": {
         "question": "What would you rather not want anybody to know?",
-        "anwers": {
+        "answers": {
             "1": "Your recent partners",
             "2": "Your browser history",
             "3": "Your calculator history",
@@ -68,7 +68,7 @@
     },
     "9": {
         "question": "Where would you rather swim in?",
-        "anwers": {
+        "answers": {
             "1": "Pool of Honey",
             "2": "Pool of Syrup",
             "3": "Pool of Chocolate Cream",
@@ -77,7 +77,7 @@
     },
     "10": {
         "question": "What would wou rather tell a stranger on first sight?",
-        "anwers": {
+        "answers": {
             "1": "Your kinks",
             "2": "Their imperfections",
             "3": "A really fucking weird fact"
@@ -85,7 +85,7 @@
     },
     "11": {
         "question": "You can only go out during one specific time. Which time would it rather be?",
-        "anwers": {
+        "answers": {
             "1": "Day",
             "2": "Night",
             "3": "Dusk & Dawn"
@@ -93,14 +93,14 @@
     },
     "12": {
         "question": "Would you rather vomit on your hero or have your hero vomit on you?",
-        "anwers": {
+        "answers": {
             "1": "Me on my hero",
             "2": "My hero onto me"
         }
     },
     "13": {
         "question": "What would you rather cuddle with?",
-        "anwers": {
+        "answers": {
             "1": "Alligator",
             "2": "Baby Elephant",
             "3": "Giant Snail",
@@ -109,7 +109,7 @@
     },
     "14": {
         "question": "Which button should your 'Life Remote' rather have?",
-        "anwers": {
+        "answers": {
             "1": "Rewind",
             "2": "Fast-Forward",
             "3": "Pause"
@@ -117,7 +117,7 @@
     },
     "15": {
         "question": "Would you rather pee in a litter box or drink from a toilet",
-        "anwers": {
+        "answers": {
             "1": "Drink from Toilet",
             "2": "Pee in litter box",
             "3": "Drink pee?!"
@@ -125,7 +125,7 @@
     },
     "16": {
         "question": "What would you rather have one extra of?",
-        "anwers": {
+        "answers": {
             "1": "Nipple",
             "2": "Toe",
             "3": "Nose"

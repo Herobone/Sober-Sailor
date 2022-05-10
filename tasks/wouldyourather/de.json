@@ -1,7 +1,7 @@
 {
     "0": {
         "question": "Was würdest du eher essen?",
-        "anwers": {
+        "answers": {
             "1": "Hunde",
             "2": "Katzen",
             "3": "Pferde"
@@ -9,28 +9,28 @@
     },
     "1": {
         "question": "Würdest du lieber 10 minuten oder 150 Jahre in die Zukunft sehen?",
-        "anwers": {
+        "answers": {
             "1": "10 Minuten",
             "2": "150 Jahre"
         }
     },
     "2": {
         "question": "Würdest du lieber Telekinese (Gegenstände mit Gedanken bewegen) oder Telepathie (Gedanken lesen) haben?",
-        "anwers": {
+        "answers": {
             "1": "Telekinese",
             "2": "Telepathie"
         }
     },
     "3": {
         "question": "Würdest du lieber dazu gezwungen werden zu jedem Song den du hörst zu tanzen oder zu singen?",
-        "anwers": {
+        "answers": {
             "1": "Tanzen",
             "2": "Singen"
         }
     },
     "4": {
         "question": "Würdest du lieber diese Woche echte Liebe finden oder nächstes Jahr die Lotterie gewinnen?",
-        "anwers": {
+        "answers": {
             "1": "Echte Liebe",
             "2": "Lotterie",
             "3": "Alleine und arm sterben"
@@ -38,28 +38,28 @@
     },
     "5": {
         "question": "Würdest du lieber 5 Jahre im Gefängnis sitzen oder 10 Jahre im Koma liegen",
-        "anwers": {
+        "answers": {
             "1": "Gefängnis für 5 Jahre",
             "2": "Koma für 10 Jahre"
         }
     },
     "6": {
         "question": "Mit wem würdest du lieber zusammen sein?",
-        "anwers": {
+        "answers": {
             "1": "Deinem Partner für 10 Jahre",
             "2": "Deinem Celebrity Crush für eine Nacht"
         }
     },
     "7": {
         "question": "Was sollen deine Freunde eher von dir sehen können?",
-        "anwers": {
+        "answers": {
             "1": "Gedanken",
             "2": "Browser Verlauf"
         }
     },
     "8": {
         "question": "Was sollte eher niemand von dir wissen?",
-        "anwers": {
+        "answers": {
             "1": "Letzte Partner",
             "2": "Browser Verlauf",
             "3": "Taschenrechner Verlauf",
@@ -68,7 +68,7 @@
     },
     "9": {
         "question": "Worin würdest du eher schwimmen wollen?",
-        "anwers": {
+        "answers": {
             "1": "Pool aus Honig",
             "2": "Pool aus Sirup",
             "3": "Pool aus Schokocreme",
@@ -77,7 +77,7 @@
     },
     "10": {
         "question": "Was würdest du einem Fremden eher erzählen wenn du ihn das erste mal siehst?",
-        "anwers": {
+        "answers": {
             "1": "Deine Fetische",
             "2": "Deren Unvollkommenheiten",
             "3": "Einen richtig komischen Fakt"
@@ -85,7 +85,7 @@
     },
     "11": {
         "question": "Du kannst nur während einer sehr spezifischen Zeit raus gehen. Welche wäre das?",
-        "anwers": {
+        "answers": {
             "1": "Tag",
             "2": "Nacht",
             "3": "Dämmerung"
@@ -93,14 +93,14 @@
     },
     "12": {
         "question": "Würdest du lieber deinen Helden ankotzen oder dein Held dich?",
-        "anwers": {
+        "answers": {
             "1": "Ich auf meinen Held",
             "2": "Mein Held auf mich"
         }
     },
     "13": {
         "question": "Mit was würdest du eher kuscheln?",
-        "anwers": {
+        "answers": {
             "1": "Alligator",
             "2": "Baby Elefant",
             "3": "Riesen Schnecke",
@@ -109,7 +109,7 @@
     },
     "14": {
         "question": "Welchen Knopf hätte die Fernbedienung für dein Leben eher?",
-        "anwers": {
+        "answers": {
             "1": "Zurück",
             "2": "Vorwärts",
             "3": "Pause"
@@ -117,7 +117,7 @@
     },
     "15": {
         "question": "Würdest du eher in ein Katzenklo pinkeln oder aus einem Klo trinken?",
-        "anwers": {
+        "answers": {
             "1": "Aus einer Toilette trinken",
             "2": "In ein Katzenklo pinkeln",
             "3": "Urin trinken?!"
@@ -125,7 +125,7 @@
     },
     "16": {
         "question": "Wovon hättest du gerne eins Extra?",
-        "anwers": {
+        "answers": {
             "1": "Nippel",
             "2": "Zeh",
             "3": "Nase"
