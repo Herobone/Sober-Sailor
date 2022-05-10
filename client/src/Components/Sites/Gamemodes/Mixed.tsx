@@ -375,7 +375,13 @@ export default function Mixed(): JSX.Element {
             if (nextTaskType.id === "tictactoe") {
                 targetCount = 2;
             }
-            const nextTarget = GameManager.getRandomPlayer(targetCount);
+            let nextTarget: PlayerList = null;
+            try {
+                nextTarget = GameManager.getRandomPlayer(targetCount);
+            } catch (error) {
+                createAlert(Alerts.ERROR, String(error));
+            }
+
             setTask(nextTaskType, nextTarget, Util.random(3, 7)).catch(console.error);
         } else {
             setTask(nextTaskType, null).catch(console.error);

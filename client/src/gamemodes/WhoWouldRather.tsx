@@ -52,8 +52,9 @@ export function WhoWouldRather(): JSX.Element {
     }
 
     useEffect(() => {
+        const tmpValues: ReactElement[] = [];
         plt.playerUidMap.forEach((nickname: string, uid: string) => {
-            values.push(
+            tmpValues.push(
                 // eslint-disable-next-line react/no-array-index-key
                 <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
                     <Button
@@ -70,7 +71,7 @@ export function WhoWouldRather(): JSX.Element {
                 </ButtonGroup>,
             );
         });
-        setValues(values);
+        setValues(tmpValues);
     }, []);
 
     return (

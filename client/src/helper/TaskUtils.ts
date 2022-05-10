@@ -47,7 +47,7 @@ export class TaskUtils {
         const response = await fetch(url);
 
         if (response.status === 200) {
-            const json = await response.text();
+            const json = JSON.stringify(JSON.parse(await response.text()));
             localStorage.setItem(`${task}_${lang}`, json);
             const parsed: SingleAnswerTasksExternal = JSON.parse(json);
             return Util.indexedObjectToMap(parsed);
@@ -84,7 +84,7 @@ export class TaskUtils {
         const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
         if (response.status === 200) {
-            const json = await response.text();
+            const json = JSON.stringify(JSON.parse(await response.text()));
             localStorage.setItem(`${task}_${lang}`, json);
             return MultiAnswerQuestion.parseTasks(json);
         } else {

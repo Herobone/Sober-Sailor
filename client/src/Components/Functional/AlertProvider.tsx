@@ -32,6 +32,11 @@ export const useAlert = (): AlertContextType => React.useContext(AlertContext);
 export function AlertProvider(props: React.PropsWithChildren<unknown>): JSX.Element {
     const snackbar = useSnackbar();
 
+    /***
+     * Creates an notistack alert
+     * @param type      Type of the alert
+     * @param message   Message of alert
+     */
     const createAlert = (type: IAlert, message: string | ReactElement): void => {
         snackbar.enqueueSnackbar(message, {
             variant: type.variant,
