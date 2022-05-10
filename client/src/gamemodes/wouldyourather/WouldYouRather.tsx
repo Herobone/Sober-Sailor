@@ -47,6 +47,7 @@ export const WouldYouRather: FunctionComponent = () => {
         const internalValues: ReactElement[] = [];
 
         answers.forEach((internalAnswer, id) => {
+            console.log(internalAnswer);
             internalValues.push(
                 <ButtonGroup key={`answer-button-${id}`} orientation="vertical" color="primary" variant="contained">
                     <Button

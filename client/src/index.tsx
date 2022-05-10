@@ -17,10 +17,10 @@
  */
 
 import React from "react";
-import ReactDOM from "react-dom";
 import { getAuth, setPersistence, browserLocalPersistence, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { createRoot } from "react-dom/client";
 import * as serviceWorker from "./serviceWorker";
 import { firebaseApp } from "./helper/config";
 import { App } from "./App";
@@ -42,17 +42,22 @@ if (process.env.NODE_ENV !== "production") {
     connectFunctionsEmulator(fn, window.location.hostname, 5001);
 }
 
+// replace console.* for disable log on production
+if (process.env.NODE_ENV === "production") {
+    console.log = () => {};
+    console.debug = () => {};
+}
+
 if (process.env.REACT_APP_BETA_CHANNEL) {
     console.warn("This is the BETA version!");
 }
 
 Dough.startAnalytics();
 
-ReactDOM.render(
-    <App />,
-    // Get the "root" Element from index.html
-    document.querySelector("#root"),
-);
+const container = document.querySelector("#root");
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(container!);
+root.render(<App />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

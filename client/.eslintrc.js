@@ -64,7 +64,7 @@ module.exports = {
         "@typescript-eslint/no-empty-interface": "off",
         "promise/no-return-wrap": "off",
         "no-console": [
-            "warn",
+            "off",
             {
                 allow: ["warn", "error"],
             },

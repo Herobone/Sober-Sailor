@@ -36,15 +36,8 @@ export function Routed(): JSX.Element {
             <Router>
                 <Suspense fallback={<LoadingIcon />}>
                     <Routes>
-                        <Route path="play" element={<MixedGameProvider />}>
-                            <Route
-                                path=":gameID"
-                                element={
-                                    <MixedGameProvider>
-                                        <Mixed />
-                                    </MixedGameProvider>
-                                }
-                            />
+                        <Route path="play/*" element={<MixedGameProvider />}>
+                            <Route path=":gameID" element={<Mixed />} />
                         </Route>
 
                         {/*<Route path="/login">
