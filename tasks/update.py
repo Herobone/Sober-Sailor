@@ -2,8 +2,8 @@ import json
 
 tasks = {}
 
-file = "./wouldyourather/de.json"
-out = "./wouldyourather/de.new.json"
+file = "./wouldyourather/tr.json"
+out = "./wouldyourather/tr.new.json"
 
 with open(file) as json_file:
     data = json.load(json_file)
@@ -14,9 +14,11 @@ with open(file) as json_file:
         tmp = {}
         tmp["question"] = datum["question"]
         tmp2 = {}
+        count2 = 0
         for answer in datum["answers"]:
-            tmp2[answer["id"]] = answer["answer"]
+            tmp2[count2] = answer["answer"]
             print(answer)
+            count2 += 1
         tmp["anwers"] = tmp2
         tasks[counter] = tmp
         counter += 1
