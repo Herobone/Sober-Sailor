@@ -2,8 +2,8 @@ import json
 
 tasks = {}
 
-file = "./wouldyourather/tr.json"
-out = "./wouldyourather/tr.new.json"
+file = "./wouldyourather/nb_NO.json"
+out = "./wouldyourather/nb_NO.new.json"
 
 with open(file) as json_file:
     data = json.load(json_file)
