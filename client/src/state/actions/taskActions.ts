@@ -22,7 +22,7 @@ import { TaskState } from "../reducers/taskReducer";
  */
 type StringActionType = string | undefined;
 type UncertainNumberType = number | undefined;
-type AnswerActionType = MultiAnswer[] | undefined;
+type AnswerActionType = MultiAnswer | undefined;
 
 export type StringAction = {
     type: "SET_TASK" | "SET_TYPE" | "SET_TARGET";

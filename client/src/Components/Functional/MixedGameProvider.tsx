@@ -21,6 +21,7 @@ import { Fab, IconButton, TextField, Typography } from "@mui/material";
 import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
 import Cookies from "universal-cookie";
 import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
+import { Outlet, useParams } from "react-router";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useGameProviderStyle } from "../../style/GameProvider";
@@ -31,12 +32,11 @@ import { LoadingIcon } from "../Visuals/LoadingIcon";
 import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
 
-interface Props {
-    gameID?: string;
-}
-
-export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element {
+export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Element {
     const { createAlert } = useAlert();
+    const params = useParams<{
+        gameID?: string;
+    }>();
     const [name, setName] = useState("");
     const [user, setUser] = useState<User>();
 
@@ -44,11 +44,10 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
 
     const [userReady, setUserReady] = useState(false);
 
-    // const { gameID } = props;
     const classes = useGameProviderStyle();
 
-    if (props.gameID) {
-        localStorage.setItem("gameID", props.gameID);
+    if (params.gameID) {
+        localStorage.setItem("gameID", params.gameID);
     } else {
         GameManager.removeLocalData();
     }
@@ -100,7 +99,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 createAlert(Alerts.SUCCESS, "Name set");
                 setUser(currentUser);
                 updateReadyState();
-                return Promise.resolve();
+                return;
             })
             .catch(console.error);
     };
@@ -117,6 +116,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
                 <ExitToAppRounded />
                 <TranslatedMessage id="actions.leave" />
             </Fab>
+            <Outlet />
         </>
     );
 
@@ -155,7 +155,7 @@ export function MixedGameProvider(props: PropsWithChildren<Props>): JSX.Element 
         return prepareNameSetter();
     }
 
-    if (userReady && !props.gameID) {
+    if (userReady && !params.gameID) {
         return <GameCreator />;
     }
 

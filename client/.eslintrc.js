@@ -63,7 +63,12 @@ module.exports = {
         ],
         "@typescript-eslint/no-empty-interface": "off",
         "promise/no-return-wrap": "off",
-        "no-console": "off",
+        "no-console": [
+            "off",
+            {
+                allow: ["warn", "error"],
+            },
+        ],
         "jsx-a11y/label-has-associated-control": [
             "warn",
             {

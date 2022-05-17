@@ -1,16 +1,10 @@
 {
     "0": {
-        "answers": [
-            {
-                "answer": "Cani"
-            },
-            {
-                "answer": "Gatti"
-            },
-            {
-                "answer": "Cavalli"
-            }
-        ],
-        "question": "Cosa preferiresti mangiare?"
+        "question": "Cosa preferiresti mangiare?",
+        "anwers": {
+            "0": "Cani",
+            "1": "Gatti",
+            "2": "Cavalli"
+        }
     }
 }

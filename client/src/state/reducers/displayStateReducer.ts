@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { DisplayStateAction } from "../actions/displayStateActions";
+import {DisplayStateAction} from "../actions/displayStateActions";
+
 export interface DisplayState {
     pollState: boolean;
     evalState: boolean;
@@ -29,14 +30,15 @@ const initialState: DisplayState = {
     backgroundState: false,
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 export const displayStateReducer = (state: DisplayState = initialState, action: DisplayStateAction): DisplayState => {
     switch (action.type) {
         case "SET_EVAL":
-            return { ...state, evalState: action.payload };
+            return {...state, evalState: action.payload};
         case "SET_POLL":
-            return { ...state, pollState: action.payload };
+            return {...state, pollState: action.payload};
         case "SET_BACKGROUND":
-            return { ...state, backgroundState: action.payload };
+            return {...state, backgroundState: action.payload};
         default:
             return state;
     }

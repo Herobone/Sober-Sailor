@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { HostGameActions } from "../actions/gameActions";
+import {HostGameActions} from "../actions/gameActions";
 
 export interface GameState {
     host: boolean;
@@ -26,10 +26,11 @@ const initialState: GameState = {
     host: false,
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 export const gameReducer = (state: GameState = initialState, action: HostGameActions): GameState => {
     switch (action.type) {
         case "SET_HOST":
-            return { ...state, host: action.payload };
+            return {...state, host: action.payload};
         default:
             return state;
     }

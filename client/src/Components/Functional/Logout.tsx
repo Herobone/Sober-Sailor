@@ -16,37 +16,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React, { useEffect, useState } from "react";
-import { Redirect } from "react-router";
+import React, {useEffect} from "react";
+import {useNavigate} from "react-router";
 import Cookies from "universal-cookie";
-import { getAuth, signOut } from "firebase/auth";
-import { Alerts } from "../../helper/AlertTypes";
-import { firebaseApp } from "../../helper/config";
-import { TranslatedMessage } from "../../translations/TranslatedMessage";
-import { useAlert } from "./AlertProvider";
+import {getAuth, signOut} from "firebase/auth";
+import {Alerts} from "../../helper/AlertTypes";
+import {firebaseApp} from "../../helper/config";
+import {TranslatedMessage} from "../../translations/TranslatedMessage";
+import {useAlert} from "./AlertProvider";
 
 export function Logout(): JSX.Element {
-    const { createAlert } = useAlert();
-    const [redirect, setRedirect] = useState(false);
+    const {createAlert} = useAlert();
+    const navigate = useNavigate();
     useEffect((): void => {
         signOut(getAuth(firebaseApp))
             .then(() => {
-                createAlert(Alerts.SUCCESS, <TranslatedMessage id="account.descriptions.signout.success" />);
+                createAlert(Alerts.SUCCESS, <TranslatedMessage id="account.descriptions.signout.success"/>);
                 // Delete cookie that saves the global account.
                 const cookies = new Cookies();
                 cookies.remove("globalAccount");
-                setRedirect(true);
-                return Promise.resolve();
+                navigate("/");
+                return;
             })
             .catch(() => {
-                createAlert(Alerts.ERROR, <TranslatedMessage id="general.shouldnothappen" />);
+                createAlert(Alerts.ERROR, <TranslatedMessage id="general.shouldnothappen"/>);
             });
     });
 
     return (
         <>
             Logging out...
-            {redirect && <Redirect to="/" />}
         </>
     );
 }

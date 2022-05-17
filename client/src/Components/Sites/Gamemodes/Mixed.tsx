@@ -221,9 +221,9 @@ export default function Mixed(): JSX.Element {
             let readableAnswer = intl.formatMessage({ id: "general.answer.forgot" });
             if (taskType === "wouldyourather") {
                 if (answers) {
-                    answers.forEach((possibleAnswer) => {
-                        if (possibleAnswer.id === Number(answer)) {
-                            readableAnswer = possibleAnswer.answer;
+                    answers.forEach((possibleAnswer, id) => {
+                        if (id === Number(answer)) {
+                            readableAnswer = possibleAnswer;
                         }
                     });
                 } else {
@@ -375,7 +375,13 @@ export default function Mixed(): JSX.Element {
             if (nextTaskType.id === "tictactoe") {
                 targetCount = 2;
             }
-            const nextTarget = GameManager.getRandomPlayer(targetCount);
+            let nextTarget: PlayerList = null;
+            try {
+                nextTarget = GameManager.getRandomPlayer(targetCount);
+            } catch (error) {
+                createAlert(Alerts.ERROR, String(error));
+            }
+
             setTask(nextTaskType, nextTarget, Util.random(3, 7)).catch(console.error);
         } else {
             setTask(nextTaskType, null).catch(console.error);

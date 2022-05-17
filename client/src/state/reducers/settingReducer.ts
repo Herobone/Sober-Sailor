@@ -35,6 +35,7 @@ const initialState: SettingState = {
 };
 
 export const settingReducer = (
+    // eslint-disable-next-line @typescript-eslint/default-param-last
     state: SettingState = initialState,
     action: SettingAction | BooleanAction,
 ): SettingState => {

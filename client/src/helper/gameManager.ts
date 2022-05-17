@@ -203,7 +203,7 @@ export class GameManager {
                 .then(() => {
                     window.location.pathname = "";
                     GameManager.removeLocalData();
-                    return Promise.resolve();
+                    return;
                 })
                 .catch(console.error);
         };
@@ -213,7 +213,7 @@ export class GameManager {
                 if (host) {
                     return GameManager.transferHostShip();
                 }
-                return Promise.resolve();
+                return;
             })
             .then(() => deletePlayer())
             .catch(console.error);

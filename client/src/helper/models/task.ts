@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "firebase/firestore";
-import { IMultiAnswerQuestion, MultiAnswerQuestion } from "sobersailor-common/lib/models/Task";
+import { IMultiAnswerQuestionExternal, MultiAnswerQuestion } from "sobersailor-common/lib/models/Task";
 
 export const multiAnswerQuestionConverter = {
     toFirestore(question: MultiAnswerQuestion): DocumentData {
@@ -26,7 +26,7 @@ export const multiAnswerQuestionConverter = {
         };
     },
     fromFirestore(
-        snapshot: QueryDocumentSnapshot<IMultiAnswerQuestion>,
+        snapshot: QueryDocumentSnapshot<IMultiAnswerQuestionExternal>,
         options: SnapshotOptions,
     ): MultiAnswerQuestion {
         const data = snapshot.data(options);

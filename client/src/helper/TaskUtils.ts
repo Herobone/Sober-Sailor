@@ -17,8 +17,8 @@
  */
 import {
     IMultiAnswerQuestion,
+    MultiAnswerQuestion,
     MultiAnswerTask,
-    MultiAnswerTaskExternal,
     Question,
     SingleAnswerTasks,
     SingleAnswerTasksExternal,
@@ -47,7 +47,7 @@ export class TaskUtils {
         const response = await fetch(url);
 
         if (response.status === 200) {
-            const json = await response.text();
+            const json = JSON.stringify(JSON.parse(await response.text()));
             localStorage.setItem(`${task}_${lang}`, json);
             const parsed: SingleAnswerTasksExternal = JSON.parse(json);
             return Util.indexedObjectToMap(parsed);
@@ -84,10 +84,9 @@ export class TaskUtils {
         const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
         if (response.status === 200) {
-            const json = await response.text();
+            const json = JSON.stringify(JSON.parse(await response.text()));
             localStorage.setItem(`${task}_${lang}`, json);
-            const parsed: MultiAnswerTaskExternal = JSON.parse(json);
-            return Util.indexedObjectToMap(parsed);
+            return MultiAnswerQuestion.parseTasks(json);
         } else {
             throw new Error("Error during download");
         }
@@ -103,8 +102,7 @@ export class TaskUtils {
     public static async getTasksMultiAnswer(task: string, lang = "en"): Promise<MultiAnswerTask> {
         const stored = localStorage.getItem(`${task}_${lang}`);
         if (stored) {
-            const parsed: MultiAnswerTaskExternal = JSON.parse(stored);
-            return Util.indexedObjectToMap(parsed);
+            MultiAnswerQuestion.parseTasks(stored);
         }
         return this.storeLocalFromGitMultiAnswer(task, lang);
     }

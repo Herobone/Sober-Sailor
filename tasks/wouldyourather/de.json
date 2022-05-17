@@ -1,275 +1,134 @@
 {
     "0": {
         "question": "Was würdest du eher essen?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Hunde"
-            },
-            {
-                "id": 2,
-                "answer": "Katzen"
-            },
-            {
-                "id": 3,
-                "answer": "Pferde"
-            }
-        ]
+        "answers": {
+            "1": "Hunde",
+            "2": "Katzen",
+            "3": "Pferde"
+        }
     },
     "1": {
-        "question": "Würdest du lieber 10 Minuten oder 150 Jahre in die Zukunft sehen?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "10 Minuten"
-            },
-            {
-                "id": 2,
-                "answer": "150 Jahre"
-            }
-        ]
+        "question": "Würdest du lieber 10 minuten oder 150 Jahre in die Zukunft sehen?",
+        "answers": {
+            "1": "10 Minuten",
+            "2": "150 Jahre"
+        }
     },
     "2": {
         "question": "Würdest du lieber Telekinese (Gegenstände mit Gedanken bewegen) oder Telepathie (Gedanken lesen) haben?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Telekinese"
-            },
-            {
-                "id": 2,
-                "answer": "Telepathie"
-            }
-        ]
+        "answers": {
+            "1": "Telekinese",
+            "2": "Telepathie"
+        }
     },
     "3": {
         "question": "Würdest du lieber dazu gezwungen werden zu jedem Song den du hörst zu tanzen oder zu singen?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Tanzen"
-            },
-            {
-                "id": 2,
-                "answer": "Singen"
-            }
-        ]
+        "answers": {
+            "1": "Tanzen",
+            "2": "Singen"
+        }
     },
     "4": {
         "question": "Würdest du lieber diese Woche echte Liebe finden oder nächstes Jahr die Lotterie gewinnen?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Echte Liebe"
-            },
-            {
-                "id": 2,
-                "answer": "Lotterie"
-            },
-            {
-                "id": 3,
-                "answer": "Alleine und arm sterben"
-            }
-        ]
+        "answers": {
+            "1": "Echte Liebe",
+            "2": "Lotterie",
+            "3": "Alleine und arm sterben"
+        }
     },
     "5": {
         "question": "Würdest du lieber 5 Jahre im Gefängnis sitzen oder 10 Jahre im Koma liegen",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Gefängnis für 5 Jahre"
-            },
-            {
-                "id": 2,
-                "answer": "Koma für 10 Jahre"
-            }
-        ]
+        "answers": {
+            "1": "Gefängnis für 5 Jahre",
+            "2": "Koma für 10 Jahre"
+        }
     },
     "6": {
         "question": "Mit wem würdest du lieber zusammen sein?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Deinem Partner für 10 Jahre"
-            },
-            {
-                "id": 2,
-                "answer": "Deinem Celebrity Crush für eine Nacht"
-            }
-        ]
+        "answers": {
+            "1": "Deinem Partner für 10 Jahre",
+            "2": "Deinem Celebrity Crush für eine Nacht"
+        }
     },
     "7": {
         "question": "Was sollen deine Freunde eher von dir sehen können?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Gedanken"
-            },
-            {
-                "id": 2,
-                "answer": "Browser Verlauf"
-            }
-        ]
+        "answers": {
+            "1": "Gedanken",
+            "2": "Browser Verlauf"
+        }
     },
     "8": {
         "question": "Was sollte eher niemand von dir wissen?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Letzte Partner"
-            },
-            {
-                "id": 2,
-                "answer": "Browser-Verlauf"
-            },
-            {
-                "id": 3,
-                "answer": "Taschenrechnerverlauf"
-            },
-            {
-                "id": 4,
-                "answer": "Fetische"
-            }
-        ]
+        "answers": {
+            "1": "Letzte Partner",
+            "2": "Browser Verlauf",
+            "3": "Taschenrechner Verlauf",
+            "4": "Fetische"
+        }
     },
     "9": {
         "question": "Worin würdest du eher schwimmen wollen?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Schwimmbad aus Honig"
-            },
-            {
-                "id": 2,
-                "answer": "Schwimmbad aus Sirup"
-            },
-            {
-                "id": 3,
-                "answer": "Schwimmbad aus Schokocreme"
-            },
-            {
-                "id": 4,
-                "answer": "Schwimmbad aus Erdnussbutter"
-            }
-        ]
+        "answers": {
+            "1": "Pool aus Honig",
+            "2": "Pool aus Sirup",
+            "3": "Pool aus Schokocreme",
+            "4": "Pool aus Erdnussbutter"
+        }
     },
     "10": {
         "question": "Was würdest du einem Fremden eher erzählen wenn du ihn das erste mal siehst?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Deine Fetische"
-            },
-            {
-                "id": 2,
-                "answer": "Deren Unvollkommenheiten"
-            },
-            {
-                "id": 3,
-                "answer": "Einen richtig komischen Fakt"
-            }
-        ]
+        "answers": {
+            "1": "Deine Fetische",
+            "2": "Deren Unvollkommenheiten",
+            "3": "Einen richtig komischen Fakt"
+        }
     },
     "11": {
         "question": "Du kannst nur während einer sehr spezifischen Zeit raus gehen. Welche wäre das?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Tag"
-            },
-            {
-                "id": 2,
-                "answer": "Nacht"
-            },
-            {
-                "id": 3,
-                "answer": "Dämmerung"
-            }
-        ]
+        "answers": {
+            "1": "Tag",
+            "2": "Nacht",
+            "3": "Dämmerung"
+        }
     },
     "12": {
         "question": "Würdest du lieber deinen Helden ankotzen oder dein Held dich?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Ich auf meinen Held"
-            },
-            {
-                "id": 2,
-                "answer": "Mein Held auf mich"
-            }
-        ]
+        "answers": {
+            "1": "Ich auf meinen Held",
+            "2": "Mein Held auf mich"
+        }
     },
     "13": {
         "question": "Mit was würdest du eher kuscheln?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Alligator"
-            },
-            {
-                "id": 2,
-                "answer": "Baby-Elefant"
-            },
-            {
-                "id": 3,
-                "answer": "Riesen Schnecke"
-            },
-            {
-                "id": 4,
-                "answer": "Deinem größten Feind"
-            }
-        ]
+        "answers": {
+            "1": "Alligator",
+            "2": "Baby Elefant",
+            "3": "Riesen Schnecke",
+            "4": "Deinem größten Feind"
+        }
     },
     "14": {
         "question": "Welchen Knopf hätte die Fernbedienung für dein Leben eher?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Zurück"
-            },
-            {
-                "id": 2,
-                "answer": "Vorwärts"
-            },
-            {
-                "id": 3,
-                "answer": "Pause"
-            }
-        ]
+        "answers": {
+            "1": "Zurück",
+            "2": "Vorwärts",
+            "3": "Pause"
+        }
     },
     "15": {
         "question": "Würdest du eher in ein Katzenklo pinkeln oder aus einem Klo trinken?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Aus einer Toilette trinken"
-            },
-            {
-                "id": 2,
-                "answer": "In ein Katzenklo pinkeln"
-            },
-            {
-                "id": 3,
-                "answer": "Urin trinken?!"
-            }
-        ]
+        "answers": {
+            "1": "Aus einer Toilette trinken",
+            "2": "In ein Katzenklo pinkeln",
+            "3": "Urin trinken?!"
+        }
     },
     "16": {
         "question": "Wovon hättest du gerne eins Extra?",
-        "answers": [
-            {
-                "id": 1,
-                "answer": "Nippel"
-            },
-            {
-                "id": 2,
-                "answer": "Zeh"
-            },
-            {
-                "id": 3,
-                "answer": "Nase"
-            }
-        ]
+        "answers": {
+            "1": "Nippel",
+            "2": "Zeh",
+            "3": "Nase"
+        }
     }
 }
