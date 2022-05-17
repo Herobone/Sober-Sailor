@@ -2,9 +2,7 @@
     "0": {
         "question": "Cosa preferiresti mangiare?",
         "anwers": {
-            "0": "Cani",
-            "1": "Gatti",
-            "2": "Cavalli"
+            "1": "Gatti"
         }
     }
 }
