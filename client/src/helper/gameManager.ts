@@ -17,29 +17,27 @@
  */
 
 import {
-    getFirestore,
-    doc,
-    getDoc,
-    DocumentReference,
-    setDoc,
     collection,
     CollectionReference,
     deleteDoc,
-    getDocs,
-    updateDoc,
-    increment,
+    doc,
+    DocumentReference,
     DocumentSnapshot,
-    Unsubscribe,
-    onSnapshot,
     FirestoreError,
+    getDoc,
+    getDocs,
+    getFirestore,
+    onSnapshot,
+    setDoc,
+    Unsubscribe,
+    updateDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { Register } from "sobersailor-common/lib/models/Register";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { Player } from "sobersailor-common/lib/models/Player";
 import Util from "sobersailor-common/lib/Util";
-import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
-import { tasks } from "../gamemodes/tasks";
+import { tasks } from "sobersailor-common/lib/gamemodes/tasks";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";
 import { Serverless } from "./Serverless";
@@ -55,29 +53,6 @@ export class GameManager {
 
         console.warn("LocalStorage has no PLT stored! Try again!");
         return null;
-    }
-
-    static getRandomPlayer(n = 1): PlayerList {
-        if (n < 1) {
-            throw new RangeError("Can not get fewer than 1 players. That would be kinda stupid");
-        }
-        const plt = GameManager.getPlayerLookupTable();
-        if (!plt) {
-            return null;
-        }
-        const reg = plt.playerUidMap;
-        if (n > reg.size) {
-            throw new Error(`Trying to get ${n} players while PLT only has ${reg.size} entries`);
-        }
-        const players: string[] = Array.from({ length: n });
-        // console.log(`Array length ${players.length} with n=${n}`);
-        for (let i = 0; i < n; i++) {
-            const choose = Util.getRandomKey(reg);
-            // console.log(`Current iteration: ${i} has chosen ${choose}`);
-            players[i] = choose;
-            reg.delete(choose);
-        }
-        return players;
     }
 
     static updatePlayerLookupTable(data: Game): void {
@@ -134,7 +109,7 @@ export class GameManager {
 
     /**
      * This function will handle the join event. It will create a new Player object in the __players__ collection. It
-     * also attaches a event handler to the main game Document that is used to update the state
+     * also attaches an event handler to the main game Document that is used to update the state
      * @param gameEvent The Event Handler
      * @param onSnapshotError The Error Handler
      */
@@ -302,13 +277,6 @@ export class GameManager {
         });
     }
 
-    static async setEvalState(state: boolean): Promise<void> {
-        const gameRef = GameManager.getGame();
-        await updateDoc(gameRef, {
-            evalState: state,
-        });
-    }
-
     static async setAnswer(answer: string): Promise<void> {
         const auth = getAuth(firebaseApp);
         const user = auth.currentUser;
@@ -319,52 +287,6 @@ export class GameManager {
         const { uid } = user;
         await updateDoc(GameManager.getPlayer(uid), {
             answer,
-        });
-    }
-
-    static async getMyData(): Promise<Player> {
-        const auth = getAuth(firebaseApp);
-        const user = auth.currentUser;
-        if (!user) {
-            throw new Error("Unauthenticated");
-        }
-        try {
-            const { uid } = user;
-            const playerRef = GameManager.getPlayer(uid);
-            const docIn = await getDoc(playerRef.withConverter(playerConverter));
-            const data = docIn.data();
-            if (data) {
-                return data;
-            }
-        } catch (error) {
-            console.error("An error occurred while fetching player data!");
-            console.error(error);
-        }
-
-        throw new Error("Player not found");
-    }
-
-    /**
-     * Increment sips and reset answer
-     * @param results   The results that were calculated for the given round
-     */
-    static submitPenaltyAndReset(results: Player[]): Promise<void> {
-        let sipsIHaveToTake = 0;
-        const auth = getAuth(firebaseApp);
-        const user = auth.currentUser;
-        if (!user) {
-            throw new Error("Unauthenticated call to protected function!");
-        }
-
-        const { uid } = user;
-        results.forEach((player: Player) => {
-            if (player.uid === uid) {
-                sipsIHaveToTake = player.sips;
-            }
-        });
-        return updateDoc(GameManager.getPlayer(uid), {
-            sips: increment(sipsIHaveToTake),
-            answer: null,
         });
     }
 }

@@ -15,7 +15,7 @@ import {
 } from "./timed/UpdateTaskInfo";
 import { nextTaskHandler } from "./https/NextTask";
 
-admin.initializeApp({});
+admin.initializeApp();
 
 export const singleTarget = functions
   .region("europe-west1")

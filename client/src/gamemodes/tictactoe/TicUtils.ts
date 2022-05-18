@@ -16,24 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { doc, DocumentReference, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, DocumentReference, getDoc, updateDoc } from "firebase/firestore";
 import { TicOptions, TicTacToe } from "sobersailor-common/lib/models/TicTacToe";
 import { GameManager } from "../../helper/gameManager";
 import { ticTacToeConverter } from "../../helper/models/TicTacToe";
 
 export const TicUtils = {
-    async registerTicTacToe(opponents: string[]): Promise<void> {
-        if (opponents.length !== 2) {
-            throw new RangeError("More or less than two players specified!");
-        }
-        console.debug(`Player X (${opponents[0]}) plays against Player O (${opponents[1]})`);
-
-        await setDoc(
-            TicUtils.getTTTGame(),
-            new TicTacToe(Array.from<TicOptions>({ length: 9 }).fill(null), 0, true, opponents[0], opponents[1]),
-        );
-    },
-
     drawAllowed(isXNext: boolean, player: TicOptions): boolean {
         return (!isXNext && player === "O") || (isXNext && player === "X");
     },

@@ -109,7 +109,7 @@ export default function Mixed(): JSX.Element {
 
     const startTimer = (duration: number): void => {
         let localTimer = duration; // create a local copy that will be decremented
-        setMaxTime(duration); // set the state so we can calculate the with of the bar
+        setMaxTime(duration); // set the state, so we can calculate the with of the bar
         console.log(`Starting Timer with ${duration}s`);
         const timeout = setInterval(
             (horst: boolean) => {

@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import { GameIDContent } from "sobersailor-common/lib/HostEvents";
 import VerifiedHostExecutor from "../helper/VerifiedHostExecutor";
-import { tasks } from "sobersailor-common/lib/gamemodes/tasks";
+import { tasks, TaskType } from "sobersailor-common/lib/gamemodes/tasks";
 import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
 import Util from "sobersailor-common/lib/Util";
 import { Task } from "sobersailor-common/lib/models/Task";
@@ -9,6 +9,7 @@ import { Player } from "sobersailor-common/lib/models/Player";
 import FirestoreUtil from "../helper/FirestoreUtil";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { TaskConfig } from "sobersailor-common/lib/models/TaskConfig";
+import { TicUtils } from "../helper/TicUtils";
 
 /*****************************
  * Sober Sailor - The online Party Game
@@ -37,57 +38,26 @@ const setTask = async (
   taskConfig: TaskConfig,
   newPenalty = 0
 ): Promise<void> => {
-  if (type.id === "tictactoe") {
-    /// Check if this task has been here before in the near past
-    const len = gameData.latestTasks.length;
-    const rep = MAX_REPEATS * 0.75;
-    if (len < rep) {
-      if (gameData.latestTasks.includes(type.id)) {
-        throw new Error(); // This throws so that a new target and task can be selected
-      }
-    } else {
-      const split = gameData.latestTasks.slice(len - rep, len - 1);
-      if (split.includes(type.id)) {
-        throw new Error(); // This throws so that a new target and task can be selected
-      }
-    }
+  const localTarget = newTarget ? newTarget[0] : null;
 
-    if (gameData.latestTasks.length >= MAX_REPEATS) {
-      // Delete the first elements that are longer ago than 20 items
-      gameData.latestTasks.splice(
-        0,
-        gameData.latestTasks.length - (MAX_REPEATS - 1)
-      );
-    }
-    gameData.latestTasks.push(type.id);
+  const task = Util.random(0, taskConfig.get(type.id)!.count - 1);
+  const id = type.id + task + newTarget;
 
-    await updateGame(gameData, null, type, null, newPenalty);
-
-    if (newTarget && newTarget.length === 2) {
-      // TicUtils.registerTicTacToe(newTarget).catch(console.error);
-    }
-  } else {
-    const localTarget = newTarget ? newTarget[0] : null;
-
-    const task = Util.random(0, taskConfig.get(type.id)!.count - 1);
-    const id = type.id + task + newTarget;
-
-    /// Check if this task has been here before in the near past
-    if (gameData.latestTasks.includes(id)) {
-      throw new Error(); // This throws so that a new target and task can be selected
-    }
-
-    if (gameData.latestTasks.length >= MAX_REPEATS) {
-      // Delete the first elements that are longer ago than 20 items
-      gameData.latestTasks.splice(
-        0,
-        gameData.latestTasks.length - (MAX_REPEATS - 1)
-      );
-    }
-    gameData.latestTasks.push(id);
-
-    await updateGame(gameData, task, type, localTarget, newPenalty);
+  /// Check if this task has been here before in the near past
+  if (gameData.latestTasks.includes(id)) {
+    throw new Error(); // This throws so that a new target and task can be selected
   }
+
+  if (gameData.latestTasks.length >= MAX_REPEATS) {
+    // Delete the first elements that are longer ago than 20 items
+    gameData.latestTasks.splice(
+      0,
+      gameData.latestTasks.length - (MAX_REPEATS - 1)
+    );
+  }
+  gameData.latestTasks.push(id);
+
+  await updateGame(gameData, task, type.id, localTarget, newPenalty);
 };
 
 const setMultiAnswerTask = async (
@@ -106,19 +76,56 @@ const setMultiAnswerTask = async (
   }
   gameData.latestTasks.push(id);
 
-  await updateGame(gameData, task, type, null, 0);
+  await updateGame(gameData, task, type.id, null, 0);
+};
+
+const setTicTacToe = async (gameData: Game, players: Player[]) => {
+  /// Check if this task has been here before in the near past
+  const len = gameData.latestTasks.length;
+  const rep = MAX_REPEATS * 0.5;
+  if (len < rep) {
+    if (gameData.latestTasks.includes(TaskType.TIC_TAC_TOE)) {
+      throw new Error(); // This throws so that a new target and task can be selected
+    }
+  } else {
+    const split = gameData.latestTasks.slice(len - rep, len - 1);
+    if (split.includes(TaskType.TIC_TAC_TOE)) {
+      throw new Error(); // This throws so that a new target and task can be selected
+    }
+  }
+
+  const newPenalty = Util.random(3, 7);
+
+  if (gameData.latestTasks.length >= MAX_REPEATS) {
+    // Delete the first elements that are longer ago than 20 items
+    gameData.latestTasks.splice(
+      0,
+      gameData.latestTasks.length - (MAX_REPEATS - 1)
+    );
+  }
+  gameData.latestTasks.push(TaskType.TIC_TAC_TOE);
+
+  const targets = getRandomPlayer(players, 2);
+
+  await updateGame(gameData, null, TaskType.TIC_TAC_TOE, null, newPenalty);
+
+  if (targets && targets.length === 2) {
+    await TicUtils.registerTicTacToe(targets, gameData);
+    return;
+  }
+  throw new Error();
 };
 
 const updateGame = (
   game: Game,
   currentTask: number | null,
-  type: Task,
+  type: string,
   taskTarget: string | null,
   penalty: number
 ) =>
   FirestoreUtil.getGame(game.gameID).update({
     currentTask,
-    type: type.id,
+    type,
     evalState: false,
     pollState: false,
     taskTarget,
@@ -127,7 +134,7 @@ const updateGame = (
   });
 
 const getRandomPlayer = (players: Player[], n = 1): PlayerList => {
-  let localPlayers = [...players]; // Create a copy of the player array so we don't modify the original
+  let localPlayers = [...players]; // Create a copy of the player array, so we don't modify the original
   if (n < 1) {
     throw new RangeError(
       "Can not get fewer than 1 players. That would be kinda stupid"
@@ -159,12 +166,7 @@ const singleTask = async (
   players: Player[],
   taskConfig: TaskConfig
 ) => {
-  let targetCount = 1;
-  if (nextTaskType.id === "tictactoe") {
-    targetCount = 2;
-  }
-
-  const nextTarget = getRandomPlayer(players, targetCount);
+  const nextTarget = getRandomPlayer(players, nextTaskType.targetCount);
   try {
     await setTask(
       gameData,
@@ -193,14 +195,25 @@ export const nextTaskHandler = async (
     );
   }
 
-  const nextTaskType = Util.selectRandom(tasks);
+  let nextTaskType = Util.selectRandom(tasks);
+
+  if (nextTaskType.id === TaskType.TIC_TAC_TOE) {
+    try {
+      await setTicTacToe(gameData, players);
+      return;
+    } catch {
+      while (nextTaskType.id === TaskType.TIC_TAC_TOE) {
+        nextTaskType = Util.selectRandom(tasks);
+      }
+    }
+  }
 
   if (nextTaskType.multiAnswer) {
     await setMultiAnswerTask(gameData, nextTaskType, taskConfig);
     return;
   }
 
-  if (nextTaskType.singleTarget) {
+  if (nextTaskType.targetCount > 0) {
     await singleTask(gameData, nextTaskType, players, taskConfig);
   } else {
     await setTask(gameData, nextTaskType, null, taskConfig);
