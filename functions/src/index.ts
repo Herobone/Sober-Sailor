@@ -1,8 +1,5 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-
-admin.initializeApp();
-
 import { kickPlayerHandler } from "./https/KickPlayer";
 import { closeGameHandler } from "./https/CloseGame";
 import { onPlayerLeaveHandler } from "./firestore/OnPlayerLeave";
@@ -12,6 +9,13 @@ import { garbageCollectionHandler } from "./timed/GarbageCollection";
 import { garbageCollectionHTTPSHandler } from "./https/GarbageCollection";
 import { evaluateGameHandler } from "./https/Evaluate";
 import { updateScoreboardHandler } from "./https/UpdateScoreboard";
+import {
+  updateTaskInfoHandler,
+  updateTaskInfoHTTPSHandler,
+} from "./timed/UpdateTaskInfo";
+import { nextTaskHandler } from "./https/NextTask";
+
+admin.initializeApp({});
 
 export const singleTarget = functions
   .region("europe-west1")
@@ -26,6 +30,15 @@ export const onPlayerLeave = functions
   .region("europe-west1")
   .firestore.document("/games/{gameID}/players/{playerID}")
   .onDelete(onPlayerLeaveHandler);
+
+export const updateTaskInfo = functions
+  .region("europe-west1")
+  .pubsub.schedule("every 24 hours")
+  .onRun(updateTaskInfoHandler);
+
+export const updateTaskInfoHTTPS = functions
+  .region("europe-west1")
+  .https.onRequest(updateTaskInfoHTTPSHandler);
 
 export const garbageCollection = functions
   .region("europe-west1")
@@ -51,3 +64,7 @@ export const evaluateGame = functions
 export const updateScoreboard = functions
   .region("europe-west1")
   .https.onCall(updateScoreboardHandler);
+
+export const nextTask = functions
+  .region("europe-west1")
+  .https.onCall(nextTaskHandler);

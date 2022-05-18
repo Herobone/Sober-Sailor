@@ -4,6 +4,8 @@ import { gameConverter } from "../models/Game";
 import Util from "sobersailor-common/lib/Util";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { Player } from "sobersailor-common/lib/models/Player";
+import { taskConfigConverter } from "../models/TaskConfig";
+import { TaskConfig } from "sobersailor-common/lib/models/TaskConfig";
 
 export default class FirestoreUtil {
   static db: admin.firestore.Firestore = admin.firestore();
@@ -69,5 +71,17 @@ export default class FirestoreUtil {
     return FirestoreUtil.getPlayers(gameID)
       .doc(playerID)
       .withConverter(playerConverter);
+  }
+
+  static getTaskConfigDoc() {
+    return this.db
+      .collection("config")
+      .doc("tasks")
+      .withConverter(taskConfigConverter);
+  }
+
+  static async getTaskConfig(): Promise<TaskConfig | undefined> {
+    const data = await FirestoreUtil.getTaskConfigDoc().get();
+    return data.data();
   }
 }

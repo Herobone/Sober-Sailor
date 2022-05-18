@@ -1,11 +1,13 @@
-import { GameIDContent } from "sobersailor-common/lib/HostEvents";
-import * as functions from "firebase-functions";
-import FirestoreUtil from "../helper/FirestoreUtil";
-import VerifiedHostExecutor from "../helper/VerifiedHostExecutor";
+import * as admin from "firebase-admin";
+import {
+  TaskConfig,
+  TaskConfigExternal,
+} from "sobersailor-common/lib/models/TaskConfig";
+import Util from "sobersailor-common/lib/Util";
 
 /*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2021.
+ * Copyright (c) 2022.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +22,15 @@ import VerifiedHostExecutor from "../helper/VerifiedHostExecutor";
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-export const updateScoreboardHandler = async (
-  data: GameIDContent,
-  context: functions.https.CallableContext
-) => {
-  const { players, gameData } = await VerifiedHostExecutor.promiseHost(
-    data.gameID,
-    context
-  );
 
-  players.forEach((player) => {
-    gameData.scoreboard.addScore(player.uid, player.sips);
-  });
-
-  await FirestoreUtil.getGame(data.gameID).update({
-    scoreboard: gameData.scoreboard.serializeBoard(),
-  });
+export const taskConfigConverter = {
+  toFirestore(config: TaskConfig): admin.firestore.DocumentData {
+    return Util.mapToObj(config);
+  },
+  fromFirestore(
+    snapshot: admin.firestore.QueryDocumentSnapshot<TaskConfigExternal>
+  ): TaskConfig {
+    const data = snapshot.data();
+    return Util.objToMap(data);
+  },
 };

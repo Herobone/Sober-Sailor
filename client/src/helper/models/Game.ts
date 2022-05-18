@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { QueryDocumentSnapshot, SnapshotOptions, DocumentData, Timestamp } from "firebase/firestore";
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions, Timestamp } from "firebase/firestore";
 import { Game, IGameExternal } from "sobersailor-common/lib/models/Game";
 import { Register } from "sobersailor-common/lib/models/Register";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
@@ -38,6 +38,7 @@ export const gameConverter = {
             evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
             evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
             scoreboard: game.scoreboard.serializeBoard(),
+            latestTasks: game.latestTasks,
         };
     },
     fromFirestore(snapshot: QueryDocumentSnapshot<IGameExternal<Timestamp>>, options: SnapshotOptions): Game {
@@ -56,6 +57,7 @@ export const gameConverter = {
             Register.deserialize(data.playerUidMap),
             EvaluationScoreboard.deserialize(data.evaluationScoreboard, data.evaluationAnswers),
             Scoreboard.deserialize(data.scoreboard),
+            data.latestTasks,
         );
     },
 };

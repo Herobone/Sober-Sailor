@@ -34,6 +34,8 @@ export class Serverless {
 
     public static UPDATE_SCOREBOARD = "updateScoreboard";
 
+    public static NEXT_TASK = "nextTask";
+
     public static callFunction = (name: string): HttpsCallable => {
         const functions = getFunctions(firebaseApp, "europe-west1");
         return httpsCallable(functions, name);

@@ -4,6 +4,10 @@ service cloud.firestore {
     function isAuthenticated() {
       return request.auth != null;
     }
+    match /configs/{config} {
+        allow read: if isAuthenticated();
+        allow write: if false;
+    }
     match /games/{game} {
       function playerExists() {
         return isAuthenticated() &&

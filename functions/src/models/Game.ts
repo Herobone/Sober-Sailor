@@ -37,6 +37,7 @@ export const gameConverter = {
       evaluationScoreboard: game.evaluationScoreboard.serializeScore(),
       evaluationAnswers: game.evaluationScoreboard.serializeAnswers(),
       scoreboard: game.scoreboard.serializeBoard(),
+      latestTasks: game.latestTasks,
     };
   },
   fromFirestore(
@@ -61,7 +62,8 @@ export const gameConverter = {
         data.evaluationScoreboard,
         data.evaluationAnswers
       ),
-      Scoreboard.deserialize(data.scoreboard)
+      Scoreboard.deserialize(data.scoreboard),
+      data.latestTasks
     );
   },
 };

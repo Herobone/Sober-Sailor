@@ -17,7 +17,7 @@
  */
 
 import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "react";
-import { DocumentSnapshot, updateDoc, FirestoreError, Unsubscribe } from "firebase/firestore";
+import { DocumentSnapshot, FirestoreError, Unsubscribe } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 import { Tooltip } from "@mui/material";
@@ -32,20 +32,15 @@ import PollIcon from "@mui/icons-material/Poll";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import { Player } from "sobersailor-common/lib/models/Player";
 import { Game } from "sobersailor-common/lib/models/Game";
-import { Task } from "sobersailor-common/lib/models/Task";
-import Util from "sobersailor-common/lib/Util";
-import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Leaderboard } from "../../Visuals/Leaderboard";
 import { WhoWouldRather } from "../../../gamemodes/WhoWouldRather";
-import { tasks } from "../../../gamemodes/tasks";
 import { TaskUtils } from "../../../helper/TaskUtils";
 import { TruthOrDare } from "../../../gamemodes/TruthOrDare";
 import { ResultPage } from "../../Visuals/ResultPage";
 import { KickList } from "../../Visuals/KickList";
-import { TicUtils } from "../../../gamemodes/tictactoe/TicUtils";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
 import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
@@ -314,78 +309,17 @@ export default function Mixed(): JSX.Element {
         processNewTask().catch(console.error);
     }, [taskID, taskType, target]);
 
-    const setMultiAnswerTask = async (type: Task): Promise<void> => {
-        const task = await TaskUtils.getRandomMultiAnswerTask(type.id, lang);
-        await updateDoc(GameManager.getGame(), {
-            currentTask: task.id,
-            type: type.id,
-            evalState: false,
-            pollState: false,
-            taskTarget: null,
-            penalty: 0,
-        });
-    };
-
-    const setTask = async (type: Task, newTarget: PlayerList, newPenalty = 0): Promise<void> => {
-        console.log({ task: type, target: newTarget, penalty: newPenalty });
-        if (type.id === "tictactoe") {
-            await updateDoc(GameManager.getGame(), {
-                currentTask: null,
-                type: type.id,
-                evalState: false,
-                pollState: false,
-                taskTarget: null,
-                penalty: newPenalty,
-            });
-            if (newTarget && newTarget.length === 2) {
-                TicUtils.registerTicTacToe(newTarget).catch(console.error);
-            }
-        } else {
-            const localTarget = newTarget ? newTarget[0] : null;
-
-            const task = await TaskUtils.getRandomTask(type.id, lang);
-            setTaskQuestion(task.question);
-            await updateDoc(GameManager.getGame(), {
-                currentTask: task.id,
-                type: type.id,
-                evalState: false,
-                pollState: false,
-                taskTarget: localTarget,
-                penalty: newPenalty,
-            });
-        }
-    };
-
     const nextTaskButtonClick = (): void => {
         if (!isHost) {
             throw new Error("Trying to execute a host method as non Host");
         }
         submitAndReset();
-        const testMode = false;
-        const development = process.env.NODE_ENV === "development" && testMode;
-        const nextTaskType = development ? tasks[0] : Util.selectRandom(tasks);
 
-        if (nextTaskType.multiAnswer) {
-            setMultiAnswerTask(nextTaskType).catch(console.error);
-            return;
-        }
+        const callData: EvaluateGame = {
+            gameID: GameManager.getGameID(),
+        };
 
-        if (nextTaskType.singleTarget) {
-            let targetCount = 1;
-            if (nextTaskType.id === "tictactoe") {
-                targetCount = 2;
-            }
-            let nextTarget: PlayerList = null;
-            try {
-                nextTarget = GameManager.getRandomPlayer(targetCount);
-            } catch (error) {
-                createAlert(Alerts.ERROR, String(error));
-            }
-
-            setTask(nextTaskType, nextTarget, Util.random(3, 7)).catch(console.error);
-        } else {
-            setTask(nextTaskType, null).catch(console.error);
-        }
+        Serverless.callFunction(Serverless.NEXT_TASK)(callData);
     };
 
     return (
