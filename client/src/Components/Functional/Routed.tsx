@@ -31,8 +31,8 @@ export function Routed(): JSX.Element {
 
     return (
         <div className={classes.root}>
-            <GlobalOverlay />
             <Router>
+                <GlobalOverlay />
                 <Suspense fallback={<LoadingIcon />}>
                     <Routes>
                         <Route path="play/*" element={<MixedGameProvider />}>

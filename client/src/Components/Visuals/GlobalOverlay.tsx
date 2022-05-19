@@ -22,6 +22,8 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CopyrightIcon from "@mui/icons-material/Copyright";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import React, { useState } from "react";
+import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
+import { useNavigate } from "react-router";
 import { Settings } from "../Sites/Settings";
 import { useDefaultStyles } from "../../style/Style";
 import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
@@ -29,30 +31,14 @@ import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { useCookiesOpen } from "../../state/actions/settingActions";
 import { CookieNotice } from "./CookieNotice";
 
-/** ***************************
- * Sober Sailor - The online Party Game
- * Copyright (c) 2021.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 export function GlobalOverlay(): JSX.Element {
     const classes = useDefaultStyles();
     const [settingsShown, setSettingsShown] = useState(false);
     const [speedDialShown, setSpeedDialShown] = useState(false);
     const setCookiesOpen = useCookiesOpen()[1];
     const intl = useDefaultTranslation();
+
+    const navigate = useNavigate();
 
     const openSettings = (): void => {
         setSettingsShown(true);
@@ -115,6 +101,17 @@ export function GlobalOverlay(): JSX.Element {
                     onClick={() => {
                         setSpeedDialShown(false);
                         window.open("https://github.com/Herobone/Sober-Sailor/blob/main/LICENSE", "_blank ");
+                    }}
+                />
+                <SpeedDialAction
+                    key="privacy_speeddial"
+                    icon={<LocalPoliceIcon />}
+                    tooltipTitle={<TranslatedMessage id="navigation.privacy" />}
+                    title={intl.formatMessage({ id: "navigation.privacy" })}
+                    tooltipOpen
+                    onClick={() => {
+                        setSpeedDialShown(false);
+                        navigate("/privacy-policy");
                     }}
                 />
                 <SpeedDialAction
