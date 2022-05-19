@@ -1,10 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { singleTargetHandler } from "./https/SingleTarget";
 import { kickPlayerHandler } from "./https/KickPlayer";
 import { closeGameHandler } from "./https/CloseGame";
 import { onPlayerLeaveHandler } from "./firestore/OnPlayerLeave";
 import { onPlayerJoinHandler } from "./firestore/OnPlayerJoin";
-import { singleTargetHandler } from "./https/SingleTarget";
 import { garbageCollectionHandler } from "./timed/GarbageCollection";
 import { garbageCollectionHTTPSHandler } from "./https/GarbageCollection";
 import { evaluateGameHandler } from "./https/Evaluate";
@@ -17,7 +17,7 @@ import { nextTaskHandler } from "./https/NextTask";
 
 admin.initializeApp();
 
-export const singleTarget = functions
+exports.singleTarget = functions
   .region("europe-west1")
   .https.onCall(singleTargetHandler);
 
