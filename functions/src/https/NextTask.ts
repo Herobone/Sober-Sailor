@@ -96,21 +96,19 @@ const setTicTacToe = async (gameData: Game, players: Player[]) => {
 
   const newPenalty = Util.random(3, 7);
 
-  if (gameData.latestTasks.length >= MAX_REPEATS) {
-    // Delete the first elements that are longer ago than 20 items
-    gameData.latestTasks.splice(
-      0,
-      gameData.latestTasks.length - (MAX_REPEATS - 1)
-    );
-  }
-  gameData.latestTasks.push(TaskType.TIC_TAC_TOE);
-
   const targets = getRandomPlayer(players, 2);
-
-  await updateGame(gameData, null, TaskType.TIC_TAC_TOE, null, newPenalty);
 
   if (targets && targets.length === 2) {
     await TicUtils.registerTicTacToe(targets, gameData);
+    if (gameData.latestTasks.length >= MAX_REPEATS) {
+      // Delete the first elements that are longer ago than 20 items
+      gameData.latestTasks.splice(
+        0,
+        gameData.latestTasks.length - (MAX_REPEATS - 1)
+      );
+    }
+    gameData.latestTasks.push(TaskType.TIC_TAC_TOE);
+    await updateGame(gameData, null, TaskType.TIC_TAC_TOE, null, newPenalty);
     return;
   }
   throw new Error();
