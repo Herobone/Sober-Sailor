@@ -1,5 +1,8 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+// This has to be here before all the other imports
+admin.initializeApp();
+
 import { singleTargetHandler } from "./https/SingleTarget";
 import { kickPlayerHandler } from "./https/KickPlayer";
 import { closeGameHandler } from "./https/CloseGame";
@@ -14,8 +17,6 @@ import {
   updateTaskInfoHTTPSHandler,
 } from "./timed/UpdateTaskInfo";
 import { nextTaskHandler } from "./https/NextTask";
-
-admin.initializeApp();
 
 exports.singleTarget = functions
   .region("europe-west1")
