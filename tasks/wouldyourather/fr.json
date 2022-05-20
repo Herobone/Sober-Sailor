@@ -1,107 +1,93 @@
 {
     "0": {
         "question": "Que préfèrerais-tu manger ?",
-        "anwers": {
-            "1": "Des chats"
+        "answers": {
+            "1": "Chiens",
+            "3": "Chevaux",
+            "2": "Chats"
         }
     },
     "1": {
         "question": "Préfèrerais-tu voir 10 minutes dans le futur ou 150 ans dans le futur ?",
-        "anwers": {
-            "1": "150 ans"
+        "answers": {
+            "2": "150 ans"
         }
     },
     "2": {
         "question": "Préfèrerais-tu avoir la télékinésie (déplacer des objets avec ton esprit) ou la télépathie (lire dans les pensées) ?",
-        "anwers": {
-            "1": "télépathie"
+        "answers": {
+            "1": "télékinésie",
+            "2": "télépathie"
         }
     },
     "3": {
         "question": "Préfèrerais-tu être obligé(e) de danser ou de chanter chaque chanson que tu entends ?",
-        "anwers": {
-            "1": "Chanter"
+        "answers": {
+            "2": "Chanter",
+            "1": "Danse"
         }
     },
     "4": {
         "question": "Préfèrerais-tu trouver le grand amour cette semaine ou gagner à la loterie l'année prochaine ?",
-        "anwers": {
-            "1": "La loterie"
+        "answers": {
+            "1": "Véritable amour",
+            "2": "Loterie",
+            "3": "Mourir seul et pauvre"
         }
     },
     "5": {
         "question": "Préfèrerais-tu être en prison pendant 5 ans ou dans le coma pendant 10 ans ?",
-        "anwers": {
-            "1": "Le coma pendant 10 ans"
+        "answers": {
+            "2": "Coma durant 10 ans",
+            "1": "Prison durant 5 ans"
         }
     },
     "6": {
-        "question": "Avec qui préférerais-tu être ?",
-        "anwers": {
-            "1": "La célébrité que tu kiffes pendant une nuit"
-        }
+        "question": "Avec qui préférerais-tu être ?"
     },
     "7": {
         "question": "Vos amis devraient-ils plutôt être en mesure de",
-        "anwers": {
-            "1": "voir ton historique de navigation"
+        "answers": {
+            "2": "voir votre historique de navigation"
         }
     },
     "8": {
         "question": "Que préfèrerais-tu que personne ne connaisse ?",
         "anwers": {
-            "1": "Ton historique de navigation",
             "3": "Tes fétiches"
+        },
+        "answers": {
+            "4": "Fétiches"
         }
     },
     "9": {
         "question": "Dans quoi préfèrerais-tu nager ?",
         "anwers": {
-            "1": "Une piscine de sirop",
             "3": "Une piscine de beurre de cacahuète"
         }
     },
     "10": {
-        "question": "Que préfèrerais-tu dire à un étranger au premier abord ?",
-        "anwers": {
-            "1": "Ses imperfections"
-        }
+        "question": "Que préfèrerais-tu dire à un étranger au premier abord ?"
     },
     "11": {
-        "question": "Vous ne pouvez sortir qu'à un moment précis. Quel moment préfères-tu ?",
-        "anwers": {
-            "1": "La nuit"
-        }
+        "question": "Vous ne pouvez sortir qu'à un moment précis. Quel moment préfères-tu ?"
     },
     "12": {
-        "question": "Tu préfères vomir sur ton héros ou que ton héros te vomisse dessus ?",
-        "anwers": {
-            "1": "Mon héros sur moi"
-        }
+        "question": "Tu préfères vomir sur ton héros ou que ton héros te vomisse dessus ?"
     },
     "13": {
         "question": "Avec quoi préfèrerais-tu faire des câlins ?",
         "anwers": {
-            "1": "Un éléphanteau",
             "3": "Ton pire ennemi"
         }
     },
     "14": {
-        "question": "Quel bouton devrait avoir ta télécommande de ta vie ?",
-        "anwers": {
-            "1": "Avance rapide"
-        }
+        "question": "Quel bouton devrait avoir ta télécommande de ta vie ?"
     },
     "15": {
-        "question": "Préfèrerais-tu faire pipi dans une litière ou boire dans des toilettes ?",
-        "anwers": {
-            "1": "Faire pipi dans une litière"
-        }
+        "question": "Préfèrerais-tu faire pipi dans une litière ou boire dans des toilettes ?"
     },
     "16": {
-        "question": "Que préfèrerais-tuavoir en plus ?",
-        "anwers": {
-            "1": "Un orteil"
-        }
+        "question": "Que préfèrerais-tuavoir en plus ?"
     }
 }
