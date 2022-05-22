@@ -76,5 +76,6 @@
     "account.descriptions.signout.success": "Oturum başarıyla kapatıldı!",
     "account.actions.logout": "Oturumu Kapat",
     "account.actions.login.withGoogle": "Google ile Oturum Aç",
-    "account.actions.login": "Oturum Aç"
+    "account.actions.login": "Oturum Aç",
+    "navigation.privacy": "Gizlilik Politikası"
 }
