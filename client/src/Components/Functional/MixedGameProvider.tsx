@@ -163,7 +163,7 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
                 color="primary"
                 className={classes.nameInput}
                 onChange={onNameChange}
-                onKeyPress={(event) => {
+                onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === "Accept") {
                         processName();
                     }
