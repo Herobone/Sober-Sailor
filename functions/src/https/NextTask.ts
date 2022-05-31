@@ -21,11 +21,12 @@ import { tasks, TaskType } from "sobersailor-common/lib/gamemodes/tasks";
 import { PlayerList } from "sobersailor-common/lib/models/PlayerList";
 import Util from "sobersailor-common/lib/Util";
 import { Task } from "sobersailor-common/lib/models/Task";
-import { Player } from "sobersailor-common/lib/models/Player";
 import FirestoreUtil from "../helper/FirestoreUtil";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { TaskConfig } from "sobersailor-common/lib/models/TaskConfig";
 import { TicUtils } from "../helper/TicUtils";
+import { database } from "firebase-admin";
+import { DatabaseGame } from "sobersailor-common/lib/models/DatabaseStructure";
 
 const MAX_REPEATS = 20;
 
@@ -77,7 +78,7 @@ const setMultiAnswerTask = async (
   await updateGame(gameData, task, type.id, null, 0);
 };
 
-const setTicTacToe = async (gameData: Game, players: Player[]) => {
+const setTicTacToe = async (gameData: Game, players: string[]) => {
   /// Check if this task has been here before in the near past
   const len = gameData.latestTasks.length;
   const rep = MAX_REPEATS * 0.5;
@@ -129,7 +130,7 @@ const updateGame = (
     latestTasks: game.latestTasks,
   });
 
-const getRandomPlayer = (players: Player[], n = 1): PlayerList => {
+const getRandomPlayer = (players: string[], n = 1): PlayerList => {
   let localPlayers = [...players]; // Create a copy of the player array, so we don't modify the original
   if (n < 1) {
     throw new RangeError(
@@ -148,7 +149,7 @@ const getRandomPlayer = (players: Player[], n = 1): PlayerList => {
     const choose = Util.getRandomElement(localPlayers); // Choose a random player
 
     // Add the players UID to the chosen players array
-    chosen[i] = choose.uid;
+    chosen[i] = choose;
 
     // Remove the player from the local copy, so they don't get chosen twice
     localPlayers = Util.arrayRemove(localPlayers, choose);
@@ -159,7 +160,7 @@ const getRandomPlayer = (players: Player[], n = 1): PlayerList => {
 const singleTask = async (
   gameData: Game,
   nextTaskType: Task,
-  players: Player[],
+  players: string[],
   taskConfig: TaskConfig
 ) => {
   const nextTarget = getRandomPlayer(players, nextTaskType.targetCount);
@@ -180,10 +181,19 @@ export const nextTaskHandler = async (
   data: GameIDContent,
   context: functions.https.CallableContext
 ) => {
-  const { players, gameData } = await VerifiedHostExecutor.promiseHost(
+  const { gameData } = await VerifiedHostExecutor.promiseHost(
     data.gameID,
     context
   );
+  const db = database();
+  const gameDataDB: DatabaseGame = (await db.ref(data.gameID).get()).val();
+  const players: string[] = [];
+  for (const user in gameDataDB.users) {
+    if (gameDataDB.users[user].onlineState) {
+      players.push(user);
+    }
+  }
+
   const taskConfig = await FirestoreUtil.getTaskConfig();
   if (!taskConfig) {
     throw new RangeError(

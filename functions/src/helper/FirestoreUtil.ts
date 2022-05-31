@@ -24,7 +24,7 @@ import { taskConfigConverter } from "../models/TaskConfig";
 import { TaskConfig } from "sobersailor-common/lib/models/TaskConfig";
 
 export default class FirestoreUtil {
-  static db: admin.firestore.Firestore = admin.firestore();
+  static fs: admin.firestore.Firestore = admin.firestore();
 
   static async getPlayerData(gameID: string, playerID: string) {
     const playerDocRef = FirestoreUtil.getPlayer(gameID, playerID);
@@ -56,7 +56,7 @@ export default class FirestoreUtil {
   }
 
   static getGame(gameID: string): admin.firestore.DocumentReference {
-    return FirestoreUtil.db.collection("games").doc(gameID);
+    return FirestoreUtil.fs.collection("games").doc(gameID);
   }
 
   static async getGameData(gameID: string) {
@@ -90,7 +90,7 @@ export default class FirestoreUtil {
   }
 
   static getTaskConfigDoc() {
-    return this.db
+    return this.fs
       .collection("config")
       .doc("tasks")
       .withConverter(taskConfigConverter);
