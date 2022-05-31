@@ -37,10 +37,14 @@ export const Leaderboard = (): JSX.Element => {
             return;
         }
 
-        scoreboard.board.forEach((value, key) => {
+        scoreboard.board[Symbol.iterator] = function* () {
+            yield* [...this.entries()].sort((a, b) => b[1] - a[1]);
+        };
+
+        for (const [key, value] of scoreboard.board) {
             const nickname = plt.playerUidMap.get(key) || "Error Name";
             lb.set(nickname, value);
-        });
+        }
 
         setLeaderboard(lb);
     };
