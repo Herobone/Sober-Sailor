@@ -17,7 +17,13 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 // This has to be here before all the other imports
-admin.initializeApp();
+const config = JSON.parse(process.env.FIREBASE_CONFIG!);
+admin.initializeApp({
+  databaseURL:
+    "https://" +
+    config.projectId +
+    "-default-rtdb.europe-west1.firebasedatabase.app",
+});
 
 import { singleTargetHandler } from "./https/SingleTarget";
 import { kickPlayerHandler } from "./https/KickPlayer";
