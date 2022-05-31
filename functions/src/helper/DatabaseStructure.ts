@@ -1,6 +1,6 @@
 /*****************************
  * Sober Sailor - The online Party Game
- * Copyright (c) 2021-2022.
+ * Copyright (c) 2022.
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU Affero General Public License as published by the Free Software Foundation, either
@@ -13,27 +13,17 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
-import { GameActions } from "../actions/gameActions";
-
-export interface GameState {
-    host: boolean;
-    online: boolean;
+export interface DatabaseStructure {
+  [gameID: string]: DatabaseGame;
 }
 
-const initialState: GameState = {
-    host: false,
-    online: false,
-};
+export interface DatabaseGame {
+  [playerID: string]: GamePlayer;
+}
 
-// eslint-disable-next-line @typescript-eslint/default-param-last
-export const gameReducer = (state: GameState = initialState, action: GameActions): GameState => {
-    switch (action.type) {
-        case "SET_HOST":
-            return { ...state, host: action.payload };
-        case "SET_ONLINE":
-            return { ...state, online: action.payload };
-        default:
-            return state;
-    }
-};
+export interface GamePlayer {
+  readyState: number;
+  answer: string;
+  onlineState: boolean;
+  lastOnline: number;
+}

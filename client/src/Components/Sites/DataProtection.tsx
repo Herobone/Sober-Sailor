@@ -20,7 +20,7 @@ import { Paper, Grid } from "@mui/material";
 export default function DataProtection(): JSX.Element {
     return (
         <Grid container spacing={3} sx={{ padding: 5 }}>
-            <Grid item xs={10}>
+            <Grid item md={10} sm={12}>
                 <Paper sx={{ textAlign: "left", pl: 2 }}>
                     <h1>Privacy Policy</h1>
 

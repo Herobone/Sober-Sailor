@@ -38,14 +38,14 @@ import * as express from "express";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const db = admin.firestore();
+const fs = admin.firestore();
 
 export const garbageCollectionHTTPSHandler = async (
   req: functions.https.Request,
   resp: express.Response
 ) => {
   const maxAge = Date.now() - 12 * 60 * 60 * 1000;
-  const gamesRef = await db
+  const gamesRef = await fs
     .collection("games")
     .where("created", "<", new Date(maxAge))
     .withConverter(gameConverter)
@@ -60,6 +60,10 @@ export const garbageCollectionHTTPSHandler = async (
       console.log("Player, ", playerToDelete.id);
       await playerToDelete.ref.delete();
     });
+
+    // Delete Database Entries
+    const db = admin.database();
+    await db.ref(gameToDelete.id).set(null);
 
     // Delete Minigames
     const minis = await gameToDelete.ref.collection("minigames").get();

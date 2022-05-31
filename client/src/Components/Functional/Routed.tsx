@@ -20,8 +20,8 @@ import { Home } from "../Sites/Home";
 import { useDefaultStyles } from "../../style/Style";
 import { GlobalOverlay } from "../Visuals/GlobalOverlay";
 import { LoadingIcon } from "../Visuals/LoadingIcon";
-import { MixedGameProvider } from "./MixedGameProvider";
 import { Logout } from "./Logout";
+import { MixedGameProvider } from "./MixedGameProvider";
 
 const Mixed = lazy(() => import("../Sites/Gamemodes/Mixed"));
 const DataProtection = lazy(() => import("../Sites/DataProtection"));

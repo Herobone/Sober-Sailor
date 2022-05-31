@@ -20,6 +20,7 @@ import { ArrowForwardIos, ExitToAppRounded } from "@mui/icons-material";
 import Cookies from "universal-cookie";
 import { getAuth, signInAnonymously, onAuthStateChanged, User, updateProfile } from "firebase/auth";
 import { Outlet, useParams } from "react-router";
+import { getDatabase, onDisconnect, ref, serverTimestamp, set as setDB } from "firebase/database";
 import { Alerts } from "../../helper/AlertTypes";
 import { GameManager } from "../../helper/gameManager";
 import { useGameProviderStyle } from "../../style/GameProvider";
@@ -27,12 +28,13 @@ import { firebaseApp } from "../../helper/config";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
 import { VisibilityContainer } from "../Visuals/VisibilityContainer";
 import { LoadingIcon } from "../Visuals/LoadingIcon";
+import { useIsOnline } from "../../state/actions/gameActions";
 import { useAlert } from "./AlertProvider";
 import { GameCreator } from "./GameCreator";
 
 export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Element {
     const { createAlert } = useAlert();
-    const params = useParams<{
+    const { gameID } = useParams<{
         gameID?: string;
     }>();
     const [name, setName] = useState("");
@@ -44,8 +46,8 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
 
     const classes = useGameProviderStyle();
 
-    if (params.gameID) {
-        localStorage.setItem("gameID", params.gameID);
+    if (gameID) {
+        localStorage.setItem("gameID", gameID);
     } else {
         GameManager.removeLocalData();
     }
@@ -57,6 +59,35 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
     useEffect((): void => {
         updateReadyState();
     }, [user]);
+
+    const db = getDatabase();
+
+    const [online] = useIsOnline();
+
+    const setOnlineStateDB = (): void => {
+        if (!user || !gameID || !online) {
+            return;
+        }
+        const onlineState = ref(db, `${gameID}/users/${user.uid}/onlineState`);
+
+        // stores the timestamp of my last disconnect (the last time I was seen online)
+        const lastOnlineRef = ref(db, `${gameID}/users/${user.uid}/lastOnline`);
+
+        // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+        setDB(onlineState, true).catch((error) => createAlert(Alerts.ERROR, error));
+
+        // When I disconnect, set online state to false
+        onDisconnect(onlineState)
+            .set(false)
+            .catch((error) => createAlert(Alerts.ERROR, error));
+
+        // When I disconnect, update the last time I was seen online
+        onDisconnect(lastOnlineRef)
+            .set(serverTimestamp())
+            .catch((error) => createAlert(Alerts.ERROR, error));
+    };
+
+    useEffect(setOnlineStateDB, [online]);
 
     useEffect((): void => {
         const { currentUser } = auth;
@@ -72,6 +103,7 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
             console.info("Auth change");
             setUser(authStateUser || undefined);
             updateReadyState();
+            setOnlineStateDB();
         });
     }, []);
 
@@ -153,7 +185,7 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
         return prepareNameSetter();
     }
 
-    if (userReady && !params.gameID) {
+    if (userReady && !gameID) {
         return <GameCreator />;
     }
 

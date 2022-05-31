@@ -36,8 +36,8 @@ import { GameState } from "../reducers/gameReducer";
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export type HostGameActions = {
-    type: "SET_HOST";
+export type GameActions = {
+    type: "SET_HOST" | "SET_ONLINE";
     payload: boolean;
 };
 
@@ -45,7 +45,7 @@ export type HostGameActions = {
  * Set the player to host
  * @param host  Is the player host or not?
  */
-export const setHost = (host: boolean): HostGameActions => ({ type: "SET_HOST", payload: host });
+export const setHost = (host: boolean): GameActions => ({ type: "SET_HOST", payload: host });
 
 export const useIsHost = (): [boolean, (content: boolean) => void] => {
     const dispatch = useDispatch();
@@ -53,6 +53,22 @@ export const useIsHost = (): [boolean, (content: boolean) => void] => {
 
     const set = (content: boolean): void => {
         dispatch(setHost(content));
+    };
+    return [get, set];
+};
+
+/**
+ * Set the players online state
+ * @param online  Is the player online or not?
+ */
+export const setOnline = (online: boolean): GameActions => ({ type: "SET_ONLINE", payload: online });
+
+export const useIsOnline = (): [boolean, (content: boolean) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, GameState["online"]>((state) => state.game.online);
+
+    const set = (content: boolean): void => {
+        dispatch(setOnline(content));
     };
     return [get, set];
 };

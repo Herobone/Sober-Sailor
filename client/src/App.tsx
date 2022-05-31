@@ -19,6 +19,7 @@ import { CssBaseline, StyledEngineProvider, ThemeProvider } from "@mui/material"
 import { Provider } from "react-redux";
 import { SnackbarProvider } from "notistack";
 import Cookies from "universal-cookie";
+import { getDatabase, onValue, ref } from "firebase/database";
 import { AlertProvider } from "./Components/Functional/AlertProvider";
 
 import { LanguageContainer } from "./translations/LanguageContainer";
@@ -38,6 +39,7 @@ import { Filler } from "./state/reducers/settingReducer";
 import backgroundName from "./media/BackgroundWithName.png";
 import background from "./media/Background.png";
 import { useBackgroundState } from "./state/actions/displayStateActions";
+import { useIsOnline } from "./state/actions/gameActions";
 
 export function App(): JSX.Element {
     return (
@@ -53,8 +55,11 @@ function AppWithStore(): JSX.Element {
     const cookies: Cookies = new Cookies();
     const [theme, setTheme] = useThemeSetting();
     const [muiTheme, setMuiTheme] = useState(CalmTheme);
+    const setOnline = useIsOnline()[1];
 
     const [backgroundState] = useBackgroundState();
+
+    const db = getDatabase();
 
     const setFiller = useFiller()[1];
 
@@ -64,6 +69,12 @@ function AppWithStore(): JSX.Element {
 
         const fillerFromCookie: Filler | undefined = cookies.get("filler");
         if (fillerFromCookie) setFiller(fillerFromCookie);
+
+        const connectedRef = ref(db, ".info/connected");
+        onValue(connectedRef, (snap) => {
+            // Set online State in Redux Store
+            setOnline(snap.val() === true); // Comparison required since data is "any"
+        });
     }, []);
 
     useEffect(() => {

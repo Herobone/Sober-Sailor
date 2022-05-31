@@ -136,7 +136,7 @@ export class GameManager {
                 await setDoc(userRef, new Player(uid, nickname, 0, null));
             }
         } catch (error) {
-            console.warn("Problem writing to Database! Either offline or missing permissions!");
+            console.warn("Problem writing to Firestore! Either offline or missing permissions!");
             console.error(error);
         }
 
