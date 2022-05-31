@@ -52,20 +52,13 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
         GameManager.removeLocalData();
     }
 
-    const updateReadyState = (): void => {
-        setUserReady(!!user && !!user.displayName && user.displayName.length >= 2);
-    };
-
-    useEffect((): void => {
-        updateReadyState();
-    }, [user]);
-
     const db = getDatabase();
 
     const [online] = useIsOnline();
 
     const setOnlineStateDB = (): void => {
         if (!user || !gameID || !online) {
+            console.warn("Could not set online State!" + !!user + " | " + !!gameID + " | " + online);
             return;
         }
         const onlineState = ref(db, `${gameID}/users/${user.uid}/onlineState`);
@@ -85,7 +78,18 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
         onDisconnect(lastOnlineRef)
             .set(serverTimestamp())
             .catch((error) => createAlert(Alerts.ERROR, error));
+
+        console.info("Online State set!");
     };
+
+    const updateReadyState = (): void => {
+        setUserReady(!!user && !!user.displayName && user.displayName.length >= 2);
+        setOnlineStateDB();
+    };
+
+    useEffect((): void => {
+        updateReadyState();
+    }, [user]);
 
     useEffect(setOnlineStateDB, [online]);
 
@@ -103,7 +107,6 @@ export function MixedGameProvider(props: PropsWithChildren<unknown>): JSX.Elemen
             console.info("Auth change");
             setUser(authStateUser || undefined);
             updateReadyState();
-            setOnlineStateDB();
         });
     }, []);
 
