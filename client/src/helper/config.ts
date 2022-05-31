@@ -18,6 +18,7 @@ import { initializeApp } from "firebase/app";
 const betaConfig = {
     apiKey: "AIzaSyAsjpgvg6fA8icaGSNxYinPoqh08uLQG0A",
     authDomain: "sober-sailor-beta.firebaseapp.com",
+    databaseURL: "https://sober-sailor-beta-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "sober-sailor-beta",
     storageBucket: "sober-sailor-beta.appspot.com",
     messagingSenderId: "937950228213",
@@ -27,11 +28,15 @@ const betaConfig = {
 const productionConfig = {
     apiKey: "AIzaSyDK2kzipgJdsN3PLMGoWIdtvJXj0-jqHu8",
     authDomain: "sober-sailor.firebaseapp.com",
+    databaseURL: "https://sober-sailor-default-rtdb.europe-west1.firebasedatabase.app/",
     projectId: "sober-sailor",
     storageBucket: "sober-sailor.appspot.com",
     messagingSenderId: "922767796924",
     appId: "1:922767796924:web:c224574e42c431d1bd7eb9",
     measurementId: "G-1G0EXE06XV",
 };
-export const config = process.env.REACT_APP_BETA_CHANNEL === "true" ? betaConfig : productionConfig;
+export const config =
+    process.env.REACT_APP_BETA_CHANNEL === "true" || process.env.NODE_ENV !== "production"
+        ? betaConfig
+        : productionConfig;
 export const firebaseApp = initializeApp(config);

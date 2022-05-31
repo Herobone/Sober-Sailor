@@ -18,6 +18,7 @@ import React from "react";
 import { getAuth, setPersistence, browserLocalPersistence, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { createRoot } from "react-dom/client";
 import * as serviceWorker from "./serviceWorker";
 import { firebaseApp } from "./helper/config";
@@ -33,11 +34,13 @@ setPersistence(auth, browserLocalPersistence).catch(console.error);
 // Make sure to start those with "firebase emulators:start"
 if (process.env.NODE_ENV !== "production") {
     console.log("Connecting to emulators!");
-    const db = getFirestore(firebaseApp);
+    const fs = getFirestore(firebaseApp);
     const fn = getFunctions(firebaseApp, "europe-west1");
-    connectFirestoreEmulator(db, window.location.hostname, 8080);
+    const db = getDatabase(firebaseApp);
+    connectFirestoreEmulator(fs, window.location.hostname, 8080);
     connectAuthEmulator(auth, `http://${window.location.hostname}:9099`);
     connectFunctionsEmulator(fn, window.location.hostname, 5001);
+    connectDatabaseEmulator(db, window.location.hostname, 9000);
 }
 
 // replace console.* for disable log on production
