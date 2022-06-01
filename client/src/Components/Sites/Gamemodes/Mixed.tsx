@@ -31,6 +31,8 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import { Player } from "sobersailor-common/lib/models/Player";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
+import { getDatabase, onValue, ref, Unsubscribe as UnsubscribeDB } from "firebase/database";
+import { DatabaseGame } from "sobersailor-common/lib/models/DatabaseStructure";
 import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -43,7 +45,7 @@ import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
 import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
-import { useIsHost } from "../../../state/actions/gameActions";
+import { useIsHost, usePlayersOnline } from "../../../state/actions/gameActions";
 import { useBackgroundState, useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
@@ -99,6 +101,8 @@ export default function Mixed(): JSX.Element {
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
     const [taskComponent, setTaskComponent] = useState<ReactElement>(notLoaded);
     const [votable, setVotable] = useState(false);
+
+    const db = getDatabase();
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
@@ -180,12 +184,30 @@ export default function Mixed(): JSX.Element {
         createAlert(Alerts.ERROR, "Problems updating from Firestore Database! Error code: " + error.code);
     };
 
+    const setPlayersOnline = usePlayersOnline()[1];
+    const gameDataDBRef = ref(db, GameManager.getGameID());
+
+    const setupGameDBListener = (): UnsubscribeDB => {
+        return onValue(gameDataDBRef, (snap) => {
+            const data: DatabaseGame = snap.val();
+            const playersOnline: string[] = [];
+            for (const user in data.users) {
+                if (data.users[user].onlineState) {
+                    playersOnline.push(user);
+                }
+            }
+            setPlayersOnline(playersOnline);
+        });
+    };
+
     /// This code will get executed on loading of the page
     useEffect(() => {
         let unsubscribeFirestore: Unsubscribe;
+        let unsubscribeDatabase: UnsubscribeDB;
         GameManager.joinGame(gameEvent, onSnapshotError)
             .then((unsub) => {
                 unsubscribeFirestore = unsub;
+                unsubscribeDatabase = setupGameDBListener();
                 return null;
             })
             .catch(console.error);
@@ -193,6 +215,7 @@ export default function Mixed(): JSX.Element {
 
         return function cleanup(): void {
             if (unsubscribeFirestore) unsubscribeFirestore();
+            if (unsubscribeDatabase) unsubscribeDatabase();
             console.log("Unsubscribed!");
             setBackgroundState(false);
         };

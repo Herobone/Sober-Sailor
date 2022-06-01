@@ -14,25 +14,29 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { GameActions } from "../actions/gameActions";
+import { GameActions, GameArrayActions } from "../actions/gameActions";
 
 export interface GameState {
     host: boolean;
     online: boolean;
+    playersOnline: string[];
 }
 
 const initialState: GameState = {
     host: false,
     online: false,
+    playersOnline: [],
 };
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
-export const gameReducer = (state: GameState = initialState, action: GameActions): GameState => {
+export const gameReducer = (state: GameState = initialState, action: GameActions | GameArrayActions): GameState => {
     switch (action.type) {
         case "SET_HOST":
             return { ...state, host: action.payload };
         case "SET_ONLINE":
             return { ...state, online: action.payload };
+        case "SET_PLAYERS_ONLINE":
+            return { ...state, playersOnline: action.payload };
         default:
             return state;
     }

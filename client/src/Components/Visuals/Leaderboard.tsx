@@ -20,12 +20,14 @@ import { GameManager } from "../../helper/gameManager";
 import { useLeaderboardStyles } from "../../style/LeaderboardStyle";
 import { useScoreboard } from "../../state/actions/scoreboardAction";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { usePlayersOnline } from "../../state/actions/gameActions";
 
 type leaderboard = Map<string, number>;
 
 export const Leaderboard = (): JSX.Element => {
     const [leaderboard, setLeaderboard] = React.useState<leaderboard>(new Map<string, number>());
     const [scoreboard] = useScoreboard();
+    const [playersOnline] = usePlayersOnline();
 
     const classes = useLeaderboardStyles();
 
@@ -43,7 +45,7 @@ export const Leaderboard = (): JSX.Element => {
 
         for (const [key, value] of scoreboard.board) {
             const nickname = plt.playerUidMap.get(key) || "Error Name";
-            lb.set(nickname, value);
+            if (playersOnline.includes(key)) lb.set(nickname, value);
         }
 
         setLeaderboard(lb);
@@ -51,7 +53,7 @@ export const Leaderboard = (): JSX.Element => {
 
     useEffect(() => {
         updateLB();
-    }, [scoreboard]);
+    }, [scoreboard, playersOnline]);
 
     const prepareLeaderboard = (): ReactElement[] => {
         const values: ReactElement[] = [];
