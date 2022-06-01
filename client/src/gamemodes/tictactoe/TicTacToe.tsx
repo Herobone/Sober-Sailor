@@ -36,6 +36,8 @@ export function TicTacToe(): JSX.Element {
     const [spectator, setSpectator] = useState(true);
     const [player, setPlayer] = useState<TicOptions>(null);
     const [winner, setWinner] = useState<TicOptions | "tie">(null);
+    const [playerXName, setPlayerXName] = useState<string>();
+    const [playerOName, setPlayerOName] = useState<string>();
 
     const [isHost] = useIsHost();
 
@@ -72,6 +74,11 @@ export function TicTacToe(): JSX.Element {
             }
         } else {
             console.warn("No user provided!");
+        }
+        const plt = GameManager.getPlayerLookupTable();
+        if (plt) {
+            setPlayerXName(plt.playerUidMap.get(data.playerX) || "Name Missing");
+            setPlayerOName(plt.playerUidMap.get(data.playerO) || "Name Missing");
         }
 
         setSquares(data.squares);
@@ -146,6 +153,8 @@ export function TicTacToe(): JSX.Element {
                 <Grid item xs={3} className={style.gameInfo}>
                     <div>Next player: {isXNext ? "X" : "O"}</div>
                     <div>Step: {stepNumber}</div>
+                    <div>X: {playerXName}</div>
+                    <div>O: {playerOName}</div>
                 </Grid>
 
                 {winner && <h2>Player {winner} won the game!</h2>}
