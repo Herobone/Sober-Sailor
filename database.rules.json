@@ -1,6 +1,29 @@
 {
   "rules": {
-    ".read": true,
-    ".write": true
+    "$gameID": {
+      "users": {
+        ".validate": true,
+        "$uid": {
+          ".validate": true,
+          ".write": "auth != null && $uid === auth.uid",
+          ".read": "auth != null && data.parent().child(auth.uid).exists()",
+          "answer": {
+            ".validate": true
+          },
+          "lastOnline": {
+            ".validate": "newData.isNumber()"
+          },
+          "onlineState": {
+            ".validate": "newData.isBoolean()"
+          },
+          "readyState": {
+            ".validate": "newData.isNumber()"
+          }
+        }
+      },
+      "$other": {
+        ".validate": false
+      }
+    }
   }
 }
