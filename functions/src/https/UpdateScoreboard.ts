@@ -40,10 +40,12 @@ export const updateScoreboardHandler = async (
   data: GameIDContent,
   context: functions.https.CallableContext
 ) => {
-  const { players, gameData } = await VerifiedHostExecutor.promiseHost(
+  const { gameData } = await VerifiedHostExecutor.promiseHost(
     data.gameID,
     context
   );
+
+  const players = await FirestoreUtil.getAllPlayers(data.gameID);
 
   players.forEach((player) => {
     gameData.scoreboard.addScore(player.uid, player.sips);

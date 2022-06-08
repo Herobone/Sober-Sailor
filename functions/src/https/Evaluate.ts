@@ -19,11 +19,14 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { GameIDContent } from "sobersailor-common/lib/HostEvents";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
-import { Player } from "sobersailor-common/lib/models/Player";
 import Util from "sobersailor-common/lib/Util";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { ticTacToeConverter } from "../models/TicTacToe";
 import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
+import VerifiedHostExecutor from "../helper/VerifiedHostExecutor";
+import { database } from "firebase-admin";
+import { DatabaseGame } from "sobersailor-common/lib/models/DatabaseStructure";
+import { TaskType } from "sobersailor-common/lib/gamemodes/tasks";
 
 /**
  * Here we sort out the most popular Answer. If some have the same amount of votes, all are added to the array;
@@ -33,23 +36,24 @@ import { TicTacToeUtils } from "sobersailor-common/lib/helpers/TicTacToeUtils";
 const getMostPopular = (
   occurrences: Map<string, number>
 ): [string[], number] => {
-  let mostPoluarAnswers: string[] = [];
-  let mostPoluarAnswer: number = 0;
+  let mostPopularAnswers: string[] = [];
+  let mostPopularAnswer: number = 0;
   occurrences.forEach((count: number, answer: string) => {
-    if (count > mostPoluarAnswer) {
-      mostPoluarAnswers = [answer];
-      mostPoluarAnswer = count;
-    } else if (count === mostPoluarAnswer) {
-      mostPoluarAnswers.push(answer);
+    if (count > mostPopularAnswer) {
+      mostPopularAnswers = [answer];
+      mostPopularAnswer = count;
+    } else if (count === mostPopularAnswer) {
+      mostPopularAnswers.push(answer);
     }
   });
-  return [mostPoluarAnswers, mostPoluarAnswer];
+  return [mostPopularAnswers, mostPopularAnswer];
 };
 
 const submitChanges = async (
   gameData: Game,
   evaluationScoreboard: EvaluationScoreboard
 ): Promise<void> => {
+  console.table(evaluationScoreboard.serializeScore());
   await evaluationScoreboard.board.forEach(async (value, key) => {
     await FirestoreUtil.getPlayer(gameData.gameID, key).update({
       sips: admin.firestore.FieldValue.increment(value),
@@ -111,81 +115,64 @@ const evaluateTTT = async (gameData: Game): Promise<void> => {
     gameData.scoreboard.updateScore(tttGameData.playerO, penalty);
   }
   await submitChanges(gameData, evaluationScoreboard);
-  /* await tttGameRef.set(
-    new TicTacToe(
-      Array.from<TicOptions>({ length: 9 }).fill(null),
-      0,
-      true,
-      tttGameData.playerX,
-      tttGameData.playerO
-    )
-  ); */
 };
 
 export const evaluateGameHandler = async (
   data: GameIDContent,
   context: functions.https.CallableContext
 ) => {
-  const auth = context.auth;
-  if (auth) {
-    const requestUID = auth.uid;
-    const gameData = await FirestoreUtil.getGameData(data.gameID);
+  const { gameData } = await VerifiedHostExecutor.promiseHost(
+    data.gameID,
+    context
+  );
 
-    if (!gameData) {
-      throw new functions.https.HttpsError(
-        "not-found",
-        "Game data was missing!"
+  if (gameData.type === TaskType.TIC_TAC_TOE) {
+    return evaluateTTT(gameData);
+  }
+
+  const db = database();
+  const gameDataDB: DatabaseGame = (await db.ref(data.gameID).get()).val();
+  const users = Util.objToMap(gameDataDB.users);
+
+  const answers: string[] = [];
+  const evaluationScoreboard = EvaluationScoreboard.init();
+  for (const [uid, player] of users) {
+    if (player.onlineState) {
+      answers.push(
+        player.answer ||
+          (gameData.type === TaskType.WHO_WOULD_RATHER ? uid : "none")
       );
-    }
-    if (requestUID !== gameData.host) {
-      throw new functions.https.HttpsError(
-        "permission-denied",
-        "Function must be called by host of game!"
-      );
-    }
 
-    if (gameData.type === "tictactoe") {
-      return evaluateTTT(gameData);
+      evaluationScoreboard.addAnswer(uid, player.answer || "none");
     }
-
-    const players = await FirestoreUtil.getAllPlayers(data.gameID);
-    const answers: string[] = [];
-    const evaluationScoreboard = EvaluationScoreboard.init();
-
-    if (gameData.type === "wouldyourather") {
-      players.forEach((player: Player) => {
-        answers.push(player.answer || "none");
-        evaluationScoreboard.addAnswer(player.uid, player.answer || "none");
-      });
-      const occur = Util.countOccurrences(answers);
-      const [popularAnswers, count] = getMostPopular(occur);
-      players.forEach((player: Player) => {
-        if (popularAnswers.includes(player.answer || "none")) {
-          evaluationScoreboard.addScore(player.uid, count);
-          gameData.scoreboard.updateScore(player.uid, count);
-        }
-      });
-    } else {
-      players.forEach((player: Player) => {
-        answers.push(player.answer || player.uid);
-        evaluationScoreboard.addAnswer(player.uid, player.answer || "none");
-      });
-      const occur = Util.countOccurrences(answers);
-      occur.forEach((count, uid) => {
-        if (uid === "none") {
-          return;
-        }
+  }
+  console.table(evaluationScoreboard.serializeAnswers());
+  console.table(answers);
+  const occur = Util.countOccurrences(answers);
+  console.table(occur);
+  if (gameData.type === TaskType.WOULD_YOU_RATHER) {
+    const [popularAnswers, count] = getMostPopular(occur);
+    for (const [uid, player] of users) {
+      if (popularAnswers.includes(player.answer || "none")) {
         evaluationScoreboard.addScore(uid, count);
         gameData.scoreboard.updateScore(uid, count);
-      });
-    }
-
-    players.forEach((player) => {
-      if (!evaluationScoreboard.board.has(player.uid)) {
-        evaluationScoreboard.addScore(player.uid, 0);
       }
+    }
+  } else {
+    occur.forEach((count, uid) => {
+      if (uid === "none") {
+        return;
+      }
+      evaluationScoreboard.addScore(uid, count);
+      gameData.scoreboard.updateScore(uid, count);
     });
-
-    await submitChanges(gameData, evaluationScoreboard);
   }
+
+  for (const [uid] of users) {
+    if (!evaluationScoreboard.board.has(uid)) {
+      evaluationScoreboard.addScore(uid, 0);
+    }
+  }
+
+  await submitChanges(gameData, evaluationScoreboard);
 };

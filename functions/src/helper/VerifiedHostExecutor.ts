@@ -16,7 +16,6 @@
 
 import * as functions from "firebase-functions";
 import FirestoreUtil from "./FirestoreUtil";
-import { Player } from "sobersailor-common/lib/models/Player";
 import { Game } from "sobersailor-common/lib/models/Game";
 
 /*****************************
@@ -38,7 +37,6 @@ import { Game } from "sobersailor-common/lib/models/Game";
  */
 
 interface HostData {
-  players: Player[];
   gameData: Game;
 }
 
@@ -73,11 +71,8 @@ export default class VerifiedHostExecutor {
         "Function must be called by host of game!"
       );
     }
-    console.log("User is host");
-    const players = await FirestoreUtil.getAllPlayers(gameID);
 
     return {
-      players,
       gameData,
     };
   }
