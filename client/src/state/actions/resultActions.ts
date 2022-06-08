@@ -16,12 +16,18 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { Player } from "sobersailor-common/lib/models/Player";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 import { RootState } from "../store";
 import { ResultState } from "../reducers/resultReducer";
 
 export type ResultAction = {
     type: "SET_RESULT";
     payload: Player[] | null;
+};
+
+export type EvaluationScoreboardAction = {
+    type: "SET_EVALUATION_SCOREBOARD";
+    payload: EvaluationScoreboard;
 };
 
 /**
@@ -38,6 +44,29 @@ export const useResult = (): [Player[] | null, (content: Player[] | null) => voi
 
     const set = (content: Player[] | null): void => {
         dispatch(setResult(content));
+    };
+    return [get, set];
+};
+
+/**
+ * Set the evaluation scoreboard
+ *
+ * Null if none loaded
+ * @param data    The evaluation scoreboard or null
+ */
+export const setEvaluationScoreboard = (data: EvaluationScoreboard): EvaluationScoreboardAction => ({
+    type: "SET_EVALUATION_SCOREBOARD",
+    payload: data,
+});
+
+export const useEvaluationScoreboard = (): [EvaluationScoreboard, (content: EvaluationScoreboard) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, ResultState["evaluationScoreboard"]>(
+        (state) => state.result.evaluationScoreboard,
+    );
+
+    const set = (content: EvaluationScoreboard): void => {
+        dispatch(setEvaluationScoreboard(content));
     };
     return [get, set];
 };

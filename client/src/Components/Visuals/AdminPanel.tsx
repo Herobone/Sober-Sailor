@@ -20,7 +20,6 @@ import IconButton from "@mui/material/IconButton";
 import QueuePlayNextIcon from "@mui/icons-material/QueuePlayNext";
 import TransferWithinAStationIcon from "@mui/icons-material/TransferWithinAStation";
 import PollIcon from "@mui/icons-material/Poll";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useState } from "react";
 import { TaskType } from "sobersailor-common/lib/gamemodes/tasks";
@@ -154,29 +153,6 @@ export function AdminPanel(): JSX.Element {
                         </Tooltip>
                     </Grid>
                 )}
-                <Grid item xs className={classes.controlButton}>
-                    <Tooltip
-                        title={<TranslatedMessage id="actions.host.kick" />}
-                        TransitionComponent={Zoom}
-                        placement="bottom"
-                        arrow
-                    >
-                        <IconButton
-                            color="primary"
-                            className={classes.hostButton}
-                            onClick={() => {
-                                /*const klRef = kickListRef.current;
-                                if (klRef) {
-                                    klRef.show();
-                                }*/
-                                console.warn("Kick list not working currently");
-                            }}
-                            size="large"
-                        >
-                            <FlightTakeoffIcon className={classes.controlButtonIcon} />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
             </Grid>
         </Paper>
     );

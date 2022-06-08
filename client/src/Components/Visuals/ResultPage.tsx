@@ -18,16 +18,33 @@ import { TableRow, TableCell, TableContainer, TableHead, TableBody, Table, Paper
 import React, { ReactElement, useEffect, useState } from "react";
 import { Player } from "sobersailor-common/lib/models/Player";
 import { getAuth } from "firebase/auth";
+import { TaskType } from "sobersailor-common/lib/gamemodes/tasks";
 import { useDefaultStyles } from "../../style/Style";
 import { firebaseApp } from "../../helper/config";
-import { useResult } from "../../state/actions/resultActions";
+import { useEvaluationScoreboard, useResult } from "../../state/actions/resultActions";
 import { TranslatedMessage } from "../../translations/TranslatedMessage";
+import { GameManager } from "../../helper/gameManager";
+import { Alerts } from "../../helper/AlertTypes";
+import { useAnswers, useTaskType } from "../../state/actions/taskActions";
+import { useEvalState } from "../../state/actions/displayStateActions";
+import { useAlert } from "../Functional/AlertProvider";
+import { useDefaultTranslation } from "../../translations/DefaultTranslationProvider";
 import { PenaltyScreen } from "./PenaltyScreen";
 
 export function ResultPage(): JSX.Element {
     const classes = useDefaultStyles();
 
+    const { createAlert } = useAlert();
+
+    const intl = useDefaultTranslation();
+
     const [result] = useResult();
+    const [evaluationScoreboard] = useEvaluationScoreboard();
+    const [taskType] = useTaskType();
+    const [evalState] = useEvalState();
+    const [answers] = useAnswers();
+
+    const setResult = useResult()[1];
 
     const [myPenalty, setMyPenalty] = useState<number>(0);
     const [resultScreen, setResultScreen] = useState<ReactElement[]>();
@@ -62,6 +79,58 @@ export function ResultPage(): JSX.Element {
 
         setResultScreen(values);
     };
+
+    useEffect(() => {
+        if (!evalState) return;
+
+        const resultData: Player[] = [];
+        const plt = GameManager.getPlayerLookupTable();
+        if (!plt) {
+            throw new Error("PLT was missing. Why is it missing?");
+        }
+
+        if (!evaluationScoreboard || evaluationScoreboard.board.size <= 0) return;
+
+        evaluationScoreboard.board.forEach((score: number, uid: string) => {
+            const answer = evaluationScoreboard.answers.get(uid) || "none";
+            let readableAnswer = intl.formatMessage({ id: "general.answer.forgot" });
+            if (taskType === TaskType.WOULD_YOU_RATHER) {
+                if (answers) {
+                    answers.forEach((possibleAnswer, id) => {
+                        if (id === Number(answer)) {
+                            readableAnswer = possibleAnswer;
+                        }
+                    });
+                } else {
+                    createAlert(Alerts.ERROR, "Answers were not loaded, therefore could not load the right response");
+                }
+            } else if (taskType === TaskType.TIC_TAC_TOE) {
+                switch (answer) {
+                    case "winner":
+                        readableAnswer = intl.formatMessage({ id: "general.winner" });
+                        break;
+                    case "loser":
+                        readableAnswer = intl.formatMessage({ id: "general.loser" });
+                        break;
+                    default:
+                        readableAnswer = intl.formatMessage({ id: "general.tie" });
+                        break;
+                }
+            } else {
+                const temp = plt.playerUidMap.get(answer);
+                if (temp) {
+                    readableAnswer = temp;
+                }
+            }
+            resultData.push(new Player(uid, plt.playerUidMap.get(uid) || "Error Name", score, readableAnswer));
+        });
+
+        setResult(resultData);
+    }, [evalState, evaluationScoreboard, taskType]);
+
+    useEffect(() => {
+        if (!evalState) setResult(null);
+    }, [evalState]);
 
     useEffect(() => prepareResults(), [result]);
 

@@ -20,9 +20,7 @@ import { getAuth } from "firebase/auth";
 
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import { Player } from "sobersailor-common/lib/models/Player";
 import { Game } from "sobersailor-common/lib/models/Game";
-import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 import { getDatabase, onValue, ref, Unsubscribe as UnsubscribeDB } from "firebase/database";
 import { DatabaseGame } from "sobersailor-common/lib/models/DatabaseStructure";
 import Util from "sobersailor-common/lib/Util";
@@ -38,7 +36,7 @@ import { KickList } from "../../Visuals/KickList";
 import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
 import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
-import { useResult } from "../../../state/actions/resultActions";
+import { useEvaluationScoreboard, useResult } from "../../../state/actions/resultActions";
 import { useIsHost, usePlayersOnline, usePlayersReady } from "../../../state/actions/gameActions";
 import { useBackgroundState, useEvalState, usePollState } from "../../../state/actions/displayStateActions";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
@@ -46,7 +44,6 @@ import { useLanguage } from "../../../state/actions/settingActions";
 import { WouldYouRather } from "../../../gamemodes/wouldyourather/WouldYouRather";
 import { useAlert } from "../../Functional/AlertProvider";
 import { Alerts } from "../../../helper/AlertTypes";
-import { useDefaultTranslation } from "../../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../../translations/TranslatedMessage";
 import { CatPontent } from "../../Visuals/CatPontent";
 import { Timer } from "../../Visuals/Timer";
@@ -72,14 +69,12 @@ export default function Mixed(): JSX.Element {
     const [isHost, setHost] = useIsHost();
     const setPollState = usePollState()[1];
     const [evalState, setEvalState] = useEvalState();
-    const [result, setResult] = useResult();
-    const [answers, setAnswers] = useAnswers();
+    const setResult = useResult()[1];
+    const setAnswers = useAnswers()[1];
 
     const setBackgroundState = useBackgroundState()[1];
 
     const setCombined = useAll();
-
-    const intl = useDefaultTranslation();
 
     const setScoreboard = useScoreboard()[1];
 
@@ -90,22 +85,17 @@ export default function Mixed(): JSX.Element {
             <CatPontent />
         </>
     );
-    const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
+    const setEvaluationScoreboard = useEvaluationScoreboard()[1];
     const [taskComponent, setTaskComponent] = useState<ReactElement>(notLoaded);
     const setPlayersOnline = usePlayersOnline()[1];
     const setPlayersReady = usePlayersReady()[1];
 
     const db = getDatabase();
 
-    const submitAndReset = (): void => {
-        console.log("Results are", result);
+    const reset = (): void => {
         setPlayersReady([]);
         setResult(null);
     };
-
-    useEffect(() => {
-        if (!evalState) setResult(null);
-    }, [evalState]);
 
     const gameEvent = (doc: DocumentSnapshot<Game>): void => {
         const data = doc.data();
@@ -114,7 +104,7 @@ export default function Mixed(): JSX.Element {
             console.log("Received data from Firestore!");
 
             if (taskID !== data.currentTask || taskType !== data.type || target !== data.taskTarget) {
-                submitAndReset();
+                reset();
             }
 
             setCombined(
@@ -189,54 +179,6 @@ export default function Mixed(): JSX.Element {
         };
     }, []);
 
-    useEffect(() => {
-        if (!evalState) return;
-
-        const resultData: Player[] = [];
-        const plt = GameManager.getPlayerLookupTable();
-        if (!plt) {
-            throw new Error("PLT was missing. Why is it missing?");
-        }
-
-        if (!evaluationScoreboard || evaluationScoreboard.board.size <= 0) return;
-
-        evaluationScoreboard.board.forEach((score: number, uid: string) => {
-            const answer = evaluationScoreboard.answers.get(uid) || "none";
-            let readableAnswer = intl.formatMessage({ id: "general.answer.forgot" });
-            if (taskType === TaskType.WOULD_YOU_RATHER) {
-                if (answers) {
-                    answers.forEach((possibleAnswer, id) => {
-                        if (id === Number(answer)) {
-                            readableAnswer = possibleAnswer;
-                        }
-                    });
-                } else {
-                    createAlert(Alerts.ERROR, "Answers were not loaded, therefore could not load the right response");
-                }
-            } else if (taskType === TaskType.TIC_TAC_TOE) {
-                switch (answer) {
-                    case "winner":
-                        readableAnswer = intl.formatMessage({ id: "general.winner" });
-                        break;
-                    case "loser":
-                        readableAnswer = intl.formatMessage({ id: "general.loser" });
-                        break;
-                    default:
-                        readableAnswer = intl.formatMessage({ id: "general.tie" });
-                        break;
-                }
-            } else {
-                const temp = plt.playerUidMap.get(answer);
-                if (temp) {
-                    readableAnswer = temp;
-                }
-            }
-            resultData.push(new Player(uid, plt.playerUidMap.get(uid) || "Error Name", score, readableAnswer));
-        });
-
-        setResult(resultData);
-    }, [evalState, evaluationScoreboard, taskType]);
-
     const unknownTypeAlert = (): void => createAlert(Alerts.ERROR, "Unknown Task type " + taskType);
 
     const processNewMultiAnswerTask = async (): Promise<void> => {
@@ -273,7 +215,6 @@ export default function Mixed(): JSX.Element {
                 await processNewSingleAnswerTask();
                 break;
             case TaskType.TIC_TAC_TOE:
-                console.log("TicTacToe");
                 setTaskComponent(<TicTacToe />);
                 break;
             case TaskType.WOULD_YOU_RATHER:
@@ -293,32 +234,30 @@ export default function Mixed(): JSX.Element {
     }, [taskID, taskType, target]);
 
     return (
-        <>
-            <Grid container spacing={3} sx={{ pl: -3 }} className={classes.mainGrid}>
-                <Grid item xs={10} md={6}>
-                    <div className={classes.mainHeadingName}>
-                        <TranslatedMessage id="sobersailor.name" />
-                    </div>
-                </Grid>
-                <Grid item xs={12}>
-                    <Timer />
-                </Grid>
-                <Grid item xs={12} md={8} lg={9}>
-                    <Paper
-                        sx={{
-                            p: 0.5,
-                        }}
-                    >
-                        {!evalState && taskComponent}
-                        {evalState && <ResultPage />}
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} md={4} lg={3}>
-                    {isHost && <AdminPanel />}
-                    <Leaderboard />
-                    <KickList ref={kickListRef} />
-                </Grid>
+        <Grid container spacing={3} sx={{ pl: -3 }} className={classes.mainGrid}>
+            <Grid item xs={10} md={6}>
+                <div className={classes.mainHeadingName}>
+                    <TranslatedMessage id="sobersailor.name" />
+                </div>
             </Grid>
-        </>
+            <Grid item xs={12}>
+                <Timer />
+            </Grid>
+            <Grid item xs={12} md={8} lg={9}>
+                <Paper
+                    sx={{
+                        p: 0.5,
+                    }}
+                >
+                    {(!evalState || taskType === TaskType.TIC_TAC_TOE) && taskComponent}
+                    {evalState && <ResultPage />}
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} lg={3}>
+                {isHost && <AdminPanel />}
+                <Leaderboard />
+                <KickList ref={kickListRef} />
+            </Grid>
+        </Grid>
     );
 }

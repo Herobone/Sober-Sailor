@@ -15,21 +15,29 @@
  */
 
 import { Player } from "sobersailor-common/lib/models/Player";
-import { ResultAction } from "../actions/resultActions";
+import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
+import { EvaluationScoreboardAction, ResultAction } from "../actions/resultActions";
 
 export interface ResultState {
     result: Player[] | null;
+    evaluationScoreboard: EvaluationScoreboard;
 }
 
 const initialState: ResultState = {
     result: null,
+    evaluationScoreboard: EvaluationScoreboard.init(),
 };
 
-// eslint-disable-next-line @typescript-eslint/default-param-last
-export const resultReducer = (state: ResultState = initialState, action: ResultAction): ResultState => {
+export const resultReducer = (
+    // eslint-disable-next-line @typescript-eslint/default-param-last
+    state: ResultState = initialState,
+    action: ResultAction | EvaluationScoreboardAction,
+): ResultState => {
     switch (action.type) {
         case "SET_RESULT":
             return { ...state, result: action.payload };
+        case "SET_EVALUATION_SCOREBOARD":
+            return { ...state, evaluationScoreboard: action.payload };
         default:
             return state;
     }
