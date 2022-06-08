@@ -40,7 +40,10 @@ export class TaskUtils {
      * @returns Promise that contains all the Questions in the document
      */
     public static async storeToLocalFromGit(task: string, lang = "en"): Promise<SingleAnswerTasks> {
-        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
+        const url =
+            process.env.NODE_ENV === "development"
+                ? `http://${window.location.hostname}:3069/${task}/${lang}.json`
+                : `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
 
         const response = await fetch(url);
 
@@ -79,7 +82,10 @@ export class TaskUtils {
      * @returns Promise that contains all the Questions in the document
      */
     public static async storeLocalFromGitMultiAnswer(task: string, lang = "en"): Promise<MultiAnswerTask> {
-        const url = `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
+        const url =
+            process.env.NODE_ENV === "development"
+                ? `http://${window.location.hostname}:3069/${task}/${lang}.json`
+                : `https://raw.githubusercontent.com/Herobone/Sober-Sailor/${this.whereFrom}/tasks/${task}/${lang}.json`;
         const response = await fetch(url);
         if (response.status === 200) {
             const json = JSON.stringify(JSON.parse(await response.text()));

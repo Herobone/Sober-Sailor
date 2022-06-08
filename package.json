@@ -3,6 +3,7 @@
   "description": "Sober Sailor is a web based drinking game. It is currently focused every player having one Device for keeping distance",
   "version": "1.0.0",
   "private": true,
+  "main": "spawn.js",
   "scripts": {
     "functions": "cd functions && npm run build",
     "emulators": "firebase emulators:start",
