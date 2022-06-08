@@ -50,6 +50,7 @@ http
     const baseURL = "http://" + req.headers.host + "/";
     // Parsing the requested URL
     const parsedUrl = new URL(req.url, baseURL);
+    res.setHeader("Access-Control-Allow-Origin", "*");
 
     // If requested url is "/" like "http://localhost:3069/"
     if (parsedUrl.pathname === "/") {
