@@ -18,21 +18,15 @@ import React, { ElementRef, ReactElement, useEffect, useRef, useState } from "re
 import { DocumentSnapshot, FirestoreError, Unsubscribe } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-import { Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import LinearProgress from "@mui/material/LinearProgress";
-import Zoom from "@mui/material/Zoom";
-import QueuePlayNextIcon from "@mui/icons-material/QueuePlayNext";
-import IconButton from "@mui/material/IconButton";
-import TransferWithinAStationIcon from "@mui/icons-material/TransferWithinAStation";
-import PollIcon from "@mui/icons-material/Poll";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import { Player } from "sobersailor-common/lib/models/Player";
 import { Game } from "sobersailor-common/lib/models/Game";
 import { EvaluationScoreboard } from "sobersailor-common/lib/models/EvaluationScoreboard";
 import { getDatabase, onValue, ref, Unsubscribe as UnsubscribeDB } from "firebase/database";
 import { DatabaseGame } from "sobersailor-common/lib/models/DatabaseStructure";
+import Util from "sobersailor-common/lib/Util";
+import { TaskType } from "sobersailor-common/lib/gamemodes/tasks";
 import { firebaseApp } from "../../../helper/config";
 import { GameManager } from "../../../helper/gameManager";
 import { Leaderboard } from "../../Visuals/Leaderboard";
@@ -45,9 +39,8 @@ import { TicTacToe } from "../../../gamemodes/tictactoe/TicTacToe";
 import { useDefaultStyles } from "../../../style/Style";
 import { useAll, useAnswers, useTarget, useTask, useTaskID, useTaskType } from "../../../state/actions/taskActions";
 import { useResult } from "../../../state/actions/resultActions";
-import { useIsHost, usePlayersOnline } from "../../../state/actions/gameActions";
+import { useIsHost, usePlayersOnline, usePlayersReady } from "../../../state/actions/gameActions";
 import { useBackgroundState, useEvalState, usePollState } from "../../../state/actions/displayStateActions";
-import { EvaluateGame, Serverless } from "../../../helper/Serverless";
 import { useScoreboard } from "../../../state/actions/scoreboardAction";
 import { useLanguage } from "../../../state/actions/settingActions";
 import { WouldYouRather } from "../../../gamemodes/wouldyourather/WouldYouRather";
@@ -56,6 +49,8 @@ import { Alerts } from "../../../helper/AlertTypes";
 import { useDefaultTranslation } from "../../../translations/DefaultTranslationProvider";
 import { TranslatedMessage } from "../../../translations/TranslatedMessage";
 import { CatPontent } from "../../Visuals/CatPontent";
+import { Timer } from "../../Visuals/Timer";
+import { AdminPanel } from "../../Visuals/AdminPanel";
 
 type KickListHandle = ElementRef<typeof KickList>;
 
@@ -75,7 +70,7 @@ export default function Mixed(): JSX.Element {
     const setTaskQuestion = useTask()[1];
     const [taskID] = useTaskID();
     const [isHost, setHost] = useIsHost();
-    const [pollState, setPollState] = usePollState();
+    const setPollState = usePollState()[1];
     const [evalState, setEvalState] = useEvalState();
     const [result, setResult] = useResult();
     const [answers, setAnswers] = useAnswers();
@@ -95,55 +90,18 @@ export default function Mixed(): JSX.Element {
             <CatPontent />
         </>
     );
-
-    const [timer, setTimer] = useState(0);
-    const [maxTime, setMaxTime] = useState(0);
     const [evaluationScoreboard, setEvaluationScoreboard] = useState<EvaluationScoreboard>();
     const [taskComponent, setTaskComponent] = useState<ReactElement>(notLoaded);
-    const [votable, setVotable] = useState(false);
+    const setPlayersOnline = usePlayersOnline()[1];
+    const setPlayersReady = usePlayersReady()[1];
 
     const db = getDatabase();
 
     const submitAndReset = (): void => {
         console.log("Results are", result);
+        setPlayersReady([]);
         setResult(null);
     };
-
-    const startTimer = (duration: number): void => {
-        let localTimer = duration; // create a local copy that will be decremented
-        setMaxTime(duration); // set the state, so we can calculate the with of the bar
-        console.log(`Starting Timer with ${duration}s`);
-        const timeout = setInterval(
-            (horst: boolean) => {
-                setTimer(localTimer);
-
-                if (--localTimer < 0) {
-                    console.log("Stopping timer!");
-                    if (timeout) {
-                        console.log("Clearing Timeout");
-                        clearTimeout(timeout); // stop the timeout so it does not get negative
-                    }
-                    setPollState(false); // set poll state to false
-
-                    if (horst) {
-                        console.log("Publishing new states");
-                        const callData: EvaluateGame = {
-                            gameID: GameManager.getGameID(),
-                        };
-                        Serverless.callFunction(Serverless.EVALUATE_GAME)(callData);
-                    }
-                }
-            },
-            1000, // run every 1 second
-            isHost, // passing is host in here solves the issue with it being undefined inside the function
-        );
-    };
-
-    useEffect(() => {
-        if (pollState && timer === 0) {
-            startTimer(20);
-        }
-    }, [pollState]);
 
     useEffect(() => {
         if (!evalState) setResult(null);
@@ -184,30 +142,40 @@ export default function Mixed(): JSX.Element {
         createAlert(Alerts.ERROR, "Problems updating from Firestore Database! Error code: " + error.code);
     };
 
-    const setPlayersOnline = usePlayersOnline()[1];
-    const gameDataDBRef = ref(db, GameManager.getGameID());
-
     const setupGameDBListener = (): UnsubscribeDB => {
-        return onValue(gameDataDBRef, (snap) => {
-            const data: DatabaseGame = snap.val();
-            const playersOnline: string[] = [];
-            for (const user in data.users) {
-                if (data.users[user].onlineState) {
-                    playersOnline.push(user);
+        const gameDataDBRef = ref(db, GameManager.getGameID());
+
+        return onValue(
+            gameDataDBRef,
+            (snap) => {
+                const tempAnswers: string[] = [];
+                const data: DatabaseGame = snap.val();
+                const users = Util.objToMap(data.users);
+                const online: string[] = [];
+                for (const [uid, user] of users) {
+                    if (user.onlineState) {
+                        online.push(uid);
+                    }
+                    if (user.answer) {
+                        tempAnswers.push(uid);
+                    }
                 }
-            }
-            setPlayersOnline(playersOnline);
-        });
+                setPlayersReady(tempAnswers);
+                setPlayersOnline(online);
+            },
+            (error) => {
+                console.error("Request cancelled! Reason: " + error);
+            },
+        );
     };
 
     /// This code will get executed on loading of the page
     useEffect(() => {
         let unsubscribeFirestore: Unsubscribe;
-        let unsubscribeDatabase: UnsubscribeDB;
+        const unsubscribeDatabase: UnsubscribeDB = setupGameDBListener();
         GameManager.joinGame(gameEvent, onSnapshotError)
             .then((unsub) => {
                 unsubscribeFirestore = unsub;
-                unsubscribeDatabase = setupGameDBListener();
                 return null;
             })
             .catch(console.error);
@@ -215,7 +183,7 @@ export default function Mixed(): JSX.Element {
 
         return function cleanup(): void {
             if (unsubscribeFirestore) unsubscribeFirestore();
-            if (unsubscribeDatabase) unsubscribeDatabase();
+            unsubscribeDatabase();
             console.log("Unsubscribed!");
             setBackgroundState(false);
         };
@@ -235,7 +203,7 @@ export default function Mixed(): JSX.Element {
         evaluationScoreboard.board.forEach((score: number, uid: string) => {
             const answer = evaluationScoreboard.answers.get(uid) || "none";
             let readableAnswer = intl.formatMessage({ id: "general.answer.forgot" });
-            if (taskType === "wouldyourather") {
+            if (taskType === TaskType.WOULD_YOU_RATHER) {
                 if (answers) {
                     answers.forEach((possibleAnswer, id) => {
                         if (id === Number(answer)) {
@@ -245,7 +213,7 @@ export default function Mixed(): JSX.Element {
                 } else {
                     createAlert(Alerts.ERROR, "Answers were not loaded, therefore could not load the right response");
                 }
-            } else if (taskType === "tictactoe") {
+            } else if (taskType === TaskType.TIC_TAC_TOE) {
                 switch (answer) {
                     case "winner":
                         readableAnswer = intl.formatMessage({ id: "general.winner" });
@@ -286,13 +254,11 @@ export default function Mixed(): JSX.Element {
         }
 
         switch (taskType) {
-            case "whowouldrather":
+            case TaskType.WHO_WOULD_RATHER:
                 setTaskComponent(<WhoWouldRather />);
-                setVotable(true);
                 break;
-            case "truthordare":
+            case TaskType.TRUTH_OR_DARE:
                 setTaskComponent(<TruthOrDare />);
-                setVotable(false);
                 break;
             default:
                 unknownTypeAlert();
@@ -302,26 +268,22 @@ export default function Mixed(): JSX.Element {
 
     const processNewTask = async (): Promise<void> => {
         switch (taskType) {
-            case "whowouldrather":
-            case "truthordare":
+            case TaskType.WHO_WOULD_RATHER:
+            case TaskType.TRUTH_OR_DARE:
                 await processNewSingleAnswerTask();
                 break;
-            case "tictactoe":
+            case TaskType.TIC_TAC_TOE:
                 console.log("TicTacToe");
                 setTaskComponent(<TicTacToe />);
-                setVotable(false);
                 break;
-            case "wouldyourather":
+            case TaskType.WOULD_YOU_RATHER:
                 await processNewMultiAnswerTask();
-                setVotable(true);
                 break;
             case undefined:
                 setTaskComponent(notLoaded);
-                setVotable(false);
                 break;
             default:
                 unknownTypeAlert();
-                setVotable(false);
                 break;
         }
     };
@@ -329,19 +291,6 @@ export default function Mixed(): JSX.Element {
     useEffect(() => {
         processNewTask().catch(console.error);
     }, [taskID, taskType, target]);
-
-    const nextTaskButtonClick = (): void => {
-        if (!isHost) {
-            throw new Error("Trying to execute a host method as non Host");
-        }
-        submitAndReset();
-
-        const callData: EvaluateGame = {
-            gameID: GameManager.getGameID(),
-        };
-
-        Serverless.callFunction(Serverless.NEXT_TASK)(callData);
-    };
 
     return (
         <>
@@ -351,12 +300,9 @@ export default function Mixed(): JSX.Element {
                         <TranslatedMessage id="sobersailor.name" />
                     </div>
                 </Grid>
-                {timer !== 0 && (
-                    <Grid item xs={12}>
-                        <span className="countdown-inner">{timer}</span> <TranslatedMessage id="general.seconds" />
-                        <LinearProgress variant="determinate" value={(timer / maxTime) * 100} />
-                    </Grid>
-                )}
+                <Grid item xs={12}>
+                    <Timer />
+                </Grid>
                 <Grid item xs={12} md={8} lg={9}>
                     <Paper
                         sx={{
@@ -368,98 +314,7 @@ export default function Mixed(): JSX.Element {
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={4} lg={3}>
-                    {isHost && (
-                        <Paper className={classes.sideArea}>
-                            <Grid container spacing={1}>
-                                <Grid item xs={12}>
-                                    <h2 className={classes.sideHeading}>
-                                        <TranslatedMessage id="elements.admin.control" />
-                                    </h2>
-                                </Grid>
-                                {!pollState && (
-                                    <Grid item xs className={classes.controlButton}>
-                                        <Tooltip
-                                            title={<TranslatedMessage id="actions.host.nextquestion" />}
-                                            TransitionComponent={Zoom}
-                                            placement="bottom"
-                                            arrow
-                                        >
-                                            <IconButton
-                                                color="primary"
-                                                className={classes.hostButton}
-                                                onClick={nextTaskButtonClick}
-                                                size="large"
-                                            >
-                                                <QueuePlayNextIcon className={classes.controlButtonIcon} />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Grid>
-                                )}
-                                <Grid item xs className={classes.controlButton}>
-                                    <Tooltip
-                                        title={<TranslatedMessage id="actions.host.transfer" />}
-                                        TransitionComponent={Zoom}
-                                        placement="bottom"
-                                        arrow
-                                    >
-                                        <IconButton
-                                            color="primary"
-                                            className={classes.hostButton}
-                                            onClick={() => {
-                                                GameManager.transferHostShip().catch(console.error);
-                                            }}
-                                            size="large"
-                                        >
-                                            <TransferWithinAStationIcon className={classes.controlButtonIcon} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Grid>
-                                {!pollState && votable && !evalState && (
-                                    <Grid item xs className={classes.controlButton}>
-                                        <Tooltip
-                                            title={<TranslatedMessage id="actions.host.startpoll" />}
-                                            TransitionComponent={Zoom}
-                                            placement="bottom"
-                                            arrow
-                                        >
-                                            <IconButton
-                                                color="primary"
-                                                className={classes.hostButton}
-                                                onClick={() => {
-                                                    GameManager.setPollState(true).catch(console.error);
-                                                }}
-                                                size="large"
-                                            >
-                                                <PollIcon className={classes.controlButtonIcon} />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Grid>
-                                )}
-                                <Grid item xs className={classes.controlButton}>
-                                    <Tooltip
-                                        title={<TranslatedMessage id="actions.host.kick" />}
-                                        TransitionComponent={Zoom}
-                                        placement="bottom"
-                                        arrow
-                                    >
-                                        <IconButton
-                                            color="primary"
-                                            className={classes.hostButton}
-                                            onClick={() => {
-                                                const klRef = kickListRef.current;
-                                                if (klRef) {
-                                                    klRef.show();
-                                                }
-                                            }}
-                                            size="large"
-                                        >
-                                            <FlightTakeoffIcon className={classes.controlButtonIcon} />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Grid>
-                            </Grid>
-                        </Paper>
-                    )}
+                    {isHost && <AdminPanel />}
                     <Leaderboard />
                     <KickList ref={kickListRef} />
                 </Grid>

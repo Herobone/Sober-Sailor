@@ -23,6 +23,7 @@ import { useTask } from "../state/actions/taskActions";
 import { usePollState } from "../state/actions/displayStateActions";
 import { TranslatedMessage } from "../translations/TranslatedMessage";
 import { CatPontent } from "../Components/Visuals/CatPontent";
+import { usePlayersOnline } from "../state/actions/gameActions";
 
 export function WhoWouldRather(): JSX.Element {
     const [inputLock, setInputLock] = useState(true);
@@ -32,6 +33,8 @@ export function WhoWouldRather(): JSX.Element {
 
     const [question] = useTask();
     const [pollState] = usePollState();
+
+    const [playersOnline] = usePlayersOnline();
 
     useEffect(() => {
         setInputLock(true);
@@ -48,10 +51,10 @@ export function WhoWouldRather(): JSX.Element {
         createAlert(Alerts.WARNING, "No PLT stored! Reload Page!");
         return <div>ERROR</div>;
     }
-
-    useEffect(() => {
+    const updateAnswers = (): void => {
         const tmpValues: ReactElement[] = [];
         plt.playerUidMap.forEach((nickname: string, uid: string) => {
+            if (!playersOnline.includes(uid)) return;
             tmpValues.push(
                 // eslint-disable-next-line react/no-array-index-key
                 <ButtonGroup key={uid} orientation="vertical" color="primary" variant="contained">
@@ -70,7 +73,14 @@ export function WhoWouldRather(): JSX.Element {
             );
         });
         setValues(tmpValues);
+    };
+    useEffect(() => {
+        updateAnswers();
     }, []);
+
+    useEffect(() => {
+        updateAnswers();
+    }, [playersOnline]);
 
     return (
         <>
