@@ -1,12 +1,12 @@
 {
   "rules": {
     "$gameID": {
+      ".read": "auth != null && data.child('users').child(auth.uid).exists()",
       "users": {
         ".validate": true,
         "$uid": {
           ".validate": true,
           ".write": "auth != null && $uid === auth.uid",
-          ".read": "auth != null && data.parent().child(auth.uid).exists()",
           "answer": {
             ".validate": true
           },
