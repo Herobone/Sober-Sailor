@@ -61,6 +61,7 @@ export function Settings(): JSX.Element {
         { code: "cats", name: intl.formatMessage({ id: "settings.options.filler.cats" }) },
         { code: "dogs", name: intl.formatMessage({ id: "settings.options.filler.dogs" }) },
         { code: "memes", name: intl.formatMessage({ id: "settings.options.filler.memes" }) },
+        { code: "none", name: intl.formatMessage({ id: "settings.options.filler.none" }) },
     ];
 
     return (

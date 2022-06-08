@@ -32,6 +32,12 @@ export const CatPontent = (): JSX.Element => {
     const memeEndpoint = "https://api.reddit.com/r/memes/top";
 
     const newImage = async (): Promise<void> => {
+        if (filler === "none") {
+            // eslint-disable-next-line unicorn/no-useless-undefined
+            setImageURL(undefined);
+            return;
+        }
+
         const re = await fetch(endpointURL);
         const json = await re.json();
         if (filler === "memes") {
@@ -64,6 +70,9 @@ export const CatPontent = (): JSX.Element => {
                 break;
             case "memes":
                 setEndpointURL(memeEndpoint);
+                break;
+            case "none":
+                setEndpointURL("");
                 break;
             default:
                 createAlert(Alerts.ERROR, "Unknown filler");

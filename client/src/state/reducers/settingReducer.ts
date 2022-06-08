@@ -16,7 +16,7 @@
 import { BooleanAction, SettingAction } from "../actions/settingActions";
 import { AvailableThemes } from "../../style/Theme";
 
-export type Filler = "cats" | "dogs" | "memes";
+export type Filler = "cats" | "dogs" | "memes" | "none";
 
 export interface SettingState {
     language: string;
