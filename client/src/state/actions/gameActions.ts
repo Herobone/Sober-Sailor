@@ -24,7 +24,7 @@ export type GameActions = {
 };
 
 export type GameArrayActions = {
-    type: "SET_PLAYERS_ONLINE";
+    type: "SET_PLAYERS_ONLINE" | "SET_PLAYERS_READY";
     payload: string[];
 };
 
@@ -75,6 +75,25 @@ export const usePlayersOnline = (): [string[], (content: string[]) => void] => {
 
     const set = (content: string[]): void => {
         dispatch(setPlayersOnline(content));
+    };
+    return [get, set];
+};
+
+/**
+ * Set the array of players who are ready
+ * @param online  Array of player UIDs
+ */
+export const setPlayersReady = (online: string[]): GameArrayActions => ({
+    type: "SET_PLAYERS_READY",
+    payload: online,
+});
+
+export const usePlayersReady = (): [string[], (content: string[]) => void] => {
+    const dispatch = useDispatch();
+    const get = useSelector<RootState, GameState["playersReady"]>((state) => state.game.playersReady);
+
+    const set = (content: string[]): void => {
+        dispatch(setPlayersReady(content));
     };
     return [get, set];
 };

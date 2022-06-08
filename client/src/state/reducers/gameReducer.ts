@@ -20,12 +20,14 @@ export interface GameState {
     host: boolean;
     online: boolean;
     playersOnline: string[];
+    playersReady: string[];
 }
 
 const initialState: GameState = {
     host: false,
     online: false,
     playersOnline: [],
+    playersReady: [],
 };
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
@@ -37,6 +39,8 @@ export const gameReducer = (state: GameState = initialState, action: GameActions
             return { ...state, online: action.payload };
         case "SET_PLAYERS_ONLINE":
             return { ...state, playersOnline: action.payload };
+        case "SET_PLAYERS_READY":
+            return { ...state, playersReady: action.payload };
         default:
             return state;
     }

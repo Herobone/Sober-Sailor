@@ -36,6 +36,7 @@ import { Game } from "sobersailor-common/lib/models/Game";
 import { Player } from "sobersailor-common/lib/models/Player";
 import Util from "sobersailor-common/lib/Util";
 import { tasks } from "sobersailor-common/lib/gamemodes/tasks";
+import { getDatabase, ref, set } from "firebase/database";
 import { playerConverter } from "./models/Player";
 import { gameConverter } from "./models/Game";
 import { Serverless } from "./Serverless";
@@ -43,6 +44,10 @@ import { firebaseApp } from "./config";
 import { TaskUtils } from "./TaskUtils";
 
 export class GameManager {
+    static fs = getFirestore(firebaseApp);
+
+    static db = getDatabase(firebaseApp);
+
     static getPlayerLookupTable(): Register | null {
         const pltRaw = localStorage.getItem("playerLookupTable");
         if (pltRaw) {
@@ -93,8 +98,7 @@ export class GameManager {
     }
 
     private static getGameByID(gameID: string): DocumentReference<Game> {
-        const db = getFirestore(firebaseApp);
-        return doc(db, "games", gameID).withConverter(gameConverter);
+        return doc(this.fs, "games", gameID).withConverter(gameConverter);
     }
 
     static getPlayerCol(): CollectionReference {
@@ -283,6 +287,8 @@ export class GameManager {
         }
 
         const { uid } = user;
+        const answerRef = ref(this.db, `${GameManager.getGameID()}/users/${uid}/answer`);
+        await set(answerRef, answer);
         await updateDoc(GameManager.getPlayer(uid), {
             answer,
         });
