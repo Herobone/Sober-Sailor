@@ -53,9 +53,8 @@ const submitChanges = async (
   gameData: Game,
   evaluationScoreboard: EvaluationScoreboard
 ): Promise<void> => {
-  console.table(evaluationScoreboard.serializeScore());
-  await evaluationScoreboard.board.forEach(async (value, key) => {
-    await FirestoreUtil.getPlayer(gameData.gameID, key).update({
+  await evaluationScoreboard.board.forEach(async (value, uid) => {
+    await FirestoreUtil.getPlayer(gameData.gameID, uid).update({
       sips: admin.firestore.FieldValue.increment(value),
       answer: null,
     });
@@ -146,10 +145,8 @@ export const evaluateGameHandler = async (
       evaluationScoreboard.addAnswer(uid, player.answer || "none");
     }
   }
-  console.table(evaluationScoreboard.serializeAnswers());
-  console.table(answers);
+
   const occur = Util.countOccurrences(answers);
-  console.table(occur);
   if (gameData.type === TaskType.WOULD_YOU_RATHER) {
     const [popularAnswers, count] = getMostPopular(occur);
     for (const [uid, player] of users) {
@@ -172,6 +169,8 @@ export const evaluateGameHandler = async (
     if (!evaluationScoreboard.board.has(uid)) {
       evaluationScoreboard.addScore(uid, 0);
     }
+
+    await db.ref(gameData.gameID + "/users/" + uid + "/answer").set(null);
   }
 
   await submitChanges(gameData, evaluationScoreboard);
