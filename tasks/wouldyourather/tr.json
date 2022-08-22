@@ -59,9 +59,6 @@
     },
     "8": {
         "question": "Kimsenin bilmesini istemediğin şey ne?",
-        "anwers": {
-            "3": "Sapkınlıkların"
-        },
         "answers": {
             "1": "Son sevgililerin",
             "2": "Tarayıcı geçmişin",
@@ -71,9 +68,6 @@
     },
     "9": {
         "question": "Nerede yüzmeyi tercih edersin?",
-        "anwers": {
-            "3": "Fıstık Ezmesi Havuzu"
-        },
         "answers": {
             "1": "Bal havuzu",
             "2": "Şurup havuzu",
@@ -106,9 +100,6 @@
     },
     "13": {
         "question": "Neyi kucaklamayı tercih edersin?",
-        "anwers": {
-            "3": "En kötü düşmanın"
-        },
         "answers": {
             "4": "En kötü düşmanın",
             "1": "Timsah",

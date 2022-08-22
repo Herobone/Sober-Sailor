@@ -53,18 +53,12 @@
     },
     "8": {
         "question": "Que préfèrerais-tu que personne ne connaisse ?",
-        "anwers": {
-            "3": "Tes fétiches"
-        },
         "answers": {
             "4": "Fétiches"
         }
     },
     "9": {
-        "question": "Dans quoi préfèrerais-tu nager ?",
-        "anwers": {
-            "3": "Une piscine de beurre de cacahuète"
-        }
+        "question": "Dans quoi préfèrerais-tu nager ?"
     },
     "10": {
         "question": "Que préfèrerais-tu dire à un étranger au premier abord ?"
@@ -76,10 +70,7 @@
         "question": "Tu préfères vomir sur ton héros ou que ton héros te vomisse dessus ?"
     },
     "13": {
-        "question": "Avec quoi préfèrerais-tu faire des câlins ?",
-        "anwers": {
-            "3": "Ton pire ennemi"
-        }
+        "question": "Avec quoi préfèrerais-tu faire des câlins ?"
     },
     "14": {
         "question": "Quel bouton devrait avoir ta télécommande de ta vie ?"
