@@ -76,5 +76,6 @@
     "settings.options.theme.hacker": "Hackeur",
     "settings.options.theme.minimalist": "Minimaliste",
     "settings.options.theme.highcontrast": "Contraste élevé",
-    "settings.labels.select.filler": "Remplissage entre les tâches"
+    "settings.labels.select.filler": "Remplissage entre les tâches",
+    "navigation.privacy": "Politique de confidentialité"
 }

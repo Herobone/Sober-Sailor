@@ -76,5 +76,6 @@
     "settings.options.theme.highcontrast": "Hoher Kontrast",
     "settings.options.theme.hacker": "Hacker",
     "settings.options.theme.minimalist": "Minimalistisch",
-    "settings.labels.select.filler": "Füller zwischen Aufgaben"
+    "settings.labels.select.filler": "Füller zwischen Aufgaben",
+    "navigation.privacy": "Datenschutz"
 }
