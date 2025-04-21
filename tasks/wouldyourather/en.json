@@ -8,14 +8,14 @@
         }
     },
     "1": {
-        "question": "Would you rather see 10 minutes into the future or 150 years in the future",
+        "question": "Would you rather see 10 minutes into the future or 150 years in the future?",
         "answers": {
             "1": "10 minutes",
             "2": "150 years"
         }
     },
     "2": {
-        "question": "Would you rather have telekinesis (moving things with your mind) or telepathy (read minds)",
+        "question": "Would you rather have telekinesis (moving things with your mind) or telepathy (read minds)?",
         "answers": {
             "1": "telekinesis",
             "2": "telepathy"
@@ -37,7 +37,7 @@
         }
     },
     "5": {
-        "question": "Would you rather be in jail for five years or be in a coma for 10 years",
+        "question": "Would you rather be in jail for five years or be in a coma for 10 years?",
         "answers": {
             "1": "Jail for 5 years",
             "2": "Coma for 10 years"

@@ -76,5 +76,6 @@
     "settings.options.theme.minimalist": "Minimalista",
     "settings.options.theme.hacker": "Hacker",
     "settings.options.theme.highcontrast": "Contrasto elevato",
-    "settings.labels.select.filler": "Riempimento tra le attività"
+    "settings.labels.select.filler": "Riempimento tra le attività",
+    "navigation.privacy": "Informativa sulla riservatezza"
 }

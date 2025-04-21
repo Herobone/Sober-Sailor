@@ -1,10 +1,134 @@
 {
     "0": {
         "question": "Cosa preferiresti mangiare?",
-        "anwers": {
-            "0": "Cani",
-            "1": "Gatti",
-            "2": "Cavalli"
+        "answers": {
+            "1": "Cani",
+            "2": "Gatti",
+            "3": "Cavalli"
+        }
+    },
+    "1": {
+        "answers": {
+            "1": "10 minuti",
+            "2": "150 anni"
+        },
+        "question": "Preferiresti vedere 10 minuti nel futuro o 150 anni nel futuro?"
+    },
+    "2": {
+        "answers": {
+            "1": "Telecinesi",
+            "2": "Telepatia"
+        },
+        "question": "Preferiresti avere la telecinesi (muovere oggetti con la tua mente) o la telepatia (leggere le menti)?"
+    },
+    "3": {
+        "answers": {
+            "1": "Ballare",
+            "2": "Cantare"
+        },
+        "question": "Preferiresti essere costretto a ballare o cantare ad ogni canzone che senti?"
+    },
+    "4": {
+        "answers": {
+            "1": "Vero Amore",
+            "2": "Lotteria",
+            "3": "Morire solo e povero"
+        },
+        "question": "Preferiresti trovare il vero amore questa settimana o vincere la lotteria il prossimo anno?"
+    },
+    "6": {
+        "answers": {
+            "2": "La celebrità di cui siete cotti per una notte",
+            "1": "Il tuo partner per 10 anni"
+        },
+        "question": "Con chi preferiresti essere?"
+    },
+    "5": {
+        "answers": {
+            "1": "Carcere per 5 anni",
+            "2": "Coma per 10 anni"
+        },
+        "question": "Preferiresti essere incarcerato per 5 anni o rimanere in coma per 10 anni?"
+    },
+    "7": {
+        "question": "I tuoi amici dovrebbero essere in grado di",
+        "answers": {
+            "1": "leggere la tua mente",
+            "2": "guardare la tua cronologia"
+        }
+    },
+    "8": {
+        "question": "Cosa preferiresti che nessuno sapesse?",
+        "answers": {
+            "1": "I tuoi partner più recenti",
+            "2": "La tua cronologia",
+            "3": "La cronologia della tua calcolatrice",
+            "4": "Le cose che ti eccitano"
+        }
+    },
+    "9": {
+        "question": "Dove preferiresti nuotare?",
+        "answers": {
+            "1": "Piscina di miele",
+            "2": "Piscina di sciroppo",
+            "3": "Piscina di crema al cioccolato",
+            "4": "Piscina di burro d'arachidi"
+        }
+    },
+    "10": {
+        "question": "Cosa preferisti dire ad uno straniero appena lo vedi?",
+        "answers": {
+            "1": "Le cose che ti eccitano",
+            "2": "Le loro imperfezioni",
+            "3": "Un fatto veramente strano"
+        }
+    },
+    "11": {
+        "question": "Puoi uscire solo ad un'ora precisa. Cosa preferisci?",
+        "answers": {
+            "1": "Di giorno",
+            "2": "Di notte",
+            "3": "Alba e Tramonto"
+        }
+    },
+    "12": {
+        "question": "Preferisti vomitare sul tuo eroe o che il tuo eroe vomiti su di te?",
+        "answers": {
+            "1": "Io sul mio eroe",
+            "2": "Il mio eroe su di me"
+        }
+    },
+    "13": {
+        "question": "Con chi preferiresti coccolarti?",
+        "answers": {
+            "1": "Un alligatore",
+            "2": "Un cucciolo di elefante",
+            "3": "Una lumaca gigante",
+            "4": "Il tuo peggior nemico"
+        }
+    },
+    "14": {
+        "question": "Quale pulsante dovrebbe avere il tuo \"telecomando\"?",
+        "answers": {
+            "1": "Torna indietro",
+            "2": "Avanti veloce",
+            "3": "Pausa"
+        }
+    },
+    "15": {
+        "question": "Preferiresti fare pipì in una lettiera o bere da un gabinetto",
+        "answers": {
+            "1": "Bere dal gabinetto",
+            "2": "Fare pipì nella lettiera",
+            "3": "Bere pipì?!"
+        }
+    },
+    "16": {
+        "question": "Cosa preferiresti avere di extra?",
+        "answers": {
+            "1": "Capezzolo",
+            "2": "Dito del piede",
+            "3": "Naso"
         }
     }
 }

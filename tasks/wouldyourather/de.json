@@ -37,7 +37,7 @@
         }
     },
     "5": {
-        "question": "Würdest du lieber 5 Jahre im Gefängnis sitzen oder 10 Jahre im Koma liegen",
+        "question": "Würdest du lieber 5 Jahre im Gefängnis sitzen oder 10 Jahre im Koma liegen?",
         "answers": {
             "1": "Gefängnis für 5 Jahre",
             "2": "Koma für 10 Jahre"
@@ -54,7 +54,7 @@
         "question": "Was sollen deine Freunde eher von dir sehen können?",
         "answers": {
             "1": "Gedanken",
-            "2": "Browser Verlauf"
+            "2": "Browserverlauf"
         }
     },
     "8": {

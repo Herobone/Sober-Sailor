@@ -76,5 +76,6 @@
     "settings.options.theme.minimalist": "Minimalist",
     "settings.options.theme.hacker": "Hacker",
     "settings.options.theme.highcontrast": "High Contrast",
-    "settings.labels.select.filler": "Filler between tasks"
+    "settings.labels.select.filler": "Filler between tasks",
+    "navigation.privacy": "Privacy Policy"
 }
